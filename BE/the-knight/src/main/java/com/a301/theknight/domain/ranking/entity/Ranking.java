@@ -22,8 +22,6 @@ public class Ranking extends BaseTimeEntity {
 
     private int score;
 
-    private int total;
-
     private int win;
 
     private int lose;
