@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-public class ChattingApi {
+public class ChattingWebsocketApi {
 
     private final SimpMessagingTemplate template;
 

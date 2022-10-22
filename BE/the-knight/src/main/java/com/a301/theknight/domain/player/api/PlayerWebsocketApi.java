@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-public class PlayerApi {
+public class PlayerWebsocketApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
     private final SimpMessagingTemplate template;
