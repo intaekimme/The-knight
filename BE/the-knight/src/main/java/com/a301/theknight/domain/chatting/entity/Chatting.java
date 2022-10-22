@@ -25,6 +25,7 @@ public class Chatting extends BaseTimeEntity {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ChattingSet chattingSet;
 

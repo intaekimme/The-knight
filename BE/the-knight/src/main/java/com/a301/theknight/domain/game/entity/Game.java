@@ -18,6 +18,7 @@ public class Game extends BaseTimeEntity {
     @Column(length = 100, nullable = false)
     private String title;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private GameStatus status;
 
