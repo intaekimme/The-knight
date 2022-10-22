@@ -35,7 +35,7 @@ public class GameApi {
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<?> getGameInfo() {
+    public ResponseEntity<?> getGameInfo(@PathVariable int gameId) {
         GameInfoResponse gameInfoResponse = new GameInfoResponse();
         return ResponseEntity.ok(gameInfoResponse);
     }

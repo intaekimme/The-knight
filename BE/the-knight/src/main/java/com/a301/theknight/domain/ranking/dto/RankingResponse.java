@@ -6,5 +6,5 @@ import java.util.List;
 
 @Data
 public class RankingResponse {
-    private List<MemberRankingDto> members;
+    private List<RankingDto> rankings;
 }

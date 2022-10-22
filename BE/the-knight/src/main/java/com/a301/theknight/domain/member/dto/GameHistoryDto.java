@@ -11,5 +11,5 @@ public class GameHistoryDto {
     private int shield;
     private int hand;
     private List<MemberInfoResponse> alliance;
-    private List<MemberInfoResponse> apposite;
+    private List<MemberInfoResponse> opposite;
 }
