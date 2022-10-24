@@ -1,9 +1,15 @@
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import NavBar from './components/header/NavBar';
 import './App.css';
-import Chat from './component/Chat/Chat';
 
 function App() {
   return (
-    <Chat />
+    <>
+      <NavBar />
+      <Outlet />
+    </>
   )
 }
 
