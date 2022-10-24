@@ -13,6 +13,7 @@ import Rank from "./pages/Rank";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import UserPage from "./pages/UserPage";
+import Game from "./pages/Game";
 import store from './_store/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -44,6 +45,7 @@ root.render(
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<Signup />} />
               <Route path="userpage" element={<UserPage />} />
+              <Route path="game" element={<Game />} />
             </Route>
           </Routes>
         </ThemeProvider>
