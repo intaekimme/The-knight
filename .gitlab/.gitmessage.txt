@@ -1,0 +1,26 @@
+# :sparkles: feat : 새로운 기능 추가
+# :adhesive_bandage: modify : 약간의 코드 수정 (코드 리뷰 이후 등)
+# :bug: fix : 버그 수정
+# :memo: docs : 문서 수정
+# :lipstick: style : 코드 포매팅, 세미콜론 누락, 코드 변경이 없는 경우
+# :recycle: refactor : 코드 리펙토링 (로직 수정 X)
+# :white_check_mark: test : 테스트 코드, 리펙토링 테스트 코드 추가
+# :hammer: chore : 빌드 업무 수정, 패키지 매니저 수정
+# :wrench: config: 환경설정 파일 추가 및 수정
+# —————————
+#     # 초기설정
+#     git config --global commit.template .gitlab/.gitmessage.txt
+#
+#     # 커밋 메시지 vs코드로 여는법 (vim 말고)
+#     git config --global core.editor "code --wait"
+#
+#
+#     제목 끝에 마침표(.) 금지
+#     제목과 본문을 한 줄 띄워 분리하기
+#     본문은 “어떻게” 보다 “무엇을“, “왜”를 설명한다.(선택)
+# —————————
+######## 제목은 한 줄에 최대 50 글자까지만 입력 ############ -> |
+
+
+######## 본문은 한 줄에 최대 72 글자까지만 입력 ################################## -> |
+

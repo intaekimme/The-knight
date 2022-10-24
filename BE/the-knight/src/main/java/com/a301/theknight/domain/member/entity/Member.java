@@ -24,17 +24,28 @@ public class Member extends BaseTimeEntity {
     @Column(length = 45)
     private String nickname;
 
-    @Column(length = 100)
+    @Column(length = 200)
     private String refreshToken;
 
     @Column
     private String image;
 
+    private String role;
+
     @Builder
-    public Member(String email, String password, String nickname, String image){
+    public Member(String email, String password, String nickname, String image, String role) {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.image = image;
+        this.role = role;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void removeRefreshToken() {
+        refreshToken = "";
     }
 }
