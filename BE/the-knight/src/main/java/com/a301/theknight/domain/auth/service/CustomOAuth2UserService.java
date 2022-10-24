@@ -30,8 +30,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
-        String nickname = (String) attributes.get("name");
         String email = (String) attributes.get("email");
+        String nickname = email.substring(0, email.indexOf('@'));
         log.info(" Login Google : name = {}, email = {}", nickname, email);
 
         Member findMember = memberRepository.findByEmail(email)
