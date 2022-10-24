@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.game.entity;
+package com.a301.theknight.domain.player.entity.game.entity;
 
 import com.a301.theknight.domain.common.entity.BaseTimeEntity;
 import lombok.AccessLevel;
@@ -36,6 +36,11 @@ public class Game extends BaseTimeEntity {
     @Builder
     public Game(String title, GameStatus gameStatus, int sword, int twin, int shield, int hand, int capacity){
         this.title = title;
-
+        this.status = gameStatus;
+        this.sword = sword;
+        this.twin = twin;
+        this.shield = shield;
+        this.hand = hand;
+        this.capacity = capacity;
     }
 }

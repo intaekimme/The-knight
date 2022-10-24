@@ -1,9 +1,9 @@
 package com.a301.theknight.domain.player.entity;
 
 import com.a301.theknight.domain.common.entity.BaseTimeEntity;
-import com.a301.theknight.domain.game.entity.Game;
-import com.a301.theknight.domain.game.entity.GameResult;
-import com.a301.theknight.domain.game.entity.Weapon;
+import com.a301.theknight.domain.player.entity.game.entity.Game;
+import com.a301.theknight.domain.player.entity.game.entity.GameResult;
+import com.a301.theknight.domain.player.entity.game.entity.Weapon;
 import com.a301.theknight.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Getter;
