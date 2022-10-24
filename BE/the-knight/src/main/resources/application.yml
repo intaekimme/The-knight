@@ -1,4 +1,4 @@
 spring:
   profiles:
-#    active: server
-#    include:
+    active: server
+    include: auth
