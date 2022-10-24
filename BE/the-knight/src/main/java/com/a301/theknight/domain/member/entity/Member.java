@@ -2,6 +2,7 @@ package com.a301.theknight.domain.member.entity;
 
 import com.a301.theknight.domain.common.entity.BaseTimeEntity;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,4 +29,12 @@ public class Member extends BaseTimeEntity {
 
     @Column
     private String image;
+
+    @Builder
+    public Member(String email, String password, String nickname, String image){
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.image = image;
+    }
 }
