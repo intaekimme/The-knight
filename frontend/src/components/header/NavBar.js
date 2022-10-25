@@ -73,7 +73,6 @@ export default function NavBar() {
             <Link to="/info">소개</Link>
             <Link to="/lobby">로비</Link>
             <Link to="/rank">랭킹</Link>
-            <Link to="/game">인게임</Link>
           </Navigation>
         </StyledNav>
         <Navigation>
