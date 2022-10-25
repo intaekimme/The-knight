@@ -6,6 +6,7 @@ import com.a301.theknight.domain.game.entity.GameResult;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.member.entity.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -49,11 +50,9 @@ public class Player extends BaseTimeEntity {
 
     private boolean isReady;
 
-    public void enterGame(Game game){
-
-        if(this.game  != null){
-            this.game.getPlayers().remove(this);
-        }
+    @Builder
+    public Player(Member member, Game game) {
+        this.member = member;
         this.game = game;
         game.getPlayers().add(this);
     }
@@ -62,5 +61,17 @@ public class Player extends BaseTimeEntity {
         if(this.game  != null){
             this.game.getPlayers().remove(this);
         }
+    }
+
+    public void selectTeam(Team team) {
+        this.team = team;
+    }
+
+    public void winGame() {
+        result = GameResult.WIN;
+    }
+
+    public void loseGame() {
+        result = GameResult.LOSE;
     }
 }
