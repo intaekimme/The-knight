@@ -1,7 +1,12 @@
 package com.a301.theknight.domain.member.dto;
 
+import lombok.Builder;
+import lombok.Data;
+
 import java.util.List;
 
+@Builder
+@Data
 public class GameHistoryDto {
     private int gameId;
     private String result;

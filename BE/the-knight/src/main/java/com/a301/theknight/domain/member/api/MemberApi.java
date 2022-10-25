@@ -1,5 +1,6 @@
 package com.a301.theknight.domain.member.api;
 
+import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.member.dto.MemberHistoryResponse;
 import com.a301.theknight.domain.member.dto.MemberInfoResponse;
 import com.a301.theknight.domain.member.dto.MemberUpdateRequest;
@@ -20,24 +21,26 @@ public class MemberApi {
     }
 
     @GetMapping("/members")
-    public ResponseEntity<?> getMemberInfo() {
-        MemberInfoResponse memberInfoResponse = new MemberInfoResponse();
-        return ResponseEntity.ok(memberInfoResponse);
+    public ResponseEntity<?> getMemberInfo(@LoginMemberId long memberId) {
+        return ResponseEntity.ok(memberService.getMemberInfo(memberId));
     }
 
     @PatchMapping("/members")
-    public ResponseEntity<?> updateMemberInfo(@RequestBody MemberUpdateRequest memberUpdateRequest) {
-        return null;
+    public ResponseEntity<?> updateMemberInfo(@RequestBody MemberUpdateRequest memberUpdateRequest,
+                                              @LoginMemberId long memberId) {
+        memberService.updateMemberInfo(memberId, memberUpdateRequest);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/members")
-    public ResponseEntity<?> deleteMember() {
+    public ResponseEntity<?> deleteMember(@LoginMemberId long memberId) {
+        memberService.deleteMember(memberId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/history")
-    public ResponseEntity<?> getMemberHistory() {
-        MemberHistoryResponse memberHistoryResponse = new MemberHistoryResponse();
+    public ResponseEntity<?> getMemberHistory(@LoginMemberId long memberId) {
+        MemberHistoryResponse memberHistoryResponse = memberService.getMemberHistory(memberId);
         return ResponseEntity.ok(memberHistoryResponse);
     }
 }

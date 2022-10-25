@@ -1,7 +1,9 @@
 package com.a301.theknight.domain.member.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
+@Builder
 @Data
 public class MemberInfoResponse {
     private String nickname;
