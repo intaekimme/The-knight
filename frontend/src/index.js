@@ -15,6 +15,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import UserPage from "./pages/UserPage";
 import Game from './pages/Game';
+import Chat from './commons/chatting/Chat';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const theme = createTheme({
@@ -46,6 +47,7 @@ root.render(
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<Signup />} />
               <Route path="userpage" element={<UserPage />} />
+              <Route path="chat" element={<Chat />} />
             </Route>
           </Routes>
         </ThemeProvider>
