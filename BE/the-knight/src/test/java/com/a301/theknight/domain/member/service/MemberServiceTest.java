@@ -4,6 +4,7 @@ import com.a301.theknight.domain.member.dto.MemberInfoResponse;
 import com.a301.theknight.domain.member.dto.MemberUpdateRequest;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
+import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.domain.ranking.entity.Ranking;
 import com.a301.theknight.domain.ranking.repository.RankingRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,6 +30,11 @@ class MemberServiceTest {
     @Mock
     RankingRepository rankingRepository;
 
+    @Mock
+    PlayerRepository playerRepository;
+
+    MemberService memberService;
+
     static Member testMember;
 
     @BeforeAll
@@ -41,6 +47,11 @@ class MemberServiceTest {
                 .role("ROLE_USER").build();
     }
 
+    @BeforeEach
+    void beforeEach() {
+        memberService = new MemberService(memberRepository, rankingRepository, playerRepository);
+    }
+
     @Test
     @DisplayName("회원 정보 조회, 랭킹 O")
     void memberInfoWithRanking() {
@@ -51,7 +62,6 @@ class MemberServiceTest {
         }
         ranking.saveLoseScore();
 
-        MemberService memberService = new MemberService(memberRepository, rankingRepository);
         given(memberRepository.findById(1L)).willReturn(Optional.of(testMember));
         given(rankingRepository.findByMemberId(1L)).willReturn(Optional.of(ranking));
         given(rankingRepository.findMemberRanking(1L)).willReturn(3);
@@ -73,7 +83,6 @@ class MemberServiceTest {
         given(rankingRepository.findByMemberId(1L)).willReturn(Optional.empty());
         given(rankingRepository.findMemberRanking(1L)).willReturn(2);
 
-        MemberService memberService = new MemberService(memberRepository, rankingRepository);
         MemberInfoResponse memberInfo = memberService.getMemberInfo(1L);
 
         assertEquals("테스트유저1", memberInfo.getNickname());
@@ -99,7 +108,6 @@ class MemberServiceTest {
 
         given(memberRepository.findById(1L)).willReturn(Optional.of(member));
 
-        MemberService memberService = new MemberService(memberRepository, rankingRepository);
         memberService.updateMemberInfo(1L, request);
 
         assertEquals("닉네임 변경", member.getNickname());

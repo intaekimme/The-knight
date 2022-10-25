@@ -21,7 +21,7 @@ public class MemberApi {
     }
 
     @GetMapping("/members")
-    public ResponseEntity<?> getMemberInfo(@LoginMemberId long memberId) {
+    public ResponseEntity<MemberInfoResponse> getMemberInfo(@LoginMemberId long memberId) {
         return ResponseEntity.ok(memberService.getMemberInfo(memberId));
     }
 

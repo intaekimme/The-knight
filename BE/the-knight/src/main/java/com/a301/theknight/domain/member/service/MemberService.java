@@ -1,11 +1,12 @@
 package com.a301.theknight.domain.member.service;
 
-import com.a301.theknight.domain.member.dto.GameHistoryDto;
-import com.a301.theknight.domain.member.dto.MemberHistoryResponse;
-import com.a301.theknight.domain.member.dto.MemberInfoResponse;
-import com.a301.theknight.domain.member.dto.MemberUpdateRequest;
+import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.member.dto.*;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
+import com.a301.theknight.domain.player.entity.Player;
+import com.a301.theknight.domain.player.entity.Team;
+import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.domain.ranking.entity.Ranking;
 import com.a301.theknight.domain.ranking.repository.RankingRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -22,6 +24,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final RankingRepository rankingRepository;
+    private final PlayerRepository playerRepository;
 
     @Transactional
     public MemberInfoResponse getMemberInfo(long memberId) {
@@ -46,11 +49,6 @@ public class MemberService {
         member.updateInfo(memberUpdateRequest.getNickname(), memberUpdateRequest.getImage());
     }
 
-    private Member getMember(long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("해당 회원이 존재하지 않습니다."));
-    }
-
     @Transactional
     public void deleteMember(long memberId) {
         Member member = getMember(memberId);
@@ -59,23 +57,44 @@ public class MemberService {
 
     @Transactional
     public MemberHistoryResponse getMemberHistory(long memberId) {
-
         List<GameHistoryDto> historyDtoList = new ArrayList<>();
 
-        //player 중 memberId와 결과가 null이 아닌 걸로 조회 (수정 날짜순으로 desc후 limit 10개)
-        //해당 player 10개의 game을 순서대로 DTO에 채워줌
-//        GameHistoryDto.builder()
-//                .gameId()
-//                .result()
-//                .capacity()
-//                .sword()
-//                .twin()
-//                .shield()
-//                .hand()
-//                .alliance()//game
-//                .opposite()
-//                .build();
+        List<Player> players = playerRepository.findTenByMemberId(memberId);
+        players.stream().forEach(player -> {
+            Team myTeam = player.getTeam();
+            Game game = player.getGame();
+
+            List<MemberInfoDto> alliance = game.getPlayers().stream()
+                    .filter(p -> myTeam.equals(p.getTeam()))
+                    .map(p -> MemberInfoDto.builder()
+                            .nickname(p.getMember().getNickname())
+                            .image(p.getMember().getImage()).build())
+                    .collect(Collectors.toList());
+
+            List<MemberInfoDto> opposite = game.getPlayers().stream()
+                    .filter(p -> !myTeam.equals(p.getTeam()))
+                    .map(p -> MemberInfoDto.builder()
+                            .nickname(p.getMember().getNickname())
+                            .image(p.getMember().getImage()).build())
+                    .collect(Collectors.toList());
+
+            historyDtoList.add(GameHistoryDto.builder()
+                .gameId(game.getId())
+                .result(player.getResult().name())
+                .capacity(game.getCapacity())
+                .sword(game.getSword())
+                .twin(game.getTwin())
+                .shield(game.getShield())
+                .hand(game.getHand())
+                .alliance(alliance)//game
+                .opposite(opposite).build());
+        });
 
         return new MemberHistoryResponse(historyDtoList);
+    }
+
+    private Member getMember(long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NoSuchElementException("해당 회원이 존재하지 않습니다."));
     }
 }
