@@ -53,4 +53,13 @@ public class Game extends BaseTimeEntity {
     public void changeStatus(GameStatus gameStatus) {
         this.status = gameStatus;
     }
+
+    public void ModifyGame(String title, int capacity, int sword, int twin, int shield, int hand){
+        this.title = title;
+        this.capacity = capacity;
+        this.sword = sword;
+        this.twin = twin;
+        this.shield = shield;
+        this.hand = hand;
+    }
 }
