@@ -1,5 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
+import com.a301.theknight.domain.auth.annotation.LoginMemberId;
+import com.a301.theknight.domain.game.service.GameWebsocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -12,6 +14,22 @@ public class GameWebsocketApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
     private final SimpMessagingTemplate template;
+
+    private final GameWebsocketService gameWebsocketService;
+
+    @MessageMapping(value = "/games/{gameId}/modify")
+    public void modify(@DestinationVariable long gameId, @LoginMemberId long memberId){
+        String destination = makeDestinationString(gameId, "/modify");
+
+        template.convertAndSend(destination);
+    }
+
+    @MessageMapping(value = "/games/{gameId}/delete")
+    public void delete(@DestinationVariable long gameId){
+        String destination = makeDestinationString(gameId, "/delete");
+
+        template.convertAndSend(destination);
+    }
 
     @MessageMapping(value="/games/{gameId}/leader")
     public void leader(@DestinationVariable long gameId){
