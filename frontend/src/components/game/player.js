@@ -1,14 +1,20 @@
 import PersonIcon from '@mui/icons-material/Person';
 
-function Player({ isMe }) {
+function Player({ isMe, nickName }) {
   if (isMe) {
     return (
-      <PersonIcon color="success" sx={{ fontSize: 100 }} />
+      <div>
+        <PersonIcon color="success" sx={{ fontSize: 100 }} />
+        <div style={{ color: "green" }}>{ nickName }</div>
+      </div>
     )
   }
   else {
     return (
-      <PersonIcon sx={{ fontSize: 100 }} />
+      <div>
+        <PersonIcon sx={{ fontSize: 100 }} />
+        <div>{ nickName }</div>
+      </div>
     )
   }
 }
