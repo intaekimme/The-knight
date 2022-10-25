@@ -17,6 +17,9 @@ class GameServiceTest {
     @Mock
     MemberRepository memberRepository;
 
+    @Mock
+    GameService gameService;
+
     @BeforeEach
     void setUp() {
         // 유저 생성
@@ -32,7 +35,7 @@ class GameServiceTest {
         }
 
         //  게임방 생성
-
+//        gameService.createGame();
     }
 
     @AfterEach

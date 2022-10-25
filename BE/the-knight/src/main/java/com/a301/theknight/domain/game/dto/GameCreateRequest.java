@@ -16,7 +16,6 @@ public class GameCreateRequest {
     public Game toEntity(){
         return Game.builder()
                 .title(title)
-                .gameStatus(GameStatus.WAITING)
                 .sword(sword)
                 .twin(twin)
                 .shield(shield)

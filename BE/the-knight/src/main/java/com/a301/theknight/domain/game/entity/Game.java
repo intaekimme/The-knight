@@ -39,9 +39,9 @@ public class Game extends BaseTimeEntity {
     private int capacity;
 
     @Builder
-    public Game(String title, GameStatus gameStatus, int sword, int twin, int shield, int hand, int capacity){
+    public Game(String title, int sword, int twin, int shield, int hand, int capacity){
         this.title = title;
-        this.status = gameStatus;
+        this.status = GameStatus.WAITING;
         this.sword = sword;
         this.twin = twin;
         this.shield = shield;

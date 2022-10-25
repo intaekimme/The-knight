@@ -33,21 +33,18 @@ public class GameService {
         GameListResponse gameListResponse = new GameListResponse();
         Page<Game> gamePage = null;
         if(keyword != null){
-            gamePage = gameRepository.findByTitleIsContaining(keyword, pageable)
-                    .orElseThrow(() -> new NoSuchElementException("검색 결과가 없습니다."));
+            gamePage = gameRepository.findByTitleIsContaining(keyword, pageable);
         }else{
             gamePage = gameRepository.findAll(pageable);
         }
 
         List<GameListDto> gameListDtos = gamePage.stream().map(game -> {
-            int players = (int)playerRepository.countPlayers(game.getId());
-
             return GameListDto.builder()
                     .gameId(game.getId())
                     .title(game.getTitle())
                     .status(game.getStatus().name())
                     .capacity(game.getCapacity())
-                    .participant(players)
+                    .participant(game.getPlayers().size())
                     .build();
         }).collect(Collectors.toList());
 

@@ -57,4 +57,10 @@ public class Player extends BaseTimeEntity {
         this.game = game;
         game.getPlayers().add(this);
     }
+
+    public void exitGame(){
+        if(this.game  != null){
+            this.game.getPlayers().remove(this);
+        }
+    }
 }
