@@ -1,12 +1,14 @@
-package com.a301.theknight.domain.player.entity.game.entity;
+package com.a301.theknight.domain.game.entity;
 
 import com.a301.theknight.domain.common.entity.BaseTimeEntity;
+import com.a301.theknight.domain.player.entity.Player;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,6 +24,9 @@ public class Game extends BaseTimeEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private GameStatus status;
+
+    @OneToMany(mappedBy = "game")
+    private List<Player> players;
 
     private int sword;
 

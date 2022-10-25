@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.player.entity.game.api;
+package com.a301.theknight.domain.game.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

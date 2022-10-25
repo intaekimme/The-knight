@@ -1,7 +1,7 @@
-package com.a301.theknight.domain.player.entity.game.dto;
+package com.a301.theknight.domain.game.dto;
 
-import com.a301.theknight.domain.player.entity.game.entity.Game;
-import com.a301.theknight.domain.player.entity.game.entity.GameStatus;
+import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import lombok.Data;
 
 @Data

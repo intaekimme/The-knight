@@ -1,6 +1,6 @@
-package com.a301.theknight.domain.player.entity.game.repository;
+package com.a301.theknight.domain.game.repository;
 
-import com.a301.theknight.domain.player.entity.game.entity.Game;
+import com.a301.theknight.domain.game.entity.Game;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

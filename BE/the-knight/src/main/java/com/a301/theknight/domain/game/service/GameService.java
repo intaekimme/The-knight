@@ -1,11 +1,10 @@
-package com.a301.theknight.domain.player.entity.game.service;
+package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.player.entity.Player;
-import com.a301.theknight.domain.player.entity.game.dto.GameCreateRequest;
-import com.a301.theknight.domain.player.entity.game.dto.GameListDto;
-import com.a301.theknight.domain.player.entity.game.dto.GameListResponse;
-import com.a301.theknight.domain.player.entity.game.entity.Game;
-import com.a301.theknight.domain.player.entity.game.repository.GameRepository;
+import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.dto.GameCreateRequest;
+import com.a301.theknight.domain.game.dto.GameListDto;
+import com.a301.theknight.domain.game.dto.GameListResponse;
+import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.domain.player.repository.PlayerRepository;

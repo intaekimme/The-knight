@@ -1,6 +1,6 @@
-package com.a301.theknight.domain.player.entity.game.dto;
+package com.a301.theknight.domain.game.dto;
 
-import com.a301.theknight.domain.player.entity.game.entity.Weapon;
+import com.a301.theknight.domain.game.entity.Weapon;
 
 public class InGame {
     private Long memberId;
