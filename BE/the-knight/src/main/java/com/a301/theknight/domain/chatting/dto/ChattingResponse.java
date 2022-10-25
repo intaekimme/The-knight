@@ -6,6 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class ChattingResponse {
+    private long memberId;
+    private String nickname;
     private String chattingSet;
     private String content;
 }

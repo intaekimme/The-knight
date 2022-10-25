@@ -35,6 +35,8 @@ public class ChattingService {
                 .content(chattingRequest.getContent()).build());
 
         return ChattingResponse.builder()
+                .memberId(memberId)
+                .nickname(member.getNickname())
                 .chattingSet(chatting.getChattingSet().name())
                 .content(chatting.getContent()).build();
     }
