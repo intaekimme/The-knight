@@ -3,7 +3,7 @@ package com.a301.theknight.domain.member.dto;
 import java.util.List;
 
 public class GameHistoryDto {
-    private int gameId;
+    private long gameId;
     private String result;
     private int capacity;
     private int sword;

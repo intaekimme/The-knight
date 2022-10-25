@@ -1,5 +1,7 @@
 package com.a301.theknight.domain.game.dto;
 
+import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import lombok.Data;
 
 @Data
@@ -10,4 +12,15 @@ public class GameCreateRequest {
     private int twin;
     private int shield;
     private int hand;
+
+    public Game toEntity(){
+        return Game.builder()
+                .title(title)
+                .sword(sword)
+                .twin(twin)
+                .shield(shield)
+                .hand(hand)
+                .capacity(capacity)
+                .build();
+    }
 }
