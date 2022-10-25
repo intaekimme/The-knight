@@ -23,8 +23,8 @@ public class ChattingWebsocketApi {
                             @DestinationVariable long gameId, @LoginMemberId long memberId) {
             ChattingResponse chattingResponse = chattingService.makeResponse(memberId, gameId, chattingRequest);
 
-            makeDestinationUri("/sub/games/", gameId, chattingResponse.getChattingSet());
-            template.convertAndSend("", chattingResponse);
+        String destinationUri = makeDestinationUri("/sub/games/", gameId, chattingResponse.getChattingSet());
+        template.convertAndSend(destinationUri, chattingResponse);
         }
 
         private String makeDestinationUri(String prefix, long gameId, String chattingSet) {
