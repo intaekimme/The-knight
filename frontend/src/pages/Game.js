@@ -1,48 +1,48 @@
 import React from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import LoginCheck from "../commons/login/LoginCheck";
-import PlayerWithWeapon from '../components/game/playerWithWeapon';
-import OrderPicker from '../components/game/orderPicker';
-import WeaponPicker from '../components/game/weaponPicker';
+import PlayerWithWeapon from "../components/game/PlayerWithWeapon";
+import OrderPicker from "../components/game/OrderPicker";
+import WeaponPicker from "../components/game/WeaponPicker";
 
-import Grid from '@mui/material/Grid';
+import Grid from "@mui/material/Grid";
 
 export default function Information() {
   // 비 로그인 시 로그인 화면으로
   const isLogin = LoginCheck();
   const navigate = useNavigate();
-  React.useEffect(()=>{
-    if(!isLogin){
-      navigate('/login');
+  React.useEffect(() => {
+    if (!isLogin) {
+      navigate("/login");
     }
   }, []);
 
   const dummyPlayers = [
     {
       userName: "player1",
-      team: "A"
+      team: "A",
     },
     {
       userName: "player2",
-      team: "A"
+      team: "A",
     },
     {
       userName: "player3",
-      team: "A"
+      team: "A",
     },
     {
       userName: "player4",
-      team: "B"
+      team: "B",
     },
     {
       userName: "player5",
-      team: "B"
+      team: "B",
     },
     {
       userName: "player6",
-      team: "B"
+      team: "B",
     },
-  ]
+  ];
 
   function placePlayers(players) {
     let arr = [];
@@ -55,7 +55,7 @@ export default function Information() {
             {/* 추후에 isMe 삭제 */}
             <PlayerWithWeapon isMe={true} nickName={players[i].userName} />
           </Grid>
-        )
+        );
       }
     }
     return arr;
@@ -65,14 +65,10 @@ export default function Information() {
     <div>
       <h1>진행 순서와 무기를 선택하세요</h1>
       <h3>100</h3>
-      <div style={{ backgroundColor: "grey" }}>
-        당신은 리더입니다.
-      </div>
+      <div style={{ backgroundColor: "grey" }}>당신은 리더입니다.</div>
       <OrderPicker dummyPlayers={dummyPlayers} />
       <WeaponPicker></WeaponPicker>
-      <Grid container>
-        { placePlayers(dummyPlayers) }
-      </Grid>
+      <Grid container>{placePlayers(dummyPlayers)}</Grid>
     </div>
   );
 }
