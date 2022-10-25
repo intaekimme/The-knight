@@ -79,7 +79,7 @@ public class MemberService {
                     .collect(Collectors.toList());
 
             historyDtoList.add(GameHistoryDto.builder()
-                .gameId(game.getId())
+                .gameId(game.getId() == null ? 0 : game.getId())
                 .result(player.getResult().name())
                 .capacity(game.getCapacity())
                 .sword(game.getSword())
