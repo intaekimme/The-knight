@@ -1,7 +1,8 @@
+import React from "react";
+import GoogleLogin from "../commons/login/GoogleLogin";
+
 export default function Login() {
   return (
-    <div>
-      로그인
-    </div>
+    <input type="button" onClick={GoogleLogin} value = "button"/>
   );
 }
