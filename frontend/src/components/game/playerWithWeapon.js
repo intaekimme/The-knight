@@ -1,6 +1,7 @@
 import Player from "./player";
 import Grid from "@mui/material/Grid";
 
+// 추후에 isMe 삭제
 function PlayerWithWeapon({ isMe, nickName }) {
   return (
     <Grid container>
