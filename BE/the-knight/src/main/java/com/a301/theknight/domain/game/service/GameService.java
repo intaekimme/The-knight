@@ -1,5 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
+import com.a301.theknight.domain.game.dto.GameInfoResponse;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.dto.GameCreateRequest;
 import com.a301.theknight.domain.game.dto.GameListDto;
@@ -11,6 +12,7 @@ import com.a301.theknight.domain.player.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +31,7 @@ public class GameService {
     private static long memberId = 1L;
 
     @Transactional(readOnly = true)
-    public GameListResponse getGameList(String keyword, Pageable pageable){
+    public GameListResponse getGameList(@Nullable String keyword, Pageable pageable){
         GameListResponse gameListResponse = new GameListResponse();
         Page<Game> gamePage = null;
         if(keyword != null){
@@ -54,12 +56,29 @@ public class GameService {
     }
 
     @Transactional
-    public void createGame(GameCreateRequest gameCreateRequest){
+    public long createGame(GameCreateRequest gameCreateRequest){
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 유저입니다."));
 
         Game newGame = gameCreateRequest.toEntity();
         gameRepository.save(newGame);
+        return newGame.getId();
+    }
 
+    @Transactional(readOnly = true)
+    public GameInfoResponse getGameInfo(long gameId){
+        Game findGame = gameRepository.findById(gameId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임입니다."));
+
+        return GameInfoResponse.builder()
+                .gameId(gameId)
+                .title(findGame.getTitle())
+                .capacity(findGame.getCapacity())
+                .participant(findGame.getPlayers().size())
+                .sword(findGame.getSword())
+                .twin(findGame.getTwin())
+                .shield(findGame.getShield())
+                .hand(findGame.getHand())
+                .build();
     }
 }
