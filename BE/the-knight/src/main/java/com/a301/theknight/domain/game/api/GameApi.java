@@ -18,19 +18,19 @@ public class GameApi {
 
     @GetMapping
     public ResponseEntity<?> getGameList(@RequestParam String keyword, Pageable pageable) {
-        GameListResponse gameListResponse = new GameListResponse();
+        GameListResponse gameListResponse = gameService.getGameList(keyword, pageable);
         return ResponseEntity.ok(gameListResponse);
     }
 
     @PostMapping
     public ResponseEntity<?> createGame(@RequestBody GameCreateRequest gameCreateRequest) {
-        return null;
-//        return ResponseEntity.created(??);
+        long newGameId = gameService.createGame(gameCreateRequest);
+        return ResponseEntity.ok(newGameId);
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<?> getGameInfo(@PathVariable int gameId) {
-        GameInfoResponse gameInfoResponse = new GameInfoResponse();
+    public ResponseEntity<?> getGameInfo(@PathVariable long gameId) {
+        GameInfoResponse gameInfoResponse = gameService.getGameInfo(gameId);
         return ResponseEntity.ok(gameInfoResponse);
     }
 }
