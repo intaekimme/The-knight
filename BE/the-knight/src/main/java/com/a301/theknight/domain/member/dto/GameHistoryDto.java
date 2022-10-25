@@ -8,7 +8,7 @@ import java.util.List;
 @Builder
 @Data
 public class GameHistoryDto {
-    private int gameId;
+    private long gameId;
     private String result;
     private int capacity;
     private int sword;
