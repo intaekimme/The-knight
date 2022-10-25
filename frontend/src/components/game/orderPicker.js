@@ -1,6 +1,8 @@
+import { useSelector } from "react-redux";
 import Grid from "@mui/material/Grid";
 
-function OrderPicker({ dummyPlayers }) {
+function OrderPicker() {
+  const players = useSelector(state => state.players.value)
 
   function orderList(players) {
     let arr = [];
@@ -19,7 +21,7 @@ function OrderPicker({ dummyPlayers }) {
     return arr;
   }
 
-  return <Grid container>{orderList(dummyPlayers)}</Grid>;
+  return <Grid container>{orderList(players)}</Grid>;
 }
 
 export default OrderPicker;
