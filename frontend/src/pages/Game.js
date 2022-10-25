@@ -1,7 +1,19 @@
+import React from "react";
+import { useNavigate } from 'react-router-dom';
+import LoginCheck from "../commons/login/LoginCheck";
 import PlayerWithWeapon from '../components/game/playerWithWeapon';
 import Grid from '@mui/material/Grid';
 
 export default function Information() {
+  // 비 로그인 시 로그인 화면으로
+  const isLogin = LoginCheck();
+  const navigate = useNavigate();
+  React.useEffect(()=>{
+    if(!isLogin){
+      navigate('/login');
+    }
+  }, []);
+
   const countMemberInTeam = 3
 
   return (

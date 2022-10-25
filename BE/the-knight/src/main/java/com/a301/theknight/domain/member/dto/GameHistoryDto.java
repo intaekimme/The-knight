@@ -1,7 +1,12 @@
 package com.a301.theknight.domain.member.dto;
 
+import lombok.Builder;
+import lombok.Data;
+
 import java.util.List;
 
+@Builder
+@Data
 public class GameHistoryDto {
     private long gameId;
     private String result;
@@ -10,6 +15,6 @@ public class GameHistoryDto {
     private int twin;
     private int shield;
     private int hand;
-    private List<MemberInfoResponse> alliance;
-    private List<MemberInfoResponse> opposite;
+    private List<MemberInfoDto> alliance;
+    private List<MemberInfoDto> opposite;
 }

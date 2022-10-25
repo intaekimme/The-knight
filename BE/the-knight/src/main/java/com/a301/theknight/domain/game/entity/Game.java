@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,7 +27,7 @@ public class Game extends BaseTimeEntity {
     private GameStatus status;
 
     @OneToMany(mappedBy = "game")
-    private List<Player> players;
+    private List<Player> players = new ArrayList<>();
 
     private int sword;
 
@@ -47,5 +48,9 @@ public class Game extends BaseTimeEntity {
         this.shield = shield;
         this.hand = hand;
         this.capacity = capacity;
+    }
+
+    public void changeStatus(GameStatus gameStatus) {
+        this.status = gameStatus;
     }
 }
