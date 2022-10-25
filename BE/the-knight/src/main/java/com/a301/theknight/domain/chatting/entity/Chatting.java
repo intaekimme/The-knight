@@ -4,6 +4,7 @@ import com.a301.theknight.domain.common.entity.BaseTimeEntity;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.member.entity.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -31,4 +32,12 @@ public class Chatting extends BaseTimeEntity {
 
     @Column(length = 1000, nullable = false)
     private String content;
+
+    @Builder
+    public Chatting(Member member, Game game, ChattingSet chattingSet, String content) {
+        this.member = member;
+        this.game = game;
+        this.chattingSet = chattingSet;
+        this.content = content;
+    }
 }
