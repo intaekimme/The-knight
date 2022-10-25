@@ -48,4 +48,19 @@ public class Player extends BaseTimeEntity {
     private boolean isDead;
 
     private boolean isReady;
+
+    public void enterGame(Game game){
+
+        if(this.game  != null){
+            this.game.getPlayers().remove(this);
+        }
+        this.game = game;
+        game.getPlayers().add(this);
+    }
+
+    public void exitGame(){
+        if(this.game  != null){
+            this.game.getPlayers().remove(this);
+        }
+    }
 }
