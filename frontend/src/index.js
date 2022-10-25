@@ -50,6 +50,7 @@ root.render(
               <Route path="islogin" element={<LoginToken />} />
               <Route path="signup" element={<Signup />} />
               <Route path="userpage" element={<UserPage />} />
+              <Route path="game" element={<Game />} />
               <Route path="chat" element={<Chat />} />
             </Route>
           </Routes>
