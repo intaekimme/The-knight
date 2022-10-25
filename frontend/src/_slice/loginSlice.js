@@ -1,33 +1,39 @@
 import React from "react";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import api from '../api/api';
+// import axios from 'axios';
+// import api from '../api/api';
 
-const tempValueInit = {
-  a: "a",
-  b: "b",
+// const login = createAsyncThunk('login', async (payload, { rejectWithValue }) => {
+//   try {
+//     const res = await axios.get(api.login());
+//     return res.data;
+//   } catch (err) {
+//     return rejectWithValue(err.response.data);
+//   }
+// });
+// export {login};
+
+// login
+const loginInit = {
+  isLogin: false,
+  token: "",
 }
-const login = createAsyncThunk('login', async (payload, { rejectWithValue }) => {
-  try {
-    const res = await axios.get(api.login());
-    return res.data;
-  } catch (err) {
-    return rejectWithValue(err.response.data);
-  }
-});
-export {login};
-
-// temp
-export const tempValue = createSlice({
-  name: 'tempValue',
-  initialState:{value: tempValueInit},
+export const loginSlice = createSlice({
+  name: 'loginValue',
+  initialState:{value: loginInit},
   reducers:{
-    setValueA:(state, action) =>{
-      state.value.a = action.payload;
+    login:(state, action) =>{
+      state.value.isLogin = true;
+      state.value.token = action.payload;
     },
-    setValueB:(state, action) =>{
-      state.value.b = action.payload;
+    logout:(state) =>{
+      state.value.isLogin = false;
+      state.value.token = "";
     }
+  },
+  extraReducers:{
+
   }
 });
-export const tempValueAction = tempValue.actions;
+export const { login, logout } = loginSlice.actions;
+export default loginSlice.reducer;

@@ -2,6 +2,7 @@ package com.a301.theknight.domain.game.dto;
 
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
@@ -22,5 +23,15 @@ public class GameCreateRequest {
                 .hand(hand)
                 .capacity(capacity)
                 .build();
+    }
+
+    @Builder
+    public GameCreateRequest(String title, int capacity, int sword, int twin, int shield, int hand){
+        this.title = title;
+        this.capacity = capacity;
+        this.sword = sword;
+        this.twin = twin;
+        this.shield = shield;
+        this.hand = hand;
     }
 }

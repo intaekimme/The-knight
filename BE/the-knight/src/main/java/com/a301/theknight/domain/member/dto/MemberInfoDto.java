@@ -5,11 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class MemberInfoResponse {
+public class MemberInfoDto {
     private String nickname;
     private String image;
-    private int ranking;
-    private int score;
-    private int win;
-    private int lose;
 }

@@ -3,6 +3,7 @@ package com.a301.theknight.domain.ranking.entity;
 import com.a301.theknight.domain.common.entity.BaseTimeEntity;
 import com.a301.theknight.domain.member.entity.Member;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,23 @@ public class Ranking extends BaseTimeEntity {
     private int win;
 
     private int lose;
+
+    @Builder
+    public Ranking(Member member) {
+        this.member = member;
+    }
+
+    public void saveWinScore() {
+        //TODO : 승점 기준 정하기
+        score += 10;
+        win++;
+    }
+
+    public void saveLoseScore() {
+        //TODO : 점수 기준 정하기
+        score -= 10;
+        if (score < 0)
+            score = 0;
+        lose++;
+    }
 }

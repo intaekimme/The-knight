@@ -1,9 +1,9 @@
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import {tempValueAction} from '../_slice/tempSlice';
+import loginReducer from '../_slice/LoginSlice';
 
 const store = configureStore({
   reducer: {
-    temp: tempValueAction,
+    login: loginReducer,
   }
 });
 

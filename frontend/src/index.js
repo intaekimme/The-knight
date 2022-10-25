@@ -1,5 +1,5 @@
 import React from 'react';
-import { Provider } from 'react-redux';
+import { Provider, useSelector } from 'react-redux';
 import { createTheme, ThemeProvider } from '@mui/material';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -12,9 +12,11 @@ import Information from "./pages/Information";
 import Lobby from "./pages/Lobby";
 import Rank from "./pages/Rank";
 import Login from "./pages/Login";
+import GoogleLogin from './commons/login/GoogleLogin';
 import Signup from "./pages/Signup";
 import UserPage from "./pages/UserPage";
 import Game from './pages/Game';
+import LoginToken from './commons/login/LoginToken';
 import Chat from './commons/chatting/Chat';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -45,6 +47,7 @@ root.render(
               <Route path="rank" element={<Rank />} />
               <Route path="game" element={<Game />} />
               <Route path="login" element={<Login />} />
+              <Route path="islogin" element={<LoginToken />} />
               <Route path="signup" element={<Signup />} />
               <Route path="userpage" element={<UserPage />} />
               <Route path="game" element={<Game />} />
