@@ -1,7 +1,8 @@
 package com.a301.theknight.domain.player.api;
 
-import com.a301.theknight.domain.player.dto.PlayerReadyDto;
-import com.a301.theknight.domain.player.dto.PlayerTeamDto;
+import com.a301.theknight.domain.auth.annotation.LoginMemberId;
+import com.a301.theknight.domain.player.dto.PlayerReadyRequest;
+import com.a301.theknight.domain.player.dto.PlayerTeamRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -16,7 +17,8 @@ public class PlayerWebsocketApi {
     private final SimpMessagingTemplate template;
 
     @MessageMapping(value="/games/{gameId}/entry")
-    public void entry(@DestinationVariable long gameId){
+    public void entry(@DestinationVariable long gameId,
+                      @LoginMemberId long memberId){
         String destination = makeDestinationString(gameId, "/entry");
 
         template.convertAndSend(destination);
@@ -30,14 +32,14 @@ public class PlayerWebsocketApi {
     }
 
     @MessageMapping(value="/games/{gameId}/team")
-    public void team(@DestinationVariable long gameId, PlayerTeamDto playerTeamMessage){
+    public void team(@DestinationVariable long gameId, PlayerTeamRequest playerTeamMessage){
         String destination = makeDestinationString(gameId, "/team");
 
         template.convertAndSend(destination);
     }
 
     @MessageMapping(value="/games/{gameId}/ready")
-    public void ready(@DestinationVariable long gameId, PlayerReadyDto playerReadyMessage){
+    public void ready(@DestinationVariable long gameId, PlayerReadyRequest playerReadyMessage){
         String destination = makeDestinationString(gameId, "/ready");
 
         template.convertAndSend(destination);
