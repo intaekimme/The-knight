@@ -64,6 +64,6 @@ public class GameWebsocketService {
 
     private boolean isOwner(Game game, long memberId){
         Player owner = game.getPlayers().get(0);
-        return owner.getMember().getId() == memberId;
+        return owner.getMember().getId().equals(memberId);
     }
 }

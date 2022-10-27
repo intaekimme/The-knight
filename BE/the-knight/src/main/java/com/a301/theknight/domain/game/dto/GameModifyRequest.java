@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class GameModifyRequest {
-    String title;
-    int capacity;
-    int sword;
-    int twin;
-    int shield;
-    int hand;
+    private String title;
+    private int capacity;
+    private int sword;
+    private int twin;
+    private int shield;
+    private int hand;
 }
