@@ -28,7 +28,6 @@ function createData(id, name, score) {
 }
 
 const rows = [];
-
 for (let i = 0; i < 200; i += 1) {
   const randomSelection = sample[Math.floor(Math.random() * sample.length)];
   rows.push(createData(i, ...randomSelection));
