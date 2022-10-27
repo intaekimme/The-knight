@@ -28,16 +28,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         String email = (String) attributes.get("email");
         String nickname = email.substring(0, email.indexOf('@'));
+        String image = (String) attributes.get("picture");
         log.info(" Login Google : name = {}, email = {}", nickname, email);
 
         Member findMember = memberRepository.findByEmail(email)
                 .orElseGet(() -> {
-                    log.info(" Execute Join Member");
+                    log.info(" Execute join new member");
                     return memberRepository.save(Member.builder()
                             .email(email)
                             .nickname(nickname)
                             .password(passwordEncoder.encode(email))
                             .role("ROLE_USER")
+                            .image(image)
                             .build()
                     );
                 });
