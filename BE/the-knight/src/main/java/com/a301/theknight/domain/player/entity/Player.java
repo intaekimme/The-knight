@@ -54,6 +54,7 @@ public class Player extends BaseTimeEntity {
     public Player(Member member, Game game) {
         this.member = member;
         this.game = game;
+        this.team = Team.A;
         game.getPlayers().add(this);
     }
 
@@ -74,4 +75,6 @@ public class Player extends BaseTimeEntity {
     public void loseGame() {
         result = GameResult.LOSE;
     }
+
+    public void ready(boolean isReady) { this.isReady = isReady; }
 }
