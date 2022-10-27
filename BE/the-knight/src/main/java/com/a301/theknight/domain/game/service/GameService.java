@@ -9,6 +9,9 @@ import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
+import com.a301.theknight.global.error.errorcode.GameErrorCode;
+import com.a301.theknight.global.error.errorcode.MemberErrorCode;
+import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,7 +61,7 @@ public class GameService {
     @Transactional
     public long createGame(GameCreateRequest gameCreateRequest){
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 유저입니다."));
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
 
         Game newGame = gameCreateRequest.toEntity();
         gameRepository.save(newGame);
@@ -68,7 +71,7 @@ public class GameService {
     @Transactional(readOnly = true)
     public GameInfoResponse getGameInfo(long gameId){
         Game findGame = gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 게임입니다."));
+                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
 
         return GameInfoResponse.builder()
                 .gameId(gameId)

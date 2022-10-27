@@ -4,6 +4,8 @@ import com.a301.theknight.domain.auth.service.TokenProperties;
 import com.a301.theknight.domain.auth.service.TokenService;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
+import com.a301.theknight.global.error.errorcode.MemberErrorCode;
+import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +17,6 @@ import org.springframework.util.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class CustomLogoutHandler implements LogoutHandler {
             if (tokenService.validateToken(accessToken, tokenProperties.getAccess().getName())) {
                 Long memberId = tokenService.getId(accessToken);
                 Member member = memberRepository.findById(memberId)
-                        .orElseThrow(() -> new NoSuchElementException("해당 회원이 존재하지 않습니다."));
+                        .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
                 member.removeRefreshToken();
                 tokenService.setBlackList(accessToken, memberId);
             }
