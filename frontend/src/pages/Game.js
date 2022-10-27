@@ -33,7 +33,7 @@ export default function Game() {
         arr.push(
           <Grid item xs={(players.length === 10) ? 2 : (12 / (players.length / 2))} key={i}>
             {/* 추후에 isMe 삭제 */}
-            <PlayerWithWeapon isMe={true} userName={players[i].user.userName} />
+            <PlayerWithWeapon isMe={true} userName={players[i].user.userName} weapons={players[i].user.weapons} />
           </Grid>
         );
       }
