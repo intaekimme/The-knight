@@ -22,12 +22,16 @@ export default function Game() {
 
   function placePlayers(players) {
     let arr = [];
+    if (players.length === 10) {
+      arr.push(
+        <Grid item xs={1}></Grid>
+      )
+    }
     for (let i = 0; i < players.length; i++) {
       // A를 추후에 로그인한 유저의 팀과 비교하도록 변경
       if (players[i].team === "A") {
         arr.push(
-          // 5대5일 경우 추가
-          <Grid item xs={12 / (players.length / 2)} key={i}>
+          <Grid item xs={(players.length === 10) ? 2 : (12 / (players.length / 2))} key={i}>
             {/* 추후에 isMe 삭제 */}
             <PlayerWithWeapon isMe={true} userName={players[i].user.userName} />
           </Grid>
