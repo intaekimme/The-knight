@@ -1,7 +1,14 @@
+import { useDispatch } from "react-redux"
+import { selectWeapon } from "../../_slice/playersSlice"
+
 import Grid from "@mui/material/Grid";
 
 function WeaponPicker() {
+  const dispatch = useDispatch();
   const weapons = ["sword", "twin swords", "shield", "hand"];
+  function onClick(weapon) {
+    dispatch(selectWeapon(weapon));
+  }
 
   return (
     <Grid container>
@@ -12,7 +19,7 @@ function WeaponPicker() {
             xs={12 / weapons.length}
             key={index}
           >
-            <div style={{ width: 80, height: 80, backgroundColor: "#e2e2e2" }}></div>
+            <div onClick={() => onClick(weapon)} style={{ width: 80, height: 80, backgroundColor: "#e2e2e2" }}>{weapon}</div>
           </Grid>
         );
       })}
