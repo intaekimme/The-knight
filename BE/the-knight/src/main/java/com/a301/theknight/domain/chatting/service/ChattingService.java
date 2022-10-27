@@ -8,11 +8,12 @@ import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
+import com.a301.theknight.global.error.errorcode.GameErrorCode;
+import com.a301.theknight.global.error.errorcode.MemberErrorCode;
+import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
@@ -43,11 +44,11 @@ public class ChattingService {
 
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("해당 게임이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
     private Member getMember(long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
     }
 }

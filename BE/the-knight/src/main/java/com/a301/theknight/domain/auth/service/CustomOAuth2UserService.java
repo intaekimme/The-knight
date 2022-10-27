@@ -32,7 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         Member findMember = memberRepository.findByEmail(email)
                 .orElseGet(() -> {
-                    log.info(" Execute Join Member");
+                    log.info(" Execute join new member");
                     return memberRepository.save(Member.builder()
                             .email(email)
                             .nickname(nickname)

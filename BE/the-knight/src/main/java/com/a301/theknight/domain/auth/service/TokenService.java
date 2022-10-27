@@ -3,6 +3,8 @@ package com.a301.theknight.domain.auth.service;
 import com.a301.theknight.domain.auth.model.TokenSet;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
+import com.a301.theknight.global.error.errorcode.MemberErrorCode;
+import com.a301.theknight.global.error.exception.CustomException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +16,6 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -46,7 +47,7 @@ public class TokenService {
     @Transactional
     public TokenSet issueNewToken(String email) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
 
         String accessToken = createJwt(member, tokenProperties.getAccess().getName());
         String refreshToken = createJwt(member, tokenProperties.getRefresh().getName());
