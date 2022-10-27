@@ -69,8 +69,15 @@ export const playersSlice = createSlice({
       } else if (!state.value[0].user.weapons[1]) {
         state.value[0].user.weapons[1] = action.payload
       }
+    },
+    deleteWeapon: (state, action) => {
+      if (action.payload === 'left') {
+        state.value[0].user.weapons[0] = null
+      } else if (action.payload === 'right') {
+        state.value[0].user.weapons[1] = null
+      }
     }
   },
 });
-export const { selectWeapon } = playersSlice.actions;
+export const { selectWeapon, deleteWeapon } = playersSlice.actions;
 export default playersSlice.reducer;
