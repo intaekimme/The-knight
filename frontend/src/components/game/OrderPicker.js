@@ -6,12 +6,16 @@ function OrderPicker() {
 
   function orderList(players) {
     let arr = [];
+    if (players.length === 10) {
+      arr.push(
+        <Grid item xs={1}></Grid>
+      )
+    }
     for (let i = 0; i < (players.length/2); i++) {
       arr.push(
-        // 5대5일 경우 추가
         <Grid
           item
-          xs={12 / (players.length/2)}
+          xs={(players.length === 10) ? 2 : (12 / (players.length / 2))}
           key={i}
         >
           <div style={{ width: 80, height: 80, backgroundColor: "#e2e2e2" }}></div>
