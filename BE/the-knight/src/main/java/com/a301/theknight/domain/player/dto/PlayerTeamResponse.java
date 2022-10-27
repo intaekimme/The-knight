@@ -6,6 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class PlayerTeamResponse {
-    long playerId;
-    String team;
+    private long playerId;
+    private String team;
 }

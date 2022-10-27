@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class PlayerEntryResponse {
-    long playerId;
-    String nickname;
-    String image;
+    private long playerId;
+    private String nickname;
+    private String image;
 }

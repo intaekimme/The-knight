@@ -6,6 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class PlayerReadyResponse {
-    long playerId;
-    boolean readyStatus;
+    private long playerId;
+    private boolean readyStatus;
 }
