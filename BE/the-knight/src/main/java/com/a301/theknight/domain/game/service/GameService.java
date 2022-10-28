@@ -1,14 +1,13 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.GameInfoResponse;
-import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.dto.GameCreateRequest;
+import com.a301.theknight.domain.game.dto.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.GameListDto;
 import com.a301.theknight.domain.game.dto.GameListResponse;
+import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
-import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -28,7 +26,6 @@ import java.util.stream.Collectors;
 public class GameService {
     private final GameRepository gameRepository;
     private final MemberRepository memberRepository;
-    private final PlayerRepository playerRepository;
 
     //  테스트용
     private static long memberId = 1L;

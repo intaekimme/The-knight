@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux"
-import { selectWeapon } from "../../_slice/playersSlice"
+import { selectWeapon } from "../../_slice/gameSlice"
 
 import Grid from "@mui/material/Grid";
 
