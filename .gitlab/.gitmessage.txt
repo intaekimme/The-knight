@@ -1,5 +1,5 @@
 # :sparkles: feat : 새로운 기능 추가
-# :adhesive_bandage: modify : 약간의 코드 수정 (코드 리뷰 이후 등)
+# :lemon: modify : 약간의 코드 수정 (코드 리뷰 이후 등)
 # :bug: fix : 버그 수정
 # :memo: docs : 문서 수정
 # :lipstick: style : 코드 포매팅, 세미콜론 누락, 코드 변경이 없는 경우
