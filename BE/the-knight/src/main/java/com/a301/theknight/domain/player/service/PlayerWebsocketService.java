@@ -5,9 +5,7 @@ import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
-import com.a301.theknight.domain.player.dto.PlayerEntryResponse;
-import com.a301.theknight.domain.player.dto.PlayerReadyResponse;
-import com.a301.theknight.domain.player.dto.PlayerTeamResponse;
+import com.a301.theknight.domain.player.dto.*;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
@@ -20,7 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -37,7 +36,6 @@ public class PlayerWebsocketService {
             throw new CustomException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
         }
         if(!isEnterPossible(entryGame)){
-            //TODO 커스텀 예외처리로 refactoring
             throw new CustomException(GameWaitingErrorCode.CAN_NOT_ACCOMMODATE);
         }
         Member entryMember = getMember(memberId);
@@ -67,13 +65,13 @@ public class PlayerWebsocketService {
     }
 
     @Transactional
-    public PlayerTeamResponse team(long gameId, long memberId, String team){
+    public PlayerTeamResponse team(long gameId, long memberId,  PlayerTeamRequest playerTeamMessage){
         Game findGame = getGame(gameId);
         Member findMember = getMember(memberId);
 
         Player findPlayer = getPlayer(findGame, findMember);
         //TODO NotNull 유효성 검사
-        findPlayer.selectTeam(Team.A.name().equals(team) ? Team.A : Team.B);
+        findPlayer.selectTeam(Team.A.name().equals(playerTeamMessage.getTeam()) ? Team.A : Team.B);
 
         return PlayerTeamResponse.builder()
                 .playerId(findPlayer.getId())
@@ -82,23 +80,34 @@ public class PlayerWebsocketService {
     }
 
     @Transactional
-    public PlayerReadyResponse ready(long gameId, long memberId, boolean isReady){
+    public ReadyResponseDto ready(long gameId, long memberId, PlayerReadyRequest playerReadyMessage){
         Game findGame = getGame(gameId);
         Member findMember = getMember(memberId);
 
         Player readyPlayer = getPlayer(findGame, findMember);
 
-        readyPlayer.ready(isReady);
+        readyPlayer.ready(playerReadyMessage.isReadyStatus());
+
+        ReadyResponseDto readyResponseDto = new ReadyResponseDto();
 
         if(!isOwner(findGame, readyPlayer)){
-            return PlayerReadyResponse.builder()
+            readyResponseDto.setPlayerReadyResponse(
+                    PlayerReadyResponse.builder()
                     .playerId(readyPlayer.getId())
                     .readyStatus(readyPlayer.isReady())
-                    .build();
+                    .build()
+            );
         }else{
-            //TODO 방장일 경우 게임 시작 가능 여부 로직 처리
-            return null;
+            if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
+            if(!isAllReady(findGame)) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
+//            if(!findGame.isCanStart()) //TODO 구독자에게 오류 구문 전달
+//            else{
+//                findGame.startPlaying(GameStatus.PLAYING);
+//                readyResponseDto.setOwner(true);
+//            }
         }
+
+        return readyResponseDto;
     }
 
     private Member getMember(long memberId) {
@@ -112,13 +121,11 @@ public class PlayerWebsocketService {
     }
 
     private Player getPlayer(Member member){
-        //TODO 커스텀 예외처리로 refactoring
         return playerRepository.findByMember(member)
                 .orElseThrow(() -> new CustomException(PlayerErrorCode.PLAYER_IS_NOT_EXIST));
     }
 
     private Player getPlayer(Game game, Member member){
-        //TODO 커스텀 예외처리로 refactoring
         return playerRepository.findByGameAndMember(game, member)
                 .orElseThrow(() -> new CustomException(PlayerErrorCode.PLAYER_IS_NOT_EXIST));
     }
@@ -129,8 +136,26 @@ public class PlayerWebsocketService {
     private boolean isEnterPossible(Game game){
         return game.getCapacity() > game.getPlayers().size();
     }
-
     private boolean isOwner(Game game, Player player){
         return game.getPlayers().get(0).equals(player);
+    }
+    private boolean isEqualPlayerNum(Game game){
+        AtomicInteger teamA = new AtomicInteger();
+        AtomicInteger teamB = new AtomicInteger();
+        game.getPlayers().stream().map(player -> player.getTeam().name().equals("A") ? teamA.getAndIncrement() : teamB.getAndIncrement())
+                .collect(Collectors.toList());
+        return teamA.equals(teamB);
+    }
+
+    private boolean isAllReady(Game game){
+//        TODO 병합 후 주석으로 바꾸기
+//        boolean canStart = game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
+//        if(canStart) {
+//            game.completeReady();
+//            return true;
+//        } else{
+//            return false;
+//        }
+        return game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
     }
 }
