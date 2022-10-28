@@ -1,10 +1,9 @@
 package com.a301.theknight.domain.game.api;
 
-import com.a301.theknight.domain.game.dto.playing.GameMembersInfoDto;
-import com.a301.theknight.domain.game.dto.playing.GamePrepareDto;
-import com.a301.theknight.domain.game.dto.playing.GameStartRequest;
-import com.a301.theknight.domain.game.dto.playing.GameWeaponDto;
+import com.a301.theknight.domain.game.dto.GameModifyRequest;
+import com.a301.theknight.domain.game.dto.playing.*;
 import com.a301.theknight.domain.game.service.GamePlayingService;
+import com.a301.theknight.domain.game.util.GameTimer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -16,10 +15,11 @@ import org.springframework.stereotype.Controller;
 public class GamePlayingApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
+    private static final long ONE_SECOND = 1L;
     private final SimpMessagingTemplate template;
     private final GamePlayingService gamePlayingService;
 
-    @MessageMapping(value = "/pub/games/{gameId}/start")
+    @MessageMapping(value = "/games/{gameId}/start")
     public void prepareGameStart(@DestinationVariable long gameId, GameStartRequest gameStartRequest) {
         if (!gamePlayingService.canStartGame(gameId, gameStartRequest.getSetGame())) {
             return;
@@ -34,11 +34,18 @@ public class GamePlayingApi {
         getGamePlayerData(gameId);
     }
 
-    @MessageMapping(value = "/pub/games/{gameId}/members")
+    @MessageMapping(value = "/games/{gameId}/members")
     public void getGamePlayerData(@DestinationVariable long gameId) {
         GameMembersInfoDto membersInfo = gamePlayingService.getMembersInfo(gameId);
 
         template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId, "/members"), membersInfo);
+    }
+
+    @MessageMapping(value="/games/{gameId}/timer")
+    public void timer(@DestinationVariable long gameId, GameTimerDto gameTimerDto){
+        GameTimer gameTimer = new GameTimer();
+        gameTimer.sendSeconds(gameTimerDto.getDelay(), gameTimerDto.getSecond(),
+                makeDestinationUri(SEND_PREFIX, gameId, "/timer"), template);
     }
 
     private String makeDestinationUri(String prefix, long gameId, String postfix) {
