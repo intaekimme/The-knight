@@ -14,7 +14,7 @@ import Rank from "./pages/Rank";
 import Login from "./pages/Login";
 import GoogleLogin from './commons/login/GoogleLogin';
 import Signup from "./pages/Signup";
-import UserPage from "./pages/UserPage";
+import MemberPage from "./pages/MemberPage";
 import Game from './pages/Game';
 import LoginToken from './commons/login/LoginToken';
 import Chat from './commons/chatting/Chat';
@@ -49,7 +49,7 @@ root.render(
               <Route path="login" element={<Login />} />
               <Route path="islogin" element={<LoginToken />} />
               <Route path="signup" element={<Signup />} />
-              <Route path="userpage" element={<UserPage />} />
+              <Route path="memberpage" element={<MemberPage />} />
               <Route path="game" element={<Game />} />
               <Route path="chat" element={<Chat />} />
             </Route>

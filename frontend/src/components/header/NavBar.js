@@ -78,14 +78,14 @@ export default function NavBar() {
         <Navigation>
           <Link to={`/game`}>진행중인 게임</Link>
           {/* <Link to={`/friendList`}>친구목록</Link> */}
-          <Link to={`/userpage`}>마이페이지</Link>
+          <Link to={`/memberPage`}>마이페이지</Link>
           {/* <button type="button" onClick={handdleLogout}>Logout</button> */}
         </Navigation>
         {/* {isLogin ? (
           <Navigation>
-            <Link to={`/userpage/${walletAddress}`}>진행중인 게임</Link>
-            <Link to={`/userpage/${walletAddress}`}>친구목록</Link>
-            <Link to={`/userpage`}>마이페이지</Link>
+            <Link to={`/memberPage/${walletAddress}`}>진행중인 게임</Link>
+            <Link to={`/memberPage/${walletAddress}`}>친구목록</Link>
+            <Link to={`/memberPage`}>마이페이지</Link>
             <button type="button" onClick={handdleLogout}>
               Logout
             </button>
