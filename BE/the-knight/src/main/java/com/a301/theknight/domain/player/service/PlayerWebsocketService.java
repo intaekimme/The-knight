@@ -12,6 +12,7 @@ import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
+import com.a301.theknight.global.error.errorcode.GameWaitingErrorCode;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
 import com.a301.theknight.global.error.errorcode.PlayerErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
@@ -33,12 +34,11 @@ public class PlayerWebsocketService {
     public PlayerEntryResponse entry(long gameId, long memberId){
         Game entryGame = getGame(gameId);
         if(!isWaiting(entryGame)){
-            //TODO 커스텀 예외처리로 refactoring
-            throw new RuntimeException("대기중인 게임이 아닙니다.");
+            throw new CustomException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
         }
         if(!isEnterPossible(entryGame)){
             //TODO 커스텀 예외처리로 refactoring
-            throw new RuntimeException("허용 인원을 초과했습니다.");
+            throw new CustomException(GameWaitingErrorCode.CAN_NOT_ACCOMMODATE);
         }
         Member entryMember = getMember(memberId);
         Player entryPlayer = Player.builder().member(entryMember).game(entryGame).build();
@@ -54,8 +54,7 @@ public class PlayerWebsocketService {
         Game exitGame = getGame(gameId);
 
         if(!isWaiting(exitGame)){
-            //TODO 커스텀 예외처리로 refactoring
-            throw new RuntimeException("대기중인 게임이 아닙니다.");
+            throw new CustomException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
         }
         Member findMember = getMember(memberId);
         Player exitPlayer = getPlayer(findMember);
