@@ -6,5 +6,5 @@ import lombok.Data;
 public class ReadyResponseDto {
     private PlayerReadyResponse playerReadyResponse;
     private OwnerReadyResponse ownerReadyResponse;
-    private boolean isOwner;
+    private boolean isOwner = false;
 }

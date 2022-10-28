@@ -90,6 +90,7 @@ public class PlayerWebsocketService {
 
         ReadyResponseDto readyResponseDto = new ReadyResponseDto();
 
+        // 방장이 아니면
         if(!isOwner(findGame, readyPlayer)){
             readyResponseDto.setPlayerReadyResponse(
                     PlayerReadyResponse.builder()
@@ -98,15 +99,19 @@ public class PlayerWebsocketService {
                     .build()
             );
         }else{
+            //방장이면
+            //인원수 체크
             if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
+            // 모두 레디 체크
             if(!isAllReady(findGame)) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
-//            if(!findGame.isCanStart()) //TODO 구독자에게 오류 구문 전달
-//            else{
-//                findGame.startPlaying(GameStatus.PLAYING);
-//                readyResponseDto.setOwner(true);
-//            }
+            // 서버에 세팅 준비 보낼 수 있는지 체크
+            if(!findGame.isCanStart()) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
+            else{
+                // 보낼 수 있으면
+                findGame.changeStatus(GameStatus.PLAYING);
+                readyResponseDto.setOwner(true);
+            }
         }
-
         return readyResponseDto;
     }
 
@@ -143,14 +148,12 @@ public class PlayerWebsocketService {
     }
 
     private boolean isAllReady(Game game){
-//        TODO 병합 후 주석으로 바꾸기
-//        boolean canStart = game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
-//        if(canStart) {
-//            game.completeReady();
-//            return true;
-//        } else{
-//            return false;
-//        }
-        return game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
+        boolean canStart = game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
+        if(canStart) {
+            game.completeReady();
+            return true;
+        } else {
+            return false;
+        }
     }
 }
