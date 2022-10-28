@@ -2,7 +2,7 @@ package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.game.dto.GameModifyRequest;
-import com.a301.theknight.domain.game.service.GameWebsocketService;
+import com.a301.theknight.domain.game.service.GameWaitingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-public class GameWebsocketApi {
+public class GameWaitingApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
     private final SimpMessagingTemplate template;
 
-    private final GameWebsocketService gameWebsocketService;
+    private final GameWaitingService gameWebsocketService;
 
     @MessageMapping(value = "/games/{gameId}/modify")
     public void modify(@DestinationVariable long gameId,

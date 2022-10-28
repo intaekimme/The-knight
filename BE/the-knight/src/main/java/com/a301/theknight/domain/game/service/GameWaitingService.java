@@ -4,9 +4,11 @@ import com.a301.theknight.domain.game.dto.GameModifyRequest;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.repository.GameRepository;
-import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
+import com.a301.theknight.global.error.errorcode.GameErrorCode;
+import com.a301.theknight.global.error.errorcode.GameWaitingErrorCode;
+import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +17,9 @@ import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
-public class GameWebsocketService {
+public class GameWaitingService {
 
-    private final MemberRepository memberRepository;
+
     private final GameRepository gameRepository;
 
     private final PlayerRepository playerRepository;
@@ -37,11 +39,11 @@ public class GameWebsocketService {
                         gameModifyRequest.getHand()
                 );
             }else{
-                throw new RuntimeException("수정은 방장만 가능합니다.");
+                throw new CustomException(GameWaitingErrorCode.NO_PERMISSION_TO_MODIFY_GAME_ROOM);
             }
 
         }else{
-            throw new RuntimeException("대기 상태가 아닙니다.");
+            throw new CustomException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
         }
     }
 
@@ -52,14 +54,14 @@ public class GameWebsocketService {
             playerRepository.deleteAll(findGame.getPlayers());
             gameRepository.delete(findGame);
         }else{
-            throw new RuntimeException("방 삭제는 방장만 가능합니다.");
+            throw new CustomException(GameWaitingErrorCode.NO_PERMISSION_TO_DELETE_GAME_ROOM);
         }
     }
 
 
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("해당 게임이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
     private boolean isOwner(Game game, long memberId){
