@@ -1,13 +1,7 @@
 import * as React from 'react';
-import SearchForm from '../components/rank/SearchForm';
-import RankTable from "../components/rank/RankTable";
 
-import { Container } from "@mui/system";
-import "../_css/Rank.module.css"
-
-import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
+import Paper from '@mui/material/Paper';
+import { DataGrid } from '@mui/x-data-grid';
 
 const columns = [
   { field: 'id', headerName: '랭킹', width: 300, headerAlign: 'center', align:'center' },
@@ -34,13 +28,17 @@ for (let i = 0; i < 200; i += 1) {
   rows.push(createData(i, ...randomSelection));
 }
 
-export default function Rank() {
+export default function RankTable() {
+
   return (
-    <Container fixed >
-      <SearchForm/>
-      <br />
-      <RankTable/>
-      <br/>
-    </Container>
+      <Paper style={{ width: '100%' }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          pageSize={20}
+          rowsPerPageOptions={[1]}
+          autoHeight={true}
+      />
+      </Paper>
   );
 }
