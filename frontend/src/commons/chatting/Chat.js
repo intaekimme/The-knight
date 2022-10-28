@@ -20,18 +20,16 @@ export default function Chat(){
   const connect = () => {
     // config/WebsocketConfig.java registerStompEndpoints 를 pub로 설정했기 때문에 마지막에 ws 있어야함
     // let Sock = new SockJS("https://j7a301.p.ssafy.io/pub");
-    console.log(window.localStorage.getItem("loginToken"));
-    let Sock = new SockJS(`http://localhost:8080/websocket?token=${window.localStorage.getItem("loginToken")}`);
+    // let Sock = new SockJS("http://localhost:8080/pub");
+    let Sock = new SockJS(`http://localhost:8080/pub?token=${window.localStorage.getItem("loginToken")}`);
     stompClient = over(Sock);
     stompClient.connect({}, onConnected, onError);
   };
 
   const onConnected = () => {
     setUserData({ ...userData, connected: true });
-    // stompClient.subscribe("/chatroom/public", onMessageReceived);
-    // stompClient.subscribe("/user/" + userData.sender + "/private",onPrivateMessage);
-    // stompClient.subscribe("/games/1/chat", onMessageReceived);
-    stompClient.subscribe("/sub/games/1/chat-all", onMessageReceived);
+    stompClient.subscribe("/chatroom/public", onMessageReceived);
+    stompClient.subscribe("/user/" + userData.sender + "/private",onPrivateMessage);
     userJoin();
   };
 
