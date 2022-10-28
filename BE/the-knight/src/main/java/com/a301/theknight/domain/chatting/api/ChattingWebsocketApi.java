@@ -21,16 +21,17 @@ public class ChattingWebsocketApi {
     @MessageMapping(value = "/games/{gameId}/chat")
     public void sendMessage(ChattingRequest chattingRequest,
                             @DestinationVariable long gameId, @LoginMemberId long memberId) {
-            ChattingResponse chattingResponse = chattingService.makeResponse(memberId, gameId, chattingRequest);
+        ChattingResponse chattingResponse = chattingService.makeResponse(memberId, gameId, chattingRequest);
 
         String destinationUri = makeDestinationUri("/sub/games/", gameId, chattingResponse.getChattingSet());
         template.convertAndSend(destinationUri, chattingResponse);
-        }
+    }
 
-        private String makeDestinationUri(String prefix, long gameId, String chattingSet) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(prefix).append(gameId).append("/").append("chat-").append(chattingSet.toLowerCase());
+    private String makeDestinationUri(String prefix, long gameId, String chattingSet) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(prefix).append(gameId).append("/").append("chat-").append(chattingSet.toLowerCase());
 
         return sb.toString();
     }
+
 }

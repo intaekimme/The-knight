@@ -50,6 +50,8 @@ public class Player extends BaseTimeEntity {
 
     private boolean isReady;
 
+    private boolean isLeader;
+
     @Builder
     public Player(Member member, Game game) {
         this.member = member;
@@ -77,4 +79,8 @@ public class Player extends BaseTimeEntity {
     }
 
     public void ready(boolean isReady) { this.isReady = isReady; }
+
+    public void becomeLeader() {
+        isLeader = true;
+    }
 }

@@ -39,6 +39,8 @@ public class Game extends BaseTimeEntity {
 
     private int capacity;
 
+    private boolean canStart;
+
     @Builder
     public Game(String title, int sword, int twin, int shield, int hand, int capacity){
         this.title = title;
@@ -61,5 +63,9 @@ public class Game extends BaseTimeEntity {
         this.twin = twin;
         this.shield = shield;
         this.hand = hand;
+    }
+
+    public void completeReady() {
+        canStart = true;
     }
 }
