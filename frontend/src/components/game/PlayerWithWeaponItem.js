@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import CancelIcon from '@mui/icons-material/Cancel';
 
 // 추후에 isMe 삭제
-function PlayerWithWeapon({ isMe, userName, weapons }) {
+function PlayerWithWeaponItem({ isMe, userName, weapons }) {
   const dispatch = useDispatch();
   function deleteLeft() {
     dispatch(deleteWeapon('left'))
@@ -32,4 +32,4 @@ function PlayerWithWeapon({ isMe, userName, weapons }) {
   );
 }
 
-export default PlayerWithWeapon;
+export default PlayerWithWeaponItem;
