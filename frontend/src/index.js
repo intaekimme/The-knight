@@ -18,6 +18,7 @@ import UserPage from "./pages/UserPage";
 import Game from './pages/Game';
 import LoginToken from './commons/login/LoginToken';
 import Chat from './commons/chatting/Chat';
+import Chatting from './commons/chatting/Chatting';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const theme = createTheme({
@@ -52,6 +53,7 @@ root.render(
               <Route path="userpage" element={<UserPage />} />
               <Route path="game" element={<Game />} />
               <Route path="chat" element={<Chat />} />
+              <Route path="chatting" element={<Chatting />} />
             </Route>
           </Routes>
         </ThemeProvider>

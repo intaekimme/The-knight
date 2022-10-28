@@ -1,6 +1,6 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux'
 import { login } from "../../_slice/loginSlice";
 
 export default function LoginToken() {

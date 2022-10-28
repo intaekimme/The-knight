@@ -11,6 +11,10 @@ import com.a301.theknight.domain.player.dto.PlayerTeamResponse;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
+import com.a301.theknight.global.error.errorcode.GameErrorCode;
+import com.a301.theknight.global.error.errorcode.MemberErrorCode;
+import com.a301.theknight.global.error.errorcode.PlayerErrorCode;
+import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,27 +103,25 @@ public class PlayerWebsocketService {
     }
 
     private Member getMember(long memberId) {
-        //TODO 커스텀 예외처리로 refactoring
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("해당 유저가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
     }
 
     private Game getGame(long gameId) {
-        //TODO 커스텀 예외처리로 refactoring
         return gameRepository.findById(gameId)
-                .orElseThrow(() -> new NoSuchElementException("해당 게임이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
     private Player getPlayer(Member member){
         //TODO 커스텀 예외처리로 refactoring
         return playerRepository.findByMember(member)
-                .orElseThrow(() -> new NoSuchElementException("해당 플레이어가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(PlayerErrorCode.PLAYER_IS_NOT_EXIST));
     }
 
     private Player getPlayer(Game game, Member member){
         //TODO 커스텀 예외처리로 refactoring
         return playerRepository.findByGameAndMember(game, member)
-                .orElseThrow(() -> new NoSuchElementException("해당 플레이어가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomException(PlayerErrorCode.PLAYER_IS_NOT_EXIST));
     }
 
     private boolean isWaiting(Game game){
