@@ -1,6 +1,6 @@
 import Player from "./Player";
 import { useDispatch } from "react-redux"
-import { deleteWeapon } from "../../_slice/playersSlice"
+import { deleteWeapon } from "../../_slice/gameSlice"
 import Grid from "@mui/material/Grid";
 import CancelIcon from '@mui/icons-material/Cancel';
 

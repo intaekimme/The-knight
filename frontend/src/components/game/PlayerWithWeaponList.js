@@ -3,7 +3,7 @@ import PlayerWithWeaponItem from "./PlayerWithWeaponItem";
 import Grid from "@mui/material/Grid";
 
 function PlayerWithWeaponList() {
-  const players = useSelector(state => state.players.value)
+  const players = useSelector(state => state.game.players)
 
   function placePlayers(players) {
     let arr = [];
