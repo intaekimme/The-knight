@@ -70,8 +70,8 @@ public class PlayerWebsocketService {
         Member findMember = getMember(memberId);
 
         Player findPlayer = getPlayer(findGame, findMember);
-        //TODO NotNull 유효성 검사
-        findPlayer.selectTeam(Team.A.name().equals(playerTeamMessage.getTeam()) ? Team.A : Team.B);
+        //TODO 유효성 검사 컨트롤러에서 처리하기, A,B 이외의 값이 들어온 경우
+        findPlayer.selectTeam(Team.valueOf(playerTeamMessage.getTeam()));
 
         return PlayerTeamResponse.builder()
                 .playerId(findPlayer.getId())
