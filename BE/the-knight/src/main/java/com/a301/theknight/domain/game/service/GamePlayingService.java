@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.playing.*;
 import com.a301.theknight.domain.game.dto.InGame;
+import com.a301.theknight.domain.game.dto.playing.*;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.player.entity.Player;
@@ -63,6 +63,11 @@ public class GamePlayingService {
                 .gameWeaponDto(gameWeaponDto)
                 .gameLeaderDto(gameLeaderDto)
                 .build();
+    }
+
+    @Transactional
+    public GameCountDto countDown(long gameId) {
+        return null;
     }
 
     private Map<String, PlayerStateDto> getTeamPlayersInfo(List<InGame> players, Team team) {
@@ -148,4 +153,5 @@ public class GamePlayingService {
     private String weaponKeyGen(long gameId) {
         return "weapon:" + gameId;
     }
+
 }

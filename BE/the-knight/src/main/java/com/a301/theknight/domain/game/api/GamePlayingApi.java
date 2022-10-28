@@ -44,8 +44,8 @@ public class GamePlayingApi {
     @MessageMapping(value="/games/{gameId}/timer")
     public void timer(@DestinationVariable long gameId, GameTimerDto gameTimerDto){
         GameTimer gameTimer = new GameTimer();
-//        gameTimer.setTimer(gameTimerDto.getDelay(), gameTimerDto.getSecond(),ONE_SECOND);
-//        template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId, "/timer"), gameCountDto);
+        gameTimer.sendSeconds(gameTimerDto.getDelay(), gameTimerDto.getSecond(),
+                makeDestinationUri(SEND_PREFIX, gameId, "/timer"), template);
     }
 
     private String makeDestinationUri(String prefix, long gameId, String postfix) {
