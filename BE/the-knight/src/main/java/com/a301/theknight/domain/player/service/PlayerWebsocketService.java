@@ -49,13 +49,13 @@ public class PlayerWebsocketService {
 
     @Transactional
     public long exit(long gameId, long memberId){
-        Game exitGame = getGame(gameId);
+        Game findGame = getGame(gameId);
 
-        if(!isWaiting(exitGame)){
+        if(!isWaiting(findGame)){
             throw new CustomException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
         }
         Member findMember = getMember(memberId);
-        Player exitPlayer = getPlayer(findMember);
+        Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
 
         long exitPlayerId = exitPlayer.getId();
@@ -118,11 +118,6 @@ public class PlayerWebsocketService {
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
                 .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
-    }
-
-    private Player getPlayer(Member member){
-        return playerRepository.findByMember(member)
-                .orElseThrow(() -> new CustomException(PlayerErrorCode.PLAYER_IS_NOT_EXIST));
     }
 
     private Player getPlayer(Game game, Member member){
