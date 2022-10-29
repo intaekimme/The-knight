@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,6 +42,8 @@ public class Game extends BaseTimeEntity {
 
     private boolean canStart;
 
+    private String setGame;
+
     @Builder
     public Game(String title, int sword, int twin, int shield, int hand, int capacity){
         this.title = title;
@@ -68,4 +71,6 @@ public class Game extends BaseTimeEntity {
     public void completeReady() {
         canStart = true;
     }
+
+    public void setGameMessage() { this.setGame = UUID.randomUUID().toString(); }
 }

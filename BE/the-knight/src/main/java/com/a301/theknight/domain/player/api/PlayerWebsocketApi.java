@@ -21,7 +21,7 @@ public class PlayerWebsocketApi {
     public void entry(@DestinationVariable long gameId,
                       @LoginMemberId long memberId){
         PlayerEntryResponse playerEntryResponse = playerWebsocketService.entry(gameId, memberId);
-        String destination = makeDestinationString(gameId, "/entry");
+        String destination = makeDestinationString(SEND_PREFIX, gameId, "/entry");
         template.convertAndSend(destination, playerEntryResponse);
     }
 
@@ -29,7 +29,7 @@ public class PlayerWebsocketApi {
     public void exit(@DestinationVariable long gameId,
                      @LoginMemberId long memberId){
         long exitPlayerId = playerWebsocketService.exit(gameId, memberId);
-        String destination = makeDestinationString(gameId, "/exit");
+        String destination = makeDestinationString(SEND_PREFIX, gameId, "/exit");
         template.convertAndSend(destination, exitPlayerId);
     }
 
@@ -38,7 +38,7 @@ public class PlayerWebsocketApi {
                      @LoginMemberId long memberId,
                      PlayerTeamRequest playerTeamMessage){
         PlayerTeamResponse playerTeamResponse = playerWebsocketService.team(gameId, memberId, playerTeamMessage);
-        String destination = makeDestinationString(gameId, "/team");
+        String destination = makeDestinationString(SEND_PREFIX, gameId, "/team");
         template.convertAndSend(destination, playerTeamResponse);
     }
 
@@ -46,14 +46,23 @@ public class PlayerWebsocketApi {
     public void ready(@DestinationVariable long gameId,
                       @LoginMemberId long memberId,
                       PlayerReadyRequest playerReadyMessage){
-        String destination = makeDestinationString(gameId, "/ready");
         ReadyResponseDto readyResponseDto = playerWebsocketService.ready(gameId, memberId, playerReadyMessage);
-        template.convertAndSend(destination, readyResponseDto);
+
+        if(!readyResponseDto.isOwner()){
+            String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
+            template.convertAndSend(destination, readyResponseDto.getPlayerReadyResponseList());
+        }else{
+            String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
+            template.convertAndSend(destination, readyResponseDto.getPlayerReadyResponseList());
+
+            destination = makeDestinationString("/pub/games/", gameId, "/start");
+            template.convertAndSend(destination, readyResponseDto.getSetGame());
+        }
     }
 
-    private static String makeDestinationString(long gameId, String postfix){
+    private static String makeDestinationString(String prefix, long gameId, String postfix){
         StringBuilder sb = new StringBuilder();
-        sb.append(SEND_PREFIX).append(gameId).append(postfix);
+        sb.append(prefix).append(gameId).append(postfix);
         return sb.toString();
     }
 

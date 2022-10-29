@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -90,28 +91,27 @@ public class PlayerWebsocketService {
 
         ReadyResponseDto readyResponseDto = new ReadyResponseDto();
 
-        // 방장이 아니면
         if(!isOwner(findGame, readyPlayer)){
-            readyResponseDto.setPlayerReadyResponse(
-                    PlayerReadyResponse.builder()
-                    .playerId(readyPlayer.getId())
-                    .readyStatus(readyPlayer.isReady())
-                    .build()
-            );
+            readyResponseDto
+                    .getPlayerReadyResponseList()
+                    .add(PlayerReadyResponse.builder()
+                            .playerId(readyPlayer.getId())
+                            .readyStatus(readyPlayer.isReady())
+                            .startFlag(false)
+                            .build()
+                    );
         }else{
-            //방장이면
-            //인원수 체크
             if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
-            // 모두 레디 체크
             if(!isAllReady(findGame)) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
-            // 서버에 세팅 준비 보낼 수 있는지 체크
-            if(!findGame.isCanStart()) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
+            if(!findGame.isCanStart()) throw new CustomException((GameWaitingErrorCode.NOT_MET_ALL_THE_CONDITIONS_YET));
             else{
-                // 보낼 수 있으면
                 findGame.changeStatus(GameStatus.PLAYING);
+                readyResponseDto.setPlayerReadyResponseList(startAllPlayers(findGame));
+                readyResponseDto.setSetGame(new SetGameMessage(findGame.getSetGame()));
                 readyResponseDto.setOwner(true);
             }
         }
+
         return readyResponseDto;
     }
 
@@ -152,8 +152,20 @@ public class PlayerWebsocketService {
         if(canStart) {
             game.completeReady();
             return true;
-        } else {
+        } else{
             return false;
         }
+    }
+
+    private List<PlayerReadyResponse> startAllPlayers(Game game){
+        return game.getPlayers()
+                .stream()
+                .map(player ->
+                        PlayerReadyResponse.builder()
+                                .playerId(player.getId())
+                                .readyStatus(player.isReady())
+                                .startFlag(true)
+                                .build()).
+                collect(Collectors.toList());
     }
 }
