@@ -41,6 +41,7 @@ public class PlayerWebsocketService {
         }
         Member entryMember = getMember(memberId);
         Player entryPlayer = Player.builder().member(entryMember).game(entryGame).build();
+        playerRepository.save(entryPlayer);
 
         return PlayerEntryResponse.builder().playerId(entryPlayer.getId())
                 .nickname(entryMember.getNickname())
