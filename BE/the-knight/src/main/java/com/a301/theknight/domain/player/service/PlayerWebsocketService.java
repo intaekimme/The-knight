@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,7 @@ public class PlayerWebsocketService {
         }
         Member entryMember = getMember(memberId);
         Player entryPlayer = Player.builder().member(entryMember).game(entryGame).build();
+        playerRepository.save(entryPlayer);
 
         return PlayerEntryResponse.builder().playerId(entryPlayer.getId())
                 .nickname(entryMember.getNickname())
@@ -91,20 +94,25 @@ public class PlayerWebsocketService {
         ReadyResponseDto readyResponseDto = new ReadyResponseDto();
 
         if(!isOwner(findGame, readyPlayer)){
-            readyResponseDto.setPlayerReadyResponse(
-                    PlayerReadyResponse.builder()
+            List<PlayerReadyResponse> playerReadyResponseList = new ArrayList<>();
+            playerReadyResponseList.add(PlayerReadyResponse.builder()
                     .playerId(readyPlayer.getId())
                     .readyStatus(readyPlayer.isReady())
+                    .startFlag(false)
                     .build()
             );
+            readyResponseDto.setPlayerReadyResponseList(playerReadyResponseList);
+            readyResponseDto.setOwner(false);
         }else{
             if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
             if(!isAllReady(findGame)) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
-//            if(!findGame.isCanStart()) //TODO 구독자에게 오류 구문 전달
-//            else{
-//                findGame.startPlaying(GameStatus.PLAYING);
-//                readyResponseDto.setOwner(true);
-//            }
+            if(!findGame.isCanStart()) throw new CustomException((GameWaitingErrorCode.NOT_MET_ALL_THE_CONDITIONS_YET));
+            else{
+                findGame.changeStatus(GameStatus.PLAYING);
+                readyResponseDto.setPlayerReadyResponseList(startAllPlayers(findGame));
+                readyResponseDto.setSetGame(findGame.getSetGame());
+                readyResponseDto.setOwner(true);
+            }
         }
 
         return readyResponseDto;
@@ -143,14 +151,24 @@ public class PlayerWebsocketService {
     }
 
     private boolean isAllReady(Game game){
-//        TODO 병합 후 주석으로 바꾸기
-//        boolean canStart = game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
-//        if(canStart) {
-//            game.completeReady();
-//            return true;
-//        } else{
-//            return false;
-//        }
-        return game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
+        boolean canStart = game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
+        if(canStart) {
+            game.completeReady();
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    private List<PlayerReadyResponse> startAllPlayers(Game game){
+        return game.getPlayers()
+                .stream()
+                .map(player ->
+                        PlayerReadyResponse.builder()
+                                .playerId(player.getId())
+                                .readyStatus(player.isReady())
+                                .startFlag(true)
+                                .build()).
+                collect(Collectors.toList());
     }
 }

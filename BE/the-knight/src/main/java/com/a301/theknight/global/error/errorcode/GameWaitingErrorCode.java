@@ -14,7 +14,7 @@ public enum GameWaitingErrorCode implements ErrorCode {
     CAN_NOT_ACCOMMODATE(HttpStatus.BAD_REQUEST, "Can't accommodate."),
     NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT(HttpStatus.BAD_REQUEST, "The number of players on both team is different."),
     NOT_All_USERS_ARE_READY(HttpStatus.BAD_REQUEST, "Not all users are ready."),
-
+    NOT_MET_ALL_THE_CONDITIONS_YET(HttpStatus.BAD_REQUEST, "Not met all the conditions yet."),
     ;
     private final HttpStatus httpStatus;
     private final String message;
