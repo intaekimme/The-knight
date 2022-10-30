@@ -48,11 +48,10 @@ public class PlayerWebsocketApi {
                       PlayerReadyRequest playerReadyMessage){
         ReadyResponseDto readyResponseDto = playerWebsocketService.ready(gameId, memberId, playerReadyMessage);
 
+        String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
         if(!readyResponseDto.isOwner()){
-            String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
             template.convertAndSend(destination, readyResponseDto.getPlayerReadyResponseList());
         }else{
-            String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
             template.convertAndSend(destination, readyResponseDto.getPlayerReadyResponseList());
 
             destination = makeDestinationString("/pub/games/", gameId, "/start");

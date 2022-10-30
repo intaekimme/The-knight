@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -93,14 +94,15 @@ public class PlayerWebsocketService {
         ReadyResponseDto readyResponseDto = new ReadyResponseDto();
 
         if(!isOwner(findGame, readyPlayer)){
-            readyResponseDto
-                    .getPlayerReadyResponseList()
-                    .add(PlayerReadyResponse.builder()
-                            .playerId(readyPlayer.getId())
-                            .readyStatus(readyPlayer.isReady())
-                            .startFlag(false)
-                            .build()
-                    );
+            List<PlayerReadyResponse> playerReadyResponseList = new ArrayList<>();
+            playerReadyResponseList.add(PlayerReadyResponse.builder()
+                    .playerId(readyPlayer.getId())
+                    .readyStatus(readyPlayer.isReady())
+                    .startFlag(false)
+                    .build()
+            );
+            readyResponseDto.setPlayerReadyResponseList(playerReadyResponseList);
+            readyResponseDto.setOwner(false);
         }else{
             if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
             if(!isAllReady(findGame)) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
@@ -108,7 +110,7 @@ public class PlayerWebsocketService {
             else{
                 findGame.changeStatus(GameStatus.PLAYING);
                 readyResponseDto.setPlayerReadyResponseList(startAllPlayers(findGame));
-                readyResponseDto.setSetGame(new SetGameMessage(findGame.getSetGame()));
+                readyResponseDto.setSetGame(findGame.getSetGame());
                 readyResponseDto.setOwner(true);
             }
         }

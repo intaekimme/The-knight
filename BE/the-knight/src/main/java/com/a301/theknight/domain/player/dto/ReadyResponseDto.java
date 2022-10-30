@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 public class ReadyResponseDto {
-    private List<PlayerReadyResponse> playerReadyResponseList = new ArrayList<>();
-    private SetGameMessage setGame;
+    private List<PlayerReadyResponse> playerReadyResponseList;
+    private String setGame;
     private boolean isOwner = false;
 }
