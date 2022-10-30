@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.InGame;
+import com.a301.theknight.domain.game.entity.Weapon;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,36 +18,61 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
+@Rollback(value = true)
 class GamePlayingServiceTest {
 
     @Autowired
     RedisTemplate<String, InGame> redisTemplate;
 
     @BeforeEach
-    void clear() {
-        Long size = redisTemplate.opsForList().size(1L + "");
-        while (size-- > 0) {
-            redisTemplate.opsForList().rightPop(1L + "");
-        }
+    void clearAndSave() {
+//        Long size = redisTemplate.opsForList().size(1L + "");
+//        while (size-- > 0) {
+//            redisTemplate.opsForList().rightPop(1L + "");
+//        }
+
+        Long memberId = 3L;
+        InGame inGame1 = InGame.builder()
+                .memberId(memberId)
+                .nickname("before")
+                .isLeader(true)
+                .order(1).build();
+//        redisTemplate.opsForList().rightPush(memberId+"", inGame1);
+        redisTemplate.opsForValue().set(memberId+"", inGame1);
     }
 
     @Test
     @DisplayName("레디스 리스트 저장 테스트")
     void redisListTest() {
         Long memberId = 1L;
-        InGame inGame1 = InGame.builder()
-                .memberId(memberId)
-                .order(1).build();
-        InGame inGame2 = InGame.builder()
-                .memberId(memberId)
-                .order(2).build();
-
-        redisTemplate.opsForList().rightPush(memberId+"", inGame1);
-        redisTemplate.opsForList().rightPush(memberId+"", inGame2);
 
         List<InGame> inGames = getListOps(memberId + "");
-        assertEquals(2, inGames.size());
-        assertEquals(inGame1.getMemberId(), inGames.get(0).getMemberId());
+
+        assertEquals(1, inGames.size());
+        assertEquals(memberId, inGames.get(0).getMemberId());
+    }
+
+    @Test
+    @DisplayName("레디스 값 수정 테스트")
+    void updateValueTest() {
+        Long memberId = 3L;
+
+        InGame beforeInGame = getInGame(memberId);
+        assertEquals("before", beforeInGame.getNickname());
+
+        InGame ChangeInGame = InGame.builder()
+                .memberId(memberId)
+                .nickname("change")
+                .order(1).build();
+        redisTemplate.opsForValue().set(memberId+"", ChangeInGame);
+
+        InGame inGame = getInGame(memberId);
+        assertEquals("change", inGame.getNickname());
+    }
+
+    private InGame getInGame(Long memberId) {
+        return redisTemplate.opsForValue().get(memberId + "");
     }
 
     // list (opsForList)
