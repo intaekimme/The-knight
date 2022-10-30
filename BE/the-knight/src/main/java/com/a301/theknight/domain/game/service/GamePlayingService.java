@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
+
 @RequiredArgsConstructor
 @Service
 public class GamePlayingService {
@@ -32,11 +34,11 @@ public class GamePlayingService {
 
     @Transactional
     public GameMembersInfoDto getMembersInfo(long gameId) {
-        List<InGame> players = getGameListOps(gameKeyGen(gameId)) ;
-        int peopleNum = players.size() / 2;
+        List<InGame> playerDataList = getInGamePlayerList(gameKeyGen(gameId));
+        int peopleNum = playerDataList.size() / 2;
 
-        Map<String, PlayerStateDto> teamA = getTeamPlayersInfo(players, Team.A);
-        Map<String, PlayerStateDto> teamB = getTeamPlayersInfo(players, Team.B);
+        Map<String, PlayerStateDto> teamA = getTeamPlayersInfo(playerDataList, Team.A);
+        Map<String, PlayerStateDto> teamB = getTeamPlayersInfo(playerDataList, Team.B);
 
         return GameMembersInfoDto.builder()
                 .peopleNum(peopleNum)
@@ -65,14 +67,23 @@ public class GamePlayingService {
                 .build();
     }
 
-    @Transactional
-    public GameCountDto countDown(long gameId) {
-        return null;
+//    @Transactional
+//    public GameWeaponDto choiceWeapon(long gameId, Long memberId, GameWeaponRequest gameWeaponRequest) {
+//        InGame inGame = getInGameData(gameId, memberId);
+//
+//    }
+
+    private InGame getInGameData(long gameId, Long memberId) {
+        Object inGame = gameRedisTemplate.opsForHash().get(gameKeyGen(gameId), inGameKeyGen(memberId));
+        if (inGame == null) {
+            throw new CustomException(INGAME_IS_NOT_EXIST);
+        }
+        return (InGame) inGame;
     }
 
-    private Map<String, PlayerStateDto> getTeamPlayersInfo(List<InGame> players, Team team) {
-        Collections.sort(players, (o1, o2) -> o1.getOrder() - o2.getOrder());
-        List<PlayerStateDto> playerStateDtoList = players.stream()
+    private Map<String, PlayerStateDto> getTeamPlayersInfo(List<InGame> playerDataList, Team team) {
+        Collections.sort(playerDataList, (o1, o2) -> o1.getOrder() - o2.getOrder());
+        List<PlayerStateDto> playerStateDtoList = playerDataList.stream()
                 .filter(inGame -> team.equals(inGame.getTeam()))
                 .map(inGame -> PlayerStateDto.builder()
                         .memberId(inGame.getMemberId())
@@ -111,18 +122,22 @@ public class GamePlayingService {
     }
 
     private void saveInGameData(long gameId, List<Player> players) {
-        List<InGame> inGames = players.stream().map(player -> InGame.builder()
-                        .memberId(player.getMember().getId())
-                        .nickname(player.getMember().getNickname())
-                        .team(player.getTeam())
-                        .isLeader(player.isLeader())
-                        .leftCount(3)
-                        .rightCount(3)
-                        .build())
-                .collect(Collectors.toList());
-        gameRedisTemplate.opsForList().rightPushAll(gameKeyGen(gameId), inGames);
-    }
+        Map<String, InGame> inGameMap = new HashMap<>();
 
+        players.stream().forEach(player -> {
+            String inGameKey = inGameKeyGen(player.getMember().getId());
+
+            inGameMap.put(inGameKey, InGame.builder()
+                    .memberId(player.getMember().getId())
+                    .nickname(player.getMember().getNickname())
+                    .team(player.getTeam())
+                    .isLeader(player.isLeader())
+                    .leftCount(3)
+                    .rightCount(3).build());
+        });
+        String gameKey = gameKeyGen(gameId);
+        gameRedisTemplate.opsForHash().putAll(gameKey, inGameMap);
+    }
 
     private GameWeaponDto getWeaponsData(Game game) {
         GameWeaponDto gameWeaponDto = GameWeaponDto.toDto(game);
@@ -136,14 +151,20 @@ public class GamePlayingService {
                 .collect(Collectors.toList());
     }
 
-    public List<InGame> getGameListOps(String key){
-        Long len = gameRedisTemplate.opsForList().size(key);
-        return len == 0 ? new ArrayList<>() : gameRedisTemplate.opsForList().range(key, 0, len-1);
+    public List<InGame> getInGamePlayerList(String gameKey){
+        return gameRedisTemplate.opsForHash().size(gameKey) == 0
+                ? new ArrayList<>() : gameRedisTemplate.opsForHash().entries(gameKey)
+                    .entrySet().stream().map(Map.Entry::getValue)
+                    .map(value -> (InGame) value).collect(Collectors.toList());
     }
 
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
                 .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
+    }
+
+    private String inGameKeyGen(long memberId) {
+        return "member:" + memberId;
     }
 
     private String gameKeyGen(long gameId) {

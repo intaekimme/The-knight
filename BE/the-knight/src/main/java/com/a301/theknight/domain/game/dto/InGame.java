@@ -20,4 +20,12 @@ public class InGame implements Serializable {
     private int order;
     private boolean isDead;
     private boolean isLeader;
+
+    public void choiceWeapon(Weapon weapon, boolean isLeft) {
+
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

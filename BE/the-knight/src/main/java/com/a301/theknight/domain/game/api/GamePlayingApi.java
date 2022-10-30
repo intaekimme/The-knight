@@ -1,5 +1,6 @@
 package com.a301.theknight.domain.game.api;
 
+import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.game.dto.GameModifyRequest;
 import com.a301.theknight.domain.game.dto.playing.*;
 import com.a301.theknight.domain.game.service.GamePlayingService;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Controller;
 public class GamePlayingApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
-    private static final long ONE_SECOND = 1L;
     private final SimpMessagingTemplate template;
     private final GamePlayingService gamePlayingService;
 
@@ -46,6 +46,17 @@ public class GamePlayingApi {
         GameTimer gameTimer = new GameTimer();
         gameTimer.sendSeconds(gameTimerDto.getDelay(), gameTimerDto.getSecond(),
                 makeDestinationUri(SEND_PREFIX, gameId, "/timer"), template);
+    }
+
+    @MessageMapping(value="/games/{gameId}/weapons")
+    public void choiceWeapon(@DestinationVariable long gameId, GameWeaponRequest gameWeaponRequest,
+                             @LoginMemberId Long memberId){
+//        GameWeaponDto gameWeaponDto = gamePlayingService.choiceWeapon(gameId, memberId, gameWeaponRequest);
+    }
+
+    @MessageMapping(value="/games/{gameId}/orders")
+    public void choiceOrder(@DestinationVariable long gameId, GameOrderRequest gameOrderRequest){
+
     }
 
     private String makeDestinationUri(String prefix, long gameId, String postfix) {
