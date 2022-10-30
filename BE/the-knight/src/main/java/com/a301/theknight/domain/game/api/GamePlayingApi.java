@@ -1,10 +1,10 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.game.dto.GameModifyRequest;
 import com.a301.theknight.domain.game.dto.playing.*;
 import com.a301.theknight.domain.game.service.GamePlayingService;
 import com.a301.theknight.domain.game.util.GameTimer;
+import com.a301.theknight.domain.player.entity.Team;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -26,8 +26,8 @@ public class GamePlayingApi {
         }
         GamePrepareDto gamePrepareDto = gamePlayingService.prepareToStartGame(gameId);
 
-        template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/a/weapons"), gamePrepareDto.getGameWeaponDto());
-        template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/b/weapons"), gamePrepareDto.getGameWeaponDto());
+        sendWeaponResponse(gameId, Team.A, gamePrepareDto.getGameWeaponData());
+        sendWeaponResponse(gameId, Team.B, gamePrepareDto.getGameWeaponData());
 
         template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/a/leader"), gamePrepareDto.getGameLeaderDto().getTeamA());
         template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/b/leader"), gamePrepareDto.getGameLeaderDto().getTeamB());
@@ -48,15 +48,34 @@ public class GamePlayingApi {
                 makeDestinationUri(SEND_PREFIX, gameId, "/timer"), template);
     }
 
-    @MessageMapping(value="/games/{gameId}/weapons")
-    public void choiceWeapon(@DestinationVariable long gameId, GameWeaponRequest gameWeaponRequest,
+    @MessageMapping(value="/games/{gameId}/weapon-choice")
+    public void choiceWeapon(@DestinationVariable long gameId, GameWeaponChoiceRequest gameWeaponChoiceRequest,
                              @LoginMemberId Long memberId){
-//        GameWeaponDto gameWeaponDto = gamePlayingService.choiceWeapon(gameId, memberId, gameWeaponRequest);
+        GameWeaponResponse weaponResponse = gamePlayingService.choiceWeapon(gameId, memberId, gameWeaponChoiceRequest);
+
+        sendWeaponResponse(gameId, weaponResponse.getTeam(), weaponResponse.getGameWeaponData());
     }
+
+    @MessageMapping(value="/games/{gameId}/weapon-delete")
+    public void deleteWeapon(@DestinationVariable long gameId, GameWeaponDeleteRequest weaponDeleteRequest,
+                              @LoginMemberId Long memberId){
+        GameWeaponResponse weaponResponse = gamePlayingService.deleteWeapon(gameId, memberId, weaponDeleteRequest.isLeft());
+
+        sendWeaponResponse(gameId, weaponResponse.getTeam(), weaponResponse.getGameWeaponData());
+    }
+
 
     @MessageMapping(value="/games/{gameId}/orders")
     public void choiceOrder(@DestinationVariable long gameId, GameOrderRequest gameOrderRequest){
 
+    }
+
+    private void sendWeaponResponse(long gameId, Team team, GameWeaponData weaponData) {
+        if (Team.A.equals(team)) {
+            template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/a/weapons"), weaponData);
+            return;
+        }
+        template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/a/weapons"), weaponData);
     }
 
     private String makeDestinationUri(String prefix, long gameId, String postfix) {

@@ -6,6 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class GamePrepareDto {
-    private GameWeaponDto gameWeaponDto;
+    private GameWeaponData gameWeaponData;
     private GameLeaderDto gameLeaderDto;
 }

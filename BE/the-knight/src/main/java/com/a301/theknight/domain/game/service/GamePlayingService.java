@@ -25,7 +25,7 @@ public class GamePlayingService {
     private final GameRepository gameRepository;
 
     private final RedisTemplate<String, InGame> gameRedisTemplate;
-    private final RedisTemplate<String, GameWeaponDto> weaponRedisTemplate;
+    private final RedisTemplate<String, GameWeaponData> weaponRedisTemplate;
 
     @Transactional
     public boolean canStartGame(long gameId, String setGame) {
@@ -57,21 +57,54 @@ public class GamePlayingService {
         List<Player> players = game.getPlayers();
 
         GameLeaderDto gameLeaderDto = choiceLeader(players);
-        saveInGameData(gameId, players);
+        makeInGameData(gameId, players);
 
-        GameWeaponDto gameWeaponDto = getWeaponsData(game);
+        GameWeaponData gameWeaponData = makeWeaponsData(game);
 
         return GamePrepareDto.builder()
-                .gameWeaponDto(gameWeaponDto)
+                .gameWeaponData(gameWeaponData)
                 .gameLeaderDto(gameLeaderDto)
                 .build();
     }
 
-//    @Transactional
-//    public GameWeaponDto choiceWeapon(long gameId, Long memberId, GameWeaponRequest gameWeaponRequest) {
-//        InGame inGame = getInGameData(gameId, memberId);
-//
-//    }
+    @Transactional
+    public GameWeaponResponse choiceWeapon(long gameId, Long memberId, GameWeaponChoiceRequest gameWeaponChoiceRequest) {
+        InGame inGame = getInGameData(gameId, memberId);
+        GameWeaponData weaponsData = getWeaponsData(gameId, inGame.getTeam());
+
+        if (!weaponsData.canTakeWeapon(gameWeaponChoiceRequest.getWeapon())) {
+            throw new CustomException(NOT_ENOUGH_WEAPON);
+        }
+        if (!inGame.canTakeWeapon()) {
+            throw new CustomException(SELECT_WEAPON_IS_FULL);
+        }
+
+        inGame.choiceWeapon(gameWeaponChoiceRequest.getWeapon(), weaponsData);
+        saveInGame(gameId, memberId, inGame);
+        saveWeaponsData(gameId, inGame.getTeam(), weaponsData);
+
+        return new GameWeaponResponse(inGame.getTeam(), weaponsData);
+    }
+
+    @Transactional
+    public GameWeaponResponse deleteWeapon(long gameId, Long memberId, boolean isLeft) {
+        InGame inGame = getInGameData(gameId, memberId);
+        GameWeaponData weaponsData = getWeaponsData(gameId, inGame.getTeam());
+
+        inGame.deleteWeapon(isLeft, weaponsData);
+        saveInGame(gameId, memberId, inGame);
+        saveWeaponsData(gameId, inGame.getTeam(), weaponsData);
+
+        return new GameWeaponResponse(inGame.getTeam(), weaponsData);
+    }
+
+    private void saveWeaponsData(long gameId, Team team, GameWeaponData weaponsData) {
+        weaponRedisTemplate.opsForValue().set(weaponKeyGen(gameId, team), weaponsData);
+    }
+
+    private void saveInGame(long gameId, Long memberId, InGame inGame) {
+        gameRedisTemplate.opsForHash().put(gameKeyGen(gameId), inGameKeyGen(memberId), inGame);
+    }
 
     private InGame getInGameData(long gameId, Long memberId) {
         Object inGame = gameRedisTemplate.opsForHash().get(gameKeyGen(gameId), inGameKeyGen(memberId));
@@ -121,7 +154,7 @@ public class GamePlayingService {
                 .build();
     }
 
-    private void saveInGameData(long gameId, List<Player> players) {
+    private void makeInGameData(long gameId, List<Player> players) {
         Map<String, InGame> inGameMap = new HashMap<>();
 
         players.stream().forEach(player -> {
@@ -139,11 +172,17 @@ public class GamePlayingService {
         gameRedisTemplate.opsForHash().putAll(gameKey, inGameMap);
     }
 
-    private GameWeaponDto getWeaponsData(Game game) {
-        GameWeaponDto gameWeaponDto = GameWeaponDto.toDto(game);
-        weaponRedisTemplate.opsForValue().set(weaponKeyGen(game.getId()), gameWeaponDto);
+    private GameWeaponData makeWeaponsData(Game game) {
+        GameWeaponData gameWeaponDataA = GameWeaponData.toDto(game);
+        GameWeaponData gameWeaponDataB = GameWeaponData.toDto(game);
 
-        return gameWeaponDto;
+        weaponRedisTemplate.opsForValue().set(weaponKeyGen(game.getId(), Team.A), gameWeaponDataA);
+        weaponRedisTemplate.opsForValue().set(weaponKeyGen(game.getId(), Team.B), gameWeaponDataA);
+        return gameWeaponDataA;
+    }
+
+    private GameWeaponData getWeaponsData(long gameId, Team team) {
+        return weaponRedisTemplate.opsForValue().get(weaponKeyGen(gameId, team));
     }
 
     private List<Player> getTeamPlayerList(List<Player> players, Team team) {
@@ -171,8 +210,9 @@ public class GamePlayingService {
         return "game:" + gameId;
     }
 
-    private String weaponKeyGen(long gameId) {
-        return "weapon:" + gameId;
+    private String weaponKeyGen(long gameId, Team team) {
+        return "weapon" + team.name() + ":" + gameId;
     }
+
 
 }
