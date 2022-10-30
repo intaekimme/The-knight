@@ -49,11 +49,8 @@ public class PlayerWebsocketApi {
         ReadyResponseDto readyResponseDto = playerWebsocketService.ready(gameId, memberId, playerReadyMessage);
 
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
-        if(!readyResponseDto.isOwner()){
-            template.convertAndSend(destination, readyResponseDto.getPlayerReadyResponseList());
-        }else{
-            template.convertAndSend(destination, readyResponseDto.getPlayerReadyResponseList());
-
+        template.convertAndSend(destination, readyResponseDto.getPlayerReadyResponseList());
+        if(readyResponseDto.isOwner()){
             destination = makeDestinationString("/pub/games/", gameId, "/start");
             template.convertAndSend(destination, readyResponseDto.getSetGame());
         }
