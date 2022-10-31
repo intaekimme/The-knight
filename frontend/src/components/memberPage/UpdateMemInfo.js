@@ -6,7 +6,8 @@ import { Avatar } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import TextField from '@mui/material/TextField';
 
-function changeImg(url) {
+const changeImg = (url) => {
+  console.log("변경 이미지 url", url);
 }
 
 export default function UpdateMemInfo() {
@@ -32,14 +33,16 @@ export default function UpdateMemInfo() {
   return (
     <Box sx={{ flexGrow: 1 }}>
     <Grid container sx={{ pt: 10 }} spacing={3}>
-      <Grid item xs={3} spacing={3} >
-        <Avatar alt="profile image" src={image} sx={{ width: 250, height: 250 }} />
+        <Grid item xs={3} spacing={3} >
+          <Avatar alt="profile image" src={image} sx={{ width: 250, height: 250 }} />
       </Grid>
         <Grid container item xs={9} spacing={1} >
           {arr.map((a, key) =>{
             return(
               <Grid item xs={2} key={key}>
-                <Avatar alt="profile image" src={a} sx={{ width: 110, height: 110 }} onCilck={changeImg(a)} />
+                <div onCilck={changeImg(a)}>
+                  <Avatar alt="profile image" src={a} sx={{ width: 110, height: 110 }} />
+                </div>
               </Grid>
               )
             }
