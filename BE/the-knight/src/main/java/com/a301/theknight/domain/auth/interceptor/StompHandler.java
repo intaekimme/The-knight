@@ -1,0 +1,54 @@
+package com.a301.theknight.domain.auth.interceptor;
+
+import com.a301.theknight.domain.auth.model.MemberPrincipal;
+import com.a301.theknight.domain.auth.service.CustomUserDetailsService;
+import com.a301.theknight.domain.auth.service.TokenProperties;
+import com.a301.theknight.domain.auth.service.TokenService;
+import com.a301.theknight.global.error.errorcode.DomainErrorCode;
+import com.a301.theknight.global.error.exception.CustomException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import java.util.Objects;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class StompHandler implements ChannelInterceptor {
+    private final TokenService tokenService;
+    private final TokenProperties tokenProperties;
+    private final CustomUserDetailsService customUserDetailsService;
+
+    @Override
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+            String accessToken = Objects.requireNonNull(accessor.getFirstNativeHeader("Authorization")).substring(7);
+            log.info(" Request Access-Token = {}", accessToken);
+            try {
+                if (StringUtils.hasText(accessToken) && tokenService.validateToken(accessToken, tokenProperties.getAccess().getName())) {
+                    Long id = tokenService.getId(accessToken);
+                    UserDetails userDetails = customUserDetailsService.loadMemberById(id);
+                    MemberPrincipal memberPrincipal = (MemberPrincipal) userDetails;
+                    log.info(" Request Member Id = {}, Email = {}", memberPrincipal.getMemberId(), memberPrincipal.getUsername());
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            } catch (Exception e) {
+                throw new CustomException(DomainErrorCode.DO_NOT_HAVE_AUTHENTICATION);
+            }
+        }
+        return message;
+    }
+}

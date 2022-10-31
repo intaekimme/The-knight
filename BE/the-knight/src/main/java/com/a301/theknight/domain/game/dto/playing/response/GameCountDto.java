@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.game.dto.playing;
+package com.a301.theknight.domain.game.dto.playing.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

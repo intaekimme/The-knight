@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import PlayerWithWeaponItem from "./PlayerWithWeaponItem";
 import Grid from "@mui/material/Grid";
 
-function PlayerWithWeaponList() {
+function PlayerWithWeaponList({isOpp}) {
   const players = useSelector(state => state.game.players)
 
   function placePlayers(players) {
@@ -15,9 +15,9 @@ function PlayerWithWeaponList() {
     for (let i = 1; i < players.peopleNum + 1; i++) {
       // A를 추후에 로그인한 유저의 팀과 비교하도록 변경
       arr.push(
-        <Grid item xs={(players.peopleNum === 5) ? 2 : (12 / players.peopleNum)} key={players.teamA[`player${i}`].memberId}>
+        <Grid item xs={(players.peopleNum === 5) ? 2 : (12 / players.peopleNum)} key= {isOpp ? players.teamB[`player${i}`].memberId : players.teamA[`player${i}`].memberId}>
           {/* 추후에 isMe 삭제 */}
-          <PlayerWithWeaponItem isMe={true} userName={players.teamA[`player${i}`].nickname} weapons={players.teamA[`player${i}`].weapons} />
+          <PlayerWithWeaponItem isMe={true} userName={isOpp ? players.teamB[`player${i}`].nickname : players.teamA[`player${i}`].nickname} weapons={isOpp ? players.teamB[`player${i}`].weapons : players.teamA[`player${i}`].weapons} isOpp={isOpp} />
         </Grid>
       );
     }
