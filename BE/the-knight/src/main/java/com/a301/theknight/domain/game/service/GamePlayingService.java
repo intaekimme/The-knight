@@ -111,8 +111,13 @@ public class GamePlayingService {
         List<InGame> inGamePlayerList = getInGamePlayerList(gameKeyGen(gameId));
         int numPeople = inGamePlayerList.size() / 2;
 
-        InGame findInGame = inGamePlayerList.stream().filter(inGame -> inGame.getMemberId() == memberId)
-                .findFirst().orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+        InGame findInGame = getFindInGameInPlayerList(memberId, inGamePlayerList);
+        if (alreadySelectedOrderNumber(orderRequest.getOrderNumber(), findInGame.getTeam(), inGamePlayerList)) {
+            if (findInGame.getMemberId() == orderRequest.getOrderNumber()) {
+                return null;
+            }
+            throw new CustomException(ALREADY_SELECTED_ORDER_NUMBER);
+        }
         findInGame.saveOrder(orderRequest.getOrderNumber());
         saveInGame(gameId, memberId, findInGame);
 
@@ -127,6 +132,17 @@ public class GamePlayingService {
                         .image(inGame.getImage()).build();
                 });
         return new GameOrderResponse(findInGame.getTeam(), gameOrderDtos);
+    }
+
+    private boolean alreadySelectedOrderNumber(int orderNumber, Team team, List<InGame> inGamePlayerList) {
+        return inGamePlayerList.stream()
+                .filter(inGame -> inGame.getTeam().equals(team) && inGame.getOrder() == orderNumber)
+                .collect(Collectors.toList()).size() > 0;
+    }
+
+    private InGame getFindInGameInPlayerList(long memberId, List<InGame> inGamePlayerList) {
+        return inGamePlayerList.stream().filter(inGame -> inGame.getMemberId().equals(memberId))
+                .findFirst().orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
     }
 
     private void saveWeaponsData(long gameId, Team team, GameWeaponData weaponsData) {
