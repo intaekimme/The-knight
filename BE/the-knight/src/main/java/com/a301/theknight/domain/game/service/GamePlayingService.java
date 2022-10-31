@@ -2,16 +2,21 @@ package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.InGame;
 import com.a301.theknight.domain.game.dto.playing.*;
+import com.a301.theknight.domain.game.dto.playing.request.GameOrderRequest;
+import com.a301.theknight.domain.game.dto.playing.request.GameWeaponChoiceRequest;
+import com.a301.theknight.domain.game.dto.playing.response.*;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
+import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -98,6 +103,35 @@ public class GamePlayingService {
         return new GameWeaponResponse(inGame.getTeam(), weaponsData);
     }
 
+    @Transactional
+    public GameOrderResponse choiceOrder(long gameId, long memberId, GameOrderRequest orderRequest) {
+        /*
+        * 1. ingame데이터 불러오기
+        * 2. ingame에 순서 저장
+        * 3. 응답 DTO 만들어서 리턴
+        *
+        * */
+        if (orderRequest.validate(getPlayerSize(gameKeyGen(gameId)))) {
+            throw new CustomException(ORDER_NUMBER_IS_INVALID);
+        }
+        List<InGame> inGamePlayerList = getInGamePlayerList(gameKeyGen(gameId));
+        InGame findInGame = inGamePlayerList.stream().filter(inGame -> inGame.getMemberId() == memberId)
+                .findFirst().orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+        findInGame.saveOrder(orderRequest.getOrderNumber());
+        saveInGame(gameId, memberId, findInGame);
+
+        List<GameOrderDto> gameOrderDtoList = inGamePlayerList.stream()
+                .filter(inGame -> inGame.getTeam().equals(findInGame.getTeam()) && inGame.getOrder() > 0)
+                .sorted((o1, o2) -> o1.getOrder() - o2.getOrder())
+                .map(inGame -> GameOrderDto.builder()
+                        .memberId(inGame.getMemberId())
+                        .nickname(inGame.getNickname())
+                        .image(inGame.getImage()).build())
+                .collect(Collectors.toList());
+
+        return new GameOrderResponse(findInGame.getTeam(), gameOrderDtoList);
+    }
+
     private void saveWeaponsData(long gameId, Team team, GameWeaponData weaponsData) {
         weaponRedisTemplate.opsForValue().set(weaponKeyGen(gameId, team), weaponsData);
     }
@@ -163,6 +197,7 @@ public class GamePlayingService {
             inGameMap.put(inGameKey, InGame.builder()
                     .memberId(player.getMember().getId())
                     .nickname(player.getMember().getNickname())
+                    .image(player.getMember().getImage())
                     .team(player.getTeam())
                     .isLeader(player.isLeader())
                     .leftCount(3)
@@ -177,7 +212,7 @@ public class GamePlayingService {
         GameWeaponData gameWeaponDataB = GameWeaponData.toDto(game);
 
         weaponRedisTemplate.opsForValue().set(weaponKeyGen(game.getId(), Team.A), gameWeaponDataA);
-        weaponRedisTemplate.opsForValue().set(weaponKeyGen(game.getId(), Team.B), gameWeaponDataA);
+        weaponRedisTemplate.opsForValue().set(weaponKeyGen(game.getId(), Team.B), gameWeaponDataB);
         return gameWeaponDataA;
     }
 
@@ -191,10 +226,14 @@ public class GamePlayingService {
     }
 
     public List<InGame> getInGamePlayerList(String gameKey){
-        return gameRedisTemplate.opsForHash().size(gameKey) == 0
+        return getPlayerSize(gameKey) == 0
                 ? new ArrayList<>() : gameRedisTemplate.opsForHash().entries(gameKey)
                     .entrySet().stream().map(Map.Entry::getValue)
                     .map(value -> (InGame) value).collect(Collectors.toList());
+    }
+
+    private Long getPlayerSize(String gameKey) {
+        return gameRedisTemplate.opsForHash().size(gameKey);
     }
 
     private Game getGame(long gameId) {
@@ -213,6 +252,5 @@ public class GamePlayingService {
     private String weaponKeyGen(long gameId, Team team) {
         return "weapon" + team.name() + ":" + gameId;
     }
-
 
 }

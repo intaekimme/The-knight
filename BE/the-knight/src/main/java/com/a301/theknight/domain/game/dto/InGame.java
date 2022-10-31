@@ -13,6 +13,7 @@ import java.io.Serializable;
 public class InGame implements Serializable {
     private Long memberId;
     private String nickname;
+    private String image;
     private Team team;
     private int leftCount;
     private int rightCount;
@@ -50,5 +51,9 @@ public class InGame implements Serializable {
             return;
         }
         rightWeapon = weapon;
+    }
+
+    public void saveOrder(int orderNumber) {
+        order = orderNumber;
     }
 }

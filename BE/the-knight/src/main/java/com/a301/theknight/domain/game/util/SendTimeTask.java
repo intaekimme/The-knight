@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.game.util;
 
-import com.a301.theknight.domain.game.dto.playing.GameCountDto;
+import com.a301.theknight.domain.game.dto.playing.response.GameCountDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 

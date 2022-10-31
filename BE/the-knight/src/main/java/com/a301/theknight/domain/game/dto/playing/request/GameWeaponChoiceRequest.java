@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.game.dto.playing;
+package com.a301.theknight.domain.game.dto.playing.request;
 
 import com.a301.theknight.domain.game.entity.Weapon;
 import lombok.Data;
