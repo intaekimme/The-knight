@@ -113,7 +113,7 @@ public class GamePlayingService {
 
         InGame findInGame = getFindInGameInPlayerList(memberId, inGamePlayerList);
         if (alreadySelectedOrderNumber(orderRequest.getOrderNumber(), findInGame.getTeam(), inGamePlayerList)) {
-            if (findInGame.getMemberId() == orderRequest.getOrderNumber()) {
+            if (findInGame.getOrder() == orderRequest.getOrderNumber()) {
                 return null;
             }
             throw new CustomException(ALREADY_SELECTED_ORDER_NUMBER);
