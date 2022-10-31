@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 
+// Authorization : Bearer [액세스토큰]
 var stompClient = null;
 export default function Chat(){
   const [privateChats, setPrivateChats] = useState(new Map());
@@ -82,13 +83,18 @@ export default function Chat(){
   };
   const sendValue = () => {
     if (stompClient) {
+      // var chatMessage = {
+      //   sender: userData.sender,
+      //   message: userData.message,
+      //   status: "MESSAGE",
+      // };
       var chatMessage = {
-        sender: userData.sender,
-        message: userData.message,
-        status: "MESSAGE",
-      };
+        chattingSet: "ALL",
+        content: userData.message,
+      }
       console.log("public", chatMessage);
-      stompClient.send("/app/message", {}, JSON.stringify(chatMessage));
+      stompClient.send("/pub/games/1/chat", {}, JSON.stringify(chatMessage));
+      // stompClient.send("/pub/games/1/chat", {}, chatMessage);
       setUserData({ ...userData, message: "" });
     }
   };
@@ -101,7 +107,6 @@ export default function Chat(){
         message: userData.message,
         status: "MESSAGE",
       };
-
       if (userData.sender !== tab) {
         privateChats.get(tab).push(chatMessage);
         setPrivateChats(new Map(privateChats));

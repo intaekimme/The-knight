@@ -22,34 +22,18 @@ public class GameWaitingApi {
     public void modify(@DestinationVariable long gameId,
                        @LoginMemberId long memberId,
                        GameModifyRequest gameModifyRequest){
-        String destination = makeDestinationString(gameId, "/modify");
         gameWebsocketService.modify(gameId, memberId, gameModifyRequest);
+        String destination = makeDestinationString(gameId, "/modify");
 
-        //TODO 수정 이후 어느 메시지를 담아 어느 브로커에 보낼지 생각하기
-        template.convertAndSend(destination);
+        template.convertAndSend(destination, "");
     }
 
     @MessageMapping(value = "/games/{gameId}/delete")
     public void delete(@DestinationVariable long gameId, @LoginMemberId long memberId){
-        String destination = makeDestinationString(gameId, "/delete");
         gameWebsocketService.delete(gameId, memberId);
+        String destination = makeDestinationString(gameId, "/delete");
 
-        //TODO 삭제 이후 어느 메시지를 담아 어느 브로커에 보낼지 생각하기
-        template.convertAndSend(destination);
-    }
-
-    @MessageMapping(value="/games/{gameId}/leader")
-    public void leader(@DestinationVariable long gameId, GameModifyRequest gameModifyRequest){
-        String destination = makeDestinationString(gameId, "/leader");
-
-        template.convertAndSend(destination);
-    }
-
-    @MessageMapping(value="/games/{gameId}/prepare-time")
-    public void prepareTime(@DestinationVariable long gameId){
-        String destination = makeDestinationString(gameId, "/prepare-time");
-
-        template.convertAndSend(destination);
+        template.convertAndSend(destination, "");
     }
 
     @MessageMapping(value="/games/{gameId}/attacker")
