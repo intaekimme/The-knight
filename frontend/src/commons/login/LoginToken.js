@@ -11,6 +11,7 @@ export default function LoginToken() {
   const mounted = async () => {
     const token = new URLSearchParams(window.location.search).get("token");
     dispatch(login(token));
+    window.localStorage.setItem("loginToken", token);
     navigate("/");
   };
   React.useEffect(() => {

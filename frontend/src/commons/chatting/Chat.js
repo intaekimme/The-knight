@@ -23,7 +23,7 @@ export default function Chat(){
     console.log(window.localStorage.getItem("loginToken"));
     let Sock = new SockJS(`http://localhost:8080/websocket?token=${window.localStorage.getItem("loginToken")}`);
     stompClient = over(Sock);
-    stompClient.connect({}, onConnected, onError);
+    stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, onConnected, onError);
   };
 
   const onConnected = () => {
@@ -31,7 +31,9 @@ export default function Chat(){
     // stompClient.subscribe("/chatroom/public", onMessageReceived);
     // stompClient.subscribe("/user/" + userData.sender + "/private",onPrivateMessage);
     // stompClient.subscribe("/games/1/chat", onMessageReceived);
-    stompClient.subscribe("/sub/games/1/chat-all", onMessageReceived);
+    stompClient.subscribe("/sub/games/1/chat-all", onMessageReceived, (error) => {
+      console.log("error", error);
+    });
     userJoin();
   };
 
@@ -55,6 +57,9 @@ export default function Chat(){
       case "MESSAGE":
         publicChats.push(payloadData);
         setPublicChats([...publicChats]);
+        break;
+      default:
+        console.log("default");
         break;
     }
   };
