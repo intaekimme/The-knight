@@ -105,31 +105,28 @@ public class GamePlayingService {
 
     @Transactional
     public GameOrderResponse choiceOrder(long gameId, long memberId, GameOrderRequest orderRequest) {
-        /*
-        * 1. ingame데이터 불러오기
-        * 2. ingame에 순서 저장
-        * 3. 응답 DTO 만들어서 리턴
-        *
-        * */
         if (orderRequest.validate(getPlayerSize(gameKeyGen(gameId)))) {
             throw new CustomException(ORDER_NUMBER_IS_INVALID);
         }
         List<InGame> inGamePlayerList = getInGamePlayerList(gameKeyGen(gameId));
+        int numPeople = inGamePlayerList.size() / 2;
+
         InGame findInGame = inGamePlayerList.stream().filter(inGame -> inGame.getMemberId() == memberId)
                 .findFirst().orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
         findInGame.saveOrder(orderRequest.getOrderNumber());
         saveInGame(gameId, memberId, findInGame);
 
-        List<GameOrderDto> gameOrderDtoList = inGamePlayerList.stream()
+        GameOrderDto[] gameOrderDtos = new GameOrderDto[numPeople];
+        inGamePlayerList.stream()
                 .filter(inGame -> inGame.getTeam().equals(findInGame.getTeam()) && inGame.getOrder() > 0)
-                .sorted((o1, o2) -> o1.getOrder() - o2.getOrder())
-                .map(inGame -> GameOrderDto.builder()
+                .forEach(inGame -> {
+                    int index = inGame.getOrder() - 1;
+                    gameOrderDtos[index] = GameOrderDto.builder()
                         .memberId(inGame.getMemberId())
                         .nickname(inGame.getNickname())
-                        .image(inGame.getImage())
-                        .order(inGame.getOrder()).build())
-                .collect(Collectors.toList());
-        return new GameOrderResponse(findInGame.getTeam(), gameOrderDtoList);
+                        .image(inGame.getImage()).build();
+                });
+        return new GameOrderResponse(findInGame.getTeam(), gameOrderDtos);
     }
 
     private void saveWeaponsData(long gameId, Team team, GameWeaponData weaponsData) {
