@@ -10,6 +10,7 @@ import com.a301.theknight.global.websocket.handler.StompFrameHandlerImpl;
 import io.restassured.RestAssured;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 
+@Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PlayerWebsocketApiTest {
 
@@ -88,6 +90,7 @@ class PlayerWebsocketApiTest {
         return new WebSocketStompClient(sockJsClient);
     }
 
+    @Disabled
     @Test
     void entry() throws InterruptedException, ExecutionException, TimeoutException {
         Game game = gameRepository.findAll().get(0);

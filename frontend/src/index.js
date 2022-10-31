@@ -12,10 +12,11 @@ import Information from "./pages/Information";
 import Lobby from "./pages/Lobby";
 import Rank from "./pages/Rank";
 import Login from "./pages/Login";
-import GoogleLogin from './commons/login/GoogleLogin';
 import Signup from "./pages/Signup";
 import MemberPage from "./pages/MemberPage";
 import Game from './pages/Game';
+import Room from "./pages/Room";
+import GoogleLogin from './commons/login/GoogleLogin';
 import LoginToken from './commons/login/LoginToken';
 import Chat from './commons/chatting/Chat';
 import Chatting from './commons/chatting/Chatting';
@@ -51,6 +52,7 @@ root.render(
               <Route path="islogin" element={<LoginToken />} />
               <Route path="signup" element={<Signup />} />
               <Route path="memberpage" element={<MemberPage />} />
+              <Route path="room" element={<Room />} />
               <Route path="game" element={<Game />} />
               <Route path="chat" element={<Chat />} />
               <Route path="chatting" element={<Chatting />} />
