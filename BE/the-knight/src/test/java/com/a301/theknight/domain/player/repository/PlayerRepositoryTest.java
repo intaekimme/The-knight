@@ -40,7 +40,7 @@ class PlayerRepositoryTest {
                 .role("ROLE_USER").build();
     }
 
-    //jpa테스트로 하기
+    @Disabled
     @Test
     @DisplayName("history player 조회 / 10개 테스트")
     void getMemberHistory1() {
