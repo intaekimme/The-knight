@@ -4,7 +4,6 @@ import com.a301.theknight.domain.game.entity.Weapon;
 import lombok.Data;
 
 @Data
-public class GameWeaponRequest {
+public class GameWeaponChoiceRequest {
     private Weapon weapon;
-    private Boolean isLeft;
 }
