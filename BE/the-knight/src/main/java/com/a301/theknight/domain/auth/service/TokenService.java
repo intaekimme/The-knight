@@ -110,8 +110,8 @@ public class TokenService {
         try {
             Claims claims = Jwts.parser().setSigningKey(tokenProperties.getSecret())
                     .parseClaimsJws(token).getBody();
-            //TODO: 타입 테스트
-            return (Long) claims.get("id");
+            Integer id = (Integer) claims.get("id");
+            return Long.valueOf(id);
         } catch (SecurityException | MalformedJwtException e) {
             log.info("JWT Signature is wrong.");
         }  catch (UnsupportedJwtException e) {
