@@ -1,5 +1,6 @@
-package com.a301.theknight.domain.game.dto.playing;
+package com.a301.theknight.domain.game.dto.playing.response;
 
+import com.a301.theknight.domain.game.dto.playing.PlayerStateDto;
 import lombok.Builder;
 import lombok.Data;
 
