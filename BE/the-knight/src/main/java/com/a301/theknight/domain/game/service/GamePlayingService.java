@@ -105,31 +105,44 @@ public class GamePlayingService {
 
     @Transactional
     public GameOrderResponse choiceOrder(long gameId, long memberId, GameOrderRequest orderRequest) {
-        /*
-        * 1. ingame데이터 불러오기
-        * 2. ingame에 순서 저장
-        * 3. 응답 DTO 만들어서 리턴
-        *
-        * */
         if (orderRequest.validate(getPlayerSize(gameKeyGen(gameId)))) {
             throw new CustomException(ORDER_NUMBER_IS_INVALID);
         }
         List<InGame> inGamePlayerList = getInGamePlayerList(gameKeyGen(gameId));
-        InGame findInGame = inGamePlayerList.stream().filter(inGame -> inGame.getMemberId() == memberId)
-                .findFirst().orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+        int numPeople = inGamePlayerList.size() / 2;
+
+        InGame findInGame = getFindInGameInPlayerList(memberId, inGamePlayerList);
+        if (alreadySelectedOrderNumber(orderRequest.getOrderNumber(), findInGame.getTeam(), inGamePlayerList)) {
+            if (findInGame.getOrder() == orderRequest.getOrderNumber()) {
+                return null;
+            }
+            throw new CustomException(ALREADY_SELECTED_ORDER_NUMBER);
+        }
         findInGame.saveOrder(orderRequest.getOrderNumber());
         saveInGame(gameId, memberId, findInGame);
 
-        List<GameOrderDto> gameOrderDtoList = inGamePlayerList.stream()
+        GameOrderDto[] gameOrderDtos = new GameOrderDto[numPeople];
+        inGamePlayerList.stream()
                 .filter(inGame -> inGame.getTeam().equals(findInGame.getTeam()) && inGame.getOrder() > 0)
-                .sorted((o1, o2) -> o1.getOrder() - o2.getOrder())
-                .map(inGame -> GameOrderDto.builder()
+                .forEach(inGame -> {
+                    int index = inGame.getOrder() - 1;
+                    gameOrderDtos[index] = GameOrderDto.builder()
                         .memberId(inGame.getMemberId())
                         .nickname(inGame.getNickname())
-                        .image(inGame.getImage())
-                        .order(inGame.getOrder()).build())
-                .collect(Collectors.toList());
-        return new GameOrderResponse(findInGame.getTeam(), gameOrderDtoList);
+                        .image(inGame.getImage()).build();
+                });
+        return new GameOrderResponse(findInGame.getTeam(), gameOrderDtos);
+    }
+
+    private boolean alreadySelectedOrderNumber(int orderNumber, Team team, List<InGame> inGamePlayerList) {
+        return inGamePlayerList.stream()
+                .filter(inGame -> inGame.getTeam().equals(team) && inGame.getOrder() == orderNumber)
+                .collect(Collectors.toList()).size() > 0;
+    }
+
+    private InGame getFindInGameInPlayerList(long memberId, List<InGame> inGamePlayerList) {
+        return inGamePlayerList.stream().filter(inGame -> inGame.getMemberId().equals(memberId))
+                .findFirst().orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
     }
 
     private void saveWeaponsData(long gameId, Team team, GameWeaponData weaponsData) {
