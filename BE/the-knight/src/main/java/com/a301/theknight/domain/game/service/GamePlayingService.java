@@ -126,9 +126,9 @@ public class GamePlayingService {
                 .map(inGame -> GameOrderDto.builder()
                         .memberId(inGame.getMemberId())
                         .nickname(inGame.getNickname())
-                        .image(inGame.getImage()).build())
+                        .image(inGame.getImage())
+                        .order(inGame.getOrder()).build())
                 .collect(Collectors.toList());
-
         return new GameOrderResponse(findInGame.getTeam(), gameOrderDtoList);
     }
 

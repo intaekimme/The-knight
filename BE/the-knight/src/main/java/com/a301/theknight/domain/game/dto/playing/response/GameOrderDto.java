@@ -9,4 +9,5 @@ public class GameOrderDto {
     private long memberId;
     private String nickname;
     private String image;
+    private int order;
 }
