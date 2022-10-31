@@ -56,11 +56,15 @@ const orderInit = {
   teamB: [null, null, null, null, null],
 }
 
+// 0: 무기선택, 1: 공/수 선택, 2: 애니메이션, 3: 의심, 4: 게임종료
+const phaseInit = 0
+
 export const gameSlice = createSlice({
   name: "gameSlice",
   initialState: {
     players: playersInit,
     order: orderInit,
+    phase: phaseInit,
   },
   reducers: {
     selectWeapon: (state, action) => {
