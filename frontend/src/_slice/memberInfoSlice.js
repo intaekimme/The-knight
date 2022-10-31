@@ -2,10 +2,11 @@ import React from "react";
 import { createSlice } from "@reduxjs/toolkit";
 
 const memberInfoSliceInit = {
+    confirmPassword: false,
     MemberInfo: {
       id: 1,
       nickname: '더나이트최강자',
-      image: '',
+      image: 'https://picsum.photos/id/237/200/300',
       ranking: 1,
       score: 323,
       win: 7,

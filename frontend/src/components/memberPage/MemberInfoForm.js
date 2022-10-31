@@ -3,11 +3,7 @@ import {useSelector} from 'react-redux'
 
 import { Avatar, Button, Grid, Paper } from "@mui/material";
 
-function updateProfile() {
-  
-}
-
-export default function MemberInfoForm() {
+export default function MemberInfoForm({updateProfile}) {
   const memberInfo = useSelector(state => state.memberInfo.value.MemberInfo);
   console.log("memberInfo", memberInfo);
   return (
@@ -29,7 +25,7 @@ export default function MemberInfoForm() {
         </Paper>
         </Grid>
         <Grid item xs={2} sx={{mt:-20}}>
-          <Button onClick={updateProfile}>프로필 수정</Button>
+        <Button onClick={updateProfile}>프로필 수정</Button>
         </Grid>
       </Grid>
   );

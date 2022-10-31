@@ -11,7 +11,7 @@ export default function CurrentRecord() {
   console.log("memberReco", recordInfo);
 
   return (
-    <Grid container direction="column">
+    <Grid container direction="column" sx={{mb:10}}>
       {recordInfo.map((recordInfoDesc, key) => {
         let capac = '';
         if (recordInfoDesc.capacity === 10) {
