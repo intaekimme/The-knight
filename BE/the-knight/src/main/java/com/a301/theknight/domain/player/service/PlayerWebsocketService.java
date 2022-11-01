@@ -51,7 +51,7 @@ public class PlayerWebsocketService {
     }
 
     @Transactional
-    public long exit(long gameId, long memberId){
+    public PlayerExitResponse exit(long gameId, long memberId){
         Game findGame = getGame(gameId);
 
         if(!isWaiting(findGame)){
@@ -61,7 +61,7 @@ public class PlayerWebsocketService {
         Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
 
-        long exitPlayerId = exitPlayer.getMember().getId();
+        PlayerExitResponse exitPlayerId = new PlayerExitResponse(exitPlayer.getMember().getId());
         playerRepository.delete(exitPlayer);
 
         return exitPlayerId;
@@ -101,7 +101,7 @@ public class PlayerWebsocketService {
                     .startFlag(false)
                     .build()
             );
-            readyResponseDto.setPlayerReadyResponseList(playerReadyResponseList);
+            readyResponseDto.setPlayerReadyResponseList(new PlayerReadyResponseList(playerReadyResponseList));
             readyResponseDto.setOwner(false);
         }else{
             if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
@@ -109,7 +109,7 @@ public class PlayerWebsocketService {
             if(!findGame.isCanStart()) throw new CustomException((GameWaitingErrorCode.NOT_MET_ALL_THE_CONDITIONS_YET));
             else{
                 findGame.changeStatus(GameStatus.PLAYING);
-                readyResponseDto.setPlayerReadyResponseList(startAllPlayers(findGame));
+                readyResponseDto.setPlayerReadyResponseList(new PlayerReadyResponseList(startAllPlayers(findGame)));
                 readyResponseDto.setSetGame(new SetGame(findGame.setGameMessage()));
                 readyResponseDto.setOwner(true);
             }
