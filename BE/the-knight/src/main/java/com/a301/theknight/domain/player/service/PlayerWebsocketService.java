@@ -44,7 +44,7 @@ public class PlayerWebsocketService {
         Player entryPlayer = Player.builder().member(entryMember).game(entryGame).build();
         playerRepository.save(entryPlayer);
 
-        return PlayerEntryResponse.builder().playerId(entryPlayer.getId())
+        return PlayerEntryResponse.builder().playerId(entryPlayer.getMember().getId())
                 .nickname(entryMember.getNickname())
                 .image(entryMember.getImage())
                 .build();
@@ -61,7 +61,7 @@ public class PlayerWebsocketService {
         Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
 
-        long exitPlayerId = exitPlayer.getId();
+        long exitPlayerId = exitPlayer.getMember().getId();
         playerRepository.delete(exitPlayer);
 
         return exitPlayerId;
@@ -77,7 +77,7 @@ public class PlayerWebsocketService {
         findPlayer.selectTeam(Team.valueOf(playerTeamMessage.getTeam()));
 
         return PlayerTeamResponse.builder()
-                .playerId(findPlayer.getId())
+                .playerId(findPlayer.getMember().getId())
                 .team(findPlayer.getTeam().name())
                 .build();
     }
@@ -96,7 +96,7 @@ public class PlayerWebsocketService {
         if(!isOwner(findGame, readyPlayer)){
             List<PlayerReadyResponse> playerReadyResponseList = new ArrayList<>();
             playerReadyResponseList.add(PlayerReadyResponse.builder()
-                    .playerId(readyPlayer.getId())
+                    .playerId(readyPlayer.getMember().getId())
                     .readyStatus(readyPlayer.isReady())
                     .startFlag(false)
                     .build()
@@ -165,7 +165,7 @@ public class PlayerWebsocketService {
                 .stream()
                 .map(player ->
                         PlayerReadyResponse.builder()
-                                .playerId(player.getId())
+                                .playerId(player.getMember().getId())
                                 .readyStatus(player.isReady())
                                 .startFlag(true)
                                 .build()).
