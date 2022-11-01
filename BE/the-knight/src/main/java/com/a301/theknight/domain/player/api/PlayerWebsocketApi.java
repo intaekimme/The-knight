@@ -6,6 +6,7 @@ import com.a301.theknight.domain.player.service.PlayerWebsocketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
@@ -35,8 +36,8 @@ public class PlayerWebsocketApi {
 
     @MessageMapping(value="/games/{gameId}/team")
     public void team(@DestinationVariable long gameId,
-                     @LoginMemberId long memberId,
-                     PlayerTeamRequest playerTeamMessage){
+                     PlayerTeamRequest playerTeamMessage,
+                     @LoginMemberId long memberId){
         PlayerTeamResponse playerTeamResponse = playerWebsocketService.team(gameId, memberId, playerTeamMessage);
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/team");
         template.convertAndSend(destination, playerTeamResponse);

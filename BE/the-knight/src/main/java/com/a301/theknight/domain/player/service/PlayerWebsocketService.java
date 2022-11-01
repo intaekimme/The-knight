@@ -147,7 +147,7 @@ public class PlayerWebsocketService {
         AtomicInteger teamB = new AtomicInteger();
         game.getPlayers().stream().map(player -> player.getTeam().name().equals("A") ? teamA.getAndIncrement() : teamB.getAndIncrement())
                 .collect(Collectors.toList());
-        return teamA.equals(teamB);
+        return teamA.intValue() == teamB.intValue();
     }
 
     private boolean isAllReady(Game game){

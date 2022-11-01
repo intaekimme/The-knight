@@ -11,5 +11,5 @@ import java.util.List;
 @Data
 public class GameOrderResponse {
     private Team team;
-    private List<GameOrderDto> orderList;
+    private GameOrderDto[] orderList;
 }

@@ -78,7 +78,9 @@ public class GamePlayingApi {
                             @LoginMemberId long memberId){
         GameOrderResponse orderResponse = gamePlayingService.choiceOrder(gameId, memberId, gameOrderRequest);
 
-        sendOrderResponse(gameId, orderResponse.getTeam(), orderResponse);
+        if (orderResponse != null) {
+            sendOrderResponse(gameId, orderResponse.getTeam(), orderResponse);
+        }
     }
 
     private void sendOrderResponse(long gameId, Team team, GameOrderResponse orderResponse) {

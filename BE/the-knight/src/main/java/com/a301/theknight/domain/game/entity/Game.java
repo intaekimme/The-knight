@@ -55,6 +55,18 @@ public class Game extends BaseTimeEntity {
         this.capacity = capacity;
     }
 
+    //TODO  test 용도 추후 삭제
+    public Game(long id, String title, int sword, int twin, int shield, int hand, int capacity){
+        this.id = id;
+        this.title = title;
+        this.status = GameStatus.WAITING;
+        this.sword = sword;
+        this.twin = twin;
+        this.shield = shield;
+        this.hand = hand;
+        this.capacity = capacity;
+    }
+
     public void changeStatus(GameStatus gameStatus) {
         this.status = gameStatus;
     }

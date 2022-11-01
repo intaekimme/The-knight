@@ -60,6 +60,15 @@ public class Player extends BaseTimeEntity {
         game.getPlayers().add(this);
     }
 
+    //TODO  test 용도 추후 삭제
+    public Player(long id, Member member, Game game) {
+        this.id = id;
+        this.member = member;
+        this.game = game;
+        this.team = Team.A;
+        game.getPlayers().add(this);
+    }
+
     public void exitGame(){
         if(this.game  != null){
             this.game.getPlayers().remove(this);
