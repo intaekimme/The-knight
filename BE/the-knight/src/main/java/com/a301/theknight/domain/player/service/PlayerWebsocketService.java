@@ -44,14 +44,14 @@ public class PlayerWebsocketService {
         Player entryPlayer = Player.builder().member(entryMember).game(entryGame).build();
         playerRepository.save(entryPlayer);
 
-        return PlayerEntryResponse.builder().playerId(entryPlayer.getId())
+        return PlayerEntryResponse.builder().playerId(entryPlayer.getMember().getId())
                 .nickname(entryMember.getNickname())
                 .image(entryMember.getImage())
                 .build();
     }
 
     @Transactional
-    public long exit(long gameId, long memberId){
+    public PlayerExitResponse exit(long gameId, long memberId){
         Game findGame = getGame(gameId);
 
         if(!isWaiting(findGame)){
@@ -61,7 +61,7 @@ public class PlayerWebsocketService {
         Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
 
-        long exitPlayerId = exitPlayer.getId();
+        PlayerExitResponse exitPlayerId = new PlayerExitResponse(exitPlayer.getMember().getId());
         playerRepository.delete(exitPlayer);
 
         return exitPlayerId;
@@ -77,7 +77,7 @@ public class PlayerWebsocketService {
         findPlayer.selectTeam(Team.valueOf(playerTeamMessage.getTeam()));
 
         return PlayerTeamResponse.builder()
-                .playerId(findPlayer.getId())
+                .playerId(findPlayer.getMember().getId())
                 .team(findPlayer.getTeam().name())
                 .build();
     }
@@ -96,12 +96,12 @@ public class PlayerWebsocketService {
         if(!isOwner(findGame, readyPlayer)){
             List<PlayerReadyResponse> playerReadyResponseList = new ArrayList<>();
             playerReadyResponseList.add(PlayerReadyResponse.builder()
-                    .playerId(readyPlayer.getId())
+                    .playerId(readyPlayer.getMember().getId())
                     .readyStatus(readyPlayer.isReady())
                     .startFlag(false)
                     .build()
             );
-            readyResponseDto.setPlayerReadyResponseList(playerReadyResponseList);
+            readyResponseDto.setPlayerReadyResponseList(new PlayerReadyResponseList(playerReadyResponseList));
             readyResponseDto.setOwner(false);
         }else{
             if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
@@ -109,8 +109,8 @@ public class PlayerWebsocketService {
             if(!findGame.isCanStart()) throw new CustomException((GameWaitingErrorCode.NOT_MET_ALL_THE_CONDITIONS_YET));
             else{
                 findGame.changeStatus(GameStatus.PLAYING);
-                readyResponseDto.setPlayerReadyResponseList(startAllPlayers(findGame));
-                readyResponseDto.setSetGame(findGame.setGameMessage());
+                readyResponseDto.setPlayerReadyResponseList(new PlayerReadyResponseList(startAllPlayers(findGame)));
+                readyResponseDto.setSetGame(new SetGame(findGame.setGameMessage()));
                 readyResponseDto.setOwner(true);
             }
         }
@@ -165,7 +165,7 @@ public class PlayerWebsocketService {
                 .stream()
                 .map(player ->
                         PlayerReadyResponse.builder()
-                                .playerId(player.getId())
+                                .playerId(player.getMember().getId())
                                 .readyStatus(player.isReady())
                                 .startFlag(true)
                                 .build()).
