@@ -1,3 +1,5 @@
+# test jenkins develop
+
 FROM node:16.16.0 as build-stage
 WORKDIR /var/jenkins_home/workspace/the-knight/frontend
 COPY package*.json ./
