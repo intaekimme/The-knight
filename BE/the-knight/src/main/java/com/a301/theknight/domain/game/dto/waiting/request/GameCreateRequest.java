@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.game.dto;
+package com.a301.theknight.domain.game.dto.waiting.request;
 
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;

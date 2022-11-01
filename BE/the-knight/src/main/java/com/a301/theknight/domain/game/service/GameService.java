@@ -1,9 +1,9 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.GameCreateRequest;
-import com.a301.theknight.domain.game.dto.GameInfoResponse;
-import com.a301.theknight.domain.game.dto.GameListDto;
-import com.a301.theknight.domain.game.dto.GameListResponse;
+import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
+import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
+import com.a301.theknight.domain.game.dto.waiting.GameListDto;
+import com.a301.theknight.domain.game.dto.waiting.response.GameListResponse;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
