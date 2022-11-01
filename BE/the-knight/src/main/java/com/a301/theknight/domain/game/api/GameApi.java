@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
+import com.a301.theknight.domain.game.dto.GameCreationResponse;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameListResponse;
@@ -28,7 +29,7 @@ public class GameApi {
     @PostMapping
     public ResponseEntity<?> createGame(@RequestBody GameCreateRequest gameCreateRequest,
                                         @LoginMemberId long memberId) {
-        long newGameId = gameService.createGame(gameCreateRequest, memberId);
+        GameCreationResponse newGameId = gameService.createGame(gameCreateRequest, memberId);
         return ResponseEntity.ok(newGameId);
     }
 

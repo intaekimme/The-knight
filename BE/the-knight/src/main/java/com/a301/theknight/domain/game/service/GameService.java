@@ -1,5 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
+import com.a301.theknight.domain.game.dto.GameCreationResponse;
 import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.GameListDto;
@@ -57,12 +58,12 @@ public class GameService {
     }
 
     @Transactional
-    public long createGame(GameCreateRequest gameCreateRequest, long memberId){
+    public GameCreationResponse createGame(GameCreateRequest gameCreateRequest, long memberId){
         getMember(memberId);
 
         Game newGame = gameCreateRequest.toEntity();
         gameRepository.save(newGame);
-        return newGame.getId();
+        return new GameCreationResponse(newGame.getId());
     }
 
     @Transactional(readOnly = true)
