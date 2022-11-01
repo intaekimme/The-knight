@@ -27,11 +27,12 @@ public class GameService {
     private final GameRepository gameRepository;
     private final MemberRepository memberRepository;
 
-    //  테스트용
-    private static long memberId = 1L;
 
     @Transactional(readOnly = true)
-    public GameListResponse getGameList(@Nullable String keyword, Pageable pageable){
+    public GameListResponse getGameList(@Nullable String keyword,
+                                        Pageable pageable,
+                                        long memberId){
+        getMember(memberId);
         GameListResponse gameListResponse = new GameListResponse();
         Page<Game> gamePage = null;
         if(keyword != null){
@@ -56,9 +57,8 @@ public class GameService {
     }
 
     @Transactional
-    public long createGame(GameCreateRequest gameCreateRequest){
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
+    public long createGame(GameCreateRequest gameCreateRequest, long memberId){
+        getMember(memberId);
 
         Game newGame = gameCreateRequest.toEntity();
         gameRepository.save(newGame);
@@ -66,9 +66,9 @@ public class GameService {
     }
 
     @Transactional(readOnly = true)
-    public GameInfoResponse getGameInfo(long gameId){
-        Game findGame = gameRepository.findById(gameId)
-                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
+    public GameInfoResponse getGameInfo(long gameId, long memberId){
+        getMember(memberId);
+        Game findGame = getGame(gameId);
 
         return GameInfoResponse.builder()
                 .gameId(gameId)
@@ -81,4 +81,15 @@ public class GameService {
                 .hand(findGame.getHand())
                 .build();
     }
+
+    private Member getMember(long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
+    }
+
+    private Game getGame(long gameId) {
+        return gameRepository.findById(gameId)
+                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
+    }
+
 }

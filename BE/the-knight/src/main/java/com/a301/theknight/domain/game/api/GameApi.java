@@ -1,5 +1,6 @@
 package com.a301.theknight.domain.game.api;
 
+import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameListResponse;
@@ -17,20 +18,24 @@ public class GameApi {
     private final GameService gameService;
 
     @GetMapping
-    public ResponseEntity<?> getGameList(@RequestParam String keyword, Pageable pageable) {
-        GameListResponse gameListResponse = gameService.getGameList(keyword, pageable);
+    public ResponseEntity<?> getGameList(@RequestParam String keyword,
+                                         Pageable pageable,
+                                         @LoginMemberId long memberId) {
+        GameListResponse gameListResponse = gameService.getGameList(keyword, pageable, memberId);
         return ResponseEntity.ok(gameListResponse);
     }
 
     @PostMapping
-    public ResponseEntity<?> createGame(@RequestBody GameCreateRequest gameCreateRequest) {
-        long newGameId = gameService.createGame(gameCreateRequest);
+    public ResponseEntity<?> createGame(@RequestBody GameCreateRequest gameCreateRequest,
+                                        @LoginMemberId long memberId) {
+        long newGameId = gameService.createGame(gameCreateRequest, memberId);
         return ResponseEntity.ok(newGameId);
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<?> getGameInfo(@PathVariable long gameId) {
-        GameInfoResponse gameInfoResponse = gameService.getGameInfo(gameId);
+    public ResponseEntity<?> getGameInfo(@PathVariable long gameId,
+                                         @LoginMemberId long memberId) {
+        GameInfoResponse gameInfoResponse = gameService.getGameInfo(gameId, memberId);
         return ResponseEntity.ok(gameInfoResponse);
     }
 }
