@@ -90,7 +90,7 @@ public class PlayerApiTest {
     @Test
     @Disabled
     @DisplayName("Player exit test")
-    void long_exitPlayerId() {
+    void PlayerExitResponse_exitPlayerId() {
         given(memberRepository.findById(1L)).willReturn(Optional.of(testMembers[1]));
         given(gameRepository.findById(1L)).willReturn(Optional.of(testGame));
         given(playerRepository.findByGameAndMember(testGame, testMembers[1])).willReturn(Optional.of(testPlayers[1]));
@@ -120,7 +120,7 @@ public class PlayerApiTest {
         given(playerRepository.findByGameAndMember(testGame, testMembers[2])).willReturn(Optional.of(testPlayers[2]));
 
         ReadyResponseDto readyResponseDto = playerWebsocketService.ready(1L, 2L, playerReadyRequest);
-        PlayerReadyResponse playerReadyResponse = readyResponseDto.getPlayerReadyResponseList().get(0);
+        PlayerReadyResponse playerReadyResponse = readyResponseDto.getPlayerReadyResponseList().getPlayerReadyResponseList().get(0);
 
         assertEquals(2L, playerReadyResponse.getPlayerId());
         assertTrue(playerReadyResponse.isReadyStatus());
