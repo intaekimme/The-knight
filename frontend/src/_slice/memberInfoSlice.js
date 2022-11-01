@@ -2,10 +2,11 @@ import React from "react";
 import { createSlice } from "@reduxjs/toolkit";
 
 const memberInfoSliceInit = {
+    confirmPassword: false,
     MemberInfo: {
       id: 1,
       nickname: '더나이트최강자',
-      image: '',
+      image: 'https://picsum.photos/id/237/200/300',
       ranking: 1,
       score: 323,
       win: 7,
@@ -231,6 +232,10 @@ export const memberInfoSlice = createSlice({
   name: "memberInfoSlice",
   initialState: { value: memberInfoSliceInit },
   reducers: {
+    changeImage: (state, action) => {
+      state.value.MemberInfo.image = action.payload
+  },
   },
 });
+export const { changeImage } = memberInfoSlice.actions;
 export default memberInfoSlice.reducer;
