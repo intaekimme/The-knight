@@ -10,6 +10,7 @@ import com.a301.theknight.domain.game.dto.playing.response.GameMembersInfoDto;
 import com.a301.theknight.domain.game.dto.playing.response.GameOrderResponse;
 import com.a301.theknight.domain.game.dto.playing.response.GamePrepareDto;
 import com.a301.theknight.domain.game.dto.playing.response.GameWeaponResponse;
+import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.service.GamePlayingService;
 import com.a301.theknight.domain.game.util.GameTimer;
 import com.a301.theknight.domain.player.entity.Team;
@@ -67,7 +68,7 @@ public class GamePlayingApi {
     @MessageMapping(value="/games/{gameId}/weapon-delete")
     public void deleteWeapon(@DestinationVariable long gameId, GameWeaponDeleteRequest weaponDeleteRequest,
                               @LoginMemberId long memberId){
-        GameWeaponResponse weaponResponse = gamePlayingService.deleteWeapon(gameId, memberId, weaponDeleteRequest.isLeft());
+        GameWeaponResponse weaponResponse = gamePlayingService.cancelWeapon(gameId, memberId, weaponDeleteRequest.isLeft());
 
         sendWeaponResponse(gameId, weaponResponse.getTeam(), weaponResponse.getGameWeaponData());
     }

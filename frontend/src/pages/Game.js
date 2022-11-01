@@ -17,7 +17,7 @@ export default function Game() {
   // }, []);
 
   const phase = useSelector(state => state.game.phase)
-
+  
   return (
     <div>
       {phase === 0 ? <Phase0></Phase0> : null}
