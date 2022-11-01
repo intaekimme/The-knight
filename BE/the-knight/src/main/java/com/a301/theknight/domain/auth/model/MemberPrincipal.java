@@ -22,6 +22,10 @@ public class MemberPrincipal implements UserDetails {
         return memberId;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
@@ -34,7 +38,7 @@ public class MemberPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return memberId + "";
     }
 
     @Override
@@ -56,4 +60,5 @@ public class MemberPrincipal implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
 }

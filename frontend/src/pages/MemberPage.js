@@ -1,11 +1,14 @@
 import React from "react";
+import { useState } from "react";
 import MemberInfoForm from '../components/memberPage/MemberInfoForm'
 import CurrentRecord from '../components/memberPage/CurrentRecord'
+import UpdateMemInfo from '../components/memberPage/UpdateMemInfo';
 
 // import { useNavigate } from 'react-router-dom';
 // import LoginCheck from "../commons/login/LoginCheck";
 
 import { Container } from "@mui/system";
+import { Grid } from "@mui/material";
 
 export default function MemberPage() {
   // const isLogin = LoginCheck();
@@ -15,10 +18,26 @@ export default function MemberPage() {
   //     navigate('/login');
   //   }
   // }, []);
+  const [clickUpdate, setClickUpdate] = useState(false);
+  const updateProfile = () => {
+      console.log("this");
+      clickUpdate === true ? (
+        setClickUpdate(false)
+      ) : (
+      setClickUpdate(true)
+      )
+  }
   return (
     <Container fixed>
-      <MemberInfoForm />
-      <CurrentRecord/>
+      {!clickUpdate
+        ?
+        <Grid>
+          <MemberInfoForm updateProfile={updateProfile} />
+          <CurrentRecord />
+        </Grid>
+      :
+      <UpdateMemInfo />
+      }
     </Container>
   );
 }
