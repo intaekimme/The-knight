@@ -21,6 +21,10 @@ public class InGamePlayer implements Serializable {
     private int order;
     private boolean isDead;
     private boolean isLeader;
+    /*
+    * - 패스 여부
+    * - FakeWeapon
+    * */
 
     public void setNickname(String nickname) {
         this.nickname = nickname;

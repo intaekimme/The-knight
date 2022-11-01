@@ -1,11 +1,9 @@
 package com.a301.theknight.domain.game.repository;
 
+import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
-import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.player.entity.Team;
-import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,15 +14,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
-
 @Slf4j
 @RequiredArgsConstructor
 @Repository
 public class GameRedisRepository {
     private final RedisTemplate<String, InGame> inGameRedisTemplate; //value로 저장
     private final RedisTemplate<String, InGamePlayer> playerRedisTemplate; //hashset으로 저장
-
     private final RedisTemplate<String, GameWeaponData> weaponRedisTemplate; //value로 저장
 
     public Optional<InGame> getInGame(long gameId) {

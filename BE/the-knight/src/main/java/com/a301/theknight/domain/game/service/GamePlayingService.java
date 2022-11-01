@@ -1,13 +1,14 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
-import com.a301.theknight.domain.game.entity.redis.InGame;
-import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
-import com.a301.theknight.domain.game.dto.playing.*;
+import com.a301.theknight.domain.game.dto.playing.PlayerStateDto;
+import com.a301.theknight.domain.game.dto.playing.TeamLeaderDto;
 import com.a301.theknight.domain.game.dto.playing.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.playing.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.playing.response.*;
 import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
+import com.a301.theknight.domain.game.entity.redis.InGame;
+import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
@@ -16,7 +17,6 @@ import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
