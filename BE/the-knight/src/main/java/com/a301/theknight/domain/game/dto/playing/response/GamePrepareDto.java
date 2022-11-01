@@ -1,7 +1,6 @@
 package com.a301.theknight.domain.game.dto.playing.response;
 
-import com.a301.theknight.domain.game.dto.playing.GameWeaponData;
-import com.a301.theknight.domain.game.dto.playing.response.GameLeaderDto;
+import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import lombok.Builder;
 import lombok.Data;
 

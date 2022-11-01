@@ -84,5 +84,5 @@ public class Game extends BaseTimeEntity {
         canStart = true;
     }
 
-    public void setGameMessage() { this.setGame = UUID.randomUUID().toString(); }
+    public String setGameMessage() { return this.setGame = UUID.randomUUID().toString(); }
 }

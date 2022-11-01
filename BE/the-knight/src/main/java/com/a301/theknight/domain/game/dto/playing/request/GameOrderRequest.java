@@ -6,7 +6,7 @@ import lombok.Data;
 public class GameOrderRequest {
     private int orderNumber;
 
-    public boolean validate(long capacity) {
+    public boolean validate(int capacity) {
         return orderNumber >= 1 && orderNumber <= capacity;
     }
 }
