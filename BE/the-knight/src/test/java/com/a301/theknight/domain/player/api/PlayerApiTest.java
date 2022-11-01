@@ -95,8 +95,8 @@ public class PlayerApiTest {
         given(gameRepository.findById(1L)).willReturn(Optional.of(testGame));
         given(playerRepository.findByGameAndMember(testGame, testMembers[1])).willReturn(Optional.of(testPlayers[1]));
 
-        long exitPlayerId = playerWebsocketService.exit(1L, 1L);
-        assertEquals(1L, exitPlayerId);
+        PlayerExitResponse exitPlayerId = playerWebsocketService.exit(1L, 1L);
+        assertEquals(1L, exitPlayerId.getExitPlayerId());
     }
 
     @Test
