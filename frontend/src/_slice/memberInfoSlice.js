@@ -232,6 +232,10 @@ export const memberInfoSlice = createSlice({
   name: "memberInfoSlice",
   initialState: { value: memberInfoSliceInit },
   reducers: {
+    changeImage: (state, action) => {
+      state.value.MemberInfo.image = action.payload
+  },
   },
 });
+export const { changeImage } = memberInfoSlice.actions;
 export default memberInfoSlice.reducer;

@@ -1,19 +1,26 @@
 import React from "react";
-import {useSelector} from 'react-redux'
+import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { changeImage } from '../../_slice/memberInfoSlice'
 
 import { Button, Grid } from "@mui/material";
 import { Avatar } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import TextField from '@mui/material/TextField';
 
-const changeImg = (url) => {
-  console.log("변경 이미지 url", url);
-}
 
 export default function UpdateMemInfo() {
   const memberInfo = useSelector(state => state.memberInfo.value.MemberInfo);
   const nickname = memberInfo.nickname;
-  const image = memberInfo.image;
+  let image = memberInfo.image;
+
+  const dispatch = useDispatch();
+  
+  const changeImg = (url, e) => {
+    e.preventDefault();
+    //프로필 이미지 변경
+    dispatch(changeImage(url));
+  }
 
   const arr = [
     "https://picsum.photos/id/237/200/300",
@@ -40,9 +47,7 @@ export default function UpdateMemInfo() {
           {arr.map((a, key) =>{
             return(
               <Grid item xs={2} key={key}>
-                <div onCilck={changeImg(a)}>
-                  <Avatar alt="profile image" src={a} sx={{ width: 110, height: 110 }} />
-                </div>
+                <Avatar alt="profile image" src={a} sx={{ width: 110, height: 110 }} onClick={(e) => { changeImg(a, e) }}></Avatar>
               </Grid>
               )
             }
