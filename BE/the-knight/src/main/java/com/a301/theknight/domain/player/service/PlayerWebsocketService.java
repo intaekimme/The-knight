@@ -110,7 +110,7 @@ public class PlayerWebsocketService {
             else{
                 findGame.changeStatus(GameStatus.PLAYING);
                 readyResponseDto.setPlayerReadyResponseList(startAllPlayers(findGame));
-                readyResponseDto.setSetGame(findGame.setGameMessage());
+                readyResponseDto.setSetGame(new SetGame(findGame.setGameMessage()));
                 readyResponseDto.setOwner(true);
             }
         }

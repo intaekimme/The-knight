@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 public class ReadyResponseDto {
     private List<PlayerReadyResponse> playerReadyResponseList;
-    private String setGame;
+    private SetGame setGame;
     private boolean isOwner = false;
 }
