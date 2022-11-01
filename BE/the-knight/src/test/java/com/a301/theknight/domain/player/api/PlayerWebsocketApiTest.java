@@ -33,10 +33,8 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
-
 @Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Disabled
 class PlayerWebsocketApiTest {
 
     @LocalServerPort

@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-
+@Disabled
 @ExtendWith(MockitoExtension.class)
 public class PlayerApiTest {
     @Mock
