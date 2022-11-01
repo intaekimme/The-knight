@@ -11,7 +11,6 @@ function App() {
   React.useEffect(() => {
     window.addEventListener("resize", () => {
       dispatch(resize({ width: window.innerWidth, height: window.innerHeight }));
-      console.log(windowData);
     });
   }, [window.innerWidth, window.innerHeight]);
   return (
