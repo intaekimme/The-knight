@@ -13,6 +13,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,8 +23,8 @@ import org.springframework.util.StringUtils;
 import java.util.Objects;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
+@Component
 public class StompHandler implements ChannelInterceptor {
     private final TokenService tokenService;
     private final TokenProperties tokenProperties;
@@ -31,7 +32,7 @@ public class StompHandler implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String accessToken = Objects.requireNonNull(accessor.getFirstNativeHeader("Authorization")).substring(7);
             log.info(" Request Access-Token = {}", accessToken);
@@ -40,10 +41,11 @@ public class StompHandler implements ChannelInterceptor {
                     Long id = tokenService.getId(accessToken);
                     UserDetails userDetails = customUserDetailsService.loadMemberById(id);
                     MemberPrincipal memberPrincipal = (MemberPrincipal) userDetails;
-                    log.info(" Request Member Id = {}, Email = {}", memberPrincipal.getMemberId(), memberPrincipal.getUsername());
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    log.info(" Request Member Id = {}, Email = {}", memberPrincipal.getMemberId(), memberPrincipal.getEmail());
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberPrincipal, null, memberPrincipal.getAuthorities());
 //                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    accessor.setUser(authentication);
+//                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (Exception e) {
                 throw new CustomException(DomainErrorCode.DO_NOT_HAVE_AUTHENTICATION);
