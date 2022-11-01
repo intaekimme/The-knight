@@ -1,8 +1,8 @@
 package com.a301.theknight.domain.game.api;
 
-import com.a301.theknight.domain.game.dto.GameInfoResponse;
-import com.a301.theknight.domain.game.dto.GameCreateRequest;
-import com.a301.theknight.domain.game.dto.GameListResponse;
+import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
+import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
+import com.a301.theknight.domain.game.dto.waiting.response.GameListResponse;
 import com.a301.theknight.domain.game.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

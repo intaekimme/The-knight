@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.game.dto.playing;
+package com.a301.theknight.domain.game.entity.redis;
 
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.Weapon;
@@ -15,7 +15,7 @@ public class GameWeaponData implements Serializable {
     private int shield;
     private int hand;
 
-    public static GameWeaponData toDto(Game game) {
+    public static GameWeaponData toWeaponData(Game game) {
         return GameWeaponData.builder()
                 .sword(game.getSword())
                 .shield(game.getShield())

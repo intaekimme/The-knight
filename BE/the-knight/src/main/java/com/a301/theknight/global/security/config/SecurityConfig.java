@@ -63,7 +63,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/oauth2/authorization/google", "/login/oauth2/**",
                         "/swagger-ui/**", "/swagger-resources/**", "/favicon.ico",
-                        "/websocket/**").permitAll()
+                        "/websocket/**", "/api/hello").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,15 +1,11 @@
-package com.a301.theknight.domain.game.dto;
+package com.a301.theknight.domain.game.dto.waiting.request;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
-public class GameInfoResponse {
-    private long gameId;
+public class GameModifyRequest {
     private String title;
     private int capacity;
-    private int participant;
     private int sword;
     private int twin;
     private int shield;
