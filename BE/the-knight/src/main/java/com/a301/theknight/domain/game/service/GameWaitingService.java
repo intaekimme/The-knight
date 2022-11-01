@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.GameModifyRequest;
+import com.a301.theknight.domain.game.dto.waiting.request.GameModifyRequest;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.repository.GameRepository;
@@ -12,8 +12,6 @@ import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
