@@ -29,7 +29,7 @@ public class PlayerWebsocketApi {
     @MessageMapping(value="/games/{gameId}/exit")
     public void exit(@DestinationVariable long gameId,
                      @LoginMemberId long memberId){
-        long exitPlayerId = playerWebsocketService.exit(gameId, memberId);
+        PlayerExitResponse exitPlayerId = playerWebsocketService.exit(gameId, memberId);
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/exit");
         template.convertAndSend(destination, exitPlayerId);
     }
