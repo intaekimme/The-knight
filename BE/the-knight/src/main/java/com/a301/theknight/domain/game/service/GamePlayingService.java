@@ -137,18 +137,6 @@ public class GamePlayingService {
 
     @Transactional
     public boolean completeSelect(long gameId, long memberId, Team team) {
-        /**
-         * 1. ingame에 팀으로 teamData 찾기
-         *  -> 팀 리더의 요청인지 확인
-         *  -> OrderList에 null이 없고 다 다른사람인지
-         * 2. InGamePlayerList 찾기
-         *  -> 각각 플레이어가 선택한 무기가 있는지 & 그 무기 카운트 하고 game에 저장된 값과 같은지
-         * 3. InGame -> TeamDataInfo에 선택 완료 Flag를 true로 변경
-         * 4. 레디스의 GameWeapon 데이터를 삭제
-         * 5. InGame에 두 팀 모두 선택 완료 상태인지 확인, 응답의 분기!!
-         *  - 한 팀만 선택 : 그 팀한테 선택완료 메시지
-         *  - 두 팀 모두 : 다음 화면으로 넘어가라는 응답 (어떤 응답?) + (서버에도 prepare를 위한 메시지??)
-         */
         InGame inGame = getInGame(gameId);
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
 
@@ -164,12 +152,7 @@ public class GamePlayingService {
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.deleteGameWeaponData(gameId, team);
 
-        //TODO: 응답 바꾸기??
-        if (inGame.isAllSelected()) {
-            //TODO: 선택 완료, 제한 시간 멈추기??
-            return true;
-        }
-        return false;
+        return inGame.isAllSelected();
     }
 
     private GameLeaderDto getLeaders(Game game) {

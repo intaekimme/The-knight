@@ -99,12 +99,15 @@ public class GamePlayingApi {
         boolean completed = gamePlayingService.completeSelect(gameId, memberId, gameCompleteSelectRequest.getTeam());
 
         String teamName = gameCompleteSelectRequest.getTeam().equals(Team.A) ? Team.A.name() : Team.B.name();
-        if (completed) {
-
-            return;
+            String oppositeTeamName = Team.A.name();
+            String postfix = "/" + teamName + "/select";
+            String oppositePostfix = "/" + oppositeTeamName + "/select";
+            GameSelectResponse gameSelectResponse = new GameSelectResponse(true, false);
+            if (completed) {
+                gameSelectResponse = new GameSelectResponse(false, true);
+            template.convertAndSend(makeDestinationUri(gameId, oppositePostfix), gameSelectResponse);
         }
-        String postfix = "/" + teamName + "/select";
-        template.convertAndSend(makeDestinationUri(gameId, postfix), new GameSelectResponse(true));
+        template.convertAndSend(makeDestinationUri(gameId, postfix), gameSelectResponse);
     }
 
     private void sendOrderResponse(long gameId, Team team, GameOrderResponse orderResponse) {
