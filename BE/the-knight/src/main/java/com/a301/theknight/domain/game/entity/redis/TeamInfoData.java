@@ -13,4 +13,9 @@ public class TeamInfoData implements Serializable {
     private int peopleNum;
     private GameOrderDto[] orderList;
     private long leaderId;
+    private boolean selected;
+
+    public void completeSelect() {
+        selected = true;
+    }
 }

@@ -1,11 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from 'react-redux';
 import { Button, Box, Grid } from "@mui/material";
 
 export default function ItemBox(props) {
-	const size = 150;
+	// click 함수
+	function onClick(params){
+		if(props.onClick){
+			props.onClick(params);
+		}
+	}
+
+	// box 크기
+	const [size, setSize] = useState(100);
+	useEffect(()=>{
+		if(props.size){
+			setSize(props.size);
+		}
+	}, [props.size]);
 	return (
-		<Button>
+		<Button onClick={(e)=>{onClick(props.params);}}>
 			<Box sx={{width:size, height:size}}>
 				{props.text
 					? <Grid container>

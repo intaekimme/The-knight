@@ -50,17 +50,12 @@ public class PlayerWebsocketApi {
         ReadyResponseDto readyResponseDto = playerWebsocketService.ready(gameId, memberId, playerReadyMessage);
 
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
-        template.convertAndSend(destination, readyResponseDto.getPlayerReadyResponseList());
-        if(readyResponseDto.isOwner()){
-            destination = makeDestinationString("/pub/games/", gameId, "/start");
-            template.convertAndSend(destination, readyResponseDto.getSetGame());
-        }
+        template.convertAndSend(destination, readyResponseDto);
+        //TODO: 서버 -> 서버로 보내는 요청
     }
 
     private static String makeDestinationString(String prefix, long gameId, String postfix){
-        StringBuilder sb = new StringBuilder();
-        sb.append(prefix).append(gameId).append(postfix);
-        return sb.toString();
+        return prefix + gameId + postfix;
     }
 
 }

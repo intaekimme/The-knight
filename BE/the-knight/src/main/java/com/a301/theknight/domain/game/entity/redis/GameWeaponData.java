@@ -30,10 +30,9 @@ public class GameWeaponData implements Serializable {
             return true;
         } else if (Weapon.SHIELD.equals(weapon) && shield > 0) {
             return true;
-        } else if (Weapon.HAND.equals(weapon) && hand > 0) {
-            return true;
+        } else {
+            return Weapon.HAND.equals(weapon) && hand > 0;
         }
-        return false;
     }
 
     public void choiceWeapon(Weapon weapon) {
@@ -58,5 +57,9 @@ public class GameWeaponData implements Serializable {
         } else if (Weapon.HAND.equals(weapon)) {
             hand++;
         }
+    }
+
+    public boolean isAllSelected() {
+        return sword != 0 || twin != 0 || shield != 0 || hand != 0;
     }
 }

@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 
 import { Modal, Box, Button, Grid, Input, InputLabel, MenuItem, FormControl, Select } from "@mui/material";
 import ClearIcon from '@mui/icons-material/Clear';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ItemBox from "../ItemBox";
 
 export default function RoomSetting(props) {
@@ -29,10 +31,30 @@ export default function RoomSetting(props) {
 	};
 
 	const [maxUser, setMaxUser] = React.useState('');
+	const [itemCount, setItemCount] = React.useState([1,1,1,1]);
 
-  const maxUserChange = (event) => {
+	const maxUserChange = (event) => {
     setMaxUser(event.target.value);
   };
+
+	//아이템 목록
+	const items = ["검", "쌍검", "방패", "맨손"];
+
+	//아이템 개수증가
+	const itemCountUp = (index)=>{
+		const tempCount = [...itemCount];
+		tempCount[index]++;
+		setItemCount(tempCount);
+	}
+
+	// 아이템 개수감소
+	const itemCountDown = (index)=>{
+		const tempCount = [...itemCount];
+		if(tempCount[index]>0){
+			tempCount[index]--;
+		}
+		setItemCount(tempCount);
+	}
 
 	return (
 		<Modal
@@ -72,12 +94,24 @@ export default function RoomSetting(props) {
 							</Box>
 						</Grid>
 					</Grid>
-					<Grid container item xs={12} sx={{mt:1, mb:1}}>
-						<Grid item xs={2} sx={titleStyle}>아이템</Grid>
-						<Grid item xs={2}><ItemBox text="검"/></Grid>
-						<Grid item xs={2}><ItemBox text="쌍검"/></Grid>
-						<Grid item xs={2}><ItemBox text="방패"/></Grid>
-						<Grid item xs={2}><ItemBox text="맨손"/></Grid>
+					<Grid container columns={24} item xs={24} sx={{mt:1, mb:1}}>
+						<Grid container columns={24} item xs={4} sx={titleStyle} justifyContent="flex-end">아이템</Grid>
+						{items.map((item, index)=>(
+							<Grid container columns={24} item xs={5} key={`item${item}`}>
+								<Grid columns={12} item xs={12}><ItemBox text={item} size={190}/></Grid>
+								<Grid columns={12} container item xs={12} alignItems="center">
+									<Grid columns={12} item xs={7} sx={{pr:2, textAlign:"right", fontSize:30}}>{itemCount[index]}</Grid>
+									<Grid container columns={12} item xs={5}>
+										<Grid columns={12} item xs={12} alignItems="center">
+											<Button onClick={(e)=>{itemCountUp(index);}} sx={{width: "100%", height:"100%"}}><ArrowDropUpIcon/></Button>
+										</Grid>
+										<Grid columns={12} item xs={12} alignItems="center">
+											<Button onClick={(e)=>{itemCountDown(index);}} sx={{width: "100%", height:"100%"}}><ArrowDropDownIcon/></Button>
+										</Grid>
+									</Grid>
+								</Grid>
+							</Grid>
+						))}
 					</Grid>
 				</Grid>
 			</Box>

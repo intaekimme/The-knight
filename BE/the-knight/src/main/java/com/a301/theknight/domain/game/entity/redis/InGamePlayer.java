@@ -35,7 +35,7 @@ public class InGamePlayer implements Serializable {
     }
 
     public void choiceWeapon(Weapon weapon, GameWeaponData weaponsData) {
-        boolean isLeft = leftWeapon == null ? true : false;
+        boolean isLeft = leftWeapon == null;
         setWeapon(weapon, isLeft);
         weaponsData.choiceWeapon(weapon);
     }
@@ -58,5 +58,9 @@ public class InGamePlayer implements Serializable {
 
     public void saveOrder(int orderNumber) {
         order = orderNumber;
+    }
+
+    public boolean isFullSelectWeapon() {
+        return leftWeapon != null && rightWeapon != null;
     }
 }

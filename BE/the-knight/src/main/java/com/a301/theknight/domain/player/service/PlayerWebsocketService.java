@@ -93,27 +93,15 @@ public class PlayerWebsocketService {
 
         ReadyResponseDto readyResponseDto = new ReadyResponseDto();
 
-        if(!isOwner(findGame, readyPlayer)){
-            List<PlayerReadyResponse> playerReadyResponseList = new ArrayList<>();
-            playerReadyResponseList.add(PlayerReadyResponse.builder()
-                    .playerId(readyPlayer.getMember().getId())
-                    .readyStatus(readyPlayer.isReady())
-                    .startFlag(false)
-                    .build()
-            );
-            readyResponseDto.setPlayerReadyResponseList(new PlayerReadyResponseList(playerReadyResponseList));
-            readyResponseDto.setOwner(false);
-        }else{
+        if(isOwner(findGame, readyPlayer)){
             if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
             if(!isAllReady(findGame)) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
             if(!findGame.isCanStart()) throw new CustomException((GameWaitingErrorCode.NOT_MET_ALL_THE_CONDITIONS_YET));
-            else{
-                findGame.changeStatus(GameStatus.PLAYING);
-                readyResponseDto.setPlayerReadyResponseList(new PlayerReadyResponseList(startAllPlayers(findGame)));
-                readyResponseDto.setSetGame(new SetGame(findGame.setGameMessage()));
-                readyResponseDto.setOwner(true);
-            }
+
+            findGame.changeStatus(GameStatus.PLAYING);
+            readyResponseDto.setSetGame(findGame.setGameMessage());
         }
+        readyResponseDto.setPlayerReadyList(startAllPlayers(findGame));
 
         return readyResponseDto;
     }
@@ -167,7 +155,6 @@ public class PlayerWebsocketService {
                         PlayerReadyResponse.builder()
                                 .playerId(player.getMember().getId())
                                 .readyStatus(player.isReady())
-                                .startFlag(true)
                                 .build()).
                 collect(Collectors.toList());
     }
