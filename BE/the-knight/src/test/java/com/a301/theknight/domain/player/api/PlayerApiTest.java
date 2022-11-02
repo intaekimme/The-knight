@@ -120,7 +120,7 @@ public class PlayerApiTest {
         given(playerRepository.findByGameAndMember(testGame, testMembers[2])).willReturn(Optional.of(testPlayers[2]));
 
         ReadyResponseDto readyResponseDto = playerWebsocketService.ready(1L, 2L, playerReadyRequest);
-        PlayerReadyResponse playerReadyResponse = readyResponseDto.getPlayerReadyResponseList().getPlayerReadyResponseList().get(0);
+        PlayerReadyResponse playerReadyResponse = readyResponseDto.getPlayerReadyList().getPlayerReadyResponseList().get(0);
 
         assertEquals(2L, playerReadyResponse.getPlayerId());
         assertTrue(playerReadyResponse.isReadyStatus());

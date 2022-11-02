@@ -157,6 +157,7 @@ class PlayerWebsocketApiTest {
     }
 
     @Test
+    @Disabled
     @Transactional
     void exit() throws InterruptedException, ExecutionException, TimeoutException {
         Game game = gameRepository.findAll().get(0);
