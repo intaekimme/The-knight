@@ -128,8 +128,9 @@ class PlayerWebsocketApiTest {
         return new WebSocketStompClient(sockJsClient);
     }
 
-    @Disabled
+
     @Test
+    @Transactional
     void entry() throws InterruptedException, ExecutionException, TimeoutException {
         Game game = gameRepository.findAll().get(0);
         Member member = memberRepository.findAll().get(0);
@@ -142,7 +143,7 @@ class PlayerWebsocketApiTest {
         ListenableFuture<StompSession> connect = webSocketStompClient
                 .connect("ws://localhost:" + port + "/websocket", new StompSessionHandlerAdapter() {
                 });
-        StompSession stompSession = connect.get(60, TimeUnit.SECONDS);
+        StompSession stompSession = connect.get(120, TimeUnit.SECONDS);
         //  클라이언트가 구독
         stompSession.subscribe(String.format("/sub/games/%s/entry", game.getId()), new StompFrameHandlerImpl((new PlayerEntryResponse()), entryPlayers));
         //  클라이언트가 요청 발행

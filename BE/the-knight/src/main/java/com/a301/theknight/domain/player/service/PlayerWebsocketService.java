@@ -101,17 +101,15 @@ public class PlayerWebsocketService {
                     .startFlag(false)
                     .build()
             );
-            readyResponseDto.setPlayerReadyResponseList(new PlayerReadyResponseList(playerReadyResponseList));
-            readyResponseDto.setOwner(false);
+            readyResponseDto.setPlayerReadyResponseList(playerReadyResponseList);
         }else{
             if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
             if(!isAllReady(findGame)) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
             if(!findGame.isCanStart()) throw new CustomException((GameWaitingErrorCode.NOT_MET_ALL_THE_CONDITIONS_YET));
             else{
                 findGame.changeStatus(GameStatus.PLAYING);
-                readyResponseDto.setPlayerReadyResponseList(new PlayerReadyResponseList(startAllPlayers(findGame)));
-                readyResponseDto.setSetGame(new SetGame(findGame.setGameMessage()));
-                readyResponseDto.setOwner(true);
+                readyResponseDto.setPlayerReadyResponseList(startAllPlayers(findGame));
+                readyResponseDto.setSetGame(findGame.setGameMessage());
             }
         }
 
