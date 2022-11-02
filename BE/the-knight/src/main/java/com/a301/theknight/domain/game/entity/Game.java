@@ -2,6 +2,8 @@ package com.a301.theknight.domain.game.entity;
 
 import com.a301.theknight.domain.common.entity.BaseTimeEntity;
 import com.a301.theknight.domain.player.entity.Player;
+import com.a301.theknight.domain.player.entity.Team;
+import com.sun.source.tree.BreakTree;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +12,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -85,4 +88,10 @@ public class Game extends BaseTimeEntity {
     }
 
     public String setGameMessage() { return this.setGame = UUID.randomUUID().toString(); }
+
+    public Optional<Player> getTeamLeader(Team team) {
+        return players.stream()
+                .filter(player -> player.getTeam().equals(team) && player.isLeader())
+                .findFirst();
+    }
 }

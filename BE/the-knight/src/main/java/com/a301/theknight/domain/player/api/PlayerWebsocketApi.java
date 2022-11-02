@@ -51,12 +51,11 @@ public class PlayerWebsocketApi {
 
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
         template.convertAndSend(destination, readyResponseDto);
+        //TODO: 서버 -> 서버로 보내는 요청
     }
 
     private static String makeDestinationString(String prefix, long gameId, String postfix){
-        StringBuilder sb = new StringBuilder();
-        sb.append(prefix).append(gameId).append(postfix);
-        return sb.toString();
+        return prefix + gameId + postfix;
     }
 
 }
