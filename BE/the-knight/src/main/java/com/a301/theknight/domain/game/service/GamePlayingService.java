@@ -6,6 +6,7 @@ import com.a301.theknight.domain.game.dto.playing.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.playing.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.playing.response.*;
 import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
@@ -78,12 +79,6 @@ public class GamePlayingService {
                 .gameLeaderDto(gameLeaderDto).build();
     }
 
-    private GameLeaderDto getLeaders(Game game) {
-        return GameLeaderDto.builder()
-                .teamA(new TeamLeaderDto(getTeamLeaderId(game, Team.A)))
-                .teamB(new TeamLeaderDto(getTeamLeaderId(game, Team.B))).build();
-    }
-
     @Transactional
     public GameWeaponResponse choiceWeapon(long gameId, long memberId, GameWeaponChoiceRequest gameWeaponChoiceRequest) {
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
@@ -138,6 +133,68 @@ public class GamePlayingService {
         redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
 
         return new GameOrderResponse(inGamePlayer.getTeam(), teamInfoData.getOrderList());
+    }
+
+    @Transactional
+    public boolean completeSelect(long gameId, long memberId, Team team) {
+        InGame inGame = getInGame(gameId);
+        InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
+
+        checkLeaderRequest(inGame, inGamePlayer);
+        checkOrderSelect(inGame.getTeamInfoData(inGamePlayer.getTeam()));
+
+        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
+        Game game = getGame(gameId);
+        GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
+        checkWeaponSelect(teamPlayerList, weaponsData, game);
+
+        inGame.completeSelect(team);
+        redisRepository.saveInGame(gameId, inGame);
+        redisRepository.deleteGameWeaponData(gameId, team);
+
+        return inGame.isAllSelected();
+    }
+
+    private GameLeaderDto getLeaders(Game game) {
+        return GameLeaderDto.builder()
+                .teamA(new TeamLeaderDto(getTeamLeaderId(game, Team.A)))
+                .teamB(new TeamLeaderDto(getTeamLeaderId(game, Team.B))).build();
+    }
+
+    private void checkWeaponSelect(List<InGamePlayer> teamPlayerList, GameWeaponData weaponsData, Game game) {
+        if (weaponsData.isAllSelected()) {
+            throw new CustomException(CAN_NOT_COMPLETE_WEAPON_SELECT);
+        }
+        GameWeaponData checkWeaponData = GameWeaponData.toWeaponData(game);
+        teamPlayerList.forEach(inGamePlayer -> {
+            Weapon leftWeapon = inGamePlayer.getLeftWeapon();
+            Weapon rightWeapon = inGamePlayer.getRightWeapon();
+            if (leftWeapon == null || rightWeapon == null) {
+                throw new CustomException(CAN_NOT_COMPLETE_WEAPON_SELECT);
+            }
+            checkWeaponData.choiceWeapon(leftWeapon);
+            checkWeaponData.choiceWeapon(rightWeapon);
+        });
+        if (checkWeaponData.isAllSelected()) {
+            throw new CustomException(CAN_NOT_COMPLETE_WEAPON_SELECT);
+        }
+    }
+
+    private void checkOrderSelect(TeamInfoData teamInfoData) {
+        //다 선택됐는지, 겹치는 멤버 Id는 없는지
+        Set<Long> idSet = new HashSet<>();
+        for (GameOrderDto gameOrderDto : teamInfoData.getOrderList()) {
+            if (gameOrderDto == null || !idSet.add(gameOrderDto.getMemberId())) {
+                throw new CustomException(CAN_NOT_COMPLETE_ORDER_SELECT);
+            }
+        }
+    }
+
+    private void checkLeaderRequest(InGame inGame, InGamePlayer inGamePlayer) {
+        TeamInfoData teamInfoData = inGame.getTeamInfoData(inGamePlayer.getTeam());
+        if (teamInfoData.getLeaderId() != inGamePlayer.getMemberId()) {
+            throw new CustomException(GamePlayingErrorCode.CAN_COMPLETE_BY_LEADER);
+        }
     }
 
     private InGame getInGame(long gameId) {
@@ -251,5 +308,11 @@ public class GamePlayingService {
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
                 .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
+    }
+
+    @Transactional
+    public GamePreAttackResponse getPreAttack(long gameId) {
+        InGame inGame = getInGame(gameId);
+        return new GamePreAttackResponse(inGame.getCurrentAttackTeam());
     }
 }
