@@ -9,6 +9,7 @@ const playersInit = {
       nickname: 'John',
       leftCount: 0,
       rightCount: 0,
+      isMine: true,
       weapons: [null, null],
     },
     player2: {
@@ -16,6 +17,7 @@ const playersInit = {
       nickname: 'Smith',
       leftCount: 0,
       rightCount: 0,
+      isMine: false,
       weapons: [null, null],
     },
     player3: {
@@ -23,6 +25,7 @@ const playersInit = {
       nickname: 'Sara',
       leftCount: 0,
       rightCount: 0,
+      isMine: false,
       weapons: [null, null],
     },
   },
@@ -32,6 +35,7 @@ const playersInit = {
       nickname: 'Bob',
       leftCount: 0,
       rightCount: 0,
+      isMine: false,
       weapons: [null, null],
     },
     player2: {
@@ -39,6 +43,7 @@ const playersInit = {
       nickname: 'Tom',
       leftCount: 0,
       rightCount: 0,
+      isMine: false,
       weapons: [null, null],
     },
     player3: {
@@ -46,6 +51,7 @@ const playersInit = {
       nickname: 'Ria',
       leftCount: 0,
       rightCount: 0,
+      isMine: false,
       weapons: [null, null],
     },
   },
@@ -57,7 +63,7 @@ const orderInit = {
 }
 
 // 0: 무기선택, 1: 공/수 선택, 2: 애니메이션, 3: 의심, 4: 게임종료
-const phaseInit = 1
+const phaseInit = 0
 
 export const gameSlice = createSlice({
   name: "gameSlice",
@@ -67,6 +73,9 @@ export const gameSlice = createSlice({
     phase: phaseInit,
   },
   reducers: {
+    fetchPlayers: (state, action) => {
+      state.players = action.payload
+    },
     selectWeapon: (state, action) => {
       // 지금은 A팀 플레이어1의 무기를 바꾸는 것으로 고정
       // 추후에 해당 유저의 무기를 바꾸는 것으로 변경
@@ -104,5 +113,5 @@ export const gameSlice = createSlice({
     }
   },
 });
-export const { selectWeapon, deleteWeapon, selectOrder } = gameSlice.actions;
+export const { fetchPlayers, selectWeapon, deleteWeapon, selectOrder } = gameSlice.actions;
 export default gameSlice.reducer;

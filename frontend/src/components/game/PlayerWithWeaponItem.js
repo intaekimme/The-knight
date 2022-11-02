@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import CancelIcon from '@mui/icons-material/Cancel';
 
 // 추후에 isMe 삭제
-function PlayerWithWeaponItem({ isMe, userName, weapons, isOpp }) {
+function PlayerWithWeaponItem({ player, isOpp }) {
   const phase = useSelector(state => state.game.phase)  
   const dispatch = useDispatch();
   function deleteLeft() {
@@ -19,16 +19,15 @@ function PlayerWithWeaponItem({ isMe, userName, weapons, isOpp }) {
     <div>
       <Grid container>
         <div style={{ width: 50, height: 50, backgroundColor: "grey" }}>
-          {weapons[0] && <CancelIcon onClick={deleteLeft} style={isOpp ? {display: "none"} : null}></CancelIcon>}
-          <span style={isOpp ? {display: "none"} : null}>{weapons[0]}</span>
+          {player.weapons[0] && <CancelIcon onClick={deleteLeft} style={isOpp ? {display: "none"} : null}></CancelIcon>}
+          <span style={isOpp ? {display: "none"} : null}>{player.weapons[0]}</span>
         </div>
         <Player
-          isMe={isMe}
-          userName={userName}
+          player={ player }
         />
         <div style={{ width: 50, height: 50, backgroundColor: "grey" }}>
-          {weapons[1] && <CancelIcon onClick={deleteRight} style={isOpp ? {display: "none"} : null}></CancelIcon>}
-          <span style={isOpp ? {display: "none"} : null}>{weapons[1]}</span>
+          {player.weapons[1] && <CancelIcon onClick={deleteRight} style={isOpp ? {display: "none"} : null}></CancelIcon>}
+          <span style={isOpp ? {display: "none"} : null}>{player.weapons[1]}</span>
         </div>
       </Grid>
       {/* 순서 표시하는 로직 필요 */}
