@@ -12,10 +12,20 @@ const roomInfo = createAsyncThunk('roomInfo', async (gameId, { rejectWithValue }
     return rejectWithValue(err.response.data);
   }
 });
-export { roomInfo };
- const roomInit = {
+const usersInfo = createAsyncThunk('usersInfo', async (gameId, { rejectWithValue }) => {
+  try {
+    const res = await axios.get(api.gameMembersInfo(gameId), {});
+    console.log(res.data);
+    return res.data;
+  } catch (err) {
+    return rejectWithValue(err.response.data);
+  }
+});
+export { roomInfo, usersInfo };
+const roomInit = {
   gameId: -1,
   title: "",
+  maxUser: -1,
   capacity: -1,
   participant: -1,
   sword: -1,
@@ -23,19 +33,32 @@ export { roomInfo };
   shield: -1,
   hand: -1,
 }
+const userInit = [{
+  memberId: -1,
+  nickname: "닉네임",
+  team: "A", // A/B
+},{
+  memberId: -1,
+  nickname: "닉네임",
+  team: "A", // A/B
+},{
+  memberId: -1,
+  nickname: "닉네임",
+  team: "B", // A/B
+},{
+  memberId: -1,
+  nickname: "닉네임",
+  team: "B", // A/B
+}];
 export const roomSlice = createSlice({
   name: 'roomValue',
-  initialState:{value: roomInit},
+  initialState:{roomInfo: roomInit, usersInfo: userInit},
   reducers:{
     setRoom:(state, action) =>{
-      state.value.gameId = action.payload.gameId;
-      state.value.title = action.payload.title;
-      state.value.capacity = action.payload.capacity;
-      state.value.participant = action.payload.participant;
-      state.value.sword = action.payload.sword;
-      state.value.twin = action.payload.twin;
-      state.value.shield = action.payload.shield;
-      state.value.hand = action.payload.hand;
+      state.roomInfo = action.payload;
+    },
+    setUsers:(state, action) =>{
+      state.usersInfo = [...action.payload];
     },
   },
   extraReducers: {
@@ -45,7 +68,13 @@ export const roomSlice = createSlice({
     [roomInfo.rejected]: state => {
       state.value = roomInit;
     },
+    [usersInfo.fulfilled]: (state, action) => {
+      state.value = action.payload;
+    },
+    [usersInfo.rejected]: state => {
+      state.value = userInit;
+    },
   },
 });
-export const { setRoom } = roomSlice.actions;
+export const { setRoom, setUsers } = roomSlice.actions;
 export default roomSlice.reducer;
