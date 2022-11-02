@@ -33,58 +33,28 @@ export default function RoomSetting(props) {
 	const [maxUser, setMaxUser] = React.useState('');
 	const [itemCount, setItemCount] = React.useState([1,1,1,1]);
 
+	const maxUserChange = (event) => {
+    setMaxUser(event.target.value);
+  };
+
 	//아이템 목록
 	const items = ["검", "쌍검", "방패", "맨손"];
 
 	//아이템 개수증가
-	const itemCountUp = [()=>{
+	const itemCountUp = (index)=>{
 		const tempCount = [...itemCount];
-		tempCount[0]++;
+		tempCount[index]++;
 		setItemCount(tempCount);
-	},()=>{
-		const tempCount = [...itemCount];
-		tempCount[1]++;
-		setItemCount(tempCount);
-	},()=>{
-		const tempCount = [...itemCount];
-		tempCount[2]++;
-		setItemCount(tempCount);
-	},()=>{
-		const tempCount = [...itemCount];
-		tempCount[3]++;
-		setItemCount(tempCount);
-	},];
+	}
 
 	// 아이템 개수감소
-	const itemCountDown = [()=>{
+	const itemCountDown = (index)=>{
 		const tempCount = [...itemCount];
-		if(tempCount[0]>0){
-			tempCount[0]--;
+		if(tempCount[index]>0){
+			tempCount[index]--;
 		}
 		setItemCount(tempCount);
-	},()=>{
-		const tempCount = [...itemCount];
-		if(tempCount[1]>0){
-			tempCount[1]--;
-		}
-		setItemCount(tempCount);
-	},()=>{
-		const tempCount = [...itemCount];
-		if(tempCount[2]>0){
-			tempCount[2]--;
-		}
-		setItemCount(tempCount);
-	},()=>{
-		const tempCount = [...itemCount];
-		if(tempCount[3]>0){
-			tempCount[3]--;
-		}
-		setItemCount(tempCount);
-	},];
-
-  const maxUserChange = (event) => {
-    setMaxUser(event.target.value);
-  };
+	}
 
 	return (
 		<Modal
@@ -133,10 +103,10 @@ export default function RoomSetting(props) {
 									<Grid columns={12} item xs={7} sx={{pr:2, textAlign:"right", fontSize:30}}>{itemCount[index]}</Grid>
 									<Grid container columns={12} item xs={5}>
 										<Grid columns={12} item xs={12} alignItems="center">
-											<Button onClick={itemCountUp[index]} sx={{width: "100%", height:"100%"}}><ArrowDropUpIcon/></Button>
+											<Button onClick={(e)=>{itemCountUp(index);}} sx={{width: "100%", height:"100%"}}><ArrowDropUpIcon/></Button>
 										</Grid>
 										<Grid columns={12} item xs={12} alignItems="center">
-											<Button onClick={itemCountDown[index]} sx={{width: "100%", height:"100%"}}><ArrowDropDownIcon/></Button>
+											<Button onClick={(e)=>{itemCountDown(index);}} sx={{width: "100%", height:"100%"}}><ArrowDropDownIcon/></Button>
 										</Grid>
 									</Grid>
 								</Grid>
