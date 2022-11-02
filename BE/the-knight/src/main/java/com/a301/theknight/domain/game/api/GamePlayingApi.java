@@ -1,15 +1,9 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.game.dto.playing.*;
-import com.a301.theknight.domain.game.dto.playing.request.GameOrderRequest;
-import com.a301.theknight.domain.game.dto.playing.request.GameStartRequest;
-import com.a301.theknight.domain.game.dto.playing.request.GameWeaponChoiceRequest;
-import com.a301.theknight.domain.game.dto.playing.request.GameWeaponDeleteRequest;
-import com.a301.theknight.domain.game.dto.playing.response.GameMembersInfoDto;
-import com.a301.theknight.domain.game.dto.playing.response.GameOrderResponse;
-import com.a301.theknight.domain.game.dto.playing.response.GamePrepareDto;
-import com.a301.theknight.domain.game.dto.playing.response.GameWeaponResponse;
+import com.a301.theknight.domain.game.dto.playing.GameTimerDto;
+import com.a301.theknight.domain.game.dto.playing.request.*;
+import com.a301.theknight.domain.game.dto.playing.response.*;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.service.GamePlayingService;
 import com.a301.theknight.domain.game.util.GameTimer;
@@ -45,23 +39,25 @@ public class GamePlayingApi {
 
         sendWeaponResponse(gameId, Team.A, gamePrepareDto.getGameWeaponData());
         sendWeaponResponse(gameId, Team.B, gamePrepareDto.getGameWeaponData());
-        template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/a/leader"), gamePrepareDto.getGameLeaderDto().getTeamA());
-        template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/b/leader"), gamePrepareDto.getGameLeaderDto().getTeamB());
+
+        template.convertAndSend(makeDestinationUri(gameId,"/a/leader"), gamePrepareDto.getGameLeaderDto().getTeamA());
+        template.convertAndSend(makeDestinationUri(gameId,"/b/leader"), gamePrepareDto.getGameLeaderDto().getTeamB());
         getGamePlayerData(gameId);
+        timer(gameId, new GameTimerDto(1, 100));
     }
 
     @MessageMapping(value = "/games/{gameId}/members")
     public void getGamePlayerData(@DestinationVariable long gameId) {
         GameMembersInfoDto membersInfo = gamePlayingService.getMembersInfo(gameId);
 
-        template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId, "/members"), membersInfo);
+        template.convertAndSend(makeDestinationUri(gameId, "/members"), membersInfo);
     }
 
     @MessageMapping(value="/games/{gameId}/timer")
     public void timer(@DestinationVariable long gameId, GameTimerDto gameTimerDto){
         GameTimer gameTimer = new GameTimer();
         gameTimer.sendSeconds(gameTimerDto.getDelay(), gameTimerDto.getSecond(),
-                makeDestinationUri(SEND_PREFIX, gameId, "/timer"), template);
+                makeDestinationUri(gameId, "/timer"), template);
     }
 
     @MessageMapping(value="/games/{gameId}/weapon-choice")
@@ -91,23 +87,46 @@ public class GamePlayingApi {
         }
     }
 
+    @MessageMapping(value="/games/{gameId}/pre-attack")
+    public void getPreAttack(@DestinationVariable long gameId){
+        GamePreAttackResponse response = gamePlayingService.getPreAttack(gameId);
+        template.convertAndSend(makeDestinationUri(gameId, "/pre-attack"), response);
+    }
+
+    @MessageMapping(value="/games/{gameId}/complete-select")
+    public void completeSelect(@DestinationVariable long gameId, @LoginMemberId long memberId,
+                               GameCompleteSelectRequest gameCompleteSelectRequest){
+        boolean completed = gamePlayingService.completeSelect(gameId, memberId, gameCompleteSelectRequest.getTeam());
+
+        String teamName = gameCompleteSelectRequest.getTeam().equals(Team.A) ? Team.A.name() : Team.B.name();
+            String oppositeTeamName = Team.A.name();
+            String postfix = "/" + teamName + "/select";
+            String oppositePostfix = "/" + oppositeTeamName + "/select";
+            GameSelectResponse gameSelectResponse = new GameSelectResponse(true, false);
+            if (completed) {
+                gameSelectResponse = new GameSelectResponse(false, true);
+            template.convertAndSend(makeDestinationUri(gameId, oppositePostfix), gameSelectResponse);
+        }
+        template.convertAndSend(makeDestinationUri(gameId, postfix), gameSelectResponse);
+    }
+
     private void sendOrderResponse(long gameId, Team team, GameOrderResponse orderResponse) {
         if (Team.A.equals(team)) {
-            template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/a/orders"), orderResponse);
+            template.convertAndSend(makeDestinationUri(gameId,"/a/orders"), orderResponse);
             return;
         }
-        template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/b/orders"), orderResponse);
+        template.convertAndSend(makeDestinationUri(gameId,"/b/orders"), orderResponse);
     }
 
     private void sendWeaponResponse(long gameId, Team team, GameWeaponData weaponData) {
         if (Team.A.equals(team)) {
-            template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/a/weapons"), weaponData);
+            template.convertAndSend(makeDestinationUri(gameId,"/a/weapons"), weaponData);
             return;
         }
-        template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/b/weapons"), weaponData);
+        template.convertAndSend(makeDestinationUri(gameId,"/b/weapons"), weaponData);
     }
 
-    private String makeDestinationUri(String prefix, long gameId, String postfix) {
-        return prefix + gameId + postfix;
+    private String makeDestinationUri(long gameId, String postfix) {
+        return SEND_PREFIX + gameId + postfix;
     }
 }

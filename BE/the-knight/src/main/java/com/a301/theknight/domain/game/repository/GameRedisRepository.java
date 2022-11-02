@@ -23,29 +23,29 @@ public class GameRedisRepository {
     private final RedisTemplate<String, GameWeaponData> weaponRedisTemplate; //value로 저장
 
     public Optional<InGame> getInGame(long gameId) {
-        return Optional.of((InGame) inGameRedisTemplate.opsForValue().get(gameKeyGen(gameId)));
+        return Optional.ofNullable(inGameRedisTemplate.opsForValue().get(gameKeyGen(gameId)));
     }
 
     public Optional<GameWeaponData> getGameWeaponData(long gameId, Team team) {
-        return Optional.of(weaponRedisTemplate.opsForValue().get(weaponKeyGen(gameId, team)));
+        return Optional.ofNullable(weaponRedisTemplate.opsForValue().get(weaponKeyGen(gameId, team)));
     }
 
     public List<InGamePlayer> getInGamePlayerList(long gameId) {
         return playerRedisTemplate.opsForHash().entries(gameKeyGen(gameId))
-                .entrySet().stream().map(Map.Entry::getValue)
+                .values().stream()
                 .map(value -> (InGamePlayer) value).collect(Collectors.toList());
     }
 
     public List<InGamePlayer> getTeamPlayerList(long gameId, Team team) {
         return playerRedisTemplate.opsForHash().entries(gameKeyGen(gameId))
-                .entrySet().stream().map(Map.Entry::getValue)
+                .values().stream()
                 .map(value -> (InGamePlayer) value)
                 .filter(inGamePlayer -> inGamePlayer.getTeam().equals(team))
                 .collect(Collectors.toList());
     }
 
     public Optional<InGamePlayer> getInGamePlayer(long gameId, long memberId) {
-        return Optional.of((InGamePlayer) playerRedisTemplate.opsForHash()
+        return Optional.ofNullable((InGamePlayer) playerRedisTemplate.opsForHash()
                 .get(gameKeyGen(gameId), playerKeyGen(memberId)));
     }
 
@@ -70,6 +70,10 @@ public class GameRedisRepository {
         return gameWeaponData;
     }
 
+    public void deleteGameWeaponData(long gameId, Team team) {
+        weaponRedisTemplate.delete(weaponKeyGen(gameId, team));
+    }
+
     private String playerKeyGen(long memberId) {
         return "member:" + memberId;
     }
@@ -81,4 +85,5 @@ public class GameRedisRepository {
     private String weaponKeyGen(long gameId, Team team) {
         return "weapon" + team.name() + ":" + gameId;
     }
+
 }

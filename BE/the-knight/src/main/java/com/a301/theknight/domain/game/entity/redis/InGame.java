@@ -36,4 +36,17 @@ public class InGame implements Serializable {
     public boolean allPlayerCanStart() {
         return count >= teamBInfo.getPeopleNum() * 2;
     }
+
+    public TeamInfoData getTeamInfoData(Team team) {
+        return Team.A.equals(team) ? teamAInfo : teamBInfo;
+    }
+
+    public void completeSelect(Team team) {
+        TeamInfoData teamInfoData = getTeamInfoData(team);
+        teamInfoData.completeSelect();
+    }
+
+    public boolean isAllSelected() {
+        return teamAInfo.isSelected() && teamBInfo.isSelected();
+    }
 }
