@@ -1,7 +1,7 @@
 import SockJS from "sockjs-client";
 import { over } from "stompjs";
 import { useDispatch } from "react-redux";
-import { fetchPlayers } from '../_slice/gameSlice';
+import { fetchPlayers } from '../../_slice/gameSlice';
 
 import { CircularProgress, Box } from '@mui/material';
 
