@@ -43,6 +43,7 @@ public class GamePlayingApi {
         template.convertAndSend(makeDestinationUri(gameId,"/a/leader"), gamePrepareDto.getGameLeaderDto().getTeamA());
         template.convertAndSend(makeDestinationUri(gameId,"/b/leader"), gamePrepareDto.getGameLeaderDto().getTeamB());
         getGamePlayerData(gameId);
+        timer(gameId, new GameTimerDto(1, 100));
     }
 
     @MessageMapping(value = "/games/{gameId}/members")
