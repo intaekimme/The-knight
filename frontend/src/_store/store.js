@@ -5,6 +5,7 @@ import loginReducer from "../_slice/loginSlice";
 import memberInfoReducer from "../_slice/memberInfoSlice";
 import tempGameListReducer from "../_slice/tempGameSlice"
 import gameReducer from "../_slice/gameSlice";
+import roomReducer from "../_slice/roomSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,8 +13,8 @@ const store = configureStore({
     login: loginReducer,
     memberInfo: memberInfoReducer,
     game: gameReducer,
-
     tempGame: tempGameListReducer,
+    room: roomReducer,
   },
 });
 

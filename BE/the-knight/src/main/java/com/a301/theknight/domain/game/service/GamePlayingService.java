@@ -1,11 +1,17 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.InGame;
-import com.a301.theknight.domain.game.dto.playing.*;
+import com.a301.theknight.domain.game.dto.playing.PlayerStateDto;
+import com.a301.theknight.domain.game.dto.playing.TeamLeaderDto;
 import com.a301.theknight.domain.game.dto.playing.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.playing.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.playing.response.*;
 import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.Weapon;
+import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
+import com.a301.theknight.domain.game.entity.redis.InGame;
+import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
+import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
+import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
@@ -13,10 +19,8 @@ import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,149 +32,196 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 public class GamePlayingService {
 
     private final GameRepository gameRepository;
-
-    private final RedisTemplate<String, InGame> gameRedisTemplate;
-    private final RedisTemplate<String, GameWeaponData> weaponRedisTemplate;
+    private final GameRedisRepository redisRepository;
 
     @Transactional
     public boolean canStartGame(long gameId, String setGame) {
-        return getGame(gameId).isCanStart();
+        Game game = getGame(gameId);
+        return game.isCanStart() && game.getSetGame().equals(setGame);
     }
 
     @Transactional
     public GameMembersInfoDto getMembersInfo(long gameId) {
-        List<InGame> playerDataList = getInGamePlayerList(gameKeyGen(gameId));
-        int peopleNum = playerDataList.size() / 2;
-
-        Map<String, PlayerStateDto> teamA = getTeamPlayersInfo(playerDataList, Team.A);
-        Map<String, PlayerStateDto> teamB = getTeamPlayersInfo(playerDataList, Team.B);
+        Map<String, PlayerStateDto> teamA = getTeamPlayersInfo(gameId, Team.A);
+        Map<String, PlayerStateDto> teamB = getTeamPlayersInfo(gameId, Team.B);
 
         return GameMembersInfoDto.builder()
-                .peopleNum(peopleNum)
+                .peopleNum(teamA.size())
                 .teamA(teamA)
                 .teamB(teamB).build();
     }
 
-    /**
-     * - 제한시간 100초 Start → 구독 큐에 넘겨주기
- *     - 캐싱해서 사용, 무기 다 정하면 데이터 삭제
-     */
-
     @Transactional
-    public GamePrepareDto prepareToStartGame(long gameId) {
+    public void prepareToStartGame(long gameId) {
         Game game = getGame(gameId);
         List<Player> players = game.getPlayers();
 
-        GameLeaderDto gameLeaderDto = choiceLeader(players);
-        makeInGameData(gameId, players);
-
-        GameWeaponData gameWeaponData = makeWeaponsData(game);
-
-        return GamePrepareDto.builder()
-                .gameWeaponData(gameWeaponData)
-                .gameLeaderDto(gameLeaderDto)
-                .build();
+        choiceLeader(players);
+        makeInGameData(gameId, game);
+        makeInGamePlayerData(gameId, players);
+        makeWeaponsData(game);
     }
 
     @Transactional
-    public GameWeaponResponse choiceWeapon(long gameId, Long memberId, GameWeaponChoiceRequest gameWeaponChoiceRequest) {
-        InGame inGame = getInGameData(gameId, memberId);
-        GameWeaponData weaponsData = getWeaponsData(gameId, inGame.getTeam());
+    public GamePrepareDto gameStart(long gameId) {
+        InGame inGame = getInGame(gameId);
+        inGame.addRequestCount();
+        if (!inGame.allPlayerCanStart()) {
+            return null;
+        }
+
+        Game game = getGame(gameId);
+        GameLeaderDto gameLeaderDto = getLeaders(game);
+        GameWeaponData gameWeaponData = getWeaponsData(gameId, Team.A);
+
+        return GamePrepareDto.builder()
+                .gameWeaponData(gameWeaponData)
+                .gameLeaderDto(gameLeaderDto).build();
+    }
+
+    @Transactional
+    public GameWeaponResponse choiceWeapon(long gameId, long memberId, GameWeaponChoiceRequest gameWeaponChoiceRequest) {
+        InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
+        GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
 
         if (!weaponsData.canTakeWeapon(gameWeaponChoiceRequest.getWeapon())) {
             throw new CustomException(NOT_ENOUGH_WEAPON);
         }
-        if (!inGame.canTakeWeapon()) {
+        if (!inGamePlayer.canTakeWeapon()) {
             throw new CustomException(SELECT_WEAPON_IS_FULL);
         }
 
-        inGame.choiceWeapon(gameWeaponChoiceRequest.getWeapon(), weaponsData);
-        saveInGame(gameId, memberId, inGame);
-        saveWeaponsData(gameId, inGame.getTeam(), weaponsData);
+        inGamePlayer.choiceWeapon(gameWeaponChoiceRequest.getWeapon(), weaponsData);
+        redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
+        redisRepository.saveGameWeaponData(gameId, inGamePlayer.getTeam(), weaponsData);
 
-        return new GameWeaponResponse(inGame.getTeam(), weaponsData);
+        return new GameWeaponResponse(inGamePlayer.getTeam(), weaponsData);
     }
 
     @Transactional
-    public GameWeaponResponse deleteWeapon(long gameId, Long memberId, boolean isLeft) {
-        InGame inGame = getInGameData(gameId, memberId);
-        GameWeaponData weaponsData = getWeaponsData(gameId, inGame.getTeam());
+    public GameWeaponResponse cancelWeapon(long gameId, Long memberId, boolean isLeft) {
+        InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
+        GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
 
-        inGame.deleteWeapon(isLeft, weaponsData);
-        saveInGame(gameId, memberId, inGame);
-        saveWeaponsData(gameId, inGame.getTeam(), weaponsData);
+        inGamePlayer.cancelWeapon(isLeft, weaponsData);
+        redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
+        redisRepository.saveGameWeaponData(gameId, inGamePlayer.getTeam(), weaponsData);
 
-        return new GameWeaponResponse(inGame.getTeam(), weaponsData);
+        return new GameWeaponResponse(inGamePlayer.getTeam(), weaponsData);
     }
 
     @Transactional
     public GameOrderResponse choiceOrder(long gameId, long memberId, GameOrderRequest orderRequest) {
-        if (orderRequest.validate(getPlayerSize(gameKeyGen(gameId)))) {
+        InGame inGame = getInGame(gameId);
+        if (orderRequest.validate(inGame.getTeamPlayerSize())) {
             throw new CustomException(ORDER_NUMBER_IS_INVALID);
         }
-        List<InGame> inGamePlayerList = getInGamePlayerList(gameKeyGen(gameId));
-        int numPeople = inGamePlayerList.size() / 2;
+        int orderNumber = orderRequest.getOrderNumber();
+        InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
 
-        InGame findInGame = getFindInGameInPlayerList(memberId, inGamePlayerList);
-        if (alreadySelectedOrderNumber(orderRequest.getOrderNumber(), findInGame.getTeam(), inGamePlayerList)) {
-            if (findInGame.getOrder() == orderRequest.getOrderNumber()) {
+        TeamInfoData teamInfoData = inGamePlayer.getTeam().equals(Team.A)
+                ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
+        if (alreadySelectedOrderNumber(orderNumber, teamInfoData)) {
+            if (inGamePlayer.getOrder() == orderNumber) {
                 return null;
             }
             throw new CustomException(ALREADY_SELECTED_ORDER_NUMBER);
         }
-        findInGame.saveOrder(orderRequest.getOrderNumber());
-        saveInGame(gameId, memberId, findInGame);
 
-        GameOrderDto[] gameOrderDtos = new GameOrderDto[numPeople];
-        inGamePlayerList.stream()
-                .filter(inGame -> inGame.getTeam().equals(findInGame.getTeam()) && inGame.getOrder() > 0)
-                .forEach(inGame -> {
-                    int index = inGame.getOrder() - 1;
-                    gameOrderDtos[index] = GameOrderDto.builder()
-                        .memberId(inGame.getMemberId())
-                        .nickname(inGame.getNickname())
-                        .image(inGame.getImage()).build();
-                });
-        return new GameOrderResponse(findInGame.getTeam(), gameOrderDtos);
+        inGame.choiceOrder(inGamePlayer, orderNumber);
+        redisRepository.saveInGame(gameId, inGame);
+        redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
+
+        return new GameOrderResponse(inGamePlayer.getTeam(), teamInfoData.getOrderList());
     }
 
-    private boolean alreadySelectedOrderNumber(int orderNumber, Team team, List<InGame> inGamePlayerList) {
-        return inGamePlayerList.stream()
-                .filter(inGame -> inGame.getTeam().equals(team) && inGame.getOrder() == orderNumber)
-                .collect(Collectors.toList()).size() > 0;
+    @Transactional
+    public boolean completeSelect(long gameId, long memberId, Team team) {
+        InGame inGame = getInGame(gameId);
+        InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
+
+        checkLeaderRequest(inGame, inGamePlayer);
+        checkOrderSelect(inGame.getTeamInfoData(inGamePlayer.getTeam()));
+
+        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
+        Game game = getGame(gameId);
+        GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
+        checkWeaponSelect(teamPlayerList, weaponsData, game);
+
+        inGame.completeSelect(team);
+        redisRepository.saveInGame(gameId, inGame);
+        redisRepository.deleteGameWeaponData(gameId, team);
+
+        return inGame.isAllSelected();
     }
 
-    private InGame getFindInGameInPlayerList(long memberId, List<InGame> inGamePlayerList) {
-        return inGamePlayerList.stream().filter(inGame -> inGame.getMemberId().equals(memberId))
-                .findFirst().orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+    private GameLeaderDto getLeaders(Game game) {
+        return GameLeaderDto.builder()
+                .teamA(new TeamLeaderDto(getTeamLeaderId(game, Team.A)))
+                .teamB(new TeamLeaderDto(getTeamLeaderId(game, Team.B))).build();
     }
 
-    private void saveWeaponsData(long gameId, Team team, GameWeaponData weaponsData) {
-        weaponRedisTemplate.opsForValue().set(weaponKeyGen(gameId, team), weaponsData);
-    }
-
-    private void saveInGame(long gameId, Long memberId, InGame inGame) {
-        gameRedisTemplate.opsForHash().put(gameKeyGen(gameId), inGameKeyGen(memberId), inGame);
-    }
-
-    private InGame getInGameData(long gameId, Long memberId) {
-        Object inGame = gameRedisTemplate.opsForHash().get(gameKeyGen(gameId), inGameKeyGen(memberId));
-        if (inGame == null) {
-            throw new CustomException(INGAME_IS_NOT_EXIST);
+    private void checkWeaponSelect(List<InGamePlayer> teamPlayerList, GameWeaponData weaponsData, Game game) {
+        if (weaponsData.isAllSelected()) {
+            throw new CustomException(CAN_NOT_COMPLETE_WEAPON_SELECT);
         }
-        return (InGame) inGame;
+        GameWeaponData checkWeaponData = GameWeaponData.toWeaponData(game);
+        teamPlayerList.forEach(inGamePlayer -> {
+            Weapon leftWeapon = inGamePlayer.getLeftWeapon();
+            Weapon rightWeapon = inGamePlayer.getRightWeapon();
+            if (leftWeapon == null || rightWeapon == null) {
+                throw new CustomException(CAN_NOT_COMPLETE_WEAPON_SELECT);
+            }
+            checkWeaponData.choiceWeapon(leftWeapon);
+            checkWeaponData.choiceWeapon(rightWeapon);
+        });
+        if (checkWeaponData.isAllSelected()) {
+            throw new CustomException(CAN_NOT_COMPLETE_WEAPON_SELECT);
+        }
     }
 
-    private Map<String, PlayerStateDto> getTeamPlayersInfo(List<InGame> playerDataList, Team team) {
-        Collections.sort(playerDataList, (o1, o2) -> o1.getOrder() - o2.getOrder());
-        List<PlayerStateDto> playerStateDtoList = playerDataList.stream()
-                .filter(inGame -> team.equals(inGame.getTeam()))
-                .map(inGame -> PlayerStateDto.builder()
-                        .memberId(inGame.getMemberId())
-                        .nickname(inGame.getNickname())
-                        .leftCount(inGame.getLeftCount())
-                        .rightCount(inGame.getRightCount())
-                        .weapons(new ArrayList<>(Arrays.asList(inGame.getLeftWeapon().name(), inGame.getRightWeapon().name())))
+    private void checkOrderSelect(TeamInfoData teamInfoData) {
+        //다 선택됐는지, 겹치는 멤버 Id는 없는지
+        Set<Long> idSet = new HashSet<>();
+        for (GameOrderDto gameOrderDto : teamInfoData.getOrderList()) {
+            if (gameOrderDto == null || !idSet.add(gameOrderDto.getMemberId())) {
+                throw new CustomException(CAN_NOT_COMPLETE_ORDER_SELECT);
+            }
+        }
+    }
+
+    private void checkLeaderRequest(InGame inGame, InGamePlayer inGamePlayer) {
+        TeamInfoData teamInfoData = inGame.getTeamInfoData(inGamePlayer.getTeam());
+        if (teamInfoData.getLeaderId() != inGamePlayer.getMemberId()) {
+            throw new CustomException(GamePlayingErrorCode.CAN_COMPLETE_BY_LEADER);
+        }
+    }
+
+    private InGame getInGame(long gameId) {
+        return redisRepository.getInGame(gameId)
+                .orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+    }
+
+    private boolean alreadySelectedOrderNumber(int orderNumber, TeamInfoData teamInfoData) {
+        return teamInfoData.getOrderList()[orderNumber - 1] != null;
+    }
+
+    private InGamePlayer getInGamePlayer(long gameId, Long memberId) {
+        return redisRepository.getInGamePlayer(gameId, memberId)
+                .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+    }
+
+    private Map<String, PlayerStateDto> getTeamPlayersInfo(long gameId, Team team) {
+        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
+        teamPlayerList.sort(Comparator.comparingInt(InGamePlayer::getOrder));
+
+        List<PlayerStateDto> playerStateDtoList = teamPlayerList.stream()
+                .map(inGamePlayer -> PlayerStateDto.builder()
+                        .memberId(inGamePlayer.getMemberId())
+                        .nickname(inGamePlayer.getNickname())
+                        .leftCount(inGamePlayer.getLeftCount())
+                        .rightCount(inGamePlayer.getRightCount())
+                        .weapons(new ArrayList<>(Arrays.asList(inGamePlayer.getLeftWeapon().name(), inGamePlayer.getRightWeapon().name())))
                         .build())
                 .collect(Collectors.toList());
 
@@ -182,7 +233,7 @@ public class GamePlayingService {
         return teamMap;
     }
 
-    private GameLeaderDto choiceLeader(List<Player> players) {
+    private void choiceLeader(List<Player> players) {
         List<Player> teamA = getTeamPlayerList(players, Team.A);
         List<Player> teamB = getTeamPlayerList(players, Team.B);
 
@@ -194,43 +245,59 @@ public class GamePlayingService {
         Player teamBLeader = teamB.get(teamBLeaderIndex);
         teamALeader.becomeLeader();
         teamBLeader.becomeLeader();
-
-        return GameLeaderDto.builder()
-                .teamA(new TeamLeaderDto(teamALeader.getMember().getId()))
-                .teamB(new TeamLeaderDto(teamBLeader.getMember().getId()))
-                .build();
     }
 
-    private void makeInGameData(long gameId, List<Player> players) {
-        Map<String, InGame> inGameMap = new HashMap<>();
-
-        players.stream().forEach(player -> {
-            String inGameKey = inGameKeyGen(player.getMember().getId());
-
-            inGameMap.put(inGameKey, InGame.builder()
-                    .memberId(player.getMember().getId())
-                    .nickname(player.getMember().getNickname())
-                    .image(player.getMember().getImage())
-                    .team(player.getTeam())
-                    .isLeader(player.isLeader())
-                    .leftCount(3)
-                    .rightCount(3).build());
-        });
-        String gameKey = gameKeyGen(gameId);
-        gameRedisTemplate.opsForHash().putAll(gameKey, inGameMap);
+    private void makeInGamePlayerData(long gameId, List<Player> players) {
+        List<InGamePlayer> inGamePlayers = players.stream()
+                .map(player -> InGamePlayer.builder()
+                        .memberId(player.getMember().getId())
+                        .nickname(player.getMember().getNickname())
+                        .image(player.getMember().getImage())
+                        .team(player.getTeam())
+                        .isLeader(player.isLeader())
+                        .leftCount(3)
+                        .rightCount(3).build()).collect(Collectors.toList());
+        redisRepository.saveInGamePlayerAll(gameId, inGamePlayers);
     }
 
-    private GameWeaponData makeWeaponsData(Game game) {
-        GameWeaponData gameWeaponDataA = GameWeaponData.toDto(game);
-        GameWeaponData gameWeaponDataB = GameWeaponData.toDto(game);
+    private void makeInGameData(long gameId, Game game) {
+        Team firstAttackTeam = (int) (Math.random() * 10) % 2 == 0 ? Team.A : Team.B;
 
-        weaponRedisTemplate.opsForValue().set(weaponKeyGen(game.getId(), Team.A), gameWeaponDataA);
-        weaponRedisTemplate.opsForValue().set(weaponKeyGen(game.getId(), Team.B), gameWeaponDataB);
-        return gameWeaponDataA;
+        TeamInfoData teamAInfo = makeTeamInfoData(game, getTeamLeaderId(game, Team.A));
+        TeamInfoData teamBInfo = makeTeamInfoData(game, getTeamLeaderId(game, Team.B));
+
+        redisRepository.saveInGame(gameId, InGame.builder()
+                .currentAttackTeam(firstAttackTeam)
+                .teamAInfo(teamAInfo)
+                .teamBInfo(teamBInfo).build());
+    }
+
+    private Long getTeamLeaderId(Game game, Team team) {
+        return game.getTeamLeader(team)
+                .orElseThrow(() -> new CustomException(ORDER_NUMBER_IS_INVALID)).getMember().getId();
+    }
+
+    private TeamInfoData makeTeamInfoData(Game game, long leaderId) {
+        int peopleNum = game.getPlayers().size() / 2;
+
+        return TeamInfoData.builder()
+                .currentAttackIndex(0)
+                .peopleNum(peopleNum)
+                .orderList(new GameOrderDto[peopleNum])
+                .leaderId(leaderId).build();
+    }
+
+    private void makeWeaponsData(Game game) {
+        GameWeaponData gameWeaponDataA = GameWeaponData.toWeaponData(game);
+        GameWeaponData gameWeaponDataB = GameWeaponData.toWeaponData(game);
+
+        redisRepository.saveGameWeaponData(game.getId(), Team.A, gameWeaponDataA);
+        redisRepository.saveGameWeaponData(game.getId(), Team.B, gameWeaponDataB);
     }
 
     private GameWeaponData getWeaponsData(long gameId, Team team) {
-        return weaponRedisTemplate.opsForValue().get(weaponKeyGen(gameId, team));
+        return redisRepository.getGameWeaponData(gameId, team)
+                .orElseThrow(() -> new CustomException(WEAPON_DATA_IS_NOT_EXIST));
     }
 
     private List<Player> getTeamPlayerList(List<Player> players, Team team) {
@@ -238,32 +305,14 @@ public class GamePlayingService {
                 .collect(Collectors.toList());
     }
 
-    public List<InGame> getInGamePlayerList(String gameKey){
-        return getPlayerSize(gameKey) == 0
-                ? new ArrayList<>() : gameRedisTemplate.opsForHash().entries(gameKey)
-                    .entrySet().stream().map(Map.Entry::getValue)
-                    .map(value -> (InGame) value).collect(Collectors.toList());
-    }
-
-    private Long getPlayerSize(String gameKey) {
-        return gameRedisTemplate.opsForHash().size(gameKey);
-    }
-
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
                 .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
-    private String inGameKeyGen(long memberId) {
-        return "member:" + memberId;
+    @Transactional
+    public GamePreAttackResponse getPreAttack(long gameId) {
+        InGame inGame = getInGame(gameId);
+        return new GamePreAttackResponse(inGame.getCurrentAttackTeam());
     }
-
-    private String gameKeyGen(long gameId) {
-        return "game:" + gameId;
-    }
-
-    private String weaponKeyGen(long gameId, Team team) {
-        return "weapon" + team.name() + ":" + gameId;
-    }
-
 }

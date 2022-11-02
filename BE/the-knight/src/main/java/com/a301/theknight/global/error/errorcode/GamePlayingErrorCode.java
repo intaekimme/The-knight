@@ -8,10 +8,16 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum GamePlayingErrorCode implements ErrorCode {
     INGAME_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Ingame data is not exist."),
+    INGAME_PLAYER_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Player data is not exist."),
+    WEAPON_DATA_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Weapon data is not exist."),
     NOT_ENOUGH_WEAPON(HttpStatus.BAD_REQUEST, "Weapon is not enough"),
     SELECT_WEAPON_IS_FULL(HttpStatus.BAD_REQUEST, "All selected weapons are full."),
     ORDER_NUMBER_IS_INVALID(HttpStatus.BAD_REQUEST, "Order number value is invalid."),
     ALREADY_SELECTED_ORDER_NUMBER(HttpStatus.BAD_REQUEST, "Already selected order number."),
+    CAN_COMPLETE_BY_LEADER(HttpStatus.FORBIDDEN, "Only leader can complete select."),
+    CAN_NOT_COMPLETE_ORDER_SELECT(HttpStatus.CONFLICT, "Can not complete order select."),
+    CAN_NOT_COMPLETE_WEAPON_SELECT(HttpStatus.CONFLICT, "Can not complete weapon select."),
+    LEADER_IS_NOT_SELECTED(HttpStatus.BAD_REQUEST, "Team leader is not selected."),
     ;
     private final HttpStatus httpStatus;
     private final String message;

@@ -7,8 +7,13 @@ const WEBSOCKET = '/pub';
 const EXAMPLE = '/example';
 const GOOGLE_LOGIN = '/oauth2/authorization/google';
 
+const GAME = '/games';
+const MEMBER_ALL = '/members';
+
 const api = {
   exampleFunction: () => BASE_URL + EXAMPLE + `${0}`,
   login: () => BASE_URL + GOOGLE_LOGIN,
+  gameRoomInfo: (gameId) => BASE_URL + API + GAME + `/${gameId}`,
+  gameMemberAll: (gameId) => BASE_URL + WEBSOCKET + GAME + `/${gameId}` + MEMBER_ALL,
 }
 export default api;
