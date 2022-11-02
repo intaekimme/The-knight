@@ -28,16 +28,23 @@ public class GamePlayingApi {
     private final SimpMessagingTemplate template;
     private final GamePlayingService gamePlayingService;
 
-    @MessageMapping(value = "/games/{gameId}/start")
+    @MessageMapping(value = "/games/{gameId}/prepare")
     public void prepareGameStart(@DestinationVariable long gameId, GameStartRequest gameStartRequest) {
         if (!gamePlayingService.canStartGame(gameId, gameStartRequest.getSetGame())) {
             return;
         }
-        GamePrepareDto gamePrepareDto = gamePlayingService.prepareToStartGame(gameId);
+        gamePlayingService.prepareToStartGame(gameId);
+    }
+
+    @MessageMapping(value = "/games/{gameId}/start")
+    public void gameStart(@DestinationVariable long gameId) {
+        GamePrepareDto gamePrepareDto = gamePlayingService.gameStart(gameId);
+        if (gamePrepareDto == null) {
+            return;
+        }
 
         sendWeaponResponse(gameId, Team.A, gamePrepareDto.getGameWeaponData());
         sendWeaponResponse(gameId, Team.B, gamePrepareDto.getGameWeaponData());
-
         template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/a/leader"), gamePrepareDto.getGameLeaderDto().getTeamA());
         template.convertAndSend(makeDestinationUri(SEND_PREFIX, gameId,"/b/leader"), gamePrepareDto.getGameLeaderDto().getTeamB());
         getGamePlayerData(gameId);
@@ -101,9 +108,6 @@ public class GamePlayingApi {
     }
 
     private String makeDestinationUri(String prefix, long gameId, String postfix) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(prefix).append(gameId).append(postfix);
-
-        return sb.toString();
+        return prefix + gameId + postfix;
     }
 }
