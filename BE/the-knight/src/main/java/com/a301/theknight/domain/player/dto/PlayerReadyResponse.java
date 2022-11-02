@@ -8,5 +8,4 @@ import lombok.Data;
 public class PlayerReadyResponse {
     private long playerId;
     private boolean readyStatus;
-    private boolean startFlag;
 }

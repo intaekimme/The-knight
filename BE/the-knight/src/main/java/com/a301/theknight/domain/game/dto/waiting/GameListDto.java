@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.game.dto;
+package com.a301.theknight.domain.game.dto.waiting;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.game.dto.GameModifyRequest;
+import com.a301.theknight.domain.game.dto.waiting.request.GameModifyRequest;
 import com.a301.theknight.domain.game.service.GameWaitingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

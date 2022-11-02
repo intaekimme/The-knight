@@ -17,6 +17,7 @@ public enum GamePlayingErrorCode implements ErrorCode {
     CAN_COMPLETE_BY_LEADER(HttpStatus.FORBIDDEN, "Only leader can complete select."),
     CAN_NOT_COMPLETE_ORDER_SELECT(HttpStatus.CONFLICT, "Can not complete order select."),
     CAN_NOT_COMPLETE_WEAPON_SELECT(HttpStatus.CONFLICT, "Can not complete weapon select."),
+    LEADER_IS_NOT_SELECTED(HttpStatus.BAD_REQUEST, "Team leader is not selected."),
     ;
     private final HttpStatus httpStatus;
     private final String message;

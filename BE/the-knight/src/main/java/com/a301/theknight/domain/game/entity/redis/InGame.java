@@ -13,6 +13,7 @@ public class InGame implements Serializable {
     private Team currentAttackTeam;
     private TeamInfoData teamAInfo;
     private TeamInfoData teamBInfo;
+    private int count;
 
     public void choiceOrder(InGamePlayer inGamePlayer, int orderNumber) {
         inGamePlayer.saveOrder(orderNumber);
