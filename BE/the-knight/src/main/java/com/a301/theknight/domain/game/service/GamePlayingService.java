@@ -79,12 +79,6 @@ public class GamePlayingService {
                 .gameLeaderDto(gameLeaderDto).build();
     }
 
-    private GameLeaderDto getLeaders(Game game) {
-        return GameLeaderDto.builder()
-                .teamA(new TeamLeaderDto(getTeamLeaderId(game, Team.A)))
-                .teamB(new TeamLeaderDto(getTeamLeaderId(game, Team.B))).build();
-    }
-
     @Transactional
     public GameWeaponResponse choiceWeapon(long gameId, long memberId, GameWeaponChoiceRequest gameWeaponChoiceRequest) {
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
@@ -176,6 +170,12 @@ public class GamePlayingService {
             return true;
         }
         return false;
+    }
+
+    private GameLeaderDto getLeaders(Game game) {
+        return GameLeaderDto.builder()
+                .teamA(new TeamLeaderDto(getTeamLeaderId(game, Team.A)))
+                .teamB(new TeamLeaderDto(getTeamLeaderId(game, Team.B))).build();
     }
 
     private void checkWeaponSelect(List<InGamePlayer> teamPlayerList, GameWeaponData weaponsData, Game game) {

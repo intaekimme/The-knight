@@ -18,7 +18,7 @@ public class InGame implements Serializable {
     public void choiceOrder(InGamePlayer inGamePlayer, int orderNumber) {
         inGamePlayer.saveOrder(orderNumber);
 
-        TeamInfoData teamInfoData = getTeamInfoData(inGamePlayer.getTeam());
+        TeamInfoData teamInfoData = inGamePlayer.getTeam().equals(Team.A) ? teamAInfo : teamBInfo;
         teamInfoData.getOrderList()[orderNumber - 1] = GameOrderDto.builder()
                 .memberId(inGamePlayer.getMemberId())
                 .nickname(inGamePlayer.getNickname())
@@ -27,6 +27,14 @@ public class InGame implements Serializable {
 
     public int getTeamPlayerSize() {
         return teamAInfo.getPeopleNum();
+    }
+
+    public void addRequestCount() {
+        count++;
+    }
+
+    public boolean allPlayerCanStart() {
+        return count >= teamBInfo.getPeopleNum() * 2;
     }
 
     public TeamInfoData getTeamInfoData(Team team) {

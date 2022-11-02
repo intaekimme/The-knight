@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.game.dto.playing.*;
+import com.a301.theknight.domain.game.dto.playing.GameTimerDto;
 import com.a301.theknight.domain.game.dto.playing.request.*;
 import com.a301.theknight.domain.game.dto.playing.response.*;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
