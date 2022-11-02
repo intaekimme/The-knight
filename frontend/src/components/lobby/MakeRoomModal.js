@@ -6,15 +6,19 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ItemBox from "../../commons/ItemBox";
 
-export default function GameDescModal(props) {
+const createRoom = () => {
+  console.log("hi room");
+}
+
+export default function MakeRoomModal(props) {
   const modalStyle = {
 		position: 'absolute',
 		top: '50%',
 		left: '50%',
 		transform: 'translate(-50%, -50%)',
-		width: '50vw',
+		width: 1000,
 		bgcolor: 'background.paper',
-		border: '1px solid #000',
+		border: '2px solid #000',
 		boxShadow: 24,
 		p: 4,
 	};
@@ -112,8 +116,11 @@ export default function GameDescModal(props) {
 								</Grid>
 							</Grid>
 						))}
-					</Grid>
+          </Grid>
 				</Grid>
+          <Grid sx={{display: 'flex', justifyContent: 'center' }}>
+            <Button variant="outlined" onClick={createRoom}>방 만들기</Button>
+          </Grid>
 			</Box>
 		</Modal>
 	);
