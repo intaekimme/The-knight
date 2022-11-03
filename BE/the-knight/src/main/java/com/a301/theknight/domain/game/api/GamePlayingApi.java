@@ -46,11 +46,11 @@ public class GamePlayingApi {
         timer(gameId, new GameTimerDto(1, 100));
     }
 
-    @MessageMapping(value = "/games/{gameId}/members")
+    @MessageMapping(value = "/games/{gameId}/players")
     public void getGamePlayerData(@DestinationVariable long gameId) {
         GameMembersInfoDto membersInfo = gamePlayingService.getMembersInfo(gameId);
 
-        template.convertAndSend(makeDestinationUri(gameId, "/members"), membersInfo);
+        template.convertAndSend(makeDestinationUri(gameId, "/players"), membersInfo);
     }
 
     @MessageMapping(value="/games/{gameId}/timer")

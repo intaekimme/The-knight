@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.playing.PlayerStateDto;
+import com.a301.theknight.domain.game.dto.playing.PlayerDataDto;
 import com.a301.theknight.domain.game.dto.playing.TeamLeaderDto;
 import com.a301.theknight.domain.game.dto.playing.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.playing.request.GameWeaponChoiceRequest;
@@ -42,13 +42,12 @@ public class GamePlayingService {
 
     @Transactional
     public GameMembersInfoDto getMembersInfo(long gameId) {
-        Map<String, PlayerStateDto> teamA = getTeamPlayersInfo(gameId, Team.A);
-        Map<String, PlayerStateDto> teamB = getTeamPlayersInfo(gameId, Team.B);
+        List<PlayerDataDto> playerDataDtoList = getPlayersInfo(gameId);
 
         return GameMembersInfoDto.builder()
-                .peopleNum(teamA.size())
-                .teamA(teamA)
-                .teamB(teamB).build();
+                .maxUser(playerDataDtoList.size())
+                .players(playerDataDtoList)
+                .build();
     }
 
     @Transactional
@@ -211,26 +210,19 @@ public class GamePlayingService {
                 .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
-    private Map<String, PlayerStateDto> getTeamPlayersInfo(long gameId, Team team) {
-        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
-        teamPlayerList.sort(Comparator.comparingInt(InGamePlayer::getOrder));
+    private List<PlayerDataDto> getPlayersInfo(long gameId) {
+        List<InGamePlayer> playerList = redisRepository.getInGamePlayerList(gameId);
 
-        List<PlayerStateDto> playerStateDtoList = teamPlayerList.stream()
-                .map(inGamePlayer -> PlayerStateDto.builder()
+        return playerList.stream()
+                .map(inGamePlayer -> PlayerDataDto.builder()
                         .memberId(inGamePlayer.getMemberId())
                         .nickname(inGamePlayer.getNickname())
                         .leftCount(inGamePlayer.getLeftCount())
                         .rightCount(inGamePlayer.getRightCount())
+                        .order(inGamePlayer.getOrder())
                         .weapons(new ArrayList<>(Arrays.asList(inGamePlayer.getLeftWeapon().name(), inGamePlayer.getRightWeapon().name())))
                         .build())
                 .collect(Collectors.toList());
-
-        Map<String, PlayerStateDto> teamMap = new HashMap<>();
-        int sequenceNum = 1;
-        for (PlayerStateDto playerStateDto : playerStateDtoList) {
-            teamMap.put("player" + sequenceNum++, playerStateDto);
-        }
-        return teamMap;
     }
 
     private void choiceLeader(List<Player> players) {
