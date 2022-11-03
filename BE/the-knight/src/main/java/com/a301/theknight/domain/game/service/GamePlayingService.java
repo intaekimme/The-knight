@@ -6,6 +6,7 @@ import com.a301.theknight.domain.game.dto.playing.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.playing.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.playing.response.*;
 import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.entity.redis.InGame;
@@ -70,6 +71,7 @@ public class GamePlayingService {
         }
 
         Game game = getGame(gameId);
+        game.changeStatus(GameStatus.PREPARE);
         GameLeaderDto gameLeaderDto = getLeaders(game);
         GameWeaponData gameWeaponData = getWeaponsData(gameId, Team.A);
 
@@ -144,6 +146,7 @@ public class GamePlayingService {
 
         List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
         Game game = getGame(gameId);
+        game.changeStatus(GameStatus.PLAYING);
         GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
