@@ -121,7 +121,7 @@ export default function RankTable() {
               .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
               .map((row, i) => (
                 <TableRow key={row.rank}>
-                  <TableCell align="center">{page * rowsPerPage + i + 1}</TableCell>
+                  <TableCell align="center">{row.rank}</TableCell>
                   <TableCell align="center">{row.name}</TableCell>
                   <TableCell align="center">{row.score}</TableCell>
                 </TableRow>
