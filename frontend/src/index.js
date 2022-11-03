@@ -20,6 +20,7 @@ import GoogleLogin from './commons/login/GoogleLogin';
 import LoginToken from './commons/login/LoginToken';
 import Chat from './commons/chatting/Chat';
 import Chatting from './commons/chatting/Chatting';
+import TestMakeRoom from './components/lobby/TestMakeRoom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const theme = createTheme({
@@ -55,6 +56,7 @@ root.render(
               <Route path="room" element={<Room />} />
               <Route path="chat" element={<Chat />} />
               <Route path="chatting" element={<Chatting />} />
+              <Route path="makeroom" element={<TestMakeRoom />} />
             </Route>
           </Routes>
         </ThemeProvider>

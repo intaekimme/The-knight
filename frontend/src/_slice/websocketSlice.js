@@ -5,8 +5,8 @@ import SockJS from "sockjs-client";
 // import axios from 'axios';
 import api from '../api/api';
 
-const stompClientInit = null;
-// const stompClientInit = new Client();
+// const stompClientInit = null;
+const stompClientInit = over(new WebSocket("ws://localhost:3000"));
 // 드래그중인 값
 export const websocketSlice = createSlice({
   name: 'websocketValue',

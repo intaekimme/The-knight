@@ -8,7 +8,7 @@ import EnterRoom from './EnterRoom';
 // const MySwal = withReactContent(Swal);
 
 export default function MakeRoom(roomInfo){
-  return axios.post(`${api.makeRoom()}`, JSON.stringify(roomInfo), {
+  return axios.post(`${api.makeRoom()}`, roomInfo, {
     headers: {Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}
   }).then((response) => {
     console.log("방 생성 성공", response);
@@ -25,7 +25,7 @@ export default function MakeRoom(roomInfo){
     //   text: '다시 시도해주세요',
     //   confirmButtonColor: '#66cc66',
     // });
-    console.log(error);
+    console.log(roomInfo);
     console.log("방 생성 실패", error);
     return -1;
   });
