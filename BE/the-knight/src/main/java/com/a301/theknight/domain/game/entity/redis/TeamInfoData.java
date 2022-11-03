@@ -10,7 +10,6 @@ import java.io.Serializable;
 @Builder
 public class TeamInfoData implements Serializable {
     private int currentAttackIndex;
-    private int peopleNum;
     private GameOrderDto[] orderList;
     private long leaderId;
     private boolean selected;

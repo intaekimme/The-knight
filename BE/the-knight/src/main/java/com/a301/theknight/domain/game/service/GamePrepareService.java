@@ -114,7 +114,7 @@ public class GamePrepareService {
     @Transactional
     public GameOrderResponse choiceOrder(long gameId, long memberId, GameOrderRequest orderRequest) {
         InGame inGame = getInGame(gameId);
-        if (orderRequest.validate(inGame.getTeamPlayerSize())) {
+        if (orderRequest.validate(inGame.getMaxMemberNum())) {
             throw new CustomException(ORDER_NUMBER_IS_INVALID);
         }
         int orderNumber = orderRequest.getOrderNumber();
@@ -269,6 +269,7 @@ public class GamePrepareService {
 
         redisRepository.saveInGame(gameId, InGame.builder()
                 .currentAttackTeam(firstAttackTeam)
+                .maxMemberNum(game.getCapacity())
                 .teamAInfo(teamAInfo)
                 .teamBInfo(teamBInfo).build());
     }
@@ -283,7 +284,6 @@ public class GamePrepareService {
 
         return TeamInfoData.builder()
                 .currentAttackIndex(0)
-                .peopleNum(peopleNum)
                 .orderList(new GameOrderDto[peopleNum])
                 .leaderId(leaderId).build();
     }
