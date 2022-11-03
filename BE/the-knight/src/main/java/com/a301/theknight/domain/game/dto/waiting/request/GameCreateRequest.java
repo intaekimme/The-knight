@@ -2,10 +2,13 @@ package com.a301.theknight.domain.game.dto.waiting.request;
 
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GameCreateRequest {
     private String title;
     private int capacity;
