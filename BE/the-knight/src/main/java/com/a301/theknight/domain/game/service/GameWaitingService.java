@@ -54,7 +54,7 @@ public class GameWaitingService {
             if(isOwner(findGame, memberId)){
                 findGame.ModifyGame(
                         gameModifyRequest.getTitle(),
-                        gameModifyRequest.getCapacity(),
+                        gameModifyRequest.getMaxUser(),
                         gameModifyRequest.getSword(),
                         gameModifyRequest.getTwin(),
                         gameModifyRequest.getShield(),
