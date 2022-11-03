@@ -1,9 +1,9 @@
 import PersonIcon from "@mui/icons-material/Person";
 
 // 해당 Player가 본인이면 녹색아이콘
-// 추후에 isMe 변수 대신 로그인한 유저와의 비교로 변경
+// 추후에 1 대신 로그인한 유저의 memberId로 변경
 function Player({ player }) {
-  if (player.isMine) {
+  if (player.memberId === 1) {
     return (
       <div>
         <PersonIcon
