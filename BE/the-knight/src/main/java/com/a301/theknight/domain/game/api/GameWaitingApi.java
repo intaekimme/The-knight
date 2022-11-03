@@ -51,13 +51,6 @@ public class GameWaitingApi {
         template.convertAndSend(destination);
     }
 
-    @MessageMapping(value="/games/{gameId}/doubt")
-    public void doubt(@DestinationVariable long gameId){
-        String destination = makeDestinationString(gameId, "/doubt");
-
-        template.convertAndSend(destination);
-    }
-
     @MessageMapping(value="/games/{gameId}/turn")
     public void turn(@DestinationVariable long gameId){
         String destination = makeDestinationString(gameId, "/turn");
