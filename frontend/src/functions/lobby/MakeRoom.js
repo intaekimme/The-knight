@@ -14,8 +14,7 @@ export default function MakeRoom(roomInfo){
     console.log("방 생성 성공", response);
     EnterRoom(response.gameId);
     return response.gameId;
-  })
-  .catch((error) => {
+  }).catch((error) => {
     // if (error.response.status === 401) {
     //   const refresh = apiClient.refreshAccessToken();
     // }

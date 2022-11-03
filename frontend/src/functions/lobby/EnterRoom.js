@@ -6,6 +6,13 @@ import api from '../../api/api';
 import {setRoom, setUsers} from '../../_slice/roomSlice';
 
 export default function EnterRoom(gameId){
+  // config/WebsocketConfig.java registerStompEndpoints 를 websocket/pub/sub로 설정했기 때문에 마지막에 websocket/pub/sub 있어야함
+  console.log(window.localStorage.getItem("loginToken"));
+  let Sock = new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`);
+  stompClient = over(Sock);
+  stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, onConnected, (error) => {
+    console.log(error);
+  });
   // const [members, setMembers] = useState({
   //   sender: "",
   //   receiver: "ALL", // ALL / A / B
@@ -21,13 +28,7 @@ export default function EnterRoom(gameId){
   ]);
 
   const connect = () => {
-    // config/WebsocketConfig.java registerStompEndpoints 를 websocket/pub/sub로 설정했기 때문에 마지막에 websocket/pub/sub 있어야함
-    console.log(window.localStorage.getItem("loginToken"));
-    let Sock = new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`);
-    stompClient = over(Sock);
-    stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, onConnected, (error) => {
-      console.log(error);
-    });
+    
   };
 
   const onConnected = () => {
