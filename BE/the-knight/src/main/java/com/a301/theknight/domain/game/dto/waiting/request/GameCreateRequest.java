@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 public class GameCreateRequest {
     private String title;
     private int maxUser;
+
+    private int currentUser;
     private int sword;
     private int twin;
     private int shield;

@@ -1,4 +1,5 @@
 import React from "react";
+import MakeRoomModal from "./MakeRoomModal"
 
 import { Button, Grid } from "@mui/material";
 import Paper from '@mui/material/Paper';
@@ -7,6 +8,11 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
 export default function SearchBar() {
+  // 방설정 모달
+	const [open, setOpen] = React.useState(false);
+	const roomSettingOpen = () => setOpen(true);
+  const roomSettingClose = () => setOpen(false);
+  
   return (
     <Grid container sx={{ pt: 5}} spacing={3}>
       <Grid xs={3} spacing={3}></Grid>
@@ -26,7 +32,8 @@ export default function SearchBar() {
         </Paper>
       </Grid>
       <Grid xs={3} spacing={3} sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', justifyContent:'end' }}>
-        <Button variant="outlined">방 만들기</Button>
+        <Button variant="outlined" onClick={roomSettingOpen}>방 만들기</Button>
+        <MakeRoomModal open={open} onClose={ roomSettingClose }></MakeRoomModal>
       </Grid>
     </Grid>
   )
