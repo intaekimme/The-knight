@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Getter
 @Builder
 public class InGame implements Serializable {
+    private TurnStatus status;
     private Team currentAttackTeam;
     private TeamInfoData teamAInfo;
     private TeamInfoData teamBInfo;
