@@ -1,11 +1,12 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.playing.PlayerStateDto;
-import com.a301.theknight.domain.game.dto.playing.TeamLeaderDto;
-import com.a301.theknight.domain.game.dto.playing.request.GameOrderRequest;
-import com.a301.theknight.domain.game.dto.playing.request.GameWeaponChoiceRequest;
-import com.a301.theknight.domain.game.dto.playing.response.*;
+import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
+import com.a301.theknight.domain.game.dto.prepare.TeamLeaderDto;
+import com.a301.theknight.domain.game.dto.prepare.request.GameOrderRequest;
+import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponChoiceRequest;
+import com.a301.theknight.domain.game.dto.prepare.response.*;
 import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.entity.redis.InGame;
@@ -29,7 +30,7 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
-public class GamePlayingService {
+public class GamePrepareService {
 
     private final GameRepository gameRepository;
     private final GameRedisRepository redisRepository;
@@ -41,14 +42,13 @@ public class GamePlayingService {
     }
 
     @Transactional
-    public GameMembersInfoDto getMembersInfo(long gameId) {
-        Map<String, PlayerStateDto> teamA = getTeamPlayersInfo(gameId, Team.A);
-        Map<String, PlayerStateDto> teamB = getTeamPlayersInfo(gameId, Team.B);
+    public GamePlayersInfoDto getPlayersInfo(long gameId) {
+        List<PlayerDataDto> playerDataDtoList = getPlayersDataList(gameId);
 
-        return GameMembersInfoDto.builder()
-                .peopleNum(teamA.size())
-                .teamA(teamA)
-                .teamB(teamB).build();
+        return GamePlayersInfoDto.builder()
+                .maxUser(playerDataDtoList.size())
+                .players(playerDataDtoList)
+                .build();
     }
 
     @Transactional
@@ -71,6 +71,7 @@ public class GamePlayingService {
         }
 
         Game game = getGame(gameId);
+        game.changeStatus(GameStatus.PREPARE);
         GameLeaderDto gameLeaderDto = getLeaders(game);
         GameWeaponData gameWeaponData = getWeaponsData(gameId, Team.A);
 
@@ -113,7 +114,7 @@ public class GamePlayingService {
     @Transactional
     public GameOrderResponse choiceOrder(long gameId, long memberId, GameOrderRequest orderRequest) {
         InGame inGame = getInGame(gameId);
-        if (orderRequest.validate(inGame.getTeamPlayerSize())) {
+        if (orderRequest.validate(inGame.getMaxMemberNum())) {
             throw new CustomException(ORDER_NUMBER_IS_INVALID);
         }
         int orderNumber = orderRequest.getOrderNumber();
@@ -145,6 +146,7 @@ public class GamePlayingService {
 
         List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
         Game game = getGame(gameId);
+        game.changeStatus(GameStatus.PLAYING);
         GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
@@ -153,6 +155,12 @@ public class GamePlayingService {
         redisRepository.deleteGameWeaponData(gameId, team);
 
         return inGame.isAllSelected();
+    }
+
+    @Transactional
+    public GamePreAttackResponse getPreAttack(long gameId) {
+        InGame inGame = getInGame(gameId);
+        return new GamePreAttackResponse(inGame.getCurrentAttackTeam());
     }
 
     private GameLeaderDto getLeaders(Game game) {
@@ -211,26 +219,19 @@ public class GamePlayingService {
                 .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
-    private Map<String, PlayerStateDto> getTeamPlayersInfo(long gameId, Team team) {
-        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
-        teamPlayerList.sort(Comparator.comparingInt(InGamePlayer::getOrder));
+    private List<PlayerDataDto> getPlayersDataList(long gameId) {
+        List<InGamePlayer> playerList = redisRepository.getInGamePlayerList(gameId);
 
-        List<PlayerStateDto> playerStateDtoList = teamPlayerList.stream()
-                .map(inGamePlayer -> PlayerStateDto.builder()
+        return playerList.stream()
+                .map(inGamePlayer -> PlayerDataDto.builder()
                         .memberId(inGamePlayer.getMemberId())
                         .nickname(inGamePlayer.getNickname())
                         .leftCount(inGamePlayer.getLeftCount())
                         .rightCount(inGamePlayer.getRightCount())
+                        .order(inGamePlayer.getOrder())
                         .weapons(new ArrayList<>(Arrays.asList(inGamePlayer.getLeftWeapon().name(), inGamePlayer.getRightWeapon().name())))
                         .build())
                 .collect(Collectors.toList());
-
-        Map<String, PlayerStateDto> teamMap = new HashMap<>();
-        int sequenceNum = 1;
-        for (PlayerStateDto playerStateDto : playerStateDtoList) {
-            teamMap.put("player" + sequenceNum++, playerStateDto);
-        }
-        return teamMap;
     }
 
     private void choiceLeader(List<Player> players) {
@@ -268,6 +269,7 @@ public class GamePlayingService {
 
         redisRepository.saveInGame(gameId, InGame.builder()
                 .currentAttackTeam(firstAttackTeam)
+                .maxMemberNum(game.getCapacity())
                 .teamAInfo(teamAInfo)
                 .teamBInfo(teamBInfo).build());
     }
@@ -282,7 +284,6 @@ public class GamePlayingService {
 
         return TeamInfoData.builder()
                 .currentAttackIndex(0)
-                .peopleNum(peopleNum)
                 .orderList(new GameOrderDto[peopleNum])
                 .leaderId(leaderId).build();
     }
@@ -310,9 +311,4 @@ public class GamePlayingService {
                 .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
-    @Transactional
-    public GamePreAttackResponse getPreAttack(long gameId) {
-        InGame inGame = getInGame(gameId);
-        return new GamePreAttackResponse(inGame.getCurrentAttackTeam());
-    }
 }
