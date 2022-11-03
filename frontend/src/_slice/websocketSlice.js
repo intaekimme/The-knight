@@ -10,14 +10,15 @@ const stompClientInit = over(new WebSocket("ws://localhost:3000"));
 // 드래그중인 값
 export const websocketSlice = createSlice({
   name: 'websocketValue',
-  initialState:{stompClient: stompClientInit},
+  initialState:{stompClient: stompClientInit, connect: false, fail: false},
   reducers:{
     connect:(state) =>{
       let stompClient = null;
       const Sock = new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`);
       stompClient = over(Sock);
-      stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, ()=>{}, (error) => {
+      stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, ()=>{state.connect = true; state.fail=false;}, (error) => {
         console.log(error);
+        state.connect = false; state.fail = true;
       });
       state.stompClient = stompClient;
     },
@@ -41,5 +42,5 @@ export const websocketSlice = createSlice({
     }
   }
 });
-export const { setRoom, setUsers } = websocketSlice.actions;
+export const { connect, enterRoom } = websocketSlice.actions;
 export default websocketSlice.actions;
