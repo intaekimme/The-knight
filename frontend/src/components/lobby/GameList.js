@@ -2,113 +2,62 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 import { Card, Grid, Pagination } from "@mui/material";
-import PropTypes from 'prop-types';
-import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
-
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialogContent-root': {
-    padding: theme.spacing(2),
-  },
-  '& .MuiDialogActions-root': {
-    padding: theme.spacing(1),
-  },
-}));
-
-function BootstrapDialogTitle(props) {
-  const { children, onClose, ...other } = props;
-
-  return (
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-      {children}
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </DialogTitle>
-  );
-}
-
-BootstrapDialogTitle.propTypes = {
-  children: PropTypes.node,
-  onClose: PropTypes.func.isRequired,
-};
-
+import GameDescModal from "./GameDescModal";
 
 export default function GameList() {
   const gameList = useSelector(state => state.tempGame.value.gameList)
   console.log("gamelist", gameList);
 
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-    //gameID로 get
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
+  // 방설정 모달
+	const [open, setOpen] = React.useState(false);
+	const roomSettingOpen = () => setOpen(true);
+  const roomSettingClose = () => setOpen(false);
+  
+  const fetchGameInfo = (gameId) => {
+    console.log("여기요 ~", gameId);
+    //gameId로 게임 상세정보 불러오기
+  }
+  //저장되어있는 게임 상세정보 store에서 불러오기
+  const bla = 
+    {
+      gameId: 1,
+      title: '블라'
+    }
+  
+  // function gameListRender(gameList) {
+  //   let arr = []
+  //   console.log("ssss", gameList);
+  //   for (let index = 0; index < gameList.length; index++) {
+  //     arr.push(
+  //       <Grid item key={index}>
+  //           <Card sx={{ width: '23vw', height: '14vw' }} onClick={() => { roomSettingOpen(); fetchGameInfo(gameList[index].gameId); }}>
+  //             {gameList[index].title}
+  //           </Card>
+  //       </Grid>
+  //     )
+  //   }
+  //   return arr
+  // }
   
   return (
-    <Grid container spacing={5} sx={{pt: 5, justifyContent:'center'}}>
+    <div>
+    <Grid container spacing={3} columnSpacing={5} sx={{pt: 3, justifyContent:'center'}}>
       {gameList.map((game, key) => {
         return(
           <Grid item key={key}>
-            <Card sx={{ width: 345, height: 210 }} onClick={handleClickOpen}>
+            <Card sx={{ width: '23vw', height: '14vw' }} onClick={() => { roomSettingOpen(); fetchGameInfo(game.gameId); }}>
               {game.title}
             </Card>
-            <BootstrapDialog
-            onClose={handleClose}
-            aria-labelledby="customized-dialog-title"
-            open={open}
-          >
-            <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-              {game.title}
-            </BootstrapDialogTitle>
-            <DialogContent dividers>
-              <Typography gutterBottom>
-                Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-                dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-                consectetur ac, vestibulum at eros.
-              </Typography>
-              <Typography gutterBottom>
-                Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-                Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
-              </Typography>
-              <Typography gutterBottom>
-                Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus
-                magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec
-                ullamcorper nulla non metus auctor fringilla.
-              </Typography>
-            </DialogContent>
-            <DialogActions>
-              <Button autoFocus onClick={handleClose}>
-                Save changes
-              </Button>
-            </DialogActions>
-          </BootstrapDialog>
           </Grid>
           )
         }
         )}
-      <Pagination></Pagination>
+        {/* {
+        gameListRender(gameList)
+        } */}
+        <GameDescModal bla={bla} open={open} onClose={ roomSettingClose }></GameDescModal>
     </Grid>
+    <Pagination></Pagination>
+    </div>
   )
 }
