@@ -5,11 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 @Builder
 @Data
-public class GameMembersInfoDto {
+public class GamePlayersInfoDto {
     private int maxUser;
     private List<PlayerDataDto> players;
 }

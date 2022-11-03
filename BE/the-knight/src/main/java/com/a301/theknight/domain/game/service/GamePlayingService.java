@@ -41,10 +41,10 @@ public class GamePlayingService {
     }
 
     @Transactional
-    public GameMembersInfoDto getMembersInfo(long gameId) {
-        List<PlayerDataDto> playerDataDtoList = getPlayersInfo(gameId);
+    public GamePlayersInfoDto getPlayersInfo(long gameId) {
+        List<PlayerDataDto> playerDataDtoList = getPlayersDataList(gameId);
 
-        return GameMembersInfoDto.builder()
+        return GamePlayersInfoDto.builder()
                 .maxUser(playerDataDtoList.size())
                 .players(playerDataDtoList)
                 .build();
@@ -154,6 +154,12 @@ public class GamePlayingService {
         return inGame.isAllSelected();
     }
 
+    @Transactional
+    public GamePreAttackResponse getPreAttack(long gameId) {
+        InGame inGame = getInGame(gameId);
+        return new GamePreAttackResponse(inGame.getCurrentAttackTeam());
+    }
+
     private GameLeaderDto getLeaders(Game game) {
         return GameLeaderDto.builder()
                 .teamA(new TeamLeaderDto(getTeamLeaderId(game, Team.A)))
@@ -210,7 +216,7 @@ public class GamePlayingService {
                 .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
-    private List<PlayerDataDto> getPlayersInfo(long gameId) {
+    private List<PlayerDataDto> getPlayersDataList(long gameId) {
         List<InGamePlayer> playerList = redisRepository.getInGamePlayerList(gameId);
 
         return playerList.stream()
@@ -302,9 +308,4 @@ public class GamePlayingService {
                 .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
-    @Transactional
-    public GamePreAttackResponse getPreAttack(long gameId) {
-        InGame inGame = getInGame(gameId);
-        return new GamePreAttackResponse(inGame.getCurrentAttackTeam());
-    }
 }

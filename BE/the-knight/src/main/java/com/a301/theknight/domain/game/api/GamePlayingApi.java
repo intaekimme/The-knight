@@ -48,9 +48,9 @@ public class GamePlayingApi {
 
     @MessageMapping(value = "/games/{gameId}/players")
     public void getGamePlayerData(@DestinationVariable long gameId) {
-        GameMembersInfoDto membersInfo = gamePlayingService.getMembersInfo(gameId);
+        GamePlayersInfoDto playersInfo = gamePlayingService.getPlayersInfo(gameId);
 
-        template.convertAndSend(makeDestinationUri(gameId, "/players"), membersInfo);
+        template.convertAndSend(makeDestinationUri(gameId, "/players"), playersInfo);
     }
 
     @MessageMapping(value="/games/{gameId}/timer")
