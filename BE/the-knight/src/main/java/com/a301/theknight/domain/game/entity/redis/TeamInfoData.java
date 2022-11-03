@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.game.entity.redis;
 
-import com.a301.theknight.domain.game.dto.playing.response.GameOrderDto;
+import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import lombok.Builder;
 import lombok.Getter;
 
