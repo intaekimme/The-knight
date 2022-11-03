@@ -53,7 +53,6 @@ root.render(
               <Route path="signup" element={<Signup />} />
               <Route path="memberpage" element={<MemberPage />} />
               <Route path="room" element={<Room />} />
-              <Route path="game" element={<Game />} />
               <Route path="chat" element={<Chat />} />
               <Route path="chatting" element={<Chatting />} />
             </Route>

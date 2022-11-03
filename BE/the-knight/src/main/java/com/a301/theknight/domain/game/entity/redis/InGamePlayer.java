@@ -63,4 +63,8 @@ public class InGamePlayer implements Serializable {
     public boolean isFullSelectWeapon() {
         return leftWeapon != null && rightWeapon != null;
     }
+
+    public void death() {
+        isDead = true;
+    }
 }

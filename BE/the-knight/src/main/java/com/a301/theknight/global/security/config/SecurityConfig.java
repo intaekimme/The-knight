@@ -62,7 +62,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/oauth2/authorization/google", "/login/oauth2/**",
-                        "/swagger-ui/**", "/swagger-resources/**", "/favicon.ico",
+                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/favicon.ico",
                         "/websocket/**", "/api/hello").permitAll()
                 .anyRequest().authenticated()
                 .and()

@@ -18,6 +18,8 @@ public enum GamePlayingErrorCode implements ErrorCode {
     CAN_NOT_COMPLETE_ORDER_SELECT(HttpStatus.CONFLICT, "Can not complete order select."),
     CAN_NOT_COMPLETE_WEAPON_SELECT(HttpStatus.CONFLICT, "Can not complete weapon select."),
     LEADER_IS_NOT_SELECTED(HttpStatus.BAD_REQUEST, "Team leader is not selected."),
+    PLAYER_IS_ALREADY_DEAD(HttpStatus.BAD_REQUEST, "Player is already dead."),
+    CAN_NOT_DOUBT_SAME_TEAM(HttpStatus.BAD_REQUEST, "Can not doubt same team."),
     ;
     private final HttpStatus httpStatus;
     private final String message;

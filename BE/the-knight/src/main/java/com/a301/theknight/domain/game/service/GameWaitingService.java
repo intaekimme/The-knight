@@ -1,6 +1,8 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.waiting.request.GameModifyRequest;
+import com.a301.theknight.domain.game.dto.waiting.response.GameMembersInfoDto;
+import com.a301.theknight.domain.game.dto.waiting.response.MemberDataDto;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.repository.GameRepository;
@@ -13,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @Service
 public class GameWaitingService {
@@ -23,6 +28,25 @@ public class GameWaitingService {
     private final PlayerRepository playerRepository;
 
     @Transactional
+    public GameMembersInfoDto getMembersInfo(long gameId) {
+        Game game = gameRepository.findGameWithPlayers(gameId)
+                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
+
+        List<MemberDataDto> members = game.getPlayers().stream()
+                .map(player -> MemberDataDto.builder()
+                        .id(player.getMember().getId())
+                        .nickname(player.getMember().getNickname())
+                        .team(player.getTeam().name())
+                        .build())
+                .collect(Collectors.toList());
+
+        return GameMembersInfoDto.builder()
+                .maxUser(game.getCapacity())
+                .members(members)
+                .build();
+    }
+
+    @Transactional
     public void modify(long gameId, long memberId, GameModifyRequest gameModifyRequest){
         Game findGame = getGame(gameId);
 
@@ -30,7 +54,7 @@ public class GameWaitingService {
             if(isOwner(findGame, memberId)){
                 findGame.ModifyGame(
                         gameModifyRequest.getTitle(),
-                        gameModifyRequest.getCapacity(),
+                        gameModifyRequest.getMaxUser(),
                         gameModifyRequest.getSword(),
                         gameModifyRequest.getTwin(),
                         gameModifyRequest.getShield(),

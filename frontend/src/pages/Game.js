@@ -1,10 +1,11 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import LoginCheck from "../commons/login/LoginCheck";
-import Phase0 from "../components/game/Phase0";
-import Phase1 from "../components/game/Phase1";
+import LoadingPhase from "../components/game/LoadingPhase";
+import WeaponSelectPhase from "../components/game/WeaponSelectPhase";
+import ActionSelectPhase from "../components/game/ActionSelectPhase";
 
 export default function Game() {
   // // 비 로그인 시 로그인 화면으로
@@ -20,8 +21,9 @@ export default function Game() {
   
   return (
     <div>
-      {phase === 0 ? <Phase0></Phase0> : null}
-      {phase === 1 ? <Phase1></Phase1> : null}
+      {phase === 0 ? <LoadingPhase></LoadingPhase> : null}
+      {phase === 1 ? <WeaponSelectPhase></WeaponSelectPhase> : null}
+      {phase === 2 ? <ActionSelectPhase></ActionSelectPhase> : null}
     </div>
   );
 }
