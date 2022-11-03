@@ -5,4 +5,8 @@ import lombok.Data;
 @Data
 public class AttackPlayerDto {
     private long id;
+
+    public AttackPlayerDto(long id){
+        this.id = id;
+    }
 }
