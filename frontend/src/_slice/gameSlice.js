@@ -67,7 +67,7 @@ const orderInit = {
 }
 
 // 0: 로딩페이지, 1: 무기선택, 2: 공/수 선택, 3: 애니메이션, 4: 의심, 5: 게임종료
-const phaseInit = 1
+const phaseInit = 0
 
 export const gameSlice = createSlice({
   name: "gameSlice",

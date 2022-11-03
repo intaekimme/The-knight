@@ -4,9 +4,9 @@
 const BASE_URL = 'https://sword-shield.co.kr';
 
 //frontend Local
-// const LOGIN_REDIRECT = 'http://localhost:3000/islogin';
+const LOGIN_REDIRECT = 'http://localhost:3000/islogin';
 //frontend 배포
-const LOGIN_REDIRECT = 'https://sword-shield.co.kr/islogin';
+// const LOGIN_REDIRECT = 'https://sword-shield.co.kr/islogin';
 
 const API = '/api';
 const WEBSOCKET = '/websocket';
@@ -25,6 +25,9 @@ const EXIT_ROOM = '/exit';
 const SELECT_TEAM = '/team';
 const READY = '/ready';
 
+// 인게임
+const ALL_PLAYERS = '/players';
+
 const api = {
   exampleFunction: () => BASE_URL + EXAMPLE + `${0}`,
   baseURL: () => BASE_URL,
@@ -40,5 +43,7 @@ const api = {
   ready: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + READY,
   
   gameRoomInfo: (gameId) => BASE_URL + API + GAME + `/${gameId}`,
+
+  getAllPalyers: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_PLAYERS,
 }
 export default api;
