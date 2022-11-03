@@ -3,7 +3,7 @@ import OrderPicker from "./OrderPicker";
 import WeaponPicker from "./WeaponPicker";
 import TimeLimit from "./TimeLimit";
 
-export default function Phase0() {
+export default function WeaponSelectPhase() {
   return (
     <div>
     <h1>진행 순서와 무기를 선택하세요</h1>
