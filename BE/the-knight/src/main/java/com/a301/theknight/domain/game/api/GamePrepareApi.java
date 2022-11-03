@@ -1,11 +1,11 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.game.dto.playing.GameTimerDto;
-import com.a301.theknight.domain.game.dto.playing.request.*;
-import com.a301.theknight.domain.game.dto.playing.response.*;
+import com.a301.theknight.domain.game.dto.prepare.GameTimerDto;
+import com.a301.theknight.domain.game.dto.prepare.request.*;
+import com.a301.theknight.domain.game.dto.prepare.response.*;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
-import com.a301.theknight.domain.game.service.GamePlayingService;
+import com.a301.theknight.domain.game.service.GamePrepareService;
 import com.a301.theknight.domain.game.util.GameTimer;
 import com.a301.theknight.domain.player.entity.Team;
 import lombok.RequiredArgsConstructor;
@@ -16,23 +16,23 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-public class GamePlayingApi {
+public class GamePrepareApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
     private final SimpMessagingTemplate template;
-    private final GamePlayingService gamePlayingService;
+    private final GamePrepareService gamePrepareService;
 
     @MessageMapping(value = "/games/{gameId}/prepare")
     public void prepareGameStart(@DestinationVariable long gameId, GameStartRequest gameStartRequest) {
-        if (!gamePlayingService.canStartGame(gameId, gameStartRequest.getSetGame())) {
+        if (!gamePrepareService.canStartGame(gameId, gameStartRequest.getSetGame())) {
             return;
         }
-        gamePlayingService.prepareToStartGame(gameId);
+        gamePrepareService.prepareToStartGame(gameId);
     }
 
     @MessageMapping(value = "/games/{gameId}/start")
     public void gameStart(@DestinationVariable long gameId) {
-        GamePrepareDto gamePrepareDto = gamePlayingService.gameStart(gameId);
+        GamePrepareDto gamePrepareDto = gamePrepareService.gameStart(gameId);
         if (gamePrepareDto == null) {
             return;
         }
@@ -48,7 +48,7 @@ public class GamePlayingApi {
 
     @MessageMapping(value = "/games/{gameId}/players")
     public void getGamePlayerData(@DestinationVariable long gameId) {
-        GamePlayersInfoDto playersInfo = gamePlayingService.getPlayersInfo(gameId);
+        GamePlayersInfoDto playersInfo = gamePrepareService.getPlayersInfo(gameId);
 
         template.convertAndSend(makeDestinationUri(gameId, "/players"), playersInfo);
     }
@@ -63,7 +63,7 @@ public class GamePlayingApi {
     @MessageMapping(value="/games/{gameId}/weapon-choice")
     public void choiceWeapon(@DestinationVariable long gameId, GameWeaponChoiceRequest gameWeaponChoiceRequest,
                              @LoginMemberId long memberId){
-        GameWeaponResponse weaponResponse = gamePlayingService.choiceWeapon(gameId, memberId, gameWeaponChoiceRequest);
+        GameWeaponResponse weaponResponse = gamePrepareService.choiceWeapon(gameId, memberId, gameWeaponChoiceRequest);
 
         sendWeaponResponse(gameId, weaponResponse.getTeam(), weaponResponse.getGameWeaponData());
     }
@@ -71,7 +71,7 @@ public class GamePlayingApi {
     @MessageMapping(value="/games/{gameId}/weapon-delete")
     public void deleteWeapon(@DestinationVariable long gameId, GameWeaponDeleteRequest weaponDeleteRequest,
                               @LoginMemberId long memberId){
-        GameWeaponResponse weaponResponse = gamePlayingService.cancelWeapon(gameId, memberId, weaponDeleteRequest.isLeft());
+        GameWeaponResponse weaponResponse = gamePrepareService.cancelWeapon(gameId, memberId, weaponDeleteRequest.isLeft());
 
         sendWeaponResponse(gameId, weaponResponse.getTeam(), weaponResponse.getGameWeaponData());
     }
@@ -80,7 +80,7 @@ public class GamePlayingApi {
     @MessageMapping(value="/games/{gameId}/orders")
     public void choiceOrder(@DestinationVariable long gameId, GameOrderRequest gameOrderRequest,
                             @LoginMemberId long memberId){
-        GameOrderResponse orderResponse = gamePlayingService.choiceOrder(gameId, memberId, gameOrderRequest);
+        GameOrderResponse orderResponse = gamePrepareService.choiceOrder(gameId, memberId, gameOrderRequest);
 
         if (orderResponse != null) {
             sendOrderResponse(gameId, orderResponse.getTeam(), orderResponse);
@@ -89,14 +89,14 @@ public class GamePlayingApi {
 
     @MessageMapping(value="/games/{gameId}/pre-attack")
     public void getPreAttack(@DestinationVariable long gameId){
-        GamePreAttackResponse response = gamePlayingService.getPreAttack(gameId);
+        GamePreAttackResponse response = gamePrepareService.getPreAttack(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/pre-attack"), response);
     }
 
     @MessageMapping(value="/games/{gameId}/complete-select")
     public void completeSelect(@DestinationVariable long gameId, @LoginMemberId long memberId,
                                GameCompleteSelectRequest gameCompleteSelectRequest){
-        boolean completed = gamePlayingService.completeSelect(gameId, memberId, gameCompleteSelectRequest.getTeam());
+        boolean completed = gamePrepareService.completeSelect(gameId, memberId, gameCompleteSelectRequest.getTeam());
 
         String teamName = gameCompleteSelectRequest.getTeam().equals(Team.A) ? Team.A.name() : Team.B.name();
             String oppositeTeamName = Team.A.name();

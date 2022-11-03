@@ -1,11 +1,12 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.playing.PlayerDataDto;
-import com.a301.theknight.domain.game.dto.playing.TeamLeaderDto;
-import com.a301.theknight.domain.game.dto.playing.request.GameOrderRequest;
-import com.a301.theknight.domain.game.dto.playing.request.GameWeaponChoiceRequest;
-import com.a301.theknight.domain.game.dto.playing.response.*;
+import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
+import com.a301.theknight.domain.game.dto.prepare.TeamLeaderDto;
+import com.a301.theknight.domain.game.dto.prepare.request.GameOrderRequest;
+import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponChoiceRequest;
+import com.a301.theknight.domain.game.dto.prepare.response.*;
 import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.entity.redis.InGame;
@@ -29,7 +30,7 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
-public class GamePlayingService {
+public class GamePrepareService {
 
     private final GameRepository gameRepository;
     private final GameRedisRepository redisRepository;
@@ -70,6 +71,7 @@ public class GamePlayingService {
         }
 
         Game game = getGame(gameId);
+        game.changeStatus(GameStatus.PREPARE);
         GameLeaderDto gameLeaderDto = getLeaders(game);
         GameWeaponData gameWeaponData = getWeaponsData(gameId, Team.A);
 
@@ -144,6 +146,7 @@ public class GamePlayingService {
 
         List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
         Game game = getGame(gameId);
+        game.changeStatus(GameStatus.PLAYING);
         GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
