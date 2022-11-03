@@ -13,7 +13,13 @@ public class InGame implements Serializable {
     private Team currentAttackTeam;
     private TeamInfoData teamAInfo;
     private TeamInfoData teamBInfo;
-    private int count;
+    private int maxMemberNum;
+    private TurnData turnData;
+    private int requestCount;
+
+    public void initTurnData() {
+        turnData = new TurnData();
+    }
 
     public void choiceOrder(InGamePlayer inGamePlayer, int orderNumber) {
         inGamePlayer.saveOrder(orderNumber);
@@ -25,16 +31,12 @@ public class InGame implements Serializable {
                 .image(inGamePlayer.getImage()).build();
     }
 
-    public int getTeamPlayerSize() {
-        return teamAInfo.getPeopleNum();
-    }
-
     public void addRequestCount() {
-        count++;
+        requestCount++;
     }
 
     public boolean allPlayerCanStart() {
-        return count >= teamBInfo.getPeopleNum() * 2;
+        return requestCount >= maxMemberNum;
     }
 
     public TeamInfoData getTeamInfoData(Team team) {
