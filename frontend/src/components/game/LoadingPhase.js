@@ -16,13 +16,11 @@ export default function LoadingPhase() {
   const dispatch = useDispatch();
 
   function onConnected() {
-    console.log("연결됐다");
     // gameId는 임의로 1
     stompClient.subscribe(api.getAllPalyers(1), onMessageReceived);
   }
 
   function onMessageReceived(payload) {
-    console.log("메시지 왔다");
     const payloadData = JSON.parse(payload.body);
     dispatch(fetchPlayers(payloadData))
   }
