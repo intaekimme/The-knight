@@ -2,7 +2,6 @@ package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.game.dto.GameCreationResponse;
-import com.a301.theknight.domain.game.dto.GameListRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameListResponse;
@@ -20,10 +19,10 @@ public class GameApi {
     private final GameService gameService;
 
     @GetMapping
-    public ResponseEntity<?> getGameList(@RequestParam GameListRequest keyword,
+    public ResponseEntity<?> getGameList(@RequestParam(required = false) String keyword,
                                          Pageable pageable,
                                          @LoginMemberId long memberId) {
-        GameListResponse gameListResponse = gameService.getGameList(keyword.getKeyword(), pageable, memberId);
+        GameListResponse gameListResponse = gameService.getGameList(keyword, pageable, memberId);
         return ResponseEntity.ok(gameListResponse);
     }
 

@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.player.dto;
+package com.a301.theknight.domain.player.dto.response;
 
 import lombok.Data;
 
