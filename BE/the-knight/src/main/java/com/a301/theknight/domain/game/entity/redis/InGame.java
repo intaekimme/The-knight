@@ -36,7 +36,7 @@ public class InGame implements Serializable {
         requestCount++;
     }
 
-    public boolean allPlayerCanStart() {
+    public boolean isFullCount() {
         return requestCount >= maxMemberNum;
     }
 

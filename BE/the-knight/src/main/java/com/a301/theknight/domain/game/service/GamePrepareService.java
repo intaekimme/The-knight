@@ -66,7 +66,7 @@ public class GamePrepareService {
     public GamePrepareDto gameStart(long gameId) {
         InGame inGame = getInGame(gameId);
         inGame.addRequestCount();
-        if (!inGame.allPlayerCanStart()) {
+        if (!inGame.isFullCount()) {
             return null;
         }
 
