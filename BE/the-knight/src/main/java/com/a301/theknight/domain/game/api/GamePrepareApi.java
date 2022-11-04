@@ -23,19 +23,8 @@ public class GamePrepareApi {
     private final GamePrepareService gamePrepareService;
 
     @MessageMapping(value = "/games/{gameId}/prepare")
-    public void prepareGameStart(@DestinationVariable long gameId, GameStartRequest gameStartRequest) {
-        if (!gamePrepareService.canStartGame(gameId, gameStartRequest.getSetGame())) {
-            return;
-        }
-        gamePrepareService.prepareToStartGame(gameId);
-    }
-
-    @MessageMapping(value = "/games/{gameId}/start")
-    public void gameStart(@DestinationVariable long gameId) {
-        GamePrepareDto gamePrepareDto = gamePrepareService.gameStart(gameId);
-        if (gamePrepareDto == null) {
-            return;
-        }
+    public void prepareGameStart(@DestinationVariable long gameId) {
+        GamePrepareDto gamePrepareDto = gamePrepareService.prepare(gameId);
 
         sendWeaponResponse(gameId, Team.A, gamePrepareDto.getGameWeaponData());
         sendWeaponResponse(gameId, Team.B, gamePrepareDto.getGameWeaponData());
@@ -43,7 +32,6 @@ public class GamePrepareApi {
         template.convertAndSend(makeDestinationUri(gameId,"/a/leader"), gamePrepareDto.getGameLeaderDto().getTeamA());
         template.convertAndSend(makeDestinationUri(gameId,"/b/leader"), gamePrepareDto.getGameLeaderDto().getTeamB());
         getGamePlayerData(gameId);
-        timer(gameId, new GameTimerDto(1, 100));
     }
 
     @MessageMapping(value = "/games/{gameId}/players")
