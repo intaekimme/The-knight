@@ -16,10 +16,13 @@ public class TurnData implements Serializable {
     private boolean lyingAttack;
     private boolean lyingDefend;
 
-    public void recordAttackTurn(GameAttackRequest gameAttackRequest){
-        this.attackerId = gameAttackRequest.getAttacker().getId();
-        this.attackData = new AttackData(gameAttackRequest.getWeapon(), gameAttackRequest.getHand());
-        this.defenderId = gameAttackRequest.getDefender().getId();
+    public void recordAttackTurn(InGamePlayer attacker, InGamePlayer defender, GameAttackRequest gameAttackRequest){
+        this.attackerId = attacker.getMemberId();
+        this.attackData = AttackData.builder()
+                .weapon(gameAttackRequest.getWeapon())
+                .hand(gameAttackRequest.getHand())
+                .build();
+        this.defenderId = defender.getMemberId();
     }
 
     public void recordDefenseTurn(InGamePlayer defender, GameDefenseRequest gameDefenseRequest){
