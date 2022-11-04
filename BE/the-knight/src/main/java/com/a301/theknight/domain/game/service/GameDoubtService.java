@@ -10,6 +10,7 @@ import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
@@ -19,6 +20,7 @@ public class GameDoubtService {
 
     private final GameRedisRepository gameRedisRepository;
 
+    @Transactional
     public DoubtResponse doubt(long gameId, long suspectId, long suspectedId) {
         InGame inGame = getInGame(gameId);
         InGamePlayer suspect = getInGamePlayer(gameId, suspectId);

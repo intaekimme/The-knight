@@ -39,3 +39,6 @@ out/
 ### application Settings ###
 application.yml
 application-*.yml
+
+### .http files ###
+**/src/main/**/rest/*.http
