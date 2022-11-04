@@ -67,4 +67,12 @@ public class InGamePlayer implements Serializable {
     public void death() {
         isDead = true;
     }
+
+    public void changeCount(int resultCount, Hand defendHand) {
+        if (Hand.LEFT.equals(defendHand)) {
+            leftCount = resultCount;
+        } else {
+            rightCount = resultCount;
+        }
+    }
 }
