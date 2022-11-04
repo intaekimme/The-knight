@@ -20,7 +20,7 @@ public class GameApi {
     private final GameService gameService;
 
     @GetMapping
-    public ResponseEntity<?> getGameList(@RequestParam(required = false) GameListRequest keyword,
+    public ResponseEntity<?> getGameList(@RequestParam GameListRequest keyword,
                                          Pageable pageable,
                                          @LoginMemberId long memberId) {
         GameListResponse gameListResponse = gameService.getGameList(keyword.getKeyword(), pageable, memberId);
