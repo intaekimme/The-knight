@@ -52,4 +52,10 @@ public class InGame implements Serializable {
     public boolean isAllSelected() {
         return teamAInfo.isSelected() && teamBInfo.isSelected();
     }
+
+    public boolean isTurnDataEmpty() { return this.turnData == null; }
+
+    public void recordTurnData(TurnData turnData){
+        this.turnData = turnData;
+    }
 }
