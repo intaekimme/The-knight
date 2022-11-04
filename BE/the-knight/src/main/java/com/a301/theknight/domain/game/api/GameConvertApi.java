@@ -16,6 +16,7 @@ import java.util.List;
 public class GameConvertApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
+    private static final String SERVER_PREFIX = "/pub/games/";
     private final SimpMessagingTemplate template;
 
     private final GameConvertService gameConvertService;
@@ -28,15 +29,12 @@ public class GameConvertApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/convert-complete")
-    public void ConvertComplete(@DestinationVariable long gameId, @LoginMemberId long memberId) {
-        List<String> postfixList = gameConvertService.switchCount(gameId, memberId);
-        if (postfixList == null) {
-            return;
+    public void convertComplete(@DestinationVariable long gameId, @LoginMemberId long memberId) {
+        List<String> postfixList = gameConvertService.convertComplete(gameId, memberId);
+        if (postfixList != null) {
+            postfixList.forEach(postfix -> template
+                    .convertAndSend(makeServerDestinationUri(gameId, postfix)));
         }
-
-        //TODO: State에 따른 다른 데이터들을 보내줘야 함.
-        // -> Postfix List를 Service에서 응답 받아서 그 메시지들을 발행?
-        template.convertAndSend(makeDestinationUri(gameId, "/"));
     }
 
     @MessageMapping(value = "/games/{gameId}/proceed")
@@ -47,5 +45,9 @@ public class GameConvertApi {
 
     private String makeDestinationUri(long gameId, String postfix) {
         return SEND_PREFIX + gameId + postfix;
+    }
+
+    private String makeServerDestinationUri(long gameId, String postfix) {
+        return SERVER_PREFIX + gameId + postfix;
     }
 }
