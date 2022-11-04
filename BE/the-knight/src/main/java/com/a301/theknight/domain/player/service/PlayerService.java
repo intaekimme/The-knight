@@ -6,6 +6,12 @@ import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.domain.player.dto.*;
+import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
+import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
+import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
+import com.a301.theknight.domain.player.dto.response.PlayerExitResponse;
+import com.a301.theknight.domain.player.dto.response.PlayerReadyResponse;
+import com.a301.theknight.domain.player.dto.response.PlayerTeamResponse;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
@@ -18,14 +24,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class PlayerWebsocketService {
+public class PlayerService {
 
     private final MemberRepository memberRepository;
     private final GameRepository gameRepository;
@@ -68,7 +73,7 @@ public class PlayerWebsocketService {
     }
 
     @Transactional
-    public PlayerTeamResponse team(long gameId, long memberId,  PlayerTeamRequest playerTeamMessage){
+    public PlayerTeamResponse team(long gameId, long memberId, PlayerTeamRequest playerTeamMessage){
         Game findGame = getGame(gameId);
         Member findMember = getMember(memberId);
 
