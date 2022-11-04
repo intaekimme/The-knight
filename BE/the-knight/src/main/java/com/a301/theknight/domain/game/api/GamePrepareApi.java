@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 public class GamePrepareApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
+    private static final String SERVER_PREFIX = "/pub/games/";
     private final SimpMessagingTemplate template;
     private final GamePrepareService gamePrepareService;
 
@@ -76,9 +77,13 @@ public class GamePrepareApi {
     }
 
     @MessageMapping(value="/games/{gameId}/pre-attack")
-    public void getPreAttack(@DestinationVariable long gameId){
+    public void getPreAttack(@DestinationVariable long gameId) throws InterruptedException {
         GamePreAttackResponse response = gamePrepareService.getPreAttack(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/pre-attack"), response);
+        //TODO: 제한 시간도 넘겨주고 그 시간이 끝나면 다음 화면 전환 띄우기,
+        //서버에서 그냥 sleep돌리고 /convert 돌려도 될 듯?
+        Thread.sleep(5000); //5초 대기
+        template.convertAndSend(makeConvertUri(gameId));
     }
 
     @MessageMapping(value="/games/{gameId}/select-complete")
@@ -104,6 +109,10 @@ public class GamePrepareApi {
             return;
         }
         template.convertAndSend(makeDestinationUri(gameId,"/b/weapons"), weaponData);
+    }
+
+    private String makeConvertUri(long gameId) {
+        return SERVER_PREFIX + gameId + "/convert";
     }
 
     private String makeDestinationUri(long gameId, String postfix) {
