@@ -3,6 +3,7 @@ package com.a301.theknight.domain.game.service;
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
+import com.a301.theknight.domain.game.entity.redis.TurnStatus;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +29,15 @@ public class GameConvertService {
         if (!inGame.isFullCount()) {
             return null;
         }
+        /*
+         * PRE : "/players", "/leaders", "/weapons"
+         * ATTACK : "/attacker"
+         * */
+        TurnStatus status = inGame.getStatus();
         //TODO: 게임 시작
         /*
         * inGame의 State를 key, value는 데이터 보낼 postfix의 List를 저장한 Hashmap이 있음.
+        *
         * */
         return new ArrayList<>();
     }

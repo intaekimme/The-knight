@@ -33,6 +33,7 @@ public class GameConvertApi {
         if (postfixList == null) {
             return;
         }
+
         //TODO: State에 따른 다른 데이터들을 보내줘야 함.
         // -> Postfix List를 Service에서 응답 받아서 그 메시지들을 발행?
         template.convertAndSend(makeDestinationUri(gameId, "/"));

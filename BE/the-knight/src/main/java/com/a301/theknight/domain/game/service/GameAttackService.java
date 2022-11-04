@@ -32,6 +32,9 @@ public class GameAttackService {
         InGamePlayer attacker = getInGamePlayer(gameId, memberId);
         turn.checkLyingAttack(attacker);
 
+        //inGame.changeStatus()
+        //return 자료구조.getPostfixList()
+
         AttackTeamResponse allyResponse = AttackTeamResponse.builder()
                 .attacker(new AttackPlayerDto(turn.getAttackerId()))
                 .defender(new DefendPlayerDto(turn.getDefenderId()))
