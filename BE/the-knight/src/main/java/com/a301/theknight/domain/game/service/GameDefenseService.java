@@ -28,8 +28,8 @@ public class GameDefenseService {
         InGame findInGame = getInGame(gameId);
         TurnData turn = findInGame.getTurnData();
 
-        turn.recordDefenseTurn(gameDefenseRequest);
         InGamePlayer defender = getInGamePlayer(gameId, memberId);
+        turn.recordDefenseTurn(defender, gameDefenseRequest);
         turn.checkLyingDefense(defender);
 
         //  TODO 공격 로직 수정 후 InGame reopsitory에 저장, TurnData 왜 저장 할 것 있는지 생각후 작성,

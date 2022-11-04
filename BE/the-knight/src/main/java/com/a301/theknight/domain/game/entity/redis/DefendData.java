@@ -9,10 +9,11 @@ import java.io.Serializable;
 @Getter
 public class DefendData implements Serializable {
     private final Hand defendHand;
-    private int shieldCount;
+    private final int shieldCount;
 
     @Builder
-    public DefendData(String hand){
+    public DefendData(String hand, int shieldCount){
         this.defendHand = Hand.valueOf(hand);
+        this.shieldCount = shieldCount;
     }
 }

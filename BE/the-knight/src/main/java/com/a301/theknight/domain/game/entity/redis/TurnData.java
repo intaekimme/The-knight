@@ -3,7 +3,6 @@ package com.a301.theknight.domain.game.entity.redis;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.entity.Weapon;
-import com.a301.theknight.domain.game.service.GameDefenseService;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -23,9 +22,16 @@ public class TurnData implements Serializable {
         this.defenderId = gameAttackRequest.getDefender().getId();
     }
 
-    public void recordDefenseTurn(GameDefenseRequest gameDefenseRequest){
-        this.defenderId = gameDefenseRequest.getDefender().getId();
-        this.defendData = new DefendData(gameDefenseRequest.getHand());
+    public void recordDefenseTurn(InGamePlayer defender, GameDefenseRequest gameDefenseRequest){
+        this.defenderId = defender.getMemberId();
+        this.defendData = DefendData.builder()
+                .hand(gameDefenseRequest.getHand())
+                .shieldCount(
+                        gameDefenseRequest.getHand().equals("LEFT") ?
+                                defender.getLeftCount() :
+                                defender.getRightCount()
+                )
+                .build();
     }
 
     public void checkLyingAttack(InGamePlayer attacker){
@@ -34,7 +40,7 @@ public class TurnData implements Serializable {
     }
 
     public void checkLyingDefense(InGamePlayer defender){
-        this.lyingDefend = (this.defendData.getDefendHand().name().equals("LEFT") && (defender.getLeftWeapon().equals(Weapon.SHIELD))) ||
-                (this.defendData.getDefendHand().name().equals("RIGHT") && (defender.getRightWeapon().equals(Weapon.SHIELD)));
+        this.lyingDefend = (this.defendData.getDefendHand().name().equals("LEFT") && (!defender.getLeftWeapon().equals(Weapon.SHIELD))) ||
+                (this.defendData.getDefendHand().name().equals("RIGHT") && (!defender.getRightWeapon().equals(Weapon.SHIELD)));
     }
 }
