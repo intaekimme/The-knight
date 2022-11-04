@@ -1,9 +1,7 @@
-package com.a301.theknight.domain.player.dto;
+package com.a301.theknight.domain.player.dto.request;
 
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Data
 @NoArgsConstructor

@@ -2,26 +2,30 @@ package com.a301.theknight.domain.player.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.player.dto.*;
-import com.a301.theknight.domain.player.service.PlayerWebsocketService;
+import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
+import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
+import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
+import com.a301.theknight.domain.player.dto.response.PlayerExitResponse;
+import com.a301.theknight.domain.player.dto.response.PlayerTeamResponse;
+import com.a301.theknight.domain.player.service.PlayerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller
 @RequiredArgsConstructor
-public class PlayerWebsocketApi {
+public class PlayerApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
     private final SimpMessagingTemplate template;
-    private final PlayerWebsocketService playerWebsocketService;
+    private final PlayerService playerService;
 
     @MessageMapping(value="/games/{gameId}/entry")
     public void entry(@DestinationVariable long gameId,
                       @LoginMemberId long memberId){
-        PlayerEntryResponse playerEntryResponse = playerWebsocketService.entry(gameId, memberId);
+        PlayerEntryResponse playerEntryResponse = playerService.entry(gameId, memberId);
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/entry");
         template.convertAndSend(destination, playerEntryResponse);
     }
@@ -29,7 +33,7 @@ public class PlayerWebsocketApi {
     @MessageMapping(value="/games/{gameId}/exit")
     public void exit(@DestinationVariable long gameId,
                      @LoginMemberId long memberId){
-        PlayerExitResponse exitPlayerId = playerWebsocketService.exit(gameId, memberId);
+        PlayerExitResponse exitPlayerId = playerService.exit(gameId, memberId);
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/exit");
         template.convertAndSend(destination, exitPlayerId);
     }
@@ -38,7 +42,7 @@ public class PlayerWebsocketApi {
     public void team(@DestinationVariable long gameId,
                      PlayerTeamRequest playerTeamMessage,
                      @LoginMemberId long memberId){
-        PlayerTeamResponse playerTeamResponse = playerWebsocketService.team(gameId, memberId, playerTeamMessage);
+        PlayerTeamResponse playerTeamResponse = playerService.team(gameId, memberId, playerTeamMessage);
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/team");
         template.convertAndSend(destination, playerTeamResponse);
     }
@@ -47,7 +51,7 @@ public class PlayerWebsocketApi {
     public void ready(@DestinationVariable long gameId,
                       @LoginMemberId long memberId,
                       PlayerReadyRequest playerReadyMessage){
-        ReadyResponseDto readyResponseDto = playerWebsocketService.ready(gameId, memberId, playerReadyMessage);
+        ReadyResponseDto readyResponseDto = playerService.ready(gameId, memberId, playerReadyMessage);
 
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
         template.convertAndSend(destination, readyResponseDto);
