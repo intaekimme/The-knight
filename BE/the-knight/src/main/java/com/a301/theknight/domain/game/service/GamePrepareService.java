@@ -8,10 +8,7 @@ import com.a301.theknight.domain.game.dto.prepare.response.*;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
-import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
-import com.a301.theknight.domain.game.entity.redis.InGame;
-import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
-import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
+import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.player.entity.Player;
@@ -260,10 +257,12 @@ public class GamePrepareService {
         TeamInfoData teamBInfo = makeTeamInfoData(game, getTeamLeaderId(game, Team.B));
 
         redisRepository.saveInGame(gameId, InGame.builder()
+                .gameStatus(GameStatus.PREPARE)
                 .currentAttackTeam(firstAttackTeam)
                 .maxMemberNum(game.getCapacity())
                 .teamAInfo(teamAInfo)
-                .teamBInfo(teamBInfo).build());
+                .teamBInfo(teamBInfo)
+                .turnData(new TurnData()).build());
     }
 
     private Long getTeamLeaderId(Game game, Team team) {
