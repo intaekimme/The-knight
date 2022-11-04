@@ -74,7 +74,7 @@ export default function NavBar() {
             <Link to="/lobby">로비</Link>
             <Link to="/rank">랭킹</Link>
             <Link to="/login">test Login</Link>
-            <Link to="/chat">test Chat</Link>
+            <Link to="/makeroom">test makeRoom</Link>
           </Navigation>
         </StyledNav>
         <Navigation>
