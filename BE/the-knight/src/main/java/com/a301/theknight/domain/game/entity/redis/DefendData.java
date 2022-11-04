@@ -5,9 +5,14 @@ import lombok.Getter;
 
 import java.io.Serializable;
 
-@Builder
+
 @Getter
 public class DefendData implements Serializable {
-    private Hand defendHand;
+    private final Hand defendHand;
     private int shieldCount;
+
+    @Builder
+    public DefendData(String hand){
+        this.defendHand = Hand.valueOf(hand);
+    }
 }
