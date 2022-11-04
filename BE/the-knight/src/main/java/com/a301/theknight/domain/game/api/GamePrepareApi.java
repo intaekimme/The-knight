@@ -81,21 +81,13 @@ public class GamePrepareApi {
         template.convertAndSend(makeDestinationUri(gameId, "/pre-attack"), response);
     }
 
-    @MessageMapping(value="/games/{gameId}/complete-select")
+    @MessageMapping(value="/games/{gameId}/select-complete")
     public void completeSelect(@DestinationVariable long gameId, @LoginMemberId long memberId,
                                GameCompleteSelectRequest gameCompleteSelectRequest){
         boolean completed = gamePrepareService.completeSelect(gameId, memberId, gameCompleteSelectRequest.getTeam());
-
-        String teamName = gameCompleteSelectRequest.getTeam().equals(Team.A) ? Team.A.name() : Team.B.name();
-            String oppositeTeamName = Team.A.name();
-            String postfix = "/" + teamName + "/select";
-            String oppositePostfix = "/" + oppositeTeamName + "/select";
-            GameSelectResponse gameSelectResponse = new GameSelectResponse(true, false);
-            if (completed) {
-                gameSelectResponse = new GameSelectResponse(false, true);
-            template.convertAndSend(makeDestinationUri(gameId, oppositePostfix), gameSelectResponse);
+        if (completed) {
+            template.convertAndSend(makeDestinationUri(gameId, "/convert"));
         }
-        template.convertAndSend(makeDestinationUri(gameId, postfix), gameSelectResponse);
     }
 
     private void sendOrderResponse(long gameId, Team team, GameOrderResponse orderResponse) {

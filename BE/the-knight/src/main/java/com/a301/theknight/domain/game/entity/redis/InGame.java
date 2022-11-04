@@ -53,4 +53,8 @@ public class InGame implements Serializable {
     public boolean isAllSelected() {
         return teamAInfo.isSelected() && teamBInfo.isSelected();
     }
+
+    public void changeStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
+    }
 }

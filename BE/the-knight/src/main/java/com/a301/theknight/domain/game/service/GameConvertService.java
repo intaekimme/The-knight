@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TurnStatus;
@@ -31,15 +32,14 @@ public class GameConvertService {
         if (!inGame.isFullCount()) {
             return null;
         }
-        TurnStatus status = inGame.getStatus();
-        return gameConvertUtil.getPostfixList(status.name());
+        return gameConvertUtil.getPostfixList(inGame.getGameStatus().name());
     }
 
     @Transactional
     public GameStatusResponse getGameStatus(long gameId) {
         InGame inGame = getInGame(gameId);
 
-        return new GameStatusResponse(inGame.getStatus().name());
+        return new GameStatusResponse(inGame.getGameStatus().name());
     }
 
 

@@ -131,13 +131,16 @@ public class GamePrepareService {
         checkLeaderRequest(inGame, inGamePlayer);
         checkOrderSelect(inGame.getTeamInfoData(inGamePlayer.getTeam()));
 
-        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
-        Game game = getGame(gameId);
-        game.changeStatus(GameStatus.PLAYING);
         GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
+        Game game = getGame(gameId);
+        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
+
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
         inGame.completeSelect(team);
+        if (inGame.isAllSelected()) {
+            inGame.changeStatus(GameStatus.PREDECESSOR);
+        }
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.deleteGameWeaponData(gameId, team);
 
