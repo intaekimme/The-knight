@@ -1,17 +1,18 @@
-package com.a301.theknight.global.webmvc.config;
+package com.a301.theknight;
 
 import com.a301.theknight.domain.auth.resolver.LoginMemberArgumentResolver;
 import com.a301.theknight.global.webmvc.properties.DomainProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@EnableWebMvc
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
     private final static long MAX_AGE_SECS = 3600;
@@ -31,16 +32,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(0, loginMemberArgumentResolver);
-    }
-
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        WebMvcConfigurer.super.configureMessageConverters(converters);
-    }
-
-    @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-        WebMvcConfigurer.super.extendMessageConverters(converters);
+        resolvers.add(loginMemberArgumentResolver);
     }
 }
