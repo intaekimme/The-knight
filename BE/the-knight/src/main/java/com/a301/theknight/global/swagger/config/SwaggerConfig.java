@@ -3,6 +3,7 @@ package com.a301.theknight.global.swagger.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import springfox.documentation.builders.*;
 import springfox.documentation.service.ApiInfo;
@@ -17,7 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
-@RequiredArgsConstructor
+@EnableWebMvc
 public class SwaggerConfig implements WebMvcConfigurer {
     @Bean
     public Docket swagger(){
