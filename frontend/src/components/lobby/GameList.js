@@ -1,12 +1,26 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Card, Grid, Pagination } from "@mui/material";
 import GameDescModal from "./GameDescModal";
+import { gameListAll } from "../../_slice/tempGameSlice";
 
 export default function GameList() {
-  const gameList = useSelector(state => state.tempGame.value.gameList)
-  console.log("gamelist", gameList);
+  const [isSetting, setIsSetting] = React.useState(false);
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    if (!isSetting) {
+      setIsSetting(true);
+      dispatch(gameListAll());
+    }
+  }, []);
+  //temp data
+  // const gameList = useSelector(state => state.tempGame.value.gameList)
+
+  //real data
+  const gameList = useSelector(state => state.tempGame.gameListAll)
+  console.log("gmaelistall", gameList);
+  
 
   // 방설정 모달
 	const [open, setOpen] = React.useState(false);
@@ -42,7 +56,7 @@ export default function GameList() {
   return (
     <div>
     <Grid container spacing={3} columnSpacing={5} sx={{pt: 3, justifyContent:'center'}}>
-      {gameList.map((game, key) => {
+      {gameList.games.map((game, key) => {
         return(
           <Grid item key={key}>
             <Card sx={{ width: '23vw', height: '14vw' }} onClick={() => { roomSettingOpen(); fetchGameInfo(game.gameId); }}>
