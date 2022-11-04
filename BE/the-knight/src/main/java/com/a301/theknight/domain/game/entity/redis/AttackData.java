@@ -12,7 +12,6 @@ public class AttackData implements Serializable {
     private final Hand attackHand;
     private final Weapon weapon;
 
-
     @Builder
     public AttackData(String weapon, String hand) {
         this.attackHand = Hand.valueOf(hand);
