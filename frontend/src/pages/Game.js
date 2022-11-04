@@ -17,13 +17,14 @@ export default function Game() {
     }
   }, []);
 
+  const isLoading = useSelector(state => state.game.isLoading)
   const phase = useSelector(state => state.game.phase)
   
   return (
     <div>
-      {phase === 0 ? <LoadingPhase></LoadingPhase> : null}
-      {phase === 1 ? <WeaponSelectPhase></WeaponSelectPhase> : null}
-      {phase === 2 ? <ActionSelectPhase></ActionSelectPhase> : null}
+      {isLoading && <LoadingPhase></LoadingPhase>}
+      {!isLoading && phase === "PRE" && <WeaponSelectPhase></WeaponSelectPhase>}
+      {!isLoading && phase === "ATTACK" && <ActionSelectPhase></ActionSelectPhase>}
     </div>
   );
 }
