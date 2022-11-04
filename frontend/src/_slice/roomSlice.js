@@ -3,15 +3,16 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import api from '../api/api';
 
-const makeRoom = createAsyncThunk('roomInfo', async (roomInfo, { rejectWithValue }) => {
+const initRoom = createAsyncThunk('roomInfo', async (props, { rejectWithValue }) => {
   try {
-    const res = await axios.post(`${api.makeRoom()}`, roomInfo, {
+    const res = await axios.post(`${api.initRoom()}`, props.roomInfo, {
       headers: {Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}
     });
     console.log("방 생성 성공", res);
-    return res.data;
+    props.navigate(`${props.url}${res.data.gameId}`);
+    return res.data.gameId;
   } catch (err) {
-    console.log(roomInfo);
+    console.log(props.roomInfo);
     console.log("방 생성 실패", err);
     return rejectWithValue(err.response.data);
   }
@@ -112,10 +113,10 @@ export const roomSlice = createSlice({
     },
   },
   extraReducers: {
-    [makeRoom.fulfilled]: (state, action) => {
+    [initRoom.fulfilled]: (state, action) => {
       state.roomInfo.gameId = action.payload.gameId;
     },
-    [makeRoom.rejected]: state => {
+    [initRoom.rejected]: state => {
       state.roomInfo = roomInit;
     },
     [roomInfo.fulfilled]: (state, action) => {
@@ -133,6 +134,6 @@ export const roomSlice = createSlice({
   },
 });
 
-export { makeRoom, roomInfo, usersInfo };
+export { initRoom, roomInfo, usersInfo };
 export const { modifyRoomSetting, setState, setUsers, changeTeam, changeReady } = roomSlice.actions;
 export default roomSlice.reducer;

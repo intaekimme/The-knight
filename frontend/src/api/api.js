@@ -34,7 +34,7 @@ const api = {
   login: () => BASE_URL + GOOGLE_LOGIN,
   loginRedirect: () => LOGIN_REDIRECT,
 
-  makeRoom: () => BASE_URL + API + GAME,
+  initRoom: () => BASE_URL + API + GAME,
 
   // 구독
   subModifyRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + MODIFYSETTING,

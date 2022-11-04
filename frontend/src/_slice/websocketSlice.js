@@ -24,11 +24,14 @@ export const websocketSlice = createSlice({
       return stompClient;
     },
     enterRoom:(state, action) =>{
+      console.log(action.payload);
       const subscribes = action.payload.subscribes;
       for(let i=0;i<action.payload.apis.length;i++){
         state.stompClient.subscribe(subscribes[i].api(action.payload.gameId),
           subscribes[i].receiver, (error) => {console.log(error);});
       }
+      console.log("abc");
+      action.payload.navigate(action.payload.url);
     }
   }
 });
