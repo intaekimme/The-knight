@@ -33,7 +33,7 @@ public class GamePassApi {
     public void turnExecute(@DestinationVariable long gameId) {
         gamePassService.turnExecute(gameId);
 
-        template.convertAndSend(makeDestinationUri(gameId, "/doubt"), response);
+        template.convertAndSend(makeDestinationUri(gameId, "/doubt"));
     }
 
     private String makeDestinationUri(long gameId, String postfix) {
