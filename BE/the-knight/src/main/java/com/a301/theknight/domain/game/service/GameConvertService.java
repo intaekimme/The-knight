@@ -38,7 +38,6 @@ public class GameConvertService {
     @Transactional
     public GameStatusResponse getGameStatus(long gameId) {
         InGame inGame = getInGame(gameId);
-
         return new GameStatusResponse(inGame.getGameStatus().name());
     }
 

@@ -126,11 +126,10 @@ public class PlayerServiceTest {
         given(gameRepository.findById(1L)).willReturn(Optional.of(testGame));
         given(playerRepository.findByGameAndMember(testGame, testMembers[2])).willReturn(Optional.of(testPlayers[2]));
 
-        ReadyResponseDto readyResponseDto = playerService.ready(1L, 2L, playerReadyRequest);
-        PlayerReadyResponse playerReadyResponse = readyResponseDto.getPlayerReadyList().get(0);
+        ReadyDto readyDto = playerService.ready(1L, 2L, playerReadyRequest);
 
-        assertEquals(2L, playerReadyResponse.getPlayerId());
-        assertTrue(playerReadyResponse.isReadyStatus());
+        assertEquals(2L, readyDto.getReadyResponseDto().getMemberId());
+        assertTrue(readyDto.getReadyResponseDto().getIsReady());
     }
 
     @Test
@@ -144,11 +143,9 @@ public class PlayerServiceTest {
         given(gameRepository.findById(1L)).willReturn(Optional.of(testGame));
         given(playerRepository.findByGameAndMember(testGame, testMembers[1])).willReturn(Optional.of(testPlayers[1]));
 
-        ReadyResponseDto readyResponseDto = playerService.ready(1L, 1L, playerReadyRequest);
-
+        ReadyDto readyDto = playerService.ready(1L, 1L, playerReadyRequest);
 
         assertEquals(GameStatus.PLAYING, testGame.getStatus());
-        assertEquals(readyResponseDto.getSetGame(), testGame.getSetGame());
     }
 
 }
