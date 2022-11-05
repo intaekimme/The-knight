@@ -36,12 +36,13 @@ public class GameWaitingService {
                 .map(player -> MemberDataDto.builder()
                         .id(player.getMember().getId())
                         .nickname(player.getMember().getNickname())
+                        .image(player.getMember().getImage())
                         .team(player.getTeam().name())
+                        .readyStatus(player.isReady())
                         .build())
                 .collect(Collectors.toList());
 
         return GameMembersInfoDto.builder()
-                .maxUser(game.getCapacity())
                 .members(members)
                 .build();
     }
