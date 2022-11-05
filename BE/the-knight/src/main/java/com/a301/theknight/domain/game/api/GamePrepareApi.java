@@ -19,13 +19,23 @@ import org.springframework.stereotype.Controller;
 public class GamePrepareApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
-    private static final String SERVER_PREFIX = "/pub/games/";
     private final SimpMessagingTemplate template;
     private final GamePrepareService gamePrepareService;
 
     @MessageMapping(value = "/games/{gameId}/prepare")
-    public void prepareGameStart(@DestinationVariable long gameId) {
-        GamePrepareDto gamePrepareDto = gamePrepareService.prepare(gameId);
+    public void prepareGameStart(@DestinationVariable long gameId, GameStartRequest gameStartRequest) {
+        if (!gamePrepareService.canStartGame(gameId, gameStartRequest.getSetGame())) {
+            return;
+        }
+        gamePrepareService.prepareToStartGame(gameId);
+    }
+
+    @MessageMapping(value = "/games/{gameId}/start")
+    public void gameStart(@DestinationVariable long gameId) {
+        GamePrepareDto gamePrepareDto = gamePrepareService.gameStart(gameId);
+        if (gamePrepareDto == null) {
+            return;
+        }
 
         sendWeaponResponse(gameId, Team.A, gamePrepareDto.getGameWeaponData());
         sendWeaponResponse(gameId, Team.B, gamePrepareDto.getGameWeaponData());
@@ -33,6 +43,7 @@ public class GamePrepareApi {
         template.convertAndSend(makeDestinationUri(gameId,"/a/leader"), gamePrepareDto.getGameLeaderDto().getTeamA());
         template.convertAndSend(makeDestinationUri(gameId,"/b/leader"), gamePrepareDto.getGameLeaderDto().getTeamB());
         getGamePlayerData(gameId);
+        timer(gameId, new GameTimerDto(1, 100));
     }
 
     @MessageMapping(value = "/games/{gameId}/players")
@@ -77,22 +88,26 @@ public class GamePrepareApi {
     }
 
     @MessageMapping(value="/games/{gameId}/pre-attack")
-    public void getPreAttack(@DestinationVariable long gameId) throws InterruptedException {
+    public void getPreAttack(@DestinationVariable long gameId){
         GamePreAttackResponse response = gamePrepareService.getPreAttack(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/pre-attack"), response);
-        //TODO: 제한 시간도 넘겨주고 그 시간이 끝나면 다음 화면 전환 띄우기,
-        //서버에서 그냥 sleep돌리고 /convert 돌려도 될 듯?
-        Thread.sleep(5000); //5초 대기
-        template.convertAndSend(makeConvertUri(gameId));
     }
 
-    @MessageMapping(value="/games/{gameId}/select-complete")
+    @MessageMapping(value="/games/{gameId}/complete-select")
     public void completeSelect(@DestinationVariable long gameId, @LoginMemberId long memberId,
                                GameCompleteSelectRequest gameCompleteSelectRequest){
         boolean completed = gamePrepareService.completeSelect(gameId, memberId, gameCompleteSelectRequest.getTeam());
-        if (completed) {
-            template.convertAndSend(makeDestinationUri(gameId, "/convert"));
+
+        String teamName = gameCompleteSelectRequest.getTeam().equals(Team.A) ? Team.A.name() : Team.B.name();
+            String oppositeTeamName = Team.A.name();
+            String postfix = "/" + teamName + "/select";
+            String oppositePostfix = "/" + oppositeTeamName + "/select";
+            GameSelectResponse gameSelectResponse = new GameSelectResponse(true, false);
+            if (completed) {
+                gameSelectResponse = new GameSelectResponse(false, true);
+            template.convertAndSend(makeDestinationUri(gameId, oppositePostfix), gameSelectResponse);
         }
+        template.convertAndSend(makeDestinationUri(gameId, postfix), gameSelectResponse);
     }
 
     private void sendOrderResponse(long gameId, Team team, GameOrderResponse orderResponse) {
@@ -109,10 +124,6 @@ public class GamePrepareApi {
             return;
         }
         template.convertAndSend(makeDestinationUri(gameId,"/b/weapons"), weaponData);
-    }
-
-    private String makeConvertUri(long gameId) {
-        return SERVER_PREFIX + gameId + "/convert";
     }
 
     private String makeDestinationUri(long gameId, String postfix) {

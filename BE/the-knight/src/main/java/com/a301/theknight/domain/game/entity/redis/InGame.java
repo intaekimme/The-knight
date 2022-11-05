@@ -1,7 +1,6 @@
 package com.a301.theknight.domain.game.entity.redis;
 
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
-import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Team;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import java.io.Serializable;
 @Getter
 @Builder
 public class InGame implements Serializable {
-    private GameStatus gameStatus;
+    private TurnStatus status;
     private Team currentAttackTeam;
     private TeamInfoData teamAInfo;
     private TeamInfoData teamBInfo;
@@ -37,7 +36,7 @@ public class InGame implements Serializable {
         requestCount++;
     }
 
-    public boolean isFullCount() {
+    public boolean allPlayerCanStart() {
         return requestCount >= maxMemberNum;
     }
 
@@ -52,10 +51,6 @@ public class InGame implements Serializable {
 
     public boolean isAllSelected() {
         return teamAInfo.isSelected() && teamBInfo.isSelected();
-    }
-
-    public void changeStatus(GameStatus gameStatus) {
-        this.gameStatus = gameStatus;
     }
 
     public boolean isTurnDataEmpty() { return this.turnData == null; }

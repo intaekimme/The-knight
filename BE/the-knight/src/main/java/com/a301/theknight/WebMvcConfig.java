@@ -1,4 +1,4 @@
-package com.a301.theknight.global.webmvc.config;
+package com.a301.theknight;
 
 import com.a301.theknight.domain.auth.resolver.LoginMemberArgumentResolver;
 import com.a301.theknight.global.webmvc.properties.DomainProperties;
@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 
 @RequiredArgsConstructor
+@EnableWebMvc
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
     private final static long MAX_AGE_SECS = 3600;

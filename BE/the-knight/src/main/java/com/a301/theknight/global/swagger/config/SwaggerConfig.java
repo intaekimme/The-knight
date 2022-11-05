@@ -26,8 +26,8 @@ public class SwaggerConfig implements WebMvcConfigurer {
 
         return new Docket(DocumentationType.OAS_30)
                 .servers(serverLocal, devServer)
-                .securityContexts(List.of(securityContext()))
-                .securitySchemes(List.of(apiKey()))
+                .securityContexts(Arrays.asList(securityContext()))
+                .securitySchemes(Arrays.asList(apiKey()))
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.a301.theknight"))
                 .paths(PathSelectors.any())
@@ -51,7 +51,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return List.of(new SecurityReference("Authorization", authorizationScopes));
+        return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
     }
 
     private ApiKey apiKey() {
