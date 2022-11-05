@@ -8,10 +8,7 @@ import com.a301.theknight.domain.game.dto.prepare.response.*;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
-import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
-import com.a301.theknight.domain.game.entity.redis.InGame;
-import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
-import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
+import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.player.entity.Player;
@@ -52,32 +49,22 @@ public class GamePrepareService {
     }
 
     @Transactional
-    public void prepareToStartGame(long gameId) {
+    public GamePrepareDto prepare(long gameId) {
         Game game = getGame(gameId);
+        if (!game.isCanStart()) {
+            throw new CustomException(CAN_NOT_PLAYING_GAME);
+        }
+        game.changeStatus(GameStatus.PLAYING);
         List<Player> players = game.getPlayers();
 
         choiceLeader(players);
         makeInGameData(gameId, game);
         makeInGamePlayerData(gameId, players);
         makeWeaponsData(game);
-    }
-
-    @Transactional
-    public GamePrepareDto gameStart(long gameId) {
-        InGame inGame = getInGame(gameId);
-        inGame.addRequestCount();
-        if (!inGame.allPlayerCanStart()) {
-            return null;
-        }
-
-        Game game = getGame(gameId);
-        game.changeStatus(GameStatus.PREPARE);
-        GameLeaderDto gameLeaderDto = getLeaders(game);
-        GameWeaponData gameWeaponData = getWeaponsData(gameId, Team.A);
 
         return GamePrepareDto.builder()
-                .gameWeaponData(gameWeaponData)
-                .gameLeaderDto(gameLeaderDto).build();
+                .gameWeaponData(getWeaponsData(gameId, Team.A))
+                .gameLeaderDto(getLeadersData(game)).build();
     }
 
     @Transactional
@@ -144,13 +131,16 @@ public class GamePrepareService {
         checkLeaderRequest(inGame, inGamePlayer);
         checkOrderSelect(inGame.getTeamInfoData(inGamePlayer.getTeam()));
 
-        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
-        Game game = getGame(gameId);
-        game.changeStatus(GameStatus.PLAYING);
         GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
+        Game game = getGame(gameId);
+        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
+
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
         inGame.completeSelect(team);
+        if (inGame.isAllSelected()) {
+            inGame.changeStatus(GameStatus.PREDECESSOR);
+        }
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.deleteGameWeaponData(gameId, team);
 
@@ -160,10 +150,14 @@ public class GamePrepareService {
     @Transactional
     public GamePreAttackResponse getPreAttack(long gameId) {
         InGame inGame = getInGame(gameId);
-        return new GamePreAttackResponse(inGame.getCurrentAttackTeam());
+        Team preAttackTeam = inGame.getCurrentAttackTeam();
+        //TODO: 반대 팀으로 변경 코드 넣기 (이후 공격자 조회 시 팀을 바꾸면서 조회하기 때문)
+        inGame.changeStatus(GameStatus.ATTACK);
+
+        return new GamePreAttackResponse(preAttackTeam);
     }
 
-    private GameLeaderDto getLeaders(Game game) {
+    private GameLeaderDto getLeadersData(Game game) {
         return GameLeaderDto.builder()
                 .teamA(new TeamLeaderDto(getTeamLeaderId(game, Team.A)))
                 .teamB(new TeamLeaderDto(getTeamLeaderId(game, Team.B))).build();
@@ -189,7 +183,6 @@ public class GamePrepareService {
     }
 
     private void checkOrderSelect(TeamInfoData teamInfoData) {
-        //다 선택됐는지, 겹치는 멤버 Id는 없는지
         Set<Long> idSet = new HashSet<>();
         for (GameOrderDto gameOrderDto : teamInfoData.getOrderList()) {
             if (gameOrderDto == null || !idSet.add(gameOrderDto.getMemberId())) {
@@ -268,10 +261,12 @@ public class GamePrepareService {
         TeamInfoData teamBInfo = makeTeamInfoData(game, getTeamLeaderId(game, Team.B));
 
         redisRepository.saveInGame(gameId, InGame.builder()
+                .gameStatus(GameStatus.PREPARE)
                 .currentAttackTeam(firstAttackTeam)
                 .maxMemberNum(game.getCapacity())
                 .teamAInfo(teamAInfo)
-                .teamBInfo(teamBInfo).build());
+                .teamBInfo(teamBInfo)
+                .turnData(new TurnData()).build());
     }
 
     private Long getTeamLeaderId(Game game, Team team) {
@@ -283,7 +278,7 @@ public class GamePrepareService {
         int peopleNum = game.getPlayers().size() / 2;
 
         return TeamInfoData.builder()
-                .currentAttackIndex(0)
+                .currentAttackIndex(peopleNum - 1)
                 .orderList(new GameOrderDto[peopleNum])
                 .leaderId(leaderId).build();
     }
