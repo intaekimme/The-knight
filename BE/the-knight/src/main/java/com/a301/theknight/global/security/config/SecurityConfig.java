@@ -47,6 +47,8 @@ public class SecurityConfig {
                                            OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) throws Exception {
 
         http
+                .headers().frameOptions().sameOrigin()
+                .and()
                 .cors().configurationSource(corsConfigurationSource(domainProperties))
                 .and()
                 .csrf().disable()
