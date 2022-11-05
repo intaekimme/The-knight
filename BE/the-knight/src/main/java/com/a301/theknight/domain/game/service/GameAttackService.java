@@ -15,8 +15,7 @@ import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
-import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -25,15 +24,17 @@ public class GameAttackService {
     private final GameRedisRepository gameRedisRepository;
 
     public AttackResponseDto attack(long gameId, long memberId, GameAttackRequest gameAttackRequest){
+        checkPlayerId(memberId, gameAttackRequest.getAttacker().getId());
         InGame findInGame = getInGame(gameId);
-        TurnData turn = findInGame.getTurnData();
+        TurnData turn = getTurnData(findInGame);
 
-        turn.recordAttackTurn(gameAttackRequest);
-        InGamePlayer attacker = getInGamePlayer(gameId, memberId);
+        InGamePlayer attacker = getInGamePlayer(gameId, gameAttackRequest.getAttacker().getId());
+        InGamePlayer defender = getInGamePlayer(gameId, gameAttackRequest.getDefender().getId());
+        turn.recordAttackTurn(attacker, defender, gameAttackRequest);
         turn.checkLyingAttack(attacker);
 
-        //inGame.changeStatus()
-        //return 자료구조.getPostfixList()
+        findInGame.recordTurnData(turn);
+        gameRedisRepository.saveInGame(gameId, findInGame);
 
         AttackTeamResponse allyResponse = AttackTeamResponse.builder()
                 .attacker(new AttackPlayerDto(turn.getAttackerId()))
@@ -67,4 +68,16 @@ public class GameAttackService {
                 .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
+    private TurnData getTurnData(InGame inGame){
+       if(inGame.isTurnDataEmpty()){
+           inGame.initTurnData();
+       }
+        return inGame.getTurnData();
+    }
+
+    private void checkPlayerId(long memberId, long playerId){
+        if (memberId != playerId) {
+            throw new CustomException(PLAYER_IS_NOT_USER_WHO_LOGGED_IN);
+        }
+    }
 }

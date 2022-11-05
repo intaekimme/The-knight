@@ -57,4 +57,10 @@ public class InGame implements Serializable {
     public void changeStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
     }
+
+    public boolean isTurnDataEmpty() { return this.turnData == null; }
+
+    public void recordTurnData(TurnData turnData){
+        this.turnData = turnData;
+    }
 }

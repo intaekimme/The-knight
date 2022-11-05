@@ -19,6 +19,8 @@ const GOOGLE_LOGIN = '/oauth2/authorization/google';
 const GAME = '/games';
 
 // 대기방
+const CHAT = '/chat';
+const MODIFYSETTING = '/modify';
 const ENTER_ROOM = '/entry';
 const ALL_MEMBERS = '/members';
 const EXIT_ROOM = '/exit';
@@ -32,12 +34,28 @@ const api = {
   login: () => BASE_URL + GOOGLE_LOGIN,
   loginRedirect: () => LOGIN_REDIRECT,
 
-  makeRoom: () => BASE_URL + API + GAME,
-  enterRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ENTER_ROOM,
-  allMembersInRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_MEMBERS,
-  exitRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXIT_ROOM,
-  selectTeam: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + SELECT_TEAM,
-  ready: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + READY,
+  initRoom: () => BASE_URL + API + GAME,
+
+  // 구독
+  subModifyRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + MODIFYSETTING,
+  subState: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}`,
+  subChatAll: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CHAT + `-all`,
+  subChatTeam: (gameId, team) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CHAT + `-${team}`,
+  subEnterRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ENTER_ROOM,
+  subAllMembersInRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_MEMBERS,
+  subSelectTeam: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + SELECT_TEAM,
+  subReady: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + READY,
+  subExitRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXIT_ROOM,
+
+  // 발행
+  modifyRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + MODIFYSETTING,
+  chat: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CHAT,
+  // chatTeam: (gameId, team) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CHAT + `${team}`,
+  enterRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ENTER_ROOM,
+  allMembersInRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ALL_MEMBERS,
+  selectTeam: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_TEAM,
+  ready: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + READY,
+  exitRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + EXIT_ROOM,
   
   gameRoomInfo: (gameId) => BASE_URL + API + GAME + `/${gameId}`,
 }
