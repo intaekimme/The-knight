@@ -8,5 +8,7 @@ import lombok.Data;
 public class MemberDataDto {
     private long id;
     private String nickname;
+    private String image;
     private String team;
+    private boolean readyStatus;
 }
