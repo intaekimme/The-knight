@@ -10,12 +10,4 @@ public class DefenseResponse {
     private DefendPlayerDto defender;
     private String weapon;
     private String hand;
-
-    public static DefenseResponse toResponse(DefenseTeamResponse defenseTeamResponse){
-        return DefenseResponse.builder()
-                .defender(defenseTeamResponse.getDefender())
-                .weapon(defenseTeamResponse.getWeapon())
-                .hand(defenseTeamResponse.getHand())
-                .build();
-    }
 }
