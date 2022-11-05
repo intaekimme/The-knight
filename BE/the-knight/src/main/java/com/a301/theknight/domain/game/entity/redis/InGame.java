@@ -63,4 +63,8 @@ public class InGame implements Serializable {
     public void recordTurnData(TurnData turnData){
         this.turnData = turnData;
     }
+
+    public void initRequestCount() {
+        requestCount = 0;
+    }
 }

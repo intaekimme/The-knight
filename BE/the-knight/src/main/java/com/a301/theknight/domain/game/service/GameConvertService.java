@@ -38,6 +38,9 @@ public class GameConvertService {
     @Transactional
     public GameStatusResponse getGameStatus(long gameId) {
         InGame inGame = getInGame(gameId);
+        inGame.initRequestCount();
+        gameRedisRepository.saveInGame(gameId, inGame);
+
         return new GameStatusResponse(inGame.getGameStatus().name());
     }
 
