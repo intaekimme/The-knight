@@ -21,7 +21,7 @@ public enum GamePlayingErrorCode implements ErrorCode {
     LEADER_IS_NOT_SELECTED(HttpStatus.BAD_REQUEST, "Team leader is not selected."),
     PLAYER_IS_ALREADY_DEAD(HttpStatus.BAD_REQUEST, "Player is already dead."),
     CAN_NOT_DOUBT_SAME_TEAM(HttpStatus.BAD_REQUEST, "Can not doubt same team."),
-
+    DO_NOT_FIT_REQUEST_BY_GAME_STATUS(HttpStatus.BAD_REQUEST, "Bad request that doesn't fit the game state."),
     PLAYER_IS_NOT_USER_WHO_LOGGED_IN(HttpStatus.BAD_REQUEST, "The current player is not the user who logged in.")
     ;
     private final HttpStatus httpStatus;

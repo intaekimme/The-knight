@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class GameDoubtRequest {
     private DoubtPlayerIdDto suspected;
+    private String doubtStatus;
 }

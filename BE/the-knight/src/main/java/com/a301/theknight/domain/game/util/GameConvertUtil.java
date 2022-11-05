@@ -20,9 +20,9 @@ public class GameConvertUtil {
         postfixMap.put(GameStatus.PREDECESSOR.name(), new ArrayList<>(List.of("/pre-attack")));
         postfixMap.put(GameStatus.ATTACK.name(), new ArrayList<>(List.of("/attacker")));
         postfixMap.put(GameStatus.ATTACK_DOUBT.name(), new ArrayList<>(List.of("/attack-info")));
-        postfixMap.put(GameStatus.DEFEND.name(), new ArrayList<>(List.of("/attack-info")));
-        postfixMap.put(GameStatus.DEFEND_DOUBT.name(), new ArrayList<>(List.of("/defend-info")));
-        postfixMap.put(GameStatus.DOUBT_RESULT.name(), new ArrayList<>(List.of("doubt-info")));
+        postfixMap.put(GameStatus.DEFENSE.name(), new ArrayList<>(List.of("/attack-info")));
+        postfixMap.put(GameStatus.DEFENSE_DOUBT.name(), new ArrayList<>(List.of("/defend-info")));
+        postfixMap.put(GameStatus.DOUBT_RESULT.name(), new ArrayList<>(List.of("/doubt-info")));
         postfixMap.put(GameStatus.EXECUTE.name(), new ArrayList<>(List.of("/execute")));
         postfixMap.put(GameStatus.RESULT.name(), new ArrayList<>(Arrays.asList("/action")));
     }
