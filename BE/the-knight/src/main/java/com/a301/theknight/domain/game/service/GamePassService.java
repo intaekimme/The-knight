@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.pass.response.PassResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
@@ -26,9 +27,9 @@ public class GamePassService {
             -> 공격 패스 : 다음 공격자로 화면 전환 응답 -> 바로 어태커로 메시지 발행
         */
         InGame inGame = getInGame(gameId);
-        TurnStatus status = inGame.getStatus();
+        GameStatus status = inGame.getGameStatus();
 
-        if (TurnStatus.ATTACK.equals(status)) {
+        if (GameStatus.ATTACK.equals(status)) {
             //TODO: 어택 패스 -> 어택 정보 비워주고 다음 공격자로 다시 감.
             return null;
         }

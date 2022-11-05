@@ -24,6 +24,8 @@ public class GameAttackApi {
                        @LoginMemberId long memberId){
         AttackResponseDto response = gameAttackService.attack(gameId, memberId, gameAttackRequest);
 
+        //화면 전환 응답을 보내주는
+        //send
         sendAttackResponse(gameId, response);
     }
 
