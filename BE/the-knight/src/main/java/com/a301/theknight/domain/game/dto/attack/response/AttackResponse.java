@@ -13,12 +13,4 @@ public class AttackResponse {
     private String weapon;
     private String hand;
 
-    public static AttackResponse toResponse(AttackTeamResponse attackTeamResponse){
-        return AttackResponse.builder()
-                .attacker(attackTeamResponse.getAttacker())
-                .defender(attackTeamResponse.getDefender())
-                .weapon(attackTeamResponse.getWeapon())
-                .hand(attackTeamResponse.getHand())
-                .build();
-    }
 }
