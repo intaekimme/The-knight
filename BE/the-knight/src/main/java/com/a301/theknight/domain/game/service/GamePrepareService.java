@@ -58,7 +58,7 @@ public class GamePrepareService {
         List<Player> players = game.getPlayers();
 
         choiceLeader(players);
-        makeInGameData(gameId, game);
+        initInGameData(gameId, game);
         makeInGamePlayerData(gameId, players);
         makeWeaponsData(game);
 
@@ -254,7 +254,7 @@ public class GamePrepareService {
         redisRepository.saveInGamePlayerAll(gameId, inGamePlayers);
     }
 
-    private void makeInGameData(long gameId, Game game) {
+    private void initInGameData(long gameId, Game game) {
         Team firstAttackTeam = (int) (Math.random() * 10) % 2 == 0 ? Team.A : Team.B;
 
         TeamInfoData teamAInfo = makeTeamInfoData(game, getTeamLeaderId(game, Team.A));

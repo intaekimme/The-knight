@@ -19,13 +19,15 @@ import org.springframework.stereotype.Controller;
 public class PlayerApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
+    private static final String SERVER_PREFIX = "/pub/games/";
+
     private final SimpMessagingTemplate template;
     private final PlayerService playerService;
 
     @MessageMapping(value="/games/{gameId}/entry")
-    public void entry(@DestinationVariable long gameId,
-                      @LoginMemberId long memberId){
+    public void entry(@DestinationVariable long gameId, @LoginMemberId long memberId){
         PlayerEntryResponse playerEntryResponse = playerService.entry(gameId, memberId);
+
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/entry");
         template.convertAndSend(destination, playerEntryResponse);
     }
@@ -51,11 +53,13 @@ public class PlayerApi {
     public void ready(@DestinationVariable long gameId,
                       @LoginMemberId long memberId,
                       PlayerReadyRequest playerReadyMessage){
-        ReadyResponseDto readyResponseDto = playerService.ready(gameId, memberId, playerReadyMessage);
+        ReadyDto readyDto = playerService.ready(gameId, memberId, playerReadyMessage);
 
-        String destination = makeDestinationString(SEND_PREFIX, gameId, "/ready");
-        template.convertAndSend(destination, readyResponseDto);
-        //TODO: 서버 -> 서버로 보내는 요청
+        if (readyDto.isCanStart()) {
+            template.convertAndSend(makeDestinationString(SERVER_PREFIX, gameId, "/convert"));
+            return;
+        }
+        template.convertAndSend(makeDestinationString(SEND_PREFIX, gameId, "/ready"), readyDto.getReadyResponseDto());
     }
 
     private static String makeDestinationString(String prefix, long gameId, String postfix){

@@ -94,4 +94,10 @@ public class Game extends BaseTimeEntity {
                 .filter(player -> player.getTeam().equals(team) && player.isLeader())
                 .findFirst();
     }
+
+    public Player getOwner() {
+        return players.stream()
+                .filter(player -> player.isOwner())
+                .findFirst().get();
+    }
 }
