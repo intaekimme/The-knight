@@ -15,6 +15,7 @@ public class TurnData implements Serializable {
     private DefendData defendData;
     private boolean lyingAttack;
     private boolean lyingDefend;
+    private DoubtData doubtData;
 
     public void recordAttackTurn(InGamePlayer attacker, InGamePlayer defender, GameAttackRequest gameAttackRequest){
         this.attackerId = attacker.getMemberId();
@@ -45,5 +46,9 @@ public class TurnData implements Serializable {
     public void checkLyingDefense(InGamePlayer defender){
         this.lyingDefend = (this.defendData.getDefendHand().name().equals("LEFT") && (!defender.getLeftWeapon().equals(Weapon.SHIELD))) ||
                 (this.defendData.getDefendHand().name().equals("RIGHT") && (!defender.getRightWeapon().equals(Weapon.SHIELD)));
+    }
+
+    public void setDoubtData(DoubtData doubtData) {
+        this.doubtData = doubtData;
     }
 }

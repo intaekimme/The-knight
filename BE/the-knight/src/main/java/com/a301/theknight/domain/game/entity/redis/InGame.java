@@ -67,4 +67,17 @@ public class InGame implements Serializable {
     public void initRequestCount() {
         requestCount = 0;
     }
+
+    public boolean getLyingData() {
+        return (gameStatus.equals(GameStatus.ATTACK_DOUBT) && turnData.isLyingAttack())
+                || (gameStatus.equals(GameStatus.DEFENSE_DOUBT) && turnData.isLyingDefend());
+    }
+
+    public void setDoubtData(DoubtData doubtData) {
+        turnData.setDoubtData(doubtData);
+    }
+
+    public void clearDoubtData() {
+        turnData.setDoubtData(null);
+    }
 }
