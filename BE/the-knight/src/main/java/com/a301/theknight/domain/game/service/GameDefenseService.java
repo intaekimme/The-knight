@@ -3,10 +3,8 @@ package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
-import com.a301.theknight.domain.game.dto.defense.response.DefenseResponseDto;
-import com.a301.theknight.domain.game.dto.defense.response.DefenseTeamResponse;
+import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
 import com.a301.theknight.domain.game.entity.Weapon;
-import com.a301.theknight.domain.game.entity.redis.Hand;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TurnData;
@@ -23,7 +21,7 @@ public class GameDefenseService {
 
     private final GameRedisRepository gameRedisRepository;
 
-    public DefenseResponseDto defense(long gameId, long memberId, GameDefenseRequest gameDefenseRequest){
+    public void defense(long gameId, long memberId, GameDefenseRequest gameDefenseRequest){
         checkPlayerId(memberId, gameDefenseRequest.getDefender().getId());
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
@@ -35,24 +33,16 @@ public class GameDefenseService {
         findInGame.recordTurnData(turn);
         gameRedisRepository.saveInGame(gameId, findInGame);
 
-        DefenseTeamResponse allayResponse = DefenseTeamResponse.builder()
+    }
+
+    public DefenseResponse getDefenseInfo(long gmaeId) {
+        InGame findInGame = getInGame(gmaeId);
+        TurnData turn = getTurnData(findInGame);
+
+        return DefenseResponse.builder()
                 .defender(new DefendPlayerDto(turn.getDefenderId()))
                 .weapon(Weapon.SHIELD.name())
                 .hand(turn.getDefendData().getDefendHand().name())
-                .team(defender.getTeam().name())
-                .build();
-
-        //  TODO 방어시 상대 팀에 방패와 손 정보를 전달할 것인지 논의
-        DefenseTeamResponse oppResponse = DefenseTeamResponse.builder()
-                .defender(new DefendPlayerDto(turn.getDefenderId()))
-                .weapon(Weapon.HIDE.name())
-                .hand(Hand.HIDE.name())
-                .team(defender.getTeam().name().equals("A") ? "B" : "A")
-                .build();
-
-        return DefenseResponseDto.builder()
-                .allyResponse(allayResponse)
-                .oppResponse(oppResponse)
                 .build();
     }
 
