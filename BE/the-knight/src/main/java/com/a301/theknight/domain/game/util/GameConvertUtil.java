@@ -24,7 +24,6 @@ public class GameConvertUtil {
         postfixMap.put(GameStatus.DEFENSE_DOUBT.name(), new ArrayList<>(List.of("/defense-info")));
         postfixMap.put(GameStatus.DOUBT_RESULT.name(), new ArrayList<>(List.of("/doubt-info")));
         postfixMap.put(GameStatus.EXECUTE.name(), new ArrayList<>(List.of("/execute")));
-        postfixMap.put(GameStatus.RESULT.name(), new ArrayList<>(Arrays.asList("/action")));
     }
 
     public List<String> getPostfixList(String status) {

@@ -1,5 +1,8 @@
 package com.a301.theknight.domain.game.service;
 
+import com.a301.theknight.domain.game.dto.execute.response.AttackerDto;
+import com.a301.theknight.domain.game.dto.execute.response.DefenderDto;
+import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
 import com.a301.theknight.domain.game.dto.pass.response.PassResponse;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
@@ -15,7 +18,7 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ING
 
 @RequiredArgsConstructor
 @Service
-public class GamePassService {
+public class GameExecuteService {
 
     private final GameRedisRepository redisRepository;
 
@@ -38,11 +41,11 @@ public class GamePassService {
     }
 
     @Transactional
-    public void executeTurn(long gameId) {
+    public GameExecuteResponse executeTurn(long gameId) {
         InGame inGame = getInGame(gameId);
         TurnData turnData = inGame.getTurnData();
-        InGamePlayer defender = getInGamePlayer(gameId, turnData.getDefenderId());
 
+        InGamePlayer defender = getInGamePlayer(gameId, turnData.getDefenderId());
         AttackData attackData = turnData.getAttackData();
         DefendData defendData = turnData.getDefendData();
 
@@ -50,15 +53,44 @@ public class GamePassService {
         Weapon attackWeapon = attackData.getWeapon();
         int resultCount = defendCount - attackWeapon.getCount();
 
+        GameStatus nextStatus = GameStatus.ATTACK;
         if (resultCount < 0) {
             defender.death();
+            if (defender.isLeader()) {
+                nextStatus = GameStatus.END;
+            }
         } else {
             defender.changeCount(resultCount, defendData.getDefendHand());
         }
 
-        inGame.changeStatus(GameStatus.RESULT);
+        inGame.changeStatus(nextStatus);
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.saveInGamePlayer(gameId, defender.getMemberId(), defender);
+
+        return getGameExecuteResponse(inGame, turnData, defender, resultCount);
+    }
+
+    private GameExecuteResponse getGameExecuteResponse(InGame inGame, TurnData turnData, InGamePlayer defender, int nextCount) {
+        AttackData attackData = turnData.getAttackData();
+        DefendData defendData = turnData.getDefendData();
+
+        AttackerDto attackerDto = AttackerDto.builder()
+                .id(turnData.getAttackerId())
+                .hand(attackData.getAttackHand().name())
+                .weapon(attackData.getWeapon().name())
+                .build();
+        DefenderDto defenderDto = DefenderDto.builder()
+                .id(turnData.getDefenderId())
+                .hand(defendData.getDefendHand().name())
+                .isDead(defender.isDead())
+                .nextCount(nextCount)
+                .build();
+
+        return GameExecuteResponse.builder()
+                .attackTeam(inGame.getCurrentAttackTeam().name())
+                .attacker(attackerDto)
+                .defender(defenderDto)
+                .build();
     }
 
     private InGame getInGame(long gameId) {
