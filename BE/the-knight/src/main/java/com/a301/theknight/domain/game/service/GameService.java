@@ -1,15 +1,12 @@
 package com.a301.theknight.domain.game.service;
 
+import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.game.dto.GameCreationResponse;
 import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.GameListDto;
 import com.a301.theknight.domain.game.dto.waiting.response.GameListResponse;
 import com.a301.theknight.domain.game.entity.Game;
-import com.a301.theknight.domain.game.entity.GameStatus;
-import com.a301.theknight.domain.game.entity.redis.InGame;
-import com.a301.theknight.domain.game.entity.redis.TurnData;
-import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
@@ -37,9 +34,8 @@ public class GameService {
 
 
     @Transactional(readOnly = true)
-    public GameListResponse getGameList(@Nullable String keyword,
-                                        Pageable pageable,
-                                        long memberId){
+    public GameListResponse getGameList(@Nullable String keyword, Pageable pageable,
+                                        @LoginMemberId long memberId){
         getMember(memberId);
         GameListResponse gameListResponse = new GameListResponse();
         Page<Game> gamePage = null;
@@ -49,16 +45,14 @@ public class GameService {
             gamePage = gameRepository.findAll(pageable);
         }
 
-        List<GameListDto> gameListDtos = gamePage.stream().map(game -> {
-            return GameListDto.builder()
-                    .gameId(game.getId())
-                    .title(game.getTitle())
-                    .status(game.getStatus().name())
-                    .maxUser(game.getCapacity())
-                    .participant(game.getPlayers().size())
-                    .build();
-        }).collect(Collectors.toList());
-
+        List<GameListDto> gameListDtos = gamePage.stream()
+                .map(game -> GameListDto.builder()
+                        .gameId(game.getId())
+                        .title(game.getTitle())
+                        .status(game.getStatus().name())
+                        .capacity(game.getCapacity())
+                        .currentMembers(game.getPlayers().size()).build())
+                .collect(Collectors.toList());
         gameListResponse.setGames(gameListDtos);
 
         return gameListResponse;
@@ -87,8 +81,8 @@ public class GameService {
         return GameInfoResponse.builder()
                 .gameId(gameId)
                 .title(findGame.getTitle())
-                .maxUser(findGame.getCapacity())
-                .currentUser(findGame.getPlayers().size())
+                .capacity(findGame.getCapacity())
+                .currentMembers(findGame.getPlayers().size())
                 .sword(findGame.getSword())
                 .twin(findGame.getTwin())
                 .shield(findGame.getShield())

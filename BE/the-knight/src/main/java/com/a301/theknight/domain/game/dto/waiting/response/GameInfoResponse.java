@@ -8,8 +8,8 @@ import lombok.Data;
 public class GameInfoResponse {
     private long gameId;
     private String title;
-    private int maxUser;
-    private int currentUser;
+    private int capacity;
+    private int currentMembers;
     private int sword;
     private int twin;
     private int shield;

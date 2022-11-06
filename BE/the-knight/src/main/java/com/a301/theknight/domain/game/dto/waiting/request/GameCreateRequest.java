@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GameCreateRequest {
     private String title;
-    private int maxUser;
-
-    private int currentUser;
+    private int capacity;
     private int sword;
     private int twin;
     private int shield;
@@ -25,14 +23,14 @@ public class GameCreateRequest {
                 .twin(twin)
                 .shield(shield)
                 .hand(hand)
-                .capacity(maxUser)
+                .capacity(capacity)
                 .build();
     }
 
     @Builder
-    public GameCreateRequest(String title, int maxUser, int sword, int twin, int shield, int hand){
+    public GameCreateRequest(String title, int capacity, int sword, int twin, int shield, int hand){
         this.title = title;
-        this.maxUser = maxUser;
+        this.capacity = capacity;
         this.sword = sword;
         this.twin = twin;
         this.shield = shield;
