@@ -8,7 +8,7 @@ import lombok.Data;
 public class GameInfoResponse {
     private long gameId;
     private String title;
-    private int capacity;
+    private int maxMember;
     private int currentMembers;
     private int sword;
     private int twin;

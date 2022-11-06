@@ -50,7 +50,7 @@ public class GameService {
                         .gameId(game.getId())
                         .title(game.getTitle())
                         .status(game.getStatus().name())
-                        .capacity(game.getCapacity())
+                        .maxMember(game.getCapacity())
                         .currentMembers(game.getPlayers().size()).build())
                 .collect(Collectors.toList());
         gameListResponse.setGames(gameListDtos);
@@ -81,7 +81,7 @@ public class GameService {
         return GameInfoResponse.builder()
                 .gameId(gameId)
                 .title(findGame.getTitle())
-                .capacity(findGame.getCapacity())
+                .maxMember(findGame.getCapacity())
                 .currentMembers(findGame.getPlayers().size())
                 .sword(findGame.getSword())
                 .twin(findGame.getTwin())
