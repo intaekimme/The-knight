@@ -38,29 +38,27 @@ public class GamePassService {
     }
 
     @Transactional
-    public void turnExecute(long gameId) {
-        TurnData turnData = getInGame(gameId).getTurnData();
-
-        InGamePlayer attacker = getInGamePlayer(gameId, turnData.getAttackerId());
-        InGamePlayer defender = getInGamePlayer(gameId, turnData.getAttackerId());
+    public void executeTurn(long gameId) {
+        InGame inGame = getInGame(gameId);
+        TurnData turnData = inGame.getTurnData();
+        InGamePlayer defender = getInGamePlayer(gameId, turnData.getDefenderId());
 
         AttackData attackData = turnData.getAttackData();
         DefendData defendData = turnData.getDefendData();
 
-        int defendCount = Hand.LEFT.equals(defendData.getDefendHand())
-                ? defender.getLeftCount() : defender.getRightCount();
-        Weapon attackWeapon = Hand.LEFT.equals(attackData.getAttackHand())
-                ? attacker.getLeftWeapon() : attacker.getRightWeapon();
-
+        int defendCount = defendData.getShieldCount();
+        Weapon attackWeapon = attackData.getWeapon();
         int resultCount = defendCount - attackWeapon.getCount();
+
         if (resultCount < 0) {
             defender.death();
-            //TODO: 디펜더가 리더인 경우 -> 게임 종료
         } else {
             defender.changeCount(resultCount, defendData.getDefendHand());
         }
 
-        //TODO: 턴 수행 후 응답은?? -> 다음 공격자로??
+        inGame.changeStatus(GameStatus.RESULT);
+        redisRepository.saveInGame(gameId, inGame);
+        redisRepository.saveInGamePlayer(gameId, defender.getMemberId(), defender);
     }
 
     private InGame getInGame(long gameId) {

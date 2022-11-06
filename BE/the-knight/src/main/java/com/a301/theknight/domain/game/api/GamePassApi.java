@@ -14,8 +14,9 @@ import org.springframework.stereotype.Controller;
 public class GamePassApi {
 
     private static final String SEND_PREFIX = "/sub/games/";
-    private final SimpMessagingTemplate template;
+    private static final String SERVER_PREFIX = "/pub/games/";
 
+    private final SimpMessagingTemplate template;
     private final GamePassService gamePassService;
 
     @MessageMapping(value = "/games/{gameId}/pass")
@@ -26,14 +27,24 @@ public class GamePassApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/execute")
-    public void turnExecute(@DestinationVariable long gameId) {
-        gamePassService.turnExecute(gameId);
+    public void executeTurn(@DestinationVariable long gameId) {
+        gamePassService.executeTurn(gameId);
 
-        template.convertAndSend(makeDestinationUri(gameId, "/doubt"));
+        template.convertAndSend(makeConvertUri(gameId));
+    }
+
+    @MessageMapping(value = "/games/{gameId}/turn-info")
+    public void turnInfo(@DestinationVariable long gameId) {
+
     }
 
     private String makeDestinationUri(long gameId, String postfix) {
         return SEND_PREFIX + gameId + postfix;
     }
 
+    private String makeConvertUri(long gameId){ return SERVER_PREFIX + gameId + "/convert"; }
+
+    private String makeProceedUri(long gameId) {
+        return SERVER_PREFIX + gameId + "/proceed";
+    }
 }
