@@ -86,7 +86,7 @@ const gameListAll = createAsyncThunk('gameListAll', async () => {
   //   .catch(err => { console.log(err); })
   try {
     const res = await axios.get(api.getGameList(), {
-      headers: {Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}
+      headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
     });
     console.log("get game list", res.data);
     return res.data;
@@ -94,7 +94,19 @@ const gameListAll = createAsyncThunk('gameListAll', async () => {
     console.log(err);
   }
 })
-  
+
+const gameDesc = createAsyncThunk('gameDesc', async (gameId) => {
+  try {
+    const res = await axios.get(api.gameRoomInfo(gameId), {
+      headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
+    });
+    console.log("get gmae info", res.data);
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+})
+
 const gameListInit = [{
   gameId: -1,
   title: ' ',
@@ -118,8 +130,14 @@ export const gameListSlice = createSlice({
     [gameListAll.rejected]: state => {
       state.gameListAll = gameListInit;
     },
+    [gameDesc.fulfilled]: (state, action) => {
+      state.gameDesc = action.payload;
+    },
+    [gameDesc.rejected]: state => {
+      state.gameDesc = gameListInit;
+    },
   },
 });
-export { gameListAll };
+export { gameListAll, gameDesc };
 export const { setGameList } = gameListSlice.actions;
 export default gameListSlice.reducer;

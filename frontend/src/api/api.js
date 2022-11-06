@@ -38,7 +38,7 @@ const api = {
   exitRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXIT_ROOM,
   selectTeam: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + SELECT_TEAM,
   ready: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + READY,
-  
+
   gameRoomInfo: (gameId) => BASE_URL + API + GAME + `/${gameId}`,
   getGameList: () => BASE_URL + API + GAME,
 
