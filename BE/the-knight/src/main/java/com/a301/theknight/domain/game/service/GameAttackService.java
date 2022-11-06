@@ -41,6 +41,9 @@ public class GameAttackService {
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
 
+
+        //  TODO 다음 상태 지정하기 , 공격 의심
+        //  TODO 인게임 저장
         return AttackResponse.builder()
                 .attacker(new AttackPlayerDto(turn.getAttackerId()))
                 .defender(new DefendPlayerDto(turn.getDefenderId()))

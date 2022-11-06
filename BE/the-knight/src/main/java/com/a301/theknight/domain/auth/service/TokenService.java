@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.auth.service;
 
 import com.a301.theknight.domain.auth.model.TokenSet;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;

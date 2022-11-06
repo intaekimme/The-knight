@@ -30,7 +30,7 @@ public class Game extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private GameStatus status;
 
-    @OneToMany(mappedBy = "game")
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private List<Player> players = new ArrayList<>();
 
     private int sword;
