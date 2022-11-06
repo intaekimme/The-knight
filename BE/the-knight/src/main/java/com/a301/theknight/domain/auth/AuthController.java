@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.auth;
 
-import com.a301.theknight.domain.auth.service.TokenProperties;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

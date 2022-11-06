@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class GameCreationResponse {
-    private long newGameId;
+    private long gameId;
 
-    public GameCreationResponse(long newGameId){
-        this.newGameId = newGameId;
+    public GameCreationResponse(long gameId){
+        this.gameId = gameId;
     }
 }

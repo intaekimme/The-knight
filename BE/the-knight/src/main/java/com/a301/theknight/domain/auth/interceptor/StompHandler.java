@@ -2,7 +2,7 @@ package com.a301.theknight.domain.auth.interceptor;
 
 import com.a301.theknight.domain.auth.model.MemberPrincipal;
 import com.a301.theknight.domain.auth.service.CustomUserDetailsService;
-import com.a301.theknight.domain.auth.service.TokenProperties;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.TokenService;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
@@ -15,7 +15,6 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;

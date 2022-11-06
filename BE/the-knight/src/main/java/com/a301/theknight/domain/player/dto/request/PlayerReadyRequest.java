@@ -1,7 +1,6 @@
-package com.a301.theknight.domain.player.dto;
+package com.a301.theknight.domain.player.dto.request;
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class PlayerReadyRequest {

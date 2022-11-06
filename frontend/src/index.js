@@ -15,6 +15,8 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import MemberPage from "./pages/MemberPage";
 import Game from './pages/Game';
+import MakeRoom from './components/lobby/MakeRoom';
+import EnterRoom from './components/lobby/EnterRoom';
 import Room from "./pages/Room";
 import GoogleLogin from './commons/login/GoogleLogin';
 import LoginToken from './commons/login/LoginToken';
@@ -52,7 +54,9 @@ root.render(
               <Route path="islogin" element={<LoginToken />} />
               <Route path="signup" element={<Signup />} />
               <Route path="memberpage" element={<MemberPage />} />
-              <Route path="room" element={<Room />} />
+              <Route path="makeroom" element={<MakeRoom />} />
+              <Route path="/room/:gameId" element={<EnterRoom />} />
+              <Route path="in-room" element={<Room />} />
               <Route path="chat" element={<Chat />} />
               <Route path="chatting" element={<Chatting />} />
             </Route>

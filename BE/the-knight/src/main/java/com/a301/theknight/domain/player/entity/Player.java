@@ -50,6 +50,8 @@ public class Player extends BaseTimeEntity {
 
     private boolean isReady;
 
+    private boolean owner;
+
     private boolean isLeader;
 
     @Builder
@@ -91,5 +93,9 @@ public class Player extends BaseTimeEntity {
 
     public void becomeLeader() {
         isLeader = true;
+    }
+
+    public void setOwner() {
+        owner = true;
     }
 }

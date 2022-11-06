@@ -6,9 +6,15 @@ import lombok.Getter;
 
 import java.io.Serializable;
 
-@Builder
+
 @Getter
 public class AttackData implements Serializable {
-    private Hand attackHand;
-    private Weapon weapon;
+    private final Hand attackHand;
+    private final Weapon weapon;
+
+    @Builder
+    public AttackData(String weapon, String hand) {
+        this.attackHand = Hand.valueOf(hand);
+        this.weapon = Weapon.valueOf(weapon);
+    }
 }

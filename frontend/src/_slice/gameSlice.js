@@ -66,8 +66,10 @@ const orderInit = {
   teamB: [null, null, null, null, null],
 }
 
-// 0: 로딩페이지, 1: 무기선택, 2: 공/수 선택, 3: 애니메이션, 4: 의심, 5: 게임종료
-const phaseInit = 1
+// PRE, ATTACK, DEFEND, DOUBT, SHIELD, RESULT, END
+const phaseInit = "PRE"
+
+const isLoadingInit = true
 
 export const gameSlice = createSlice({
   name: "gameSlice",
@@ -75,6 +77,7 @@ export const gameSlice = createSlice({
     players: playersInit,
     order: orderInit,
     phase: phaseInit,
+    isLoading: isLoadingInit,
   },
   reducers: {
     fetchPlayers: (state, action) => {
@@ -114,8 +117,14 @@ export const gameSlice = createSlice({
       } else if (state.order.teamA[action.payload].memberId === state.players.players[0].memberId) {
         state.order.teamA[action.payload] = null
       }
-    }
+    },
+    fetchPhase: (state, action) => {
+      state.phase = action.payload
+    },
+    switchIsLoading: (state) => {
+      state.isLoading = !state.isLoading
+    },
   },
 });
-export const { fetchPlayers, selectWeapon, deleteWeapon, selectOrder } = gameSlice.actions;
+export const { fetchPlayers, selectWeapon, deleteWeapon, selectOrder, fetchPhase, switchIsLoading } = gameSlice.actions;
 export default gameSlice.reducer;

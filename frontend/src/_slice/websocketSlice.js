@@ -3,48 +3,37 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { over, Client } from "stompjs";
 import SockJS from "sockjs-client";
 // import axios from 'axios';
-// import api from '../api/api';
+import api from '../api/api';
 
-let stompClient = null;
-const Sock = new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`);
-stompClient = over(Sock);
-stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, onConnected, (error) => {
-  console.log(error);
-});
-
-const stompClientInit = new Client();
+// const stompClientInit = null;
+const stompClientInit = over(new WebSocket("ws://localhost:3000"));
 // 드래그중인 값
 export const websocketSlice = createSlice({
   name: 'websocketValue',
-  initialState:{stompClient: stompClientInit},
+  initialState:{stompClient: stompClientInit, connect: false, fail: false},
   reducers:{
     connect:(state) =>{
       let stompClient = null;
       const Sock = new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`);
       stompClient = over(Sock);
-      stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, ()=>{}, (error) => {
+      stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, ()=>{state.connect = true; state.fail=false;}, (error) => {
         console.log(error);
+        state.connect = false; state.fail = true;
       });
       state.stompClient = stompClient;
+      return stompClient;
     },
     enterRoom:(state, action) =>{
-      state.stompClient.subscribe(api.enterRoom(action.payload), onMessageReceived, (error) => {
-        console.log(error);
-      });
-      state.stompClient.subscribe(api.allMembersInRoom(action.payload), onMessageReceived, (error) => {
-        console.log(error);
-      });
-      state.stompClient.subscribe(api.exitRoom(action.payload), onMessageReceived, (error) => {
-        console.log(error);
-      });
-      state.stompClient.subscribe(api.selectTeam(action.payload), onMessageReceived, (error) => {
-        console.log(error);
-      });
-      state.stompClient.subscribe(api.ready(action.payload), onMessageReceived, (error) => {
-        console.log(error);
-      });
+      console.log(action.payload);
+      const subscribes = action.payload.subscribes;
+      for(let i=0;i<action.payload.apis.length;i++){
+        state.stompClient.subscribe(subscribes[i].api(action.payload.gameId),
+          subscribes[i].receiver, (error) => {console.log(error);});
+      }
+      console.log("abc");
+      action.payload.navigate(action.payload.url);
     }
   }
 });
-export const { setRoom, setUsers } = websocketSlice.actions;
-export const websocketAction = websocketSlice.actions;
+export const { connect, enterRoom } = websocketSlice.actions;
+export default websocketSlice.actions;

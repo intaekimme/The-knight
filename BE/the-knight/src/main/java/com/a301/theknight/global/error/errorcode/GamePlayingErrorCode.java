@@ -10,6 +10,7 @@ public enum GamePlayingErrorCode implements ErrorCode {
     INGAME_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Ingame data is not exist."),
     INGAME_PLAYER_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Player data is not exist."),
     WEAPON_DATA_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Weapon data is not exist."),
+    CAN_NOT_PLAYING_GAME(HttpStatus.BAD_REQUEST, "Can't prepare game data. Maybe all player do not ready."),
     NOT_ENOUGH_WEAPON(HttpStatus.BAD_REQUEST, "Weapon is not enough"),
     SELECT_WEAPON_IS_FULL(HttpStatus.BAD_REQUEST, "All selected weapons are full."),
     ORDER_NUMBER_IS_INVALID(HttpStatus.BAD_REQUEST, "Order number value is invalid."),
@@ -20,6 +21,8 @@ public enum GamePlayingErrorCode implements ErrorCode {
     LEADER_IS_NOT_SELECTED(HttpStatus.BAD_REQUEST, "Team leader is not selected."),
     PLAYER_IS_ALREADY_DEAD(HttpStatus.BAD_REQUEST, "Player is already dead."),
     CAN_NOT_DOUBT_SAME_TEAM(HttpStatus.BAD_REQUEST, "Can not doubt same team."),
+    DO_NOT_FIT_REQUEST_BY_GAME_STATUS(HttpStatus.BAD_REQUEST, "Bad request that doesn't fit the game state."),
+    PLAYER_IS_NOT_USER_WHO_LOGGED_IN(HttpStatus.BAD_REQUEST, "The current player is not the user who logged in.")
     ;
     private final HttpStatus httpStatus;
     private final String message;

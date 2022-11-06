@@ -6,9 +6,15 @@ import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.GameListDto;
 import com.a301.theknight.domain.game.dto.waiting.response.GameListResponse;
 import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.GameStatus;
+import com.a301.theknight.domain.game.entity.redis.InGame;
+import com.a301.theknight.domain.game.entity.redis.TurnData;
+import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
+import com.a301.theknight.domain.player.entity.Player;
+import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
@@ -27,6 +33,7 @@ import java.util.stream.Collectors;
 public class GameService {
     private final GameRepository gameRepository;
     private final MemberRepository memberRepository;
+    private final PlayerRepository playerRepository;
 
 
     @Transactional(readOnly = true)
@@ -59,10 +66,16 @@ public class GameService {
 
     @Transactional
     public GameCreationResponse createGame(GameCreateRequest gameCreateRequest, long memberId){
-        getMember(memberId);
-
         Game newGame = gameCreateRequest.toEntity();
-        gameRepository.save(newGame);
+        newGame = gameRepository.save(newGame);
+
+        Member owner = getMember(memberId);
+        Player ownerPlayer = Player.builder()
+                .game(newGame)
+                .member(owner).build();
+        ownerPlayer.setOwner();
+        playerRepository.save(ownerPlayer);
+
         return new GameCreationResponse(newGame.getId());
     }
 
