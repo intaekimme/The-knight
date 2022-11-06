@@ -75,7 +75,7 @@ public class PlayerServiceTest {
         }
 
         playerTeamRequest  = new PlayerTeamRequest();
-        playerTeamRequest.setTeam("B");
+        playerTeamRequest.setTeam(Team.B);
 
         playerReadyRequest = new PlayerReadyRequest();
         playerReadyRequest.setReadyStatus(true);
@@ -118,8 +118,8 @@ public class PlayerServiceTest {
 
         PlayerTeamResponse playerTeamResponse = playerService.team(1L, 1L, playerTeamRequest);
 
-        assertEquals(playerTeamRequest.getTeam(), playerTeamResponse.getTeam());
-        assertEquals(1L, playerTeamResponse.getPlayerId());
+        assertEquals(playerTeamRequest.getTeam().name(), playerTeamResponse.getTeam());
+        assertEquals(1L, playerTeamResponse.getMemberId());
     }
 
     @Test
@@ -132,7 +132,7 @@ public class PlayerServiceTest {
         ReadyDto readyDto = playerService.ready(1L, 2L, playerReadyRequest);
 
         assertEquals(2L, readyDto.getReadyResponseDto().getMemberId());
-        assertTrue(readyDto.getReadyResponseDto().getIsReady());
+        assertTrue(readyDto.getReadyResponseDto().isReadyStatus());
     }
 
     @Test

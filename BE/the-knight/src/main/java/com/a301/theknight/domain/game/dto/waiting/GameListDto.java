@@ -9,6 +9,6 @@ public class GameListDto {
     private long gameId;
     private String title;
     private String status;
-    private int maxUser;
-    private int participant;
+    private int maxMember;
+    private int currentMembers;
 }

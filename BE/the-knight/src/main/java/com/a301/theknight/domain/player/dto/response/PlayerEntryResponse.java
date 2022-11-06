@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PlayerEntryResponse {
-    private long playerId;
+    private long memberId;
     private String nickname;
     private String image;
 
     @Builder
-    public PlayerEntryResponse(long playerId, String nickname, String image){
-        this.playerId = playerId;
+    public PlayerEntryResponse(long memberId, String nickname, String image){
+        this.memberId = memberId;
         this.nickname = nickname;
         this.image = image;
     }
