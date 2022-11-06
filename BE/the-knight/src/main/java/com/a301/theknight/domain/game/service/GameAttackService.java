@@ -56,11 +56,12 @@ public class GameAttackService {
     }
 
     @Transactional
-    public boolean isAttackPass(long gameId, GameAttackPassRequest gameAttackPassRequest, long memberId) {
+    public void isAttackPass(long gameId, GameAttackPassRequest gameAttackPassRequest, long memberId) {
         checkPlayerId(memberId, gameAttackPassRequest.getAttacker().getId());
         InGame findInGame = getInGame(gameId);
 
-        return findInGame.getGameStatus().equals(GameStatus.ATTACK);
+        if(findInGame.getGameStatus().equals(GameStatus.ATTACK)) return;
+        throw new CustomException(UNABLE_TO_PASS_ATTACK);
     }
 
     private InGame getInGame(long gameId) {

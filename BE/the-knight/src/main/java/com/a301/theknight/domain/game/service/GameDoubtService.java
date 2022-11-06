@@ -106,7 +106,8 @@ public class GameDoubtService {
                         //  의심 갯수 초기화
                 inGame.initDoubtPassCount();
                         //  의심 결과로 화면 전환
-                inGame.changeStatus(RESULT);
+                if(inGame.getGameStatus().equals(ATTACK_DOUBT)) inGame.changeStatus(DEFENSE);
+                else if(inGame.getGameStatus().equals(DEFENSE_DOUBT)) inGame.changeStatus(EXECUTE);
                 gameRedisRepository.saveInGame(gameId, inGame);
             }
         } catch (InterruptedException e) {

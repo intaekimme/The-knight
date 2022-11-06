@@ -40,8 +40,8 @@ public class GameAttackApi {
     @MessageMapping(value="/games/{gameId}/attack-pass")
     public void attackPass(@DestinationVariable long gameId, GameAttackPassRequest gameAttackPassRequest,
                            @LoginMemberId long memberId){
-        if (gameAttackService.isAttackPass(gameId, gameAttackPassRequest, memberId))
-            template.convertAndSend(makeConvertUri(gameId));
+        gameAttackService.isAttackPass(gameId, gameAttackPassRequest, memberId);
+        template.convertAndSend(makeConvertUri(gameId));
     }
 
     private String makeDestinationUri(long gameId, String postfix) {
