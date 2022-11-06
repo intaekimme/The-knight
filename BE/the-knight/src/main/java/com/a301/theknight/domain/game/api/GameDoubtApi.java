@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
+import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtPassRequest;
 import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtRequest;
 import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponse;
 import com.a301.theknight.domain.game.service.GameDoubtService;
@@ -37,6 +38,13 @@ public class GameDoubtApi {
         template.convertAndSend(makeProceedUri(gameId));
 
         Thread.sleep(10000);
+        template.convertAndSend(makeConvertUri(gameId));
+    }
+
+    @MessageMapping(value="/games/{gameId}/doubt-pass")
+    public void doubtPass(@DestinationVariable long gameId,  GameDoubtPassRequest gameDoubtPassRequest,
+                          @LoginMemberId long memberId){
+        gameDoubtService.doubtPass(gameId, memberId,  gameDoubtPassRequest.getDoubtStatus());
         template.convertAndSend(makeConvertUri(gameId));
     }
 

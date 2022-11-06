@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
+import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
 import com.a301.theknight.domain.game.service.GameAttackService;
@@ -31,9 +32,16 @@ public class GameAttackApi {
     public void attackInfo(@DestinationVariable long gameId) throws InterruptedException {
         AttackResponse response = gameAttackService.getAttackInfo(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/attack-info"), response);
-        //  TODO 시간 초 늘리기
+
         Thread.sleep(500);
         template.convertAndSend(makeDestinationUri(gameId, "/proceed"));
+    }
+
+    @MessageMapping(value="/games/{gameId}/attack-pass")
+    public void attackPass(@DestinationVariable long gameId, GameAttackPassRequest gameAttackPassRequest,
+                           @LoginMemberId long memberId){
+        gameAttackService.isAttackPass(gameId, gameAttackPassRequest, memberId);
+        template.convertAndSend(makeConvertUri(gameId));
     }
 
     private String makeDestinationUri(long gameId, String postfix) {

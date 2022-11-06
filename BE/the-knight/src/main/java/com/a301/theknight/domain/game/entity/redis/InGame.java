@@ -19,6 +19,8 @@ public class InGame implements Serializable {
     private TurnData turnData;
     private int requestCount;
 
+    private int doubtPassCount;
+
     public void initTurnData() {
         turnData = new TurnData();
     }
@@ -37,9 +39,13 @@ public class InGame implements Serializable {
         requestCount++;
     }
 
+    public void addDoubtPassCount() { doubtPassCount++; }
+
     public boolean isFullCount() {
         return requestCount >= maxMemberNum;
     }
+
+//    public boolean
 
     public TeamInfoData getTeamInfoData(Team team) {
         return Team.A.equals(team) ? teamAInfo : teamBInfo;
@@ -67,6 +73,8 @@ public class InGame implements Serializable {
     public void initRequestCount() {
         requestCount = 0;
     }
+
+    public void initDoubtPassCount() { doubtPassCount = 0; }
 
     public boolean getLyingData() {
         return (gameStatus.equals(GameStatus.ATTACK_DOUBT) && turnData.isLyingAttack())
