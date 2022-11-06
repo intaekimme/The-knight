@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.auth.handler;
 
-import com.a301.theknight.domain.auth.service.TokenProperties;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.TokenService;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;

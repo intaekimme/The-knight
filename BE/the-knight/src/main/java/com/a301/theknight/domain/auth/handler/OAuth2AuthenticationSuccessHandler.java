@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.auth.handler;
 
 import com.a301.theknight.domain.auth.model.TokenSet;
-import com.a301.theknight.domain.auth.service.TokenProperties;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.TokenService;
 import com.a301.theknight.domain.auth.util.CookieUtils;
 import lombok.RequiredArgsConstructor;

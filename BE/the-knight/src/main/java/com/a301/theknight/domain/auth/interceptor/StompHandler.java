@@ -2,7 +2,7 @@ package com.a301.theknight.domain.auth.interceptor;
 
 import com.a301.theknight.domain.auth.model.MemberPrincipal;
 import com.a301.theknight.domain.auth.service.CustomUserDetailsService;
-import com.a301.theknight.domain.auth.service.TokenProperties;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.TokenService;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
