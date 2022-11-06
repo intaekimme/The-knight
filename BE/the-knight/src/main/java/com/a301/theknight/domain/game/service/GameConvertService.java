@@ -1,10 +1,8 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
-import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
-import com.a301.theknight.domain.game.entity.redis.TurnStatus;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.util.GameConvertUtil;
 import com.a301.theknight.global.error.exception.CustomException;

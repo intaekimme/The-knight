@@ -37,8 +37,8 @@ public class GameDefenseService {
 
     }
 
-    public DefenseResponse getDefenseInfo(long gmaeId) {
-        InGame findInGame = getInGame(gmaeId);
+    public DefenseResponse getDefenseInfo(long game) {
+        InGame findInGame = getInGame(game);
         TurnData turn = getTurnData(findInGame);
 
         return DefenseResponse.builder()
