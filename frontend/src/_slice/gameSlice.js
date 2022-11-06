@@ -2,10 +2,10 @@ import React from "react";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const meInit = {
-  memberId: 0,
-  nickname: "SampleUser",
-  index: -1,
-  team: "A",
+  memberId: 5,
+  nickname: "Tom",
+  index: 4,
+  team: "B",
 }
 
 const playersInit = {
@@ -74,9 +74,9 @@ const orderInit = {
 }
 
 // PRE, ATTACK, DEFEND, DOUBT, SHIELD, RESULT, END
-const phaseInit = "PRE"
+const phaseInit = "ATTACK"
 
-const isLoadingInit = true
+const isLoadingInit = false
 
 export const gameSlice = createSlice({
   name: "gameSlice",
