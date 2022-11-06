@@ -1,11 +1,10 @@
 import * as React from 'react';
 
-import Paper from '@mui/material/Paper';
 // import { DataGrid } from '@mui/x-data-grid';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
-import { Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
+import { Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 
 // const columns = [
 //   { field: 'id', headerName: '랭킹', width: 300, headerAlign: 'center', align:'center' },
@@ -32,30 +31,18 @@ import { Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, Ta
 //   rows.push(createData(i, ...randomSelection));
 // }
 const originalRows = [
-  { rank: 1, name: "Pizza", score: 200},
-  { rank: 2, name: "Pizza", score: 200},
-  { rank: 3, name: "Pizza", score: 200},
-  { rank: 4, name: "Pizza", score: 200},
-  { rank: 5, name: "Pizza", score: 200},
-  { rank: 6, name: "Pizza", score: 200},
-  { rank: 7, name: "Pizza", score: 200},
-  { rank: 8, name: "Pizza", score: 200},
-  { rank: 9, name: "chicken", score: 200},
-  { rank: 10, name: "Pizza", score: 200},
-  { rank: 11, name: "Pizza", score: 200},
-  { rank: 12, name: "Pizza", score: 200},
-  { rank: 13, name: "Pizza", score: 200},
-  { rank: 14, name: "Pizza", score: 200},
-  { rank: 15, name: "Pizza", score: 200},
-  { rank: 16, name: "Pizza", score: 200},
-  { rank: 17, name: "Pizza", score: 200},
-  { rank: 18, name: "Pizza", score: 200},
-  { rank: 19, name: "Pizza", score: 200},
-  { rank: 20, name: "Pizza", score: 200},
-  { rank: 21, name: "Pizza", score: 200},
-  { rank: 22, name: "Pizza", score: 200},
-  { rank: 23, name: "Pizza", score: 200},
-  { rank: 24, name: "Pizza", score: 200},
+  { rank: 1, name: "Pizza", score: 200}, { rank: 2, name: "Pizza", score: 200},
+  { rank: 3, name: "Pizza", score: 200}, { rank: 4, name: "Pizza", score: 200},
+  { rank: 5, name: "Pizza", score: 200}, { rank: 6, name: "Pizza", score: 200},
+  { rank: 7, name: "Pizza", score: 200}, { rank: 8, name: "Pizza", score: 200},
+  { rank: 9, name: "chicken", score: 200}, { rank: 10, name: "Pizza", score: 200},
+  { rank: 11, name: "Pizza", score: 200}, { rank: 12, name: "Pizza", score: 200},
+  { rank: 13, name: "Pizza", score: 200}, { rank: 14, name: "Pizza", score: 200},
+  { rank: 15, name: "Pizza", score: 200}, { rank: 16, name: "Pizza", score: 200},
+  { rank: 17, name: "Pizza", score: 200}, { rank: 18, name: "Pizza", score: 200},
+  { rank: 19, name: "Pizza", score: 200}, { rank: 20, name: "Pizza", score: 200},
+  { rank: 21, name: "Pizza", score: 200}, { rank: 22, name: "Pizza", score: 200},
+  { rank: 23, name: "Pizza", score: 200}, { rank: 24, name: "Pizza", score: 200},
 ];
 
 export default function RankTable() {
@@ -121,7 +108,7 @@ export default function RankTable() {
               .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
               .map((row, i) => (
                 <TableRow key={row.rank}>
-                  <TableCell align="center">{page * rowsPerPage + i + 1}</TableCell>
+                  <TableCell align="center">{row.rank}</TableCell>
                   <TableCell align="center">{row.name}</TableCell>
                   <TableCell align="center">{row.score}</TableCell>
                 </TableRow>
@@ -133,7 +120,7 @@ export default function RankTable() {
                   count={rows.length}
                   page={page}
                   rowsPerPage={rowsPerPage}
-                  onChangePage={handleChangePage}
+                  onPageChange={handleChangePage}
                   rowsPerPageOptions={[]}
                 />
               </TableRow>

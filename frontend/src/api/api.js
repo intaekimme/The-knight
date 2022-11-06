@@ -40,6 +40,7 @@ const api = {
   login: () => BASE_URL + GOOGLE_LOGIN,
   loginRedirect: () => LOGIN_REDIRECT,
 
+
   initRoom: () => BASE_URL + API + GAME,
 
   // 구독
@@ -64,6 +65,13 @@ const api = {
   exitRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + EXIT_ROOM,
   
   gameRoomInfo: (gameId) => BASE_URL + API + GAME + `/${gameId}`,
+  getGameList: () => BASE_URL + API + GAME,
+
+  //memebr 관련
+  getMemberHistory: () => BASE_URL + API + '/history',
+  getMemberInfo: () => BASE_URL + API + ALL_MEMBERS,
+  deleteMember: () => BASE_URL + API + ALL_MEMBERS,
+  updateMemberInfo: () => BASE_URL + API + ALL_MEMBERS,
 
   getAllPalyers: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_PLAYERS,
   goLoading: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,

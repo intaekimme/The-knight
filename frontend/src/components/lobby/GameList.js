@@ -1,29 +1,44 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Card, Grid, Pagination } from "@mui/material";
 import GameDescModal from "./GameDescModal";
+import { gameListAll, gameDesc } from "../../_slice/tempGameSlice";
 
 export default function GameList() {
-  const gameList = useSelector(state => state.tempGame.value.gameList)
-  console.log("gamelist", gameList);
+  const [isSetting, setIsSetting] = React.useState(false);
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    if (!isSetting) {
+      setIsSetting(true);
+      dispatch(gameListAll());
+    }
+  }, []);
+  //temp data
+  // const gameList = useSelector(state => state.tempGame.value.gameList)
+
+  //real data
+  const gameList = useSelector(state => state.tempGame.gameListAll)
+  console.log("gmaelistall", gameList);
+
 
   // 방설정 모달
-	const [open, setOpen] = React.useState(false);
-	const roomSettingOpen = () => setOpen(true);
+  const [open, setOpen] = React.useState(false);
+  const roomSettingOpen = () => setOpen(true);
   const roomSettingClose = () => setOpen(false);
-  
+
   const fetchGameInfo = (gameId) => {
-    console.log("여기요 ~", gameId);
+    console.log("gameId", gameId);
     //gameId로 게임 상세정보 불러오기
+    dispatch(gameDesc(gameId));
   }
   //저장되어있는 게임 상세정보 store에서 불러오기
-  const bla = 
-    {
-      gameId: 1,
-      title: '블라'
-    }
-  
+  // const bla =
+  // {
+  //   gameId: 1,
+  //   title: '블라'
+  // }
+
   // function gameListRender(gameList) {
   //   let arr = []
   //   console.log("ssss", gameList);
@@ -38,26 +53,26 @@ export default function GameList() {
   //   }
   //   return arr
   // }
-  
+
   return (
     <div>
-    <Grid container spacing={3} columnSpacing={5} sx={{pt: 3, justifyContent:'center'}}>
-      {gameList.map((game, key) => {
-        return(
-          <Grid item key={key}>
-            <Card sx={{ width: '23vw', height: '14vw' }} onClick={() => { roomSettingOpen(); fetchGameInfo(game.gameId); }}>
-              {game.title}
-            </Card>
-          </Grid>
+      <Grid container spacing={3} columnSpacing={5} sx={{ pt: 3, justifyContent: 'center' }}>
+        {gameList.games && gameList.games.map((game, key) => {
+          return (
+            <Grid item key={key}>
+              <Card sx={{ width: '23vw', height: '14vw' }} onClick={() => { roomSettingOpen(); fetchGameInfo(game.gameId); }}>
+                {game.title}
+              </Card>
+            </Grid>
           )
         }
         )}
         {/* {
         gameListRender(gameList)
         } */}
-        <GameDescModal bla={bla} open={open} onClose={ roomSettingClose }></GameDescModal>
-    </Grid>
-    <Pagination></Pagination>
+        <GameDescModal open={open} onClose={roomSettingClose}></GameDescModal>
+      </Grid>
+      <Pagination></Pagination>
     </div>
   )
 }
