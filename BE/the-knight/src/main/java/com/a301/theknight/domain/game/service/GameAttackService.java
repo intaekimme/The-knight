@@ -2,6 +2,7 @@ package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.attack.AttackPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
+import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
 import com.a301.theknight.domain.game.entity.GameStatus;
@@ -13,6 +14,8 @@ import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
 @RequiredArgsConstructor
@@ -21,6 +24,7 @@ public class GameAttackService {
 
     private final GameRedisRepository gameRedisRepository;
 
+    @Transactional
     public void attack(long gameId, long memberId, GameAttackRequest gameAttackRequest){
         checkPlayerId(memberId, gameAttackRequest.getAttacker().getId());
         InGame findInGame = getInGame(gameId);
@@ -36,14 +40,12 @@ public class GameAttackService {
         gameRedisRepository.saveInGame(gameId, findInGame);
     }
 
+   @Transactional
     public AttackResponse getAttackInfo(long gameId) {
 
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
 
-
-        //  TODO 다음 상태 지정하기 , 공격 의심
-        //  TODO 인게임 저장
         return AttackResponse.builder()
                 .attacker(new AttackPlayerDto(turn.getAttackerId()))
                 .defender(new DefendPlayerDto(turn.getDefenderId()))
@@ -51,6 +53,14 @@ public class GameAttackService {
                 .hand(turn.getAttackData().getAttackHand().name())
                 .build();
 
+    }
+
+    @Transactional
+    public boolean isAttackPass(long gameId, GameAttackPassRequest gameAttackPassRequest, long memberId) {
+        checkPlayerId(memberId, gameAttackPassRequest.getAttacker().getId());
+        InGame findInGame = getInGame(gameId);
+
+        return findInGame.getGameStatus().equals(GameStatus.ATTACK);
     }
 
     private InGame getInGame(long gameId) {
@@ -75,4 +85,6 @@ public class GameAttackService {
             throw new CustomException(PLAYER_IS_NOT_USER_WHO_LOGGED_IN);
         }
     }
+
+
 }
