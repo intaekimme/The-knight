@@ -11,7 +11,7 @@ export default function WeaponSelectPhase() {
       <div style={{ backgroundColor: "grey" }}>당신은 리더입니다.</div>
       <OrderPicker />
       <WeaponPicker></WeaponPicker>
-    <PlayerWithWeaponList></PlayerWithWeaponList>
-  </div>
+      <PlayerWithWeaponList></PlayerWithWeaponList>
+    </div>
   )
 }
