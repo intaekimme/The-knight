@@ -56,7 +56,7 @@ public class DummyDataTest {
     }
 
     @Test
-    @Disabled
+    @Order(2)
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void 멤버_생성(){
         for(int i=1; i<=94; i++){
@@ -70,7 +70,7 @@ public class DummyDataTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void 게임_생성() {
         List<Member> allMembers = memberRepository.findAll();
@@ -88,7 +88,7 @@ public class DummyDataTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void 플레이어_입장() {
         List<Member> allMembers = memberRepository.findAll();
@@ -118,7 +118,7 @@ public class DummyDataTest {
 
 
     @Test
-    @Order(4)
+    @Order(5)
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void 플레이어_팀선택(){
         Random random = new Random(System.currentTimeMillis());
