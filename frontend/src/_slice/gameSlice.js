@@ -1,6 +1,13 @@
 import React from "react";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+const meInit = {
+  memberId: 0,
+  nickname: "SampleUser",
+  index: -1,
+  team: "A",
+}
+
 const playersInit = {
   maxUser: 6,
   players: [
@@ -74,12 +81,25 @@ const isLoadingInit = true
 export const gameSlice = createSlice({
   name: "gameSlice",
   initialState: {
+    me: meInit,
     players: playersInit,
     order: orderInit,
     phase: phaseInit,
     isLoading: isLoadingInit,
   },
   reducers: {
+    fetchMe: (state) => {
+      const memberId = window.localStorage.getItem("memberId")
+      const player = state.players.players.find((player) => player.memberId === memberId)
+      const playerIndex = state.players.players.findIndex((player) => player.memberId === memberId)
+    
+      state.me = {
+        memberId: memberId,
+        nickname: player.nickname,
+        index: playerIndex,
+        team: player.team,
+      }
+    },
     fetchPlayers: (state, action) => {
       state.players = action.payload
     },
@@ -126,5 +146,5 @@ export const gameSlice = createSlice({
     },
   },
 });
-export const { fetchPlayers, selectWeapon, deleteWeapon, selectOrder, fetchPhase, switchIsLoading } = gameSlice.actions;
+export const { fetchMe, fetchPlayers, selectWeapon, deleteWeapon, selectOrder, fetchPhase, switchIsLoading } = gameSlice.actions;
 export default gameSlice.reducer;
