@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class GameModifyRequest {
     private String title;
-    private int maxUser;
+    private int capacity;
     private int sword;
     private int twin;
     private int shield;

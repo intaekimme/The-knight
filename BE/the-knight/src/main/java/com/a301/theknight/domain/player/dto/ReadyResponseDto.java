@@ -10,5 +10,5 @@ import java.util.List;
 @Data
 public class ReadyResponseDto {
     private long memberId;
-    private Boolean isReady;
+    private boolean readyStatus;
 }

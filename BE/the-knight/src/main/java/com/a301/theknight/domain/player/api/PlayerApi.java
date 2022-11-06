@@ -41,17 +41,15 @@ public class PlayerApi {
     }
 
     @MessageMapping(value="/games/{gameId}/team")
-    public void team(@DestinationVariable long gameId,
-                     PlayerTeamRequest playerTeamMessage,
+    public void team(@DestinationVariable long gameId, PlayerTeamRequest playerTeamMessage,
                      @LoginMemberId long memberId){
         PlayerTeamResponse playerTeamResponse = playerService.team(gameId, memberId, playerTeamMessage);
-        String destination = makeDestinationString(SEND_PREFIX, gameId, "/team");
-        template.convertAndSend(destination, playerTeamResponse);
+
+        template.convertAndSend(makeDestinationString(SEND_PREFIX, gameId, "/team"), playerTeamResponse);
     }
 
     @MessageMapping(value="/games/{gameId}/ready")
-    public void ready(@DestinationVariable long gameId,
-                      @LoginMemberId long memberId,
+    public void ready(@DestinationVariable long gameId, @LoginMemberId long memberId,
                       PlayerReadyRequest playerReadyMessage){
         ReadyDto readyDto = playerService.ready(gameId, memberId, playerReadyMessage);
 

@@ -62,7 +62,7 @@ public class PlayerService {
         }
 
         return PlayerEntryResponse.builder()
-                .playerId(entryMember.getId())
+                .memberId(entryMember.getId())
                 .nickname(entryMember.getNickname())
                 .image(entryMember.getImage()).build();
     }
@@ -90,11 +90,10 @@ public class PlayerService {
         Member findMember = getMember(memberId);
 
         Player findPlayer = getPlayer(findGame, findMember);
-        //TODO 유효성 검사 컨트롤러에서 처리하기, A,B 이외의 값이 들어온 경우
-        findPlayer.selectTeam(Team.valueOf(playerTeamMessage.getTeam()));
+        findPlayer.selectTeam(playerTeamMessage.getTeam());
 
         return PlayerTeamResponse.builder()
-                .playerId(findPlayer.getMember().getId())
+                .memberId(findPlayer.getMember().getId())
                 .team(findPlayer.getTeam().name())
                 .build();
     }
@@ -121,7 +120,7 @@ public class PlayerService {
         return ReadyDto.builder()
                 .readyResponseDto(ReadyResponseDto.builder()
                         .memberId(readyPlayer.getMember().getId())
-                        .isReady(readyPlayer.isReady()).build())
+                        .readyStatus(readyPlayer.isReady()).build())
                 .canStart(findGame.isCanStart()).build();
     }
 

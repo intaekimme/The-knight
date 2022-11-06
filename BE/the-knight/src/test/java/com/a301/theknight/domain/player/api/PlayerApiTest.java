@@ -8,6 +8,7 @@ import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
 import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.dto.response.PlayerTeamResponse;
 import com.a301.theknight.domain.player.entity.Player;
+import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.websocket.handler.StompFrameHandlerImpl;
 import io.restassured.RestAssured;
@@ -152,7 +153,7 @@ class PlayerApiTest {
         PlayerEntryResponse playerEntryResponse = entryPlayers.poll(10, TimeUnit.SECONDS);
 
         //  Then
-        Assertions.assertThat(playerEntryResponse.getPlayerId()).isEqualTo(1L);
+        Assertions.assertThat(playerEntryResponse.getMemberId()).isEqualTo(1L);
         Assertions.assertThat(playerEntryResponse.getNickname()).isEqualTo(member.getNickname());
     }
 
@@ -192,7 +193,7 @@ class PlayerApiTest {
         Member member = memberRepository.findAll().get(0);
         Player player = playerRepository.findAll().get(0);
         PlayerTeamRequest playerTeamRequest = new PlayerTeamRequest();
-        playerTeamRequest.setTeam("B");
+        playerTeamRequest.setTeam(Team.B);
         // Settings
         WebSocketStompClient webSocketStompClient = 웹_소켓_STOMP_CLIENT();
         webSocketStompClient.setMessageConverter(new MappingJackson2MessageConverter());
