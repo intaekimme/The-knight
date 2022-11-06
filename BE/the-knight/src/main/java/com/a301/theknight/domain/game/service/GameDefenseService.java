@@ -4,6 +4,7 @@ package com.a301.theknight.domain.game.service;
 import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
@@ -31,6 +32,7 @@ public class GameDefenseService {
         turn.checkLyingDefense(defender);
 
         findInGame.recordTurnData(turn);
+        findInGame.changeStatus(GameStatus.DEFENSE_DOUBT);
         gameRedisRepository.saveInGame(gameId, findInGame);
 
     }
