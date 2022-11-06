@@ -34,8 +34,6 @@ public class GameAttackApi {
         //  TODO 시간 초 늘리기
         Thread.sleep(500);
         template.convertAndSend(makeDestinationUri(gameId, "/proceed"));
-
-        //  TODO 화면 전환 추가
     }
 
     private String makeDestinationUri(long gameId, String postfix) {
