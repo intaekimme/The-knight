@@ -74,7 +74,7 @@ const orderInit = {
 }
 
 // PRE, ATTACK, DEFEND, DOUBT, SHIELD, RESULT, END
-const phaseInit = "ATTACK"
+const phaseInit = "PRE"
 
 const isLoadingInit = false
 
