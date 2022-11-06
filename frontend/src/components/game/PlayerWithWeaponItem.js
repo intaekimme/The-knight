@@ -31,7 +31,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
         </div>
       </Grid>
       {/* 순서 표시하는 로직 필요 */}
-      {(phase=== 0) ? null : <div style={{ width: 50, height: 50, border: "solid" }}></div>}
+      {(phase !== "PRE") ? <div style={{ width: 50, height: 50, border: "solid" }}>{player.order}</div> : null}
     </div>
   );
 }
