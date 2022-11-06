@@ -27,6 +27,12 @@ const EXIT_ROOM = '/exit';
 const SELECT_TEAM = '/team';
 const READY = '/ready';
 
+// 인게임
+const ALL_PLAYERS = '/players';
+const CONVERT = '/convert';
+const CONVERT_COMPLETE = '/convert-complete';
+const PROCEED = '/proceed';
+
 const api = {
   exampleFunction: () => BASE_URL + EXAMPLE + `${0}`,
   baseURL: () => BASE_URL,
@@ -58,5 +64,10 @@ const api = {
   exitRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + EXIT_ROOM,
   
   gameRoomInfo: (gameId) => BASE_URL + API + GAME + `/${gameId}`,
+
+  getAllPalyers: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_PLAYERS,
+  goLoading: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,
+  readyForNextPhase: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
+  nextPhase: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PROCEED,
 }
 export default api;
