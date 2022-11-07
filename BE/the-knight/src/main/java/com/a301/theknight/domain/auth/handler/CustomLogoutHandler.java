@@ -5,7 +5,7 @@ import com.a301.theknight.domain.auth.service.TokenService;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +38,7 @@ public class CustomLogoutHandler implements LogoutHandler {
             if (tokenService.validateToken(accessToken, tokenProperties.getAccess().getName())) {
                 Long memberId = tokenService.getId(accessToken);
                 Member member = memberRepository.findById(memberId)
-                        .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
+                        .orElseThrow(() -> new CustomRestException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
                 member.removeRefreshToken();
                 tokenService.setBlackList(accessToken, memberId);
             }
