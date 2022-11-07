@@ -38,7 +38,6 @@ public class GameDoubtService {
 
         boolean isLying = inGame.getLyingData();
         InGamePlayer deadPlayer = killByDoubt(suspect, suspected, isLying);
-        inGame.changeStatus(DOUBT_RESULT);
         gameRedisRepository.saveInGamePlayer(gameId, deadPlayer.getMemberId(), deadPlayer);
 
         inGame.setDoubtData(DoubtData.builder()
