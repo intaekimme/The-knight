@@ -1,6 +1,6 @@
 function TimeLimit() {
   return (
-    <div>100</div>
+    <h2 style={{marginTop: ".5rem", marginBottom: ".5rem"}}>100</h2>
   )
 }
 

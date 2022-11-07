@@ -74,7 +74,7 @@ const orderInit = {
 }
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFEND, DEFEND_DOUBT, DOUBT_RESULT, EXECUTE, RESULT, END
-const phaseInit = "PREDECESSOR"
+const phaseInit = "PREPARE"
 const previousPhaseInit = null
 
 const isLoadingInit = false

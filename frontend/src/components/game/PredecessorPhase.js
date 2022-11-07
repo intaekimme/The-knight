@@ -9,7 +9,7 @@ export default function PredecessorPhase() {
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
-        height: "100vh",
+        height: "90vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>
