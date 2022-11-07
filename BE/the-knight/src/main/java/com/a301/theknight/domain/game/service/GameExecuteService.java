@@ -83,7 +83,7 @@ public class GameExecuteService {
                 .id(turnData.getDefenderId())
                 .hand(defendData.getDefendHand().name())
                 .isDead(defender.isDead())
-                .nextCount(nextCount)
+                .restCount(nextCount)
                 .build();
 
         return GameExecuteResponse.builder()
