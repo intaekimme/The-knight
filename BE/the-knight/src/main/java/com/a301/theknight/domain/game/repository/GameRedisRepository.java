@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,7 +21,6 @@ public class GameRedisRepository {
     private final RedisTemplate<String, InGame> inGameRedisTemplate; //value로 저장
     private final RedisTemplate<String, InGamePlayer> playerRedisTemplate; //hashset으로 저장
     private final RedisTemplate<String, GameWeaponData> weaponRedisTemplate; //value로 저장
-    private final RedisTemplate<String, String> lockRedisTemplate; //value로 저장
 
     public Optional<InGame> getInGame(long gameId) {
         return Optional.ofNullable(inGameRedisTemplate.opsForValue().get(gameKeyGen(gameId)));
@@ -72,23 +70,8 @@ public class GameRedisRepository {
         return gameWeaponData;
     }
 
-    public Boolean lock(long gameId) {
-        String key = lockKeyGen(gameId);
-
-        return lockRedisTemplate.opsForValue()
-                .setIfAbsent(key, "lock", Duration.ofMillis(3000L));
-    }
-
-    public Boolean unlock(long gameId) {
-        return lockRedisTemplate.delete(lockKeyGen(gameId));
-    }
-
     public void deleteGameWeaponData(long gameId, Team team) {
         weaponRedisTemplate.delete(weaponKeyGen(gameId, team));
-    }
-
-    private String lockKeyGen(long gameId) {
-        return "lock_game:" + gameId;
     }
 
     private String playerKeyGen(long memberId) {
