@@ -5,12 +5,16 @@ import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.util.GameConvertUtil;
+import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
@@ -20,12 +24,15 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ING
 public class GameConvertService {
     private final GameRedisRepository gameRedisRepository;
     private final GameConvertUtil gameConvertUtil;
+    private final RedissonClient redissonClient;
 
     @Transactional
     public List<String> convertComplete(long gameId, long memberId) {
+        RLock lock = redissonClient.getLock(lockKeyGen(gameId));
         try {
-            while (!gameRedisRepository.lock(gameId)) {
-                Thread.sleep(50);
+            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+            if (!available) {
+                throw new CustomException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
             }
 
             InGame inGame = getInGame(gameId);
@@ -37,7 +44,7 @@ public class GameConvertService {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            gameRedisRepository.unlock(gameId);
+            lock.unlock();
         }
     }
 

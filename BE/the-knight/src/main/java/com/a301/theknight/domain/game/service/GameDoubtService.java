@@ -4,18 +4,19 @@ import com.a301.theknight.domain.game.dto.doubt.response.DoubtPlayerDto;
 import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponse;
 import com.a301.theknight.domain.game.dto.doubt.response.SuspectedPlayerDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
-import com.a301.theknight.domain.game.entity.redis.DoubtData;
-import com.a301.theknight.domain.game.entity.redis.DoubtStatus;
-import com.a301.theknight.domain.game.entity.redis.InGame;
-import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
+import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.player.entity.Team;
+import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
@@ -25,6 +26,7 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 public class GameDoubtService {
 
     private final GameRedisRepository gameRedisRepository;
+    private final RedissonClient redissonClient;
 
     @Transactional
     public void doubt(long gameId, long suspectId, long suspectedId, String doubtStatus) {
@@ -66,9 +68,11 @@ public class GameDoubtService {
 
     @Transactional
     public void doubtPass(long gameId, long suspectId, String doubtStatus){
+        RLock lock = redissonClient.getLock(lockKeyGen(gameId));
         try {
-            while (!gameRedisRepository.lock(gameId)) {
-                Thread.sleep(50);
+            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
+            if (!available) {
+                throw new CustomException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
             }
 
             InGame inGame = getInGame(gameId);
@@ -93,6 +97,7 @@ public class GameDoubtService {
             if(curDoubtPassCount < alivePlayerCount - 1){
                         //  인게임 의심패스 카운트 증가
                 inGame.addDoubtPassCount();
+                gameRedisRepository.saveInGame(gameId, inGame);
                         //  화면 전환 없음
                         //  return
             }
@@ -103,12 +108,12 @@ public class GameDoubtService {
                         //  의심 결과로 화면 전환
                 if(inGame.getGameStatus().equals(ATTACK_DOUBT)) inGame.changeStatus(DEFENSE);
                 else if(inGame.getGameStatus().equals(DEFENSE_DOUBT)) inGame.changeStatus(EXECUTE);
+                gameRedisRepository.saveInGame(gameId, inGame);
             }
-            gameRedisRepository.saveInGame(gameId, inGame);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            gameRedisRepository.unlock(gameId);
+            lock.unlock();
         }
     }
 
