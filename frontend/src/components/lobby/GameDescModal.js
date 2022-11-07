@@ -1,13 +1,23 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { Modal, Box, Button, Grid } from "@mui/material";
 import ClearIcon from '@mui/icons-material/Clear';
 import ItemBox from "../../commons/ItemBox";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { gameDesc } from "../../_slice/tempGameSlice";
 
 export default function GameDescModal(props) {
-	const gameInfo = useSelector(state => state.tempGame.gameDesc)
-
+	const dispatch = useDispatch();
+  React.useEffect(() => {
+		if (props.open) {
+			console.log("props:", props.id);
+      dispatch(gameDesc(props.id));
+    }
+	}, []);
+	
+	const gameInfo = useSelector(state => state.tempGame.gameInfo)
+	console.log(gameInfo);
+	
 	const modalStyle = {
 		position: 'absolute',
 		top: '50%',

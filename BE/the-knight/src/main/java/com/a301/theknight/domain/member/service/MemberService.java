@@ -10,7 +10,7 @@ import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.domain.ranking.entity.Ranking;
 import com.a301.theknight.domain.ranking.repository.RankingRepository;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +33,12 @@ public class MemberService {
         Ranking ranking = rankingRepository.findByMemberId(memberId)
                 .orElseGet(() -> Ranking.builder().build());
 
+        Long rankingNumber = rankingRepository.findMemberRanking(memberId);
+
         return MemberInfoResponse.builder()
                 .nickname(member.getNickname())
                 .image(member.getImage())
-                .ranking(rankingRepository.findMemberRanking(memberId))
+                .ranking(rankingNumber == null ? 0L : rankingNumber)
                 .score(ranking.getScore())
                 .win(ranking.getWin())
                 .lose(ranking.getLose())
@@ -96,6 +98,6 @@ public class MemberService {
 
     private Member getMember(long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomRestException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
     }
 }

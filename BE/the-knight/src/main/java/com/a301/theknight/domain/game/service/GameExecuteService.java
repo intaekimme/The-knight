@@ -8,7 +8,7 @@ import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,7 +83,7 @@ public class GameExecuteService {
                 .id(turnData.getDefenderId())
                 .hand(defendData.getDefendHand().name())
                 .isDead(defender.isDead())
-                .nextCount(nextCount)
+                .restCount(nextCount)
                 .build();
 
         return GameExecuteResponse.builder()
@@ -95,11 +95,11 @@ public class GameExecuteService {
 
     private InGame getInGame(long gameId) {
         return redisRepository.getInGame(gameId)
-                .orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 
     private InGamePlayer getInGamePlayer(long gameId, Long memberId) {
         return redisRepository.getInGamePlayer(gameId, memberId)
-                .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 }

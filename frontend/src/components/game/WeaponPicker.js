@@ -18,6 +18,7 @@ function WeaponPicker() {
             item
             xs={12 / weapons.length}
             key={index}
+            sx={{display: "flex", justifyContent: "center"}}
           >
             <div onClick={() => onClick(weapon)} style={{ width: 80, height: 80, backgroundColor: "#e2e2e2" }}>{weapon}</div>
           </Grid>

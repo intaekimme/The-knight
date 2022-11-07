@@ -10,7 +10,7 @@ import com.a301.theknight.domain.player.dto.ReadyDto;
 import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
 import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
-import com.a301.theknight.domain.player.dto.response.PlayerExitResponse;
+import com.a301.theknight.domain.player.dto.response.PlayerExitDto;
 import com.a301.theknight.domain.player.dto.response.PlayerTeamResponse;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
@@ -105,8 +105,8 @@ public class PlayerServiceTest {
         given(gameRepository.findById(1L)).willReturn(Optional.of(testGame));
         given(playerRepository.findByGameAndMember(testGame, testMembers[1])).willReturn(Optional.of(testPlayers[1]));
 
-        PlayerExitResponse exitPlayerId = playerService.exit(1L, 1L);
-        assertEquals(1L, exitPlayerId.getExitPlayerId());
+        PlayerExitDto exitPlayerId = playerService.exit(1L, 1L);
+        assertEquals(1L, exitPlayerId.getPlayerExitResponse().getMemberId());
     }
 
     @Test

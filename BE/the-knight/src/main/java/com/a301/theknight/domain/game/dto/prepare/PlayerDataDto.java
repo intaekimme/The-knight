@@ -10,6 +10,7 @@ import java.util.List;
 public class PlayerDataDto {
     private long memberId;
     private String nickname;
+    private String team;
     private int leftCount;
     private int rightCount;
     private int order;

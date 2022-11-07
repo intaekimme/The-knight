@@ -10,7 +10,7 @@ import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TurnData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -61,17 +61,17 @@ public class GameAttackService {
         InGame findInGame = getInGame(gameId);
 
         if(findInGame.getGameStatus().equals(GameStatus.ATTACK)) return;
-        throw new CustomException(UNABLE_TO_PASS_ATTACK);
+        throw new CustomWebSocketException(UNABLE_TO_PASS_ATTACK);
     }
 
     private InGame getInGame(long gameId) {
         return gameRedisRepository.getInGame(gameId)
-                .orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 
     private InGamePlayer getInGamePlayer(long gameId, long memberId) {
         return gameRedisRepository.getInGamePlayer(gameId, memberId)
-                .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
     private TurnData getTurnData(InGame inGame){
@@ -83,7 +83,7 @@ public class GameAttackService {
 
     private void checkPlayerId(long memberId, long playerId){
         if (memberId != playerId) {
-            throw new CustomException(PLAYER_IS_NOT_USER_WHO_LOGGED_IN);
+            throw new CustomWebSocketException(PLAYER_IS_NOT_USER_WHO_LOGGED_IN);
         }
     }
 

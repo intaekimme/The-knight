@@ -11,22 +11,20 @@ import com.a301.theknight.domain.player.dto.*;
 import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
 import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
+import com.a301.theknight.domain.player.dto.response.PlayerExitDto;
 import com.a301.theknight.domain.player.dto.response.PlayerExitResponse;
-import com.a301.theknight.domain.player.dto.response.PlayerReadyResponse;
 import com.a301.theknight.domain.player.dto.response.PlayerTeamResponse;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
-import com.a301.theknight.global.error.errorcode.GameWaitingErrorCode;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
 import com.a301.theknight.global.error.errorcode.PlayerErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -45,10 +43,10 @@ public class PlayerService {
     public PlayerEntryResponse entry(long gameId, long memberId){
         Game entryGame = getGame(gameId);
         if(!isWaiting(entryGame)){
-            throw new CustomException(GAME_IS_NOT_READY_STATUS);
+            throw new CustomRestException(GAME_IS_NOT_READY_STATUS);
         }
         if(!isEnterPossible(entryGame)){
-            throw new CustomException(CAN_NOT_ACCOMMODATE);
+            throw new CustomRestException(CAN_NOT_ACCOMMODATE);
         }
 
         Member entryMember = getMember(memberId);
@@ -68,20 +66,19 @@ public class PlayerService {
     }
 
     @Transactional
-    public PlayerExitResponse exit(long gameId, long memberId){
+    public PlayerExitDto exit(long gameId, long memberId){
         Game findGame = getGame(gameId);
 
         if(!isWaiting(findGame)){
-            throw new CustomException(GAME_IS_NOT_READY_STATUS);
+            throw new CustomRestException(GAME_IS_NOT_READY_STATUS);
         }
         Member findMember = getMember(memberId);
         Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
 
-        PlayerExitResponse exitPlayerId = new PlayerExitResponse(exitPlayer.getMember().getId());
-        playerRepository.delete(exitPlayer);
-
-        return exitPlayerId;
+        return new PlayerExitDto(exitPlayer.isLeader(), PlayerExitResponse.builder()
+                .memberId(exitPlayer.getMember().getId())
+                .nickname(exitPlayer.getMember().getNickname()).build());
     }
 
     @Transactional
@@ -108,10 +105,10 @@ public class PlayerService {
 
         if(isOwner(findGame, readyPlayer)){
             if (!isEqualPlayerNum(findGame)) {
-                throw new CustomException(NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
+                throw new CustomRestException(NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
             }
             if (!isAllReady(findGame)) {
-                throw new CustomException(NOT_All_USERS_ARE_READY);
+                throw new CustomRestException(NOT_All_USERS_ARE_READY);
             }
             findGame.changeStatus(GameStatus.PLAYING);
             redisRepository.saveInGame(findGame.getId(), makeInGame(findGame));
@@ -126,17 +123,17 @@ public class PlayerService {
 
     private Member getMember(long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomRestException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
     }
 
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
-                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
     private Player getPlayer(Game game, Member member){
         return playerRepository.findByGameAndMember(game, member)
-                .orElseThrow(() -> new CustomException(PlayerErrorCode.PLAYER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomRestException(PlayerErrorCode.PLAYER_IS_NOT_EXIST));
     }
 
     private boolean isWaiting(Game game){

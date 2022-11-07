@@ -9,5 +9,5 @@ public class DefenderDto {
     private long id;
     private String hand;
     private Boolean isDead;
-    private int nextCount;
+    private int restCount;
 }

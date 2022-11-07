@@ -2,9 +2,13 @@ package com.a301.theknight.global.error.handler;
 
 import com.a301.theknight.global.error.dto.ErrorResponse;
 import com.a301.theknight.global.error.errorcode.ValidationErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -17,8 +21,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> customException(CustomException e) {
+    @ExceptionHandler(CustomRestException.class)
+    public ResponseEntity<ErrorResponse> customException(CustomRestException e) {
         return ErrorResponse.toResponseEntity(e.getErrorCode());
     }
 
@@ -42,6 +46,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ErrorResponse.builder()
                 .name("Http Header : Accept Error")
                 .message(e.getMessage()).build());
+    }
+
+    @MessageExceptionHandler(CustomWebSocketException.class)
+    @SendTo(value = "/games/{gameId}/error")
+    public ErrorResponse customWebSocketException(@DestinationVariable long gameId, CustomWebSocketException e){
+        return ErrorResponse.toResponse(e.getErrorCode());
     }
 
 }
