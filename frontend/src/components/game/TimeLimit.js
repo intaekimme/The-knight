@@ -1,6 +1,6 @@
-function TimeLimit(props) {
+function TimeLimit() {
   return (
-    <p style={props}>제한시간: 100</p>
+    <h2 style={{marginTop: ".5rem", marginBottom: ".5rem"}}>제한시간: 100</h2>
   )
 }
 
