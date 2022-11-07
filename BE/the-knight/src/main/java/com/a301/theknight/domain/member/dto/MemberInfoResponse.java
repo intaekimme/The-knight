@@ -8,7 +8,7 @@ import lombok.Data;
 public class MemberInfoResponse {
     private String nickname;
     private String image;
-    private int ranking;
+    private long ranking;
     private int score;
     private int win;
     private int lose;
