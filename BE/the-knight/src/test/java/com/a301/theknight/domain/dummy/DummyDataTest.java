@@ -174,6 +174,7 @@ public class DummyDataTest {
             rankingRepository.save(ranking);
         }
 
+
     }
 
     private void selectTeamFull(Random random, List<Game> allGames, int start, int end) {
