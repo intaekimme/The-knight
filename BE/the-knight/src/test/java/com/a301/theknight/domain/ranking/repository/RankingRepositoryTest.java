@@ -9,10 +9,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @Disabled
-@DataJpaTest
+@SpringBootTest
 class RankingRepositoryTest {
 
     @Autowired
@@ -59,7 +61,7 @@ class RankingRepositoryTest {
         ranking.saveWinScore();
         rankingRepository.save(ranking);
 
-        int memberRanking = rankingRepository.findMemberRanking(testMember.getId());
+        long memberRanking = rankingRepository.findMemberRanking(testMember.getId());
 
         assertEquals(3, memberRanking);
     }
