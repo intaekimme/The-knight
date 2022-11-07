@@ -10,7 +10,8 @@ import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.GameWaitingErrorCode;
-import com.a301.theknight.global.error.exception.CustomRestException;
+import com.a301.theknight.global.error.errorcode.PlayerErrorCode;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +31,7 @@ public class GameWaitingService {
     @Transactional
     public GameMembersInfoDto getMembersInfo(long gameId) {
         Game game = gameRepository.findGameWithPlayers(gameId)
-                .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(GameErrorCode.GAME_IS_NOT_EXIST));
 
         List<MemberDataDto> members = game.getPlayers().stream()
                 .map(player -> MemberDataDto.builder()
@@ -62,33 +63,35 @@ public class GameWaitingService {
                         gameModifyRequest.getHand()
                 );
             }else{
-                throw new CustomRestException(GameWaitingErrorCode.NO_PERMISSION_TO_MODIFY_GAME_ROOM);
+                throw new CustomWebSocketException(GameWaitingErrorCode.NO_PERMISSION_TO_MODIFY_GAME_ROOM);
             }
 
         }else{
-            throw new CustomRestException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
+            throw new CustomWebSocketException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
         }
     }
 
     @Transactional
     public void delete(long gameId, long memberId){
         Game findGame = getGame(gameId);
-        if(isOwner(findGame, memberId)){
-            playerRepository.deleteAll(findGame.getPlayers());
-            gameRepository.delete(findGame);
-        }else{
-            throw new CustomRestException(GameWaitingErrorCode.NO_PERMISSION_TO_DELETE_GAME_ROOM);
+        if (!isOwner(findGame, memberId)) {
+            throw new CustomWebSocketException(GameWaitingErrorCode.NO_PERMISSION_TO_DELETE_GAME_ROOM);
         }
+
+        playerRepository.deleteAll(findGame.getPlayers());
+        gameRepository.delete(findGame);
     }
 
 
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
-                .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
     private boolean isOwner(Game game, long memberId){
-        Player owner = game.getPlayers().get(0);
+        Player owner = game.getPlayers().stream().filter(player -> player.isOwner())
+                .findFirst()
+                .orElseThrow(() -> new CustomWebSocketException(PlayerErrorCode.OWNER_IS_NOT_EXIST));
         return owner.getMember().getId().equals(memberId);
     }
 }

@@ -11,6 +11,7 @@ import com.a301.theknight.domain.player.dto.*;
 import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
 import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
+import com.a301.theknight.domain.player.dto.response.PlayerExitDto;
 import com.a301.theknight.domain.player.dto.response.PlayerExitResponse;
 import com.a301.theknight.domain.player.dto.response.PlayerTeamResponse;
 import com.a301.theknight.domain.player.entity.Player;
@@ -65,7 +66,7 @@ public class PlayerService {
     }
 
     @Transactional
-    public PlayerExitResponse exit(long gameId, long memberId){
+    public PlayerExitDto exit(long gameId, long memberId){
         Game findGame = getGame(gameId);
 
         if(!isWaiting(findGame)){
@@ -75,10 +76,9 @@ public class PlayerService {
         Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
 
-        PlayerExitResponse exitPlayerId = new PlayerExitResponse(exitPlayer.getMember().getId());
-        playerRepository.delete(exitPlayer);
-
-        return exitPlayerId;
+        return new PlayerExitDto(exitPlayer.isLeader(), PlayerExitResponse.builder()
+                .memberId(exitPlayer.getMember().getId())
+                .nickname(exitPlayer.getMember().getNickname()).build());
     }
 
     @Transactional
