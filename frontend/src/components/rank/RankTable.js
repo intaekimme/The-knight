@@ -1,10 +1,12 @@
 import * as React from 'react';
+import { useSelector, useDispatch } from "react-redux";
 
 // import { DataGrid } from '@mui/x-data-grid';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
+import { fetchRankAll } from "../../_slice/rankSlice";
 
 // const columns = [
 //   { field: 'id', headerName: '랭킹', width: 300, headerAlign: 'center', align:'center' },
@@ -46,6 +48,11 @@ const originalRows = [
 ];
 
 export default function RankTable() {
+  const dispatch = useDispatch();
+  React.useEffect(() => {
+    dispatch(fetchRankAll());
+  })
+
   const [rows, setRows] = React.useState(originalRows);
   const [searched, setSearched] = React.useState("");
   const [page, setPage] = React.useState(0)
