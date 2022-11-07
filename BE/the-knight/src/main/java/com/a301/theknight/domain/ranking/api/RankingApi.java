@@ -1,16 +1,13 @@
 package com.a301.theknight.domain.ranking.api;
 
-import com.a301.theknight.domain.member.dto.MemberHistoryResponse;
-import com.a301.theknight.domain.member.dto.MemberInfoResponse;
-import com.a301.theknight.domain.member.dto.MemberUpdateRequest;
-import com.a301.theknight.domain.member.service.MemberService;
 import com.a301.theknight.domain.ranking.dto.RankingResponse;
 import com.a301.theknight.domain.ranking.service.RankingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.awt.print.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
