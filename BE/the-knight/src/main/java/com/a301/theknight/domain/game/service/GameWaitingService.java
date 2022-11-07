@@ -10,7 +10,7 @@ import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.GameWaitingErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ public class GameWaitingService {
     @Transactional
     public GameMembersInfoDto getMembersInfo(long gameId) {
         Game game = gameRepository.findGameWithPlayers(gameId)
-                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
 
         List<MemberDataDto> members = game.getPlayers().stream()
                 .map(player -> MemberDataDto.builder()
@@ -62,11 +62,11 @@ public class GameWaitingService {
                         gameModifyRequest.getHand()
                 );
             }else{
-                throw new CustomException(GameWaitingErrorCode.NO_PERMISSION_TO_MODIFY_GAME_ROOM);
+                throw new CustomRestException(GameWaitingErrorCode.NO_PERMISSION_TO_MODIFY_GAME_ROOM);
             }
 
         }else{
-            throw new CustomException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
+            throw new CustomRestException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
         }
     }
 
@@ -77,14 +77,14 @@ public class GameWaitingService {
             playerRepository.deleteAll(findGame.getPlayers());
             gameRepository.delete(findGame);
         }else{
-            throw new CustomException(GameWaitingErrorCode.NO_PERMISSION_TO_DELETE_GAME_ROOM);
+            throw new CustomRestException(GameWaitingErrorCode.NO_PERMISSION_TO_DELETE_GAME_ROOM);
         }
     }
 
 
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
-                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
     private boolean isOwner(Game game, long memberId){

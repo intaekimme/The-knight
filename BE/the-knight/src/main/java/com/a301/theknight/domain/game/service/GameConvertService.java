@@ -6,7 +6,8 @@ import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.util.GameConvertUtil;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -32,7 +33,7 @@ public class GameConvertService {
         try {
             boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
             if (!available) {
-                throw new CustomException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
+                throw new CustomRestException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
             }
 
             InGame inGame = getInGame(gameId);
@@ -59,12 +60,12 @@ public class GameConvertService {
 
     private InGame getInGame(long gameId) {
         return gameRedisRepository.getInGame(gameId)
-                .orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 
     private InGamePlayer getInGamePlayer(long gameId, long memberId) {
         return gameRedisRepository.getInGamePlayer(gameId, memberId)
-                .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
     private String lockKeyGen(long gameId) {

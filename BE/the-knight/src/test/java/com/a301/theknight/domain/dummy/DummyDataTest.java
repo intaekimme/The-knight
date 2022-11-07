@@ -11,7 +11,7 @@ import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.domain.player.service.PlayerService;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
 
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,7 +174,7 @@ public class DummyDataTest {
             System.out.println("playerNum : " + playerNum + ", maxUsers : " + game.getCapacity() + ", currentUsers : " + game.getPlayers().size());
             playerService.entry(game.getId(), allMembers.get(playerNum - 1).getId());
             visitedMember[playerNum] = true;
-        }catch(CustomException e){
+        }catch(CustomRestException e){
             System.out.println("exception occur");
             return true;
         }
