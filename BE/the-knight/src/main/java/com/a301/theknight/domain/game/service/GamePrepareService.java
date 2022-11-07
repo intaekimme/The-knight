@@ -43,7 +43,7 @@ public class GamePrepareService {
         List<PlayerDataDto> playerDataDtoList = getPlayersDataList(gameId);
 
         return GamePlayersInfoDto.builder()
-                .maxUser(playerDataDtoList.size())
+                .maxMember(playerDataDtoList.size())
                 .players(playerDataDtoList)
                 .build();
     }
@@ -87,11 +87,11 @@ public class GamePrepareService {
     }
 
     @Transactional
-    public GameWeaponResponse cancelWeapon(long gameId, Long memberId, boolean isLeft) {
+    public GameWeaponResponse cancelWeapon(long gameId, Long memberId, Hand deleteHand) {
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
         GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
 
-        inGamePlayer.cancelWeapon(isLeft, weaponsData);
+        inGamePlayer.cancelWeapon(deleteHand, weaponsData);
         redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
         redisRepository.saveGameWeaponData(gameId, inGamePlayer.getTeam(), weaponsData);
 
@@ -99,15 +99,17 @@ public class GamePrepareService {
     }
 
     @Transactional
-    public GameOrderResponse choiceOrder(long gameId, long memberId, GameOrderRequest orderRequest) {
+    public GameOrderResponse choiceOrder(long gameId, long memberId, Team team, GameOrderRequest orderRequest) {
         InGame inGame = getInGame(gameId);
         if (orderRequest.validate(inGame.getMaxMemberNum())) {
             throw new CustomException(ORDER_NUMBER_IS_INVALID);
         }
         int orderNumber = orderRequest.getOrderNumber();
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
-
-        TeamInfoData teamInfoData = inGamePlayer.getTeam().equals(Team.A)
+        if (!inGamePlayer.getTeam().equals(team)) {
+            throw new CustomException(NOT_MATCH_REQUEST_TEAM);
+        }
+        TeamInfoData teamInfoData = Team.A.equals(team)
                 ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
         if (alreadySelectedOrderNumber(orderNumber, teamInfoData)) {
             if (inGamePlayer.getOrder() == orderNumber) {
@@ -120,11 +122,11 @@ public class GamePrepareService {
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
 
-        return new GameOrderResponse(inGamePlayer.getTeam(), teamInfoData.getOrderList());
+        return new GameOrderResponse(teamInfoData.getOrderList());
     }
 
     @Transactional
-    public boolean completeSelect(long gameId, long memberId, Team team) {
+    public SelectCompleteDto completeSelect(long gameId, long memberId) {
         InGame inGame = getInGame(gameId);
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
 
@@ -137,6 +139,7 @@ public class GamePrepareService {
 
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
+        Team team = inGamePlayer.getTeam();
         inGame.completeSelect(team);
         if (inGame.isAllSelected()) {
             inGame.changeStatus(GameStatus.PREDECESSOR);
@@ -144,7 +147,7 @@ public class GamePrepareService {
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.deleteGameWeaponData(gameId, team);
 
-        return inGame.isAllSelected();
+        return new SelectCompleteDto(inGame.isAllSelected(), team);
     }
 
     @Transactional
@@ -219,6 +222,7 @@ public class GamePrepareService {
                 .map(inGamePlayer -> PlayerDataDto.builder()
                         .memberId(inGamePlayer.getMemberId())
                         .nickname(inGamePlayer.getNickname())
+                        .team(inGamePlayer.getTeam().name())
                         .leftCount(inGamePlayer.getLeftCount())
                         .rightCount(inGamePlayer.getRightCount())
                         .order(inGamePlayer.getOrder())

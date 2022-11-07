@@ -67,7 +67,7 @@ public class GameDoubtService {
     }
 
     @Transactional
-    public void doubtPass(long gameId, long suspectId, String doubtStatus){
+    public void doubtPass(long gameId, long suspectId){
         RLock lock = redissonClient.getLock(lockKeyGen(gameId));
         try {
             boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
@@ -76,45 +76,34 @@ public class GameDoubtService {
             }
 
             InGame inGame = getInGame(gameId);
+            GameStatus gameStatus = inGame.getGameStatus();
             InGamePlayer suspect = getInGamePlayer(gameId, suspectId);
+            if (suspect.isDead() || notDoubtStatus(gameStatus)) {
+                return;
+            }
 
-            // 의심 패스 요청 보낸 사람의 팀 정보와 죽어있는지 확인
-                //  죽었으면 의심 패스 종료
-            if(suspect.isDead()) return;
-                //  살아 있으면
-                    // 인게임의 현재 의심 패스 카운트 갯수 확인
-            int curDoubtPassCount = inGame.getDoubtPassCount();
-            //  이전에 확인한 팀 정보로 인게임에서 팀 데이터 얻기
             Team suspectTeam = suspect.getTeam();
-
-                    //  팀데이터의 orderlist 순회하면서 memberId가지고 인게임 내 해당 플레이어가 생존해 있는지 확인
-                    //  팀 내 총 생존한 플레이어 갯수가 나옴
-            int alivePlayerCount = suspectTeam.equals(Team.A) ?
+            int alivePlayerCount = Team.A.equals(suspectTeam) ?
                     getAlivePlayerCount(gameRedisRepository.getTeamPlayerList(gameId, Team.A)) :
                     getAlivePlayerCount(gameRedisRepository.getTeamPlayerList(gameId, Team.B));
 
-                    //  앞서 확인한 인게임 의심 패스 카운트가 < 생존한 사람 수 - 1
-            if(curDoubtPassCount < alivePlayerCount - 1){
-                        //  인게임 의심패스 카운트 증가
-                inGame.addDoubtPassCount();
-                gameRedisRepository.saveInGame(gameId, inGame);
-                        //  화면 전환 없음
-                        //  return
-            }
-                    //  의심 패스 카운트 == 생존한 사람 수 - 1
-            if(curDoubtPassCount == alivePlayerCount - 1){
-                        //  의심 갯수 초기화
+            inGame.addDoubtPassCount();
+            if(inGame.getDoubtPassCount() >= alivePlayerCount){
+                GameStatus nextStatus = ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DEFENSE : EXECUTE;
+                inGame.changeStatus(nextStatus);
+
                 inGame.initDoubtPassCount();
-                        //  의심 결과로 화면 전환
-                if(inGame.getGameStatus().equals(ATTACK_DOUBT)) inGame.changeStatus(DEFENSE);
-                else if(inGame.getGameStatus().equals(DEFENSE_DOUBT)) inGame.changeStatus(EXECUTE);
-                gameRedisRepository.saveInGame(gameId, inGame);
             }
+            gameRedisRepository.saveInGame(gameId, inGame);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
             lock.unlock();
         }
+    }
+
+    private boolean notDoubtStatus(GameStatus gameStatus) {
+        return !(ATTACK_DOUBT.equals(gameStatus) || DEFENSE_DOUBT.equals(gameStatus));
     }
 
     private GameStatus getNextGameStatus(DoubtData doubtData) {

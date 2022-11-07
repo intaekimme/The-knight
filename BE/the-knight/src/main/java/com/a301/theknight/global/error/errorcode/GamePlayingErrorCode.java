@@ -14,6 +14,7 @@ public enum GamePlayingErrorCode implements ErrorCode {
     NOT_ENOUGH_WEAPON(HttpStatus.BAD_REQUEST, "Weapon is not enough"),
     SELECT_WEAPON_IS_FULL(HttpStatus.BAD_REQUEST, "All selected weapons are full."),
     ORDER_NUMBER_IS_INVALID(HttpStatus.BAD_REQUEST, "Order number value is invalid."),
+    NOT_MATCH_REQUEST_TEAM(HttpStatus.BAD_REQUEST, "Not matching from request user and data team."),
     ALREADY_SELECTED_ORDER_NUMBER(HttpStatus.BAD_REQUEST, "Already selected order number."),
     CAN_COMPLETE_BY_LEADER(HttpStatus.FORBIDDEN, "Only leader can complete select."),
     CAN_NOT_COMPLETE_ORDER_SELECT(HttpStatus.CONFLICT, "Can not complete order select."),
