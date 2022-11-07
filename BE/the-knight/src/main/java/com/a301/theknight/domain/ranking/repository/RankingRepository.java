@@ -3,12 +3,11 @@ package com.a301.theknight.domain.ranking.repository;
 import com.a301.theknight.domain.ranking.dto.RankingDto;
 import com.a301.theknight.domain.ranking.entity.Ranking;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.awt.print.Pageable;
-import java.util.List;
 import java.util.Optional;
 
 public interface RankingRepository extends JpaRepository<Ranking, Long> {
