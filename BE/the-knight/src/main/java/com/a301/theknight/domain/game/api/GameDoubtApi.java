@@ -42,7 +42,7 @@ public class GameDoubtApi {
     }
 
     @MessageMapping(value="/games/{gameId}/doubt-pass")
-    public void doubtPass(@DestinationVariable long gameId,  GameDoubtPassRequest gameDoubtPassRequest,
+    public void doubtPass(@DestinationVariable long gameId, GameDoubtPassRequest gameDoubtPassRequest,
                           @LoginMemberId long memberId){
         gameDoubtService.doubtPass(gameId, memberId,  gameDoubtPassRequest.getDoubtStatus());
         template.convertAndSend(makeConvertUri(gameId));
