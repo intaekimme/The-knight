@@ -1,5 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
+import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.game.dto.GameCreationResponse;
 import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
@@ -9,6 +10,8 @@ import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
+import com.a301.theknight.domain.player.entity.Player;
+import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
 import com.a301.theknight.global.error.exception.CustomException;
@@ -27,12 +30,12 @@ import java.util.stream.Collectors;
 public class GameService {
     private final GameRepository gameRepository;
     private final MemberRepository memberRepository;
+    private final PlayerRepository playerRepository;
 
 
     @Transactional(readOnly = true)
-    public GameListResponse getGameList(@Nullable String keyword,
-                                        Pageable pageable,
-                                        long memberId){
+    public GameListResponse getGameList(@Nullable String keyword, Pageable pageable,
+                                        @LoginMemberId long memberId){
         getMember(memberId);
         GameListResponse gameListResponse = new GameListResponse();
         Page<Game> gamePage = null;
@@ -42,16 +45,14 @@ public class GameService {
             gamePage = gameRepository.findAll(pageable);
         }
 
-        List<GameListDto> gameListDtos = gamePage.stream().map(game -> {
-            return GameListDto.builder()
-                    .gameId(game.getId())
-                    .title(game.getTitle())
-                    .status(game.getStatus().name())
-                    .maxUser(game.getCapacity())
-                    .participant(game.getPlayers().size())
-                    .build();
-        }).collect(Collectors.toList());
-
+        List<GameListDto> gameListDtos = gamePage.stream()
+                .map(game -> GameListDto.builder()
+                        .gameId(game.getId())
+                        .title(game.getTitle())
+                        .status(game.getStatus().name())
+                        .maxMember(game.getCapacity())
+                        .currentMembers(game.getPlayers().size()).build())
+                .collect(Collectors.toList());
         gameListResponse.setGames(gameListDtos);
 
         return gameListResponse;
@@ -59,10 +60,16 @@ public class GameService {
 
     @Transactional
     public GameCreationResponse createGame(GameCreateRequest gameCreateRequest, long memberId){
-        getMember(memberId);
-
         Game newGame = gameCreateRequest.toEntity();
-        gameRepository.save(newGame);
+        newGame = gameRepository.save(newGame);
+
+        Member owner = getMember(memberId);
+        Player ownerPlayer = Player.builder()
+                .game(newGame)
+                .member(owner).build();
+        ownerPlayer.setOwner();
+        playerRepository.save(ownerPlayer);
+
         return new GameCreationResponse(newGame.getId());
     }
 
@@ -74,8 +81,8 @@ public class GameService {
         return GameInfoResponse.builder()
                 .gameId(gameId)
                 .title(findGame.getTitle())
-                .maxUser(findGame.getCapacity())
-                .currentUser(findGame.getPlayers().size())
+                .maxMember(findGame.getCapacity())
+                .currentMembers(findGame.getPlayers().size())
                 .sword(findGame.getSword())
                 .twin(findGame.getTwin())
                 .shield(findGame.getShield())

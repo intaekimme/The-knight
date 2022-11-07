@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.entity.redis;
 
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Team;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,13 +11,15 @@ import java.io.Serializable;
 @Getter
 @Builder
 public class InGame implements Serializable {
-    private TurnStatus status;
+    private GameStatus gameStatus;
     private Team currentAttackTeam;
     private TeamInfoData teamAInfo;
     private TeamInfoData teamBInfo;
     private int maxMemberNum;
     private TurnData turnData;
     private int requestCount;
+
+    private int doubtPassCount;
 
     public void initTurnData() {
         turnData = new TurnData();
@@ -36,9 +39,13 @@ public class InGame implements Serializable {
         requestCount++;
     }
 
-    public boolean allPlayerCanStart() {
+    public void addDoubtPassCount() { doubtPassCount++; }
+
+    public boolean isFullCount() {
         return requestCount >= maxMemberNum;
     }
+
+//    public boolean
 
     public TeamInfoData getTeamInfoData(Team team) {
         return Team.A.equals(team) ? teamAInfo : teamBInfo;
@@ -53,9 +60,32 @@ public class InGame implements Serializable {
         return teamAInfo.isSelected() && teamBInfo.isSelected();
     }
 
+    public void changeStatus(GameStatus gameStatus) {
+        this.gameStatus = gameStatus;
+    }
+
     public boolean isTurnDataEmpty() { return this.turnData == null; }
 
     public void recordTurnData(TurnData turnData){
         this.turnData = turnData;
+    }
+
+    public void initRequestCount() {
+        requestCount = 0;
+    }
+
+    public void initDoubtPassCount() { doubtPassCount = 0; }
+
+    public boolean getLyingData() {
+        return (gameStatus.equals(GameStatus.ATTACK_DOUBT) && turnData.isLyingAttack())
+                || (gameStatus.equals(GameStatus.DEFENSE_DOUBT) && turnData.isLyingDefend());
+    }
+
+    public void setDoubtData(DoubtData doubtData) {
+        turnData.setDoubtData(doubtData);
+    }
+
+    public void clearDoubtData() {
+        turnData.setDoubtData(null);
     }
 }

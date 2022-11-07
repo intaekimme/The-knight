@@ -2,6 +2,8 @@ package com.a301.theknight.domain.player.service;
 
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
+import com.a301.theknight.domain.game.entity.redis.InGame;
+import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
@@ -28,6 +30,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static com.a301.theknight.global.error.errorcode.GameWaitingErrorCode.*;
+
 @RequiredArgsConstructor
 @Service
 public class PlayerService {
@@ -35,24 +39,32 @@ public class PlayerService {
     private final MemberRepository memberRepository;
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
+    private final GameRedisRepository redisRepository;
 
     @Transactional
     public PlayerEntryResponse entry(long gameId, long memberId){
         Game entryGame = getGame(gameId);
         if(!isWaiting(entryGame)){
-            throw new CustomException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
+            throw new CustomException(GAME_IS_NOT_READY_STATUS);
         }
         if(!isEnterPossible(entryGame)){
-            throw new CustomException(GameWaitingErrorCode.CAN_NOT_ACCOMMODATE);
+            throw new CustomException(CAN_NOT_ACCOMMODATE);
         }
-        Member entryMember = getMember(memberId);
-        Player entryPlayer = Player.builder().member(entryMember).game(entryGame).build();
-        playerRepository.save(entryPlayer);
 
-        return PlayerEntryResponse.builder().playerId(entryPlayer.getMember().getId())
+        Member entryMember = getMember(memberId);
+        Member owner = entryGame.getOwner().getMember();
+
+        if (!entryMember.getId().equals(owner.getId())) {
+            playerRepository.save(Player.builder()
+                    .member(entryMember)
+                    .game(entryGame)
+                    .build());
+        }
+
+        return PlayerEntryResponse.builder()
+                .memberId(entryMember.getId())
                 .nickname(entryMember.getNickname())
-                .image(entryMember.getImage())
-                .build();
+                .image(entryMember.getImage()).build();
     }
 
     @Transactional
@@ -60,7 +72,7 @@ public class PlayerService {
         Game findGame = getGame(gameId);
 
         if(!isWaiting(findGame)){
-            throw new CustomException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
+            throw new CustomException(GAME_IS_NOT_READY_STATUS);
         }
         Member findMember = getMember(memberId);
         Player exitPlayer = getPlayer(findGame, findMember);
@@ -78,37 +90,38 @@ public class PlayerService {
         Member findMember = getMember(memberId);
 
         Player findPlayer = getPlayer(findGame, findMember);
-        //TODO 유효성 검사 컨트롤러에서 처리하기, A,B 이외의 값이 들어온 경우
-        findPlayer.selectTeam(Team.valueOf(playerTeamMessage.getTeam()));
+        findPlayer.selectTeam(playerTeamMessage.getTeam());
 
         return PlayerTeamResponse.builder()
-                .playerId(findPlayer.getMember().getId())
+                .memberId(findPlayer.getMember().getId())
                 .team(findPlayer.getTeam().name())
                 .build();
     }
 
     @Transactional
-    public ReadyResponseDto ready(long gameId, long memberId, PlayerReadyRequest playerReadyMessage){
+    public ReadyDto ready(long gameId, long memberId, PlayerReadyRequest playerReadyMessage){
         Game findGame = getGame(gameId);
         Member findMember = getMember(memberId);
 
         Player readyPlayer = getPlayer(findGame, findMember);
-
         readyPlayer.ready(playerReadyMessage.isReadyStatus());
 
-        ReadyResponseDto readyResponseDto = new ReadyResponseDto();
-
         if(isOwner(findGame, readyPlayer)){
-            if(!isEqualPlayerNum(findGame)) throw new CustomException(GameWaitingErrorCode.NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
-            if(!isAllReady(findGame)) throw new CustomException(GameWaitingErrorCode.NOT_All_USERS_ARE_READY);
-            if(!findGame.isCanStart()) throw new CustomException((GameWaitingErrorCode.NOT_MET_ALL_THE_CONDITIONS_YET));
-
+            if (!isEqualPlayerNum(findGame)) {
+                throw new CustomException(NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
+            }
+            if (!isAllReady(findGame)) {
+                throw new CustomException(NOT_All_USERS_ARE_READY);
+            }
             findGame.changeStatus(GameStatus.PLAYING);
-            readyResponseDto.setSetGame(findGame.setGameMessage());
+            redisRepository.saveInGame(findGame.getId(), makeInGame(findGame));
         }
-        readyResponseDto.setPlayerReadyList(startAllPlayers(findGame));
 
-        return readyResponseDto;
+        return ReadyDto.builder()
+                .readyResponseDto(ReadyResponseDto.builder()
+                        .memberId(readyPlayer.getMember().getId())
+                        .readyStatus(readyPlayer.isReady()).build())
+                .canStart(findGame.isCanStart()).build();
     }
 
     private Member getMember(long memberId) {
@@ -132,13 +145,16 @@ public class PlayerService {
     private boolean isEnterPossible(Game game){
         return game.getCapacity() > game.getPlayers().size();
     }
+
     private boolean isOwner(Game game, Player player){
-        return game.getPlayers().get(0).equals(player);
+        return game.getOwner().getId().equals(player.getId());
     }
+
     private boolean isEqualPlayerNum(Game game){
         AtomicInteger teamA = new AtomicInteger();
         AtomicInteger teamB = new AtomicInteger();
-        game.getPlayers().stream().map(player -> player.getTeam().name().equals("A") ? teamA.getAndIncrement() : teamB.getAndIncrement())
+        game.getPlayers().stream()
+                .map(player -> Team.A.equals(player.getTeam()) ? teamA.getAndIncrement() : teamB.getAndIncrement())
                 .collect(Collectors.toList());
         return teamA.intValue() == teamB.intValue();
     }
@@ -147,20 +163,12 @@ public class PlayerService {
         boolean canStart = game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
         if(canStart) {
             game.completeReady();
-            return true;
-        } else{
-            return false;
         }
+        return canStart;
     }
 
-    private List<PlayerReadyResponse> startAllPlayers(Game game){
-        return game.getPlayers()
-                .stream()
-                .map(player ->
-                        PlayerReadyResponse.builder()
-                                .playerId(player.getMember().getId())
-                                .readyStatus(player.isReady())
-                                .build()).
-                collect(Collectors.toList());
+    private InGame makeInGame(Game game) {
+        return redisRepository.saveInGame(game.getId(), InGame.builder()
+                .gameStatus(GameStatus.PREPARE).build());
     }
 }

@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.auth.filter;
 
 import com.a301.theknight.domain.auth.model.MemberPrincipal;
-import com.a301.theknight.domain.auth.service.TokenProperties;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.CustomUserDetailsService;
 import com.a301.theknight.domain.auth.service.TokenService;
 import lombok.RequiredArgsConstructor;

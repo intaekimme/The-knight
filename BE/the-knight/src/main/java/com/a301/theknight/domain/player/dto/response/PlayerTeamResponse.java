@@ -8,12 +8,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class PlayerTeamResponse {
-    private long playerId;
+    private long memberId;
     private String team;
 
     @Builder
-    public PlayerTeamResponse(long playerId, String team){
-        this.playerId = playerId;
+    public PlayerTeamResponse(long memberId, String team){
+        this.memberId = memberId;
         this.team = team;
     }
 }

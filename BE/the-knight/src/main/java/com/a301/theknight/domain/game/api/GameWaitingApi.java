@@ -20,13 +20,11 @@ public class GameWaitingApi {
     private final GameWaitingService gameWaitingService;
 
     @MessageMapping(value = "/games/{gameId}/modify")
-    public void modify(@DestinationVariable long gameId,
-                       @LoginMemberId long memberId,
-                       GameModifyRequest gameModifyRequest){
+    public void modify(@DestinationVariable long gameId, @LoginMemberId long memberId,
+                       GameModifyRequest gameModifyRequest) {
         gameWaitingService.modify(gameId, memberId, gameModifyRequest);
-        String destination = makeDestinationString(gameId, "/modify");
 
-        template.convertAndSend(destination, "");
+        template.convertAndSend(makeDestinationString(gameId, "/modify"), "");
     }
 
     @MessageMapping(value = "/games/{gameId}/delete")

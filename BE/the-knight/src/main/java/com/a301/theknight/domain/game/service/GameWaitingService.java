@@ -36,12 +36,13 @@ public class GameWaitingService {
                 .map(player -> MemberDataDto.builder()
                         .id(player.getMember().getId())
                         .nickname(player.getMember().getNickname())
+                        .image(player.getMember().getImage())
                         .team(player.getTeam().name())
+                        .readyStatus(player.isReady())
                         .build())
                 .collect(Collectors.toList());
 
         return GameMembersInfoDto.builder()
-                .maxUser(game.getCapacity())
                 .members(members)
                 .build();
     }
@@ -54,7 +55,7 @@ public class GameWaitingService {
             if(isOwner(findGame, memberId)){
                 findGame.ModifyGame(
                         gameModifyRequest.getTitle(),
-                        gameModifyRequest.getMaxUser(),
+                        gameModifyRequest.getMaxMember(),
                         gameModifyRequest.getSword(),
                         gameModifyRequest.getTwin(),
                         gameModifyRequest.getShield(),

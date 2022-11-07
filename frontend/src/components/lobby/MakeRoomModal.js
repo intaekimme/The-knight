@@ -16,7 +16,8 @@ export default function MakeRoomModal(props) {
 		top: '50%',
 		left: '50%',
 		transform: 'translate(-50%, -50%)',
-		width: '50vW',
+		width: '45vW',
+		// height: '25vw',
 		bgcolor: 'background.paper',
 		border: '1px solid #000',
 		boxShadow: 24,
@@ -26,7 +27,7 @@ export default function MakeRoomModal(props) {
 	const titleStyle = {
 		pr: 2,
 		textAlign: "right",
-		fontSize: 24
+		fontSize: 22
 	};
 
 	const [maxUser, setMaxUser] = React.useState('');
@@ -76,12 +77,12 @@ export default function MakeRoomModal(props) {
 						<Grid item xs={10}>
 							<Box sx={{ minWidth: 120 }}>
 								<FormControl fullWidth>
-									<InputLabel id="select-label">인원 수</InputLabel>
 									<Select
 										labelId="select-label"
+										size="small"
 										id="select"
 										value={maxUser}
-										label="인원 수"
+										defaultValue='2 vs 2'
 										onChange={maxUserChange}
 									>
 										<MenuItem value={2}>2 vs 2</MenuItem>

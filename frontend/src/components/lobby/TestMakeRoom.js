@@ -13,10 +13,11 @@ export default function TestMakeRoom(){
     shield: 1,
     hand: 1,
   }
-  const onClick = ()=>{
-    MakeRoom(testRoomInfo);
-  }
+  // const onClick = ()=>{
+  //   MakeRoom(testRoomInfo);
+  // }
   return (
-    <button onClick={onClick}>makeRoom</button>
+    // <button onClick={MakeRoom}>makeRoom</button>
+    <MakeRoom roomInfo={testRoomInfo}/>
   );
 }

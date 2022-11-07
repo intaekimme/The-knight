@@ -1,7 +1,7 @@
 import Player from "./Player";
 import { useDispatch, useSelector } from "react-redux"
 import { deleteWeapon } from "../../_slice/gameSlice"
-import Grid from "@mui/material/Grid";
+import { Grid, Box } from "@mui/material";
 import CancelIcon from '@mui/icons-material/Cancel';
 
 // 추후에 isMe 삭제
@@ -18,20 +18,30 @@ function PlayerWithWeaponItem({ player, isOpp }) {
   return (
     <div>
       <Grid container>
-        <div style={{ width: 50, height: 50, backgroundColor: "grey" }}>
-          {player.weapons[0] && <CancelIcon onClick={deleteLeft} style={isOpp ? {display: "none"} : null}></CancelIcon>}
-          <span style={isOpp ? {display: "none"} : null}>{player.weapons[0]}</span>
-        </div>
+        <Box sx={{ display: "flex", flexDirection: "column"}}>
+          <div style={{ width: 50, height: 50, backgroundColor: "grey" }}>
+            {player.weapons[0] && <CancelIcon onClick={deleteLeft} style={isOpp ? {display: "none"} : null}></CancelIcon>}
+            <span style={isOpp ? {display: "none"} : null}>{player.weapons[0]}</span>
+          </div>
+          <div>
+            L
+          </div>
+        </Box>
         <Player
           player={ player }
         />
-        <div style={{ width: 50, height: 50, backgroundColor: "grey" }}>
-          {player.weapons[1] && <CancelIcon onClick={deleteRight} style={isOpp ? {display: "none"} : null}></CancelIcon>}
-          <span style={isOpp ? {display: "none"} : null}>{player.weapons[1]}</span>
-        </div>
+        <Box sx={{ display: "flex", flexDirection: "column"}}>
+          <div style={{ width: 50, height: 50, backgroundColor: "grey" }}>
+            {player.weapons[1] && <CancelIcon onClick={deleteRight} style={isOpp ? {display: "none"} : null}></CancelIcon>}
+            <span style={isOpp ? {display: "none"} : null}>{player.weapons[1]}</span>
+          </div>
+          <div>
+            R
+          </div>
+        </Box>
       </Grid>
       {/* 순서 표시하는 로직 필요 */}
-      {(phase=== 0) ? null : <div style={{ width: 50, height: 50, border: "solid" }}></div>}
+      {(phase !== "PRE") ? <div style={{ width: 50, height: 50, border: "solid" }}>{player.order}</div> : null}
     </div>
   );
 }

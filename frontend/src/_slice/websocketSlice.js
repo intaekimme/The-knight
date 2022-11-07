@@ -21,24 +21,17 @@ export const websocketSlice = createSlice({
         state.connect = false; state.fail = true;
       });
       state.stompClient = stompClient;
+      return stompClient;
     },
     enterRoom:(state, action) =>{
-      const apis = action.payload.apis;
-      const receivers = action.payload.recievers;
+      console.log(action.payload);
+      const subscribes = action.payload.subscribes;
       for(let i=0;i<action.payload.apis.length;i++){
-        state.stompClient.subscribe(apis[i](action.payload.gameId),
-          receivers[i], (error) => {console.log(error);});
+        state.stompClient.subscribe(subscribes[i].api(action.payload.gameId),
+          subscribes[i].receiver, (error) => {console.log(error);});
       }
-      // state.stompClient.subscribe(api.enterRoom(action.payload.gameId),
-      //   onMessageReceived, (error) => {console.log(error);});
-      // state.stompClient.subscribe(api.allMembersInRoom(action.payload.gameId),
-      //   onMessageReceived, (error) => {console.log(error);});
-      // state.stompClient.subscribe(api.exitRoom(action.payload.gameId),
-      //   onMessageReceived, (error) => {console.log(error);});
-      // state.stompClient.subscribe(api.selectTeam(action.payload.gameId),
-      //   onMessageReceived, (error) => {console.log(error);});
-      // state.stompClient.subscribe(api.ready(action.payload.gameId),
-      //   onMessageReceived, (error) => {console.log(error);});
+      console.log("abc");
+      action.payload.navigate(action.payload.url);
     }
   }
 });
