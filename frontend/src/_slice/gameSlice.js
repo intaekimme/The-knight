@@ -74,7 +74,8 @@ const orderInit = {
 }
 
 // PRE, ATTACK, DEFEND, DOUBT, SHIELD, RESULT, END
-const phaseInit = "ATTACK"
+const phaseInit = "PRE"
+const previousPhaseInit = null
 
 const isLoadingInit = false
 
@@ -85,6 +86,7 @@ export const gameSlice = createSlice({
     players: playersInit,
     order: orderInit,
     phase: phaseInit,
+    previousPhase: previousPhaseInit,
     isLoading: isLoadingInit,
   },
   reducers: {
@@ -135,6 +137,7 @@ export const gameSlice = createSlice({
       }
     },
     fetchPhase: (state, action) => {
+      state.previousPhase = state.phase
       state.phase = action.payload
     },
     switchIsLoading: (state) => {
