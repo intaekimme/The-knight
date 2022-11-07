@@ -7,10 +7,10 @@ import io.micrometer.core.instrument.util.StringUtils;
 import jodd.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @RequiredArgsConstructor
