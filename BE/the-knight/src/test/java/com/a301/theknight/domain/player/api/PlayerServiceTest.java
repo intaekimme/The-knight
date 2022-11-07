@@ -2,15 +2,15 @@ package com.a301.theknight.domain.player.api;
 
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
+import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
-import com.a301.theknight.domain.player.dto.*;
+import com.a301.theknight.domain.player.dto.ReadyDto;
 import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
 import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
 import com.a301.theknight.domain.player.dto.response.PlayerExitResponse;
-import com.a301.theknight.domain.player.dto.response.PlayerReadyResponse;
 import com.a301.theknight.domain.player.dto.response.PlayerTeamResponse;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
@@ -23,13 +23,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 @Disabled
 @ExtendWith(MockitoExtension.class)
 public class PlayerServiceTest {
     @Mock
-
     MemberRepository memberRepository;
 
     @Mock
@@ -37,6 +37,9 @@ public class PlayerServiceTest {
 
     @Mock
     PlayerRepository playerRepository;
+
+    @Mock
+    GameRedisRepository redisRepository;
 
     PlayerService playerService;
 
@@ -72,7 +75,7 @@ public class PlayerServiceTest {
         }
 
         playerTeamRequest  = new PlayerTeamRequest();
-        playerTeamRequest.setTeam("B");
+        playerTeamRequest.setTeam(Team.B);
 
         playerReadyRequest = new PlayerReadyRequest();
         playerReadyRequest.setReadyStatus(true);
@@ -80,7 +83,7 @@ public class PlayerServiceTest {
     }
 
     @BeforeEach
-    void setup() { playerService = new PlayerService(memberRepository, gameRepository, playerRepository); }
+    void setup() { playerService = new PlayerService(memberRepository, gameRepository, playerRepository, redisRepository); }
 
     @Test
     @Disabled
@@ -115,8 +118,8 @@ public class PlayerServiceTest {
 
         PlayerTeamResponse playerTeamResponse = playerService.team(1L, 1L, playerTeamRequest);
 
-        assertEquals(playerTeamRequest.getTeam(), playerTeamResponse.getTeam());
-        assertEquals(1L, playerTeamResponse.getPlayerId());
+        assertEquals(playerTeamRequest.getTeam().name(), playerTeamResponse.getTeam());
+        assertEquals(1L, playerTeamResponse.getMemberId());
     }
 
     @Test
@@ -126,11 +129,10 @@ public class PlayerServiceTest {
         given(gameRepository.findById(1L)).willReturn(Optional.of(testGame));
         given(playerRepository.findByGameAndMember(testGame, testMembers[2])).willReturn(Optional.of(testPlayers[2]));
 
-        ReadyResponseDto readyResponseDto = playerService.ready(1L, 2L, playerReadyRequest);
-        PlayerReadyResponse playerReadyResponse = readyResponseDto.getPlayerReadyList().get(0);
+        ReadyDto readyDto = playerService.ready(1L, 2L, playerReadyRequest);
 
-        assertEquals(2L, playerReadyResponse.getPlayerId());
-        assertTrue(playerReadyResponse.isReadyStatus());
+        assertEquals(2L, readyDto.getReadyResponseDto().getMemberId());
+        assertTrue(readyDto.getReadyResponseDto().isReadyStatus());
     }
 
     @Test
@@ -144,11 +146,9 @@ public class PlayerServiceTest {
         given(gameRepository.findById(1L)).willReturn(Optional.of(testGame));
         given(playerRepository.findByGameAndMember(testGame, testMembers[1])).willReturn(Optional.of(testPlayers[1]));
 
-        ReadyResponseDto readyResponseDto = playerService.ready(1L, 1L, playerReadyRequest);
-
+        ReadyDto readyDto = playerService.ready(1L, 1L, playerReadyRequest);
 
         assertEquals(GameStatus.PLAYING, testGame.getStatus());
-        assertEquals(readyResponseDto.getSetGame(), testGame.getSetGame());
     }
 
 }

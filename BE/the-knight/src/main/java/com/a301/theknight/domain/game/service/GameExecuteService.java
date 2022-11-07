@@ -1,6 +1,10 @@
 package com.a301.theknight.domain.game.service;
 
+import com.a301.theknight.domain.game.dto.execute.response.AttackerDto;
+import com.a301.theknight.domain.game.dto.execute.response.DefenderDto;
+import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
 import com.a301.theknight.domain.game.dto.pass.response.PassResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
@@ -14,7 +18,7 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ING
 
 @RequiredArgsConstructor
 @Service
-public class GamePassService {
+public class GameExecuteService {
 
     private final GameRedisRepository redisRepository;
 
@@ -26,9 +30,9 @@ public class GamePassService {
             -> 공격 패스 : 다음 공격자로 화면 전환 응답 -> 바로 어태커로 메시지 발행
         */
         InGame inGame = getInGame(gameId);
-        TurnStatus status = inGame.getStatus();
+        GameStatus status = inGame.getGameStatus();
 
-        if (TurnStatus.ATTACK.equals(status)) {
+        if (GameStatus.ATTACK.equals(status)) {
             //TODO: 어택 패스 -> 어택 정보 비워주고 다음 공격자로 다시 감.
             return null;
         }
@@ -37,29 +41,56 @@ public class GamePassService {
     }
 
     @Transactional
-    public void turnExecute(long gameId) {
-        TurnData turnData = getInGame(gameId).getTurnData();
+    public GameExecuteResponse executeTurn(long gameId) {
+        InGame inGame = getInGame(gameId);
+        TurnData turnData = inGame.getTurnData();
 
-        InGamePlayer attacker = getInGamePlayer(gameId, turnData.getAttackerId());
-        InGamePlayer defender = getInGamePlayer(gameId, turnData.getAttackerId());
-
+        InGamePlayer defender = getInGamePlayer(gameId, turnData.getDefenderId());
         AttackData attackData = turnData.getAttackData();
         DefendData defendData = turnData.getDefendData();
 
-        int defendCount = Hand.LEFT.equals(defendData.getDefendHand())
-                ? defender.getLeftCount() : defender.getRightCount();
-        Weapon attackWeapon = Hand.LEFT.equals(attackData.getAttackHand())
-                ? attacker.getLeftWeapon() : attacker.getRightWeapon();
-
+        int defendCount = defendData.getShieldCount();
+        Weapon attackWeapon = attackData.getWeapon();
         int resultCount = defendCount - attackWeapon.getCount();
+
+        GameStatus nextStatus = GameStatus.ATTACK;
         if (resultCount < 0) {
             defender.death();
-            //TODO: 디펜더가 리더인 경우 -> 게임 종료
+            if (defender.isLeader()) {
+                nextStatus = GameStatus.END;
+            }
         } else {
             defender.changeCount(resultCount, defendData.getDefendHand());
         }
 
-        //TODO: 턴 수행 후 응답은?? -> 다음 공격자로??
+        inGame.changeStatus(nextStatus);
+        redisRepository.saveInGame(gameId, inGame);
+        redisRepository.saveInGamePlayer(gameId, defender.getMemberId(), defender);
+
+        return getGameExecuteResponse(inGame, turnData, defender, resultCount);
+    }
+
+    private GameExecuteResponse getGameExecuteResponse(InGame inGame, TurnData turnData, InGamePlayer defender, int nextCount) {
+        AttackData attackData = turnData.getAttackData();
+        DefendData defendData = turnData.getDefendData();
+
+        AttackerDto attackerDto = AttackerDto.builder()
+                .id(turnData.getAttackerId())
+                .hand(attackData.getAttackHand().name())
+                .weapon(attackData.getWeapon().name())
+                .build();
+        DefenderDto defenderDto = DefenderDto.builder()
+                .id(turnData.getDefenderId())
+                .hand(defendData.getDefendHand().name())
+                .isDead(defender.isDead())
+                .nextCount(nextCount)
+                .build();
+
+        return GameExecuteResponse.builder()
+                .attackTeam(inGame.getCurrentAttackTeam().name())
+                .attacker(attackerDto)
+                .defender(defenderDto)
+                .build();
     }
 
     private InGame getInGame(long gameId) {

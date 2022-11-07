@@ -8,6 +8,5 @@ import java.util.List;
 @Builder
 @Data
 public class GameMembersInfoDto {
-    private int maxUser;
     private List<MemberDataDto> members;
 }

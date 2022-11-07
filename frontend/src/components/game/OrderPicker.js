@@ -5,6 +5,7 @@ import Grid from "@mui/material/Grid";
 
 function OrderPicker() {
   const dispatch = useDispatch();
+  const me = useSelector(state => state.game.me)
   const players = useSelector(state => state.game.players)
   const order = useSelector(state => state.game.order)
 
@@ -23,11 +24,7 @@ function OrderPicker() {
         >
           <div onClick={() => onClick(i)} style={{ width: 80, height: 80, backgroundColor: "#e2e2e2" }}>
             {i + 1}
-            {/* 
-              현재는 teamA의 순서를 보여주도록 고정 
-              추후에 내 팀의 순서를 보여주도록 변경
-            */}
-            {order.teamA ? (order.teamA[i] ? <Player player={order.teamA[i]}></Player> : null) : null}
+            {order[me.team] ? (order[me.team][i] ? <Player player={order[me.team][i]}></Player> : null) : null}
           </div>
         </Grid>
       );

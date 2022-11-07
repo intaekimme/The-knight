@@ -19,8 +19,7 @@ public class GameApi {
     private final GameService gameService;
 
     @GetMapping
-    public ResponseEntity<?> getGameList(@RequestParam(required = false) String keyword,
-                                         Pageable pageable,
+    public ResponseEntity<?> getGameList(@RequestParam(required = false) String keyword, Pageable pageable,
                                          @LoginMemberId long memberId) {
         GameListResponse gameListResponse = gameService.getGameList(keyword, pageable, memberId);
         return ResponseEntity.ok(gameListResponse);
@@ -34,8 +33,7 @@ public class GameApi {
     }
 
     @GetMapping("/{gameId}")
-    public ResponseEntity<?> getGameInfo(@PathVariable long gameId,
-                                         @LoginMemberId long memberId) {
+    public ResponseEntity<?> getGameInfo(@PathVariable long gameId, @LoginMemberId long memberId) {
         GameInfoResponse gameInfoResponse = gameService.getGameInfo(gameId, memberId);
         return ResponseEntity.ok(gameInfoResponse);
     }

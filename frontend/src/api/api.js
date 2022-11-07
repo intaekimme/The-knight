@@ -1,12 +1,12 @@
 //backend Local
-const BASE_URL = 'http://localhost:8080';
+// const BASE_URL = 'http://localhost:8080';
 //backend 배포
-// const BASE_URL = 'https://sword-shield.co.kr';
+const BASE_URL = 'https://sword-shield.co.kr';
 
 //frontend Local
-const LOGIN_REDIRECT = 'http://localhost:3000/islogin';
+// const LOGIN_REDIRECT = 'http://localhost:3000/islogin';
 //frontend 배포
-// const LOGIN_REDIRECT = 'https://sword-shield.co.kr/islogin';
+const LOGIN_REDIRECT = 'https://sword-shield.co.kr/islogin';
 
 const API = '/api';
 const WEBSOCKET = '/websocket';
@@ -27,12 +27,19 @@ const EXIT_ROOM = '/exit';
 const SELECT_TEAM = '/team';
 const READY = '/ready';
 
+// 인게임
+const ALL_PLAYERS = '/players';
+const CONVERT = '/convert';
+const CONVERT_COMPLETE = '/convert-complete';
+const PROCEED = '/proceed';
+
 const api = {
   exampleFunction: () => BASE_URL + EXAMPLE + `${0}`,
   baseURL: () => BASE_URL,
   websocket: () => BASE_URL + WEBSOCKET,
   login: () => BASE_URL + GOOGLE_LOGIN,
   loginRedirect: () => LOGIN_REDIRECT,
+
 
   initRoom: () => BASE_URL + API + GAME,
 
@@ -58,5 +65,17 @@ const api = {
   exitRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + EXIT_ROOM,
   
   gameRoomInfo: (gameId) => BASE_URL + API + GAME + `/${gameId}`,
+  getGameList: () => BASE_URL + API + GAME,
+
+  //memebr 관련
+  getMemberHistory: () => BASE_URL + API + '/history',
+  getMemberInfo: () => BASE_URL + API + ALL_MEMBERS,
+  deleteMember: () => BASE_URL + API + ALL_MEMBERS,
+  updateMemberInfo: () => BASE_URL + API + ALL_MEMBERS,
+
+  getAllPalyers: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_PLAYERS,
+  goLoading: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,
+  readyForNextPhase: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
+  nextPhase: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PROCEED,
 }
 export default api;

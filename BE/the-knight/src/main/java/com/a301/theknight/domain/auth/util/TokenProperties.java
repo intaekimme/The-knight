@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.auth.service;
+package com.a301.theknight.domain.auth.util;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
