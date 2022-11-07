@@ -63,29 +63,41 @@ public class GamePrepareApi {
     @MessageMapping(value="/games/{gameId}/weapon-delete")
     public void deleteWeapon(@DestinationVariable long gameId, GameWeaponDeleteRequest weaponDeleteRequest,
                               @LoginMemberId long memberId){
-        GameWeaponResponse weaponResponse = gamePrepareService.cancelWeapon(gameId, memberId, weaponDeleteRequest.isLeft());
+        GameWeaponResponse weaponResponse = gamePrepareService.cancelWeapon(gameId, memberId, weaponDeleteRequest.getDeleteHand());
 
         sendWeaponResponse(gameId, weaponResponse.getTeam(), weaponResponse.getGameWeaponData());
     }
 
 
-    @MessageMapping(value="/games/{gameId}/orders")
-    public void choiceOrder(@DestinationVariable long gameId, GameOrderRequest gameOrderRequest,
+    @MessageMapping(value="/games/{gameId}/a/orders")
+    public void choiceAOrder(@DestinationVariable long gameId, GameOrderRequest gameOrderRequest,
                             @LoginMemberId long memberId){
-        GameOrderResponse orderResponse = gamePrepareService.choiceOrder(gameId, memberId, gameOrderRequest);
+        GameOrderResponse orderResponse = gamePrepareService.choiceOrder(gameId, memberId, Team.A, gameOrderRequest);
 
         if (orderResponse != null) {
-            sendOrderResponse(gameId, orderResponse.getTeam(), orderResponse);
+            sendOrderResponse(gameId, Team.A, orderResponse);
+        }
+    }
+
+    @MessageMapping(value="/games/{gameId}/b/orders")
+    public void choiceBOrder(@DestinationVariable long gameId, GameOrderRequest gameOrderRequest,
+                             @LoginMemberId long memberId){
+        GameOrderResponse orderResponse = gamePrepareService.choiceOrder(gameId, memberId, Team.B, gameOrderRequest);
+
+        if (orderResponse != null) {
+            sendOrderResponse(gameId, Team.B, orderResponse);
         }
     }
 
     @MessageMapping(value="/games/{gameId}/select-complete")
-    public void completeSelect(@DestinationVariable long gameId, @LoginMemberId long memberId,
-                               GameCompleteSelectRequest gameCompleteSelectRequest){
-        boolean completed = gamePrepareService.completeSelect(gameId, memberId, gameCompleteSelectRequest.getTeam());
-        if (completed) {
+    public void completeSelect(@DestinationVariable long gameId, @LoginMemberId long memberId){
+        SelectCompleteDto selectCompleteDto = gamePrepareService.completeSelect(gameId, memberId);
+        if (selectCompleteDto.isCompleted()) {
             template.convertAndSend(makeDestinationUri(gameId, "/convert"));
+            return;
         }
+        String postfix = Team.A.equals(selectCompleteDto.getSelectTeam()) ? "/a/select" : "/b/select";
+        template.convertAndSend(makeDestinationUri(gameId, postfix), new SelectResponse(true));
     }
 
     @MessageMapping(value="/games/{gameId}/pre-attack")
