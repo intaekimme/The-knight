@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.game.dto.GameCreationResponse;
+import com.a301.theknight.domain.game.dto.waiting.response.GameCreationResponse;
 import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.GameListDto;

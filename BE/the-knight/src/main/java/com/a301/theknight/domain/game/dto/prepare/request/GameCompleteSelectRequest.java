@@ -5,5 +5,6 @@ import lombok.Data;
 
 @Data
 public class GameCompleteSelectRequest {
+    //  TODO Enum 타입 예외 처리
     private Team team;
 }

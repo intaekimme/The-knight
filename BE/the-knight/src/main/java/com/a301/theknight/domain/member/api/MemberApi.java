@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @RestController
@@ -26,7 +28,7 @@ public class MemberApi {
     }
 
     @PatchMapping("/members")
-    public ResponseEntity<?> updateMemberInfo(@RequestBody MemberUpdateRequest memberUpdateRequest,
+    public ResponseEntity<?> updateMemberInfo(@Valid @RequestBody MemberUpdateRequest memberUpdateRequest,
                                               @LoginMemberId long memberId) {
         memberService.updateMemberInfo(memberId, memberUpdateRequest);
         return ResponseEntity.ok().build();

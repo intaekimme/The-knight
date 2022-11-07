@@ -10,6 +10,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @Controller
 public class GameDefenseApi {
@@ -19,7 +21,7 @@ public class GameDefenseApi {
     private final GameDefenseService gameDefenseService;
 
     @MessageMapping(value = "/games/{gameId}/defense")
-    public void defense(@DestinationVariable long gameId, GameDefenseRequest gameDefenseRequest,
+    public void defense(@DestinationVariable long gameId, @Valid GameDefenseRequest gameDefenseRequest,
                         @LoginMemberId long memberId){
         gameDefenseService.defense(gameId, memberId, gameDefenseRequest);
 

@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlayerTeamRequest {
+    //  TODO Enum 타입 valid 처리
     private Team team;
 }

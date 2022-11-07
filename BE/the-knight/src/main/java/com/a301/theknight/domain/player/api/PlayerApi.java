@@ -14,6 +14,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
+
 @Controller
 @RequiredArgsConstructor
 public class PlayerApi {
@@ -46,6 +48,7 @@ public class PlayerApi {
     }
 
     @MessageMapping(value="/games/{gameId}/team")
+    //  TODO Enum valid 처리
     public void team(@DestinationVariable long gameId, PlayerTeamRequest playerTeamMessage,
                      @LoginMemberId long memberId){
         PlayerTeamResponse playerTeamResponse = playerService.team(gameId, memberId, playerTeamMessage);
@@ -55,7 +58,7 @@ public class PlayerApi {
 
     @MessageMapping(value="/games/{gameId}/ready")
     public void ready(@DestinationVariable long gameId, @LoginMemberId long memberId,
-                      PlayerReadyRequest playerReadyMessage){
+                      @Valid PlayerReadyRequest playerReadyMessage){
         ReadyDto readyDto = playerService.ready(gameId, memberId, playerReadyMessage);
 
         if (readyDto.isCanStart()) {

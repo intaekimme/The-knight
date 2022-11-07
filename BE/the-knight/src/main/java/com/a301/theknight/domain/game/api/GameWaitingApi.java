@@ -10,6 +10,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
+
 @Controller
 @RequiredArgsConstructor
 public class GameWaitingApi {
@@ -21,7 +23,7 @@ public class GameWaitingApi {
 
     @MessageMapping(value = "/games/{gameId}/modify")
     public void modify(@DestinationVariable long gameId, @LoginMemberId long memberId,
-                       GameModifyRequest gameModifyRequest) {
+                       @Valid GameModifyRequest gameModifyRequest) {
         gameWaitingService.modify(gameId, memberId, gameModifyRequest);
 
         template.convertAndSend(makeDestinationString(gameId, "/modify"), gameModifyRequest);

@@ -1,7 +1,6 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtPassRequest;
 import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtRequest;
 import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponse;
 import com.a301.theknight.domain.game.service.GameDoubtService;
@@ -10,6 +9,8 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @Controller
@@ -22,7 +23,7 @@ public class GameDoubtApi {
     private final GameDoubtService gameDoubtService;
 
     @MessageMapping(value = "/games/{gameId}/doubt")
-    public void doubt(@DestinationVariable long gameId, GameDoubtRequest doubtRequest,
+    public void doubt(@DestinationVariable long gameId, @Valid GameDoubtRequest doubtRequest,
                       @LoginMemberId long memberId) {
         gameDoubtService.doubt(gameId, memberId, doubtRequest.getSuspected().getId(), doubtRequest.getDoubtStatus());
 
