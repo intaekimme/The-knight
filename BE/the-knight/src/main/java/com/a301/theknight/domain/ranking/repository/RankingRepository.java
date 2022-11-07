@@ -17,7 +17,7 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
             "FROM (SELECT member_id, rank() OVER (ORDER BY score DESC) as rank " +
             "FROM ranking) r " +
             "WHERE member_id = :memberId", nativeQuery = true)
-    int findMemberRanking(@Param("memberId") long memberId);
+    long findMemberRanking(@Param("memberId") long memberId);
 
     @Query(value = "SELECT m.nickname, m.image, rank() OVER (ORDER BY r.score DESC) AS ranking, r.score " +
             "FROM ranking AS r LEFT JOIN member AS m " +

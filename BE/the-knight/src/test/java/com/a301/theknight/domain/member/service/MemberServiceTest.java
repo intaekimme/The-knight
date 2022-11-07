@@ -68,7 +68,7 @@ class MemberServiceTest {
 
         given(memberRepository.findById(1L)).willReturn(Optional.of(testMember));
         given(rankingRepository.findByMemberId(1L)).willReturn(Optional.of(ranking));
-        given(rankingRepository.findMemberRanking(1L)).willReturn(3);
+        given(rankingRepository.findMemberRanking(1L)).willReturn(3L);
 
         MemberInfoResponse memberInfo = memberService.getMemberInfo(1L);
 
@@ -85,7 +85,7 @@ class MemberServiceTest {
     void memberInfoWithoutRanking() {
         given(memberRepository.findById(1L)).willReturn(Optional.of(testMember));
         given(rankingRepository.findByMemberId(1L)).willReturn(Optional.empty());
-        given(rankingRepository.findMemberRanking(1L)).willReturn(2);
+        given(rankingRepository.findMemberRanking(1L)).willReturn(2L);
 
         MemberInfoResponse memberInfo = memberService.getMemberInfo(1L);
 

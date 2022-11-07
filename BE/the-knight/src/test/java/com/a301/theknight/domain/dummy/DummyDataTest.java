@@ -41,7 +41,7 @@ public class DummyDataTest {
     @Autowired
     private PlayerService playerService;
 
-    private PlayerTeamRequest playerTeamRequest = new PlayerTeamRequest("B");
+    private PlayerTeamRequest playerTeamRequest = new PlayerTeamRequest(Team.B);
     private boolean[] visitedMember = new boolean[95];
 
     private int[] maxUsers = {4, 10, 8, 6};
@@ -184,7 +184,7 @@ public class DummyDataTest {
 
         return GameCreateRequest.builder()
                 .title("game" + i)
-                .maxUser(maxUsers[i % 4])
+                .maxMember(maxUsers[i % 4])
                 .sword(setItemNum[0])
                 .twin(setItemNum[1])
                 .shield(setItemNum[2])
