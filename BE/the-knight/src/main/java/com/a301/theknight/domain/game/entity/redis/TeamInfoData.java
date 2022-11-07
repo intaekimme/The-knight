@@ -17,4 +17,8 @@ public class TeamInfoData implements Serializable {
     public void completeSelect() {
         selected = true;
     }
+
+    public void updateCurrentAttackIndex(int index) {
+        this.currentAttackIndex = index;
+    }
 }
