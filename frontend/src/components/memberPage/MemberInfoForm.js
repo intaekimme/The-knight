@@ -5,23 +5,23 @@ import { Avatar, Button, Grid, Paper } from "@mui/material";
 import { fetchMemberInfo } from "../../_slice/memberInfoSlice";
 
 export default function MemberInfoForm({ updateProfile }) {
-  const [isSetting, setIsSetting] = React.useState(false);
+  // const [isSetting, setIsSetting] = React.useState(false);
   const dispatch = useDispatch();
   React.useEffect(() => {
-    if (!isSetting) {
-      setIsSetting(true);
+  //   console.log(isSetting);
+  //   if (!isSetting) {
+  //     setIsSetting(true);
       dispatch(fetchMemberInfo());
-    }
+  //   }
   }, []);
-
-  const memberInfo = useSelector(state => state.memberInfo.value.MemberInfo);
+  const memberInfo = useSelector(state => state.memberInfo.memberInfo);
   console.log("memberInfo", memberInfo);
   return (
     <Grid container sx={{ pt: 5 }} rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center" alignItems="center">
       <Grid item xs={3} >
         <Avatar
           alt="Remy Sharp"
-          src="/static/images/avatar/1.jpg"
+          src={memberInfo.image}
           sx={{ width: 250, height: 250 }}
         >
         </Avatar>

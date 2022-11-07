@@ -94,6 +94,17 @@ const gameListAll = createAsyncThunk('gameListAll', async () => {
     console.log(err);
   }
 })
+const searchRoom = createAsyncThunk('searchRoom', async (keyword) => {
+  try {
+    const res = await axios.get(api.getGameList(keyword,), {
+      headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
+    });
+    console.log("get game list", res.data);
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+})
 
 const gameDesc = createAsyncThunk('gameDesc', async (gameId) => {
   try {
@@ -104,6 +115,7 @@ const gameDesc = createAsyncThunk('gameDesc', async (gameId) => {
     return res.data;
   } catch (err) {
     console.log(err);
+    return err;
   }
 })
 
@@ -115,9 +127,20 @@ const gameListInit = [{
   currentUser: -1,
 }]
 
+const gameInfoInit = {
+  gameId: -1,
+  title: "",
+  maxMember: -1,
+  currentMembers: -1,
+  sword: -1,
+  twin: -1,
+  shield: -1,
+  hand: -1
+}
+
 export const gameListSlice = createSlice({
   name: "gameListSlice",
-  initialState: { gameListAll: gameListInit },
+  initialState: { gameListAll: gameListInit, gameInfo: gameInfoInit },
   reducers: {
     // 수정할때 사용
     // setGameList: (state) => {
@@ -125,19 +148,26 @@ export const gameListSlice = createSlice({
   },
   extraReducers: {
     [gameListAll.fulfilled]: (state, action) => {
+      console.log(action);
       state.gameListAll = action.payload;
     },
     [gameListAll.rejected]: state => {
       state.gameListAll = gameListInit;
     },
+    [searchRoom.fulfilled]: (state, action) => {
+      state.gameListAll = action.payload;
+    },
+    [searchRoom.rejected]: state => {
+      state.gameListAll = gameListInit;
+    },
     [gameDesc.fulfilled]: (state, action) => {
-      state.gameDesc = action.payload;
+      state.gameInfo = action.payload;
     },
     [gameDesc.rejected]: state => {
-      state.gameDesc = gameListInit;
+      state.gameInfo = gameInfoInit;
     },
   },
 });
-export { gameListAll, gameDesc };
+export { gameListAll, searchRoom, gameDesc };
 export const { setGameList } = gameListSlice.actions;
 export default gameListSlice.reducer;
