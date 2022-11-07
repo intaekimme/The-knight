@@ -73,8 +73,8 @@ const orderInit = {
   B: [null, null, null, null, null],
 }
 
-// PRE, ATTACK, DEFEND, DOUBT, SHIELD, RESULT, END
-const phaseInit = "PRE"
+// PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFEND, DEFEND_DOUBT, DOUBT_RESULT, EXECUTE, RESULT, END
+const phaseInit = "PREDECESSOR"
 const previousPhaseInit = null
 
 const isLoadingInit = false

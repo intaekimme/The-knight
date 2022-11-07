@@ -4,8 +4,16 @@ import { useSelector } from "react-redux";
 
 import LoginCheck from "../commons/login/LoginCheck";
 import LoadingPhase from "../components/game/LoadingPhase";
-import WeaponSelectPhase from "../components/game/WeaponSelectPhase";
-import ActionSelectPhase from "../components/game/ActionSelectPhase";
+import PreparePhase from "../components/game/PreparePhase";
+import PredecessorPhase from "../components/game/PredecessorPhase";
+import AttackPhase from "../components/game/AttackPhase";
+import AttackDoubtPhase from "../components/game/AttackDoubtPhase";
+import DefendPhase from "../components/game/DefendPhase";
+import DefendDoubtPhase from "../components/game/DefendDoubtPhase";
+import DoubtResultPhase from "../components/game/DoubtResultPhase";
+import ExecutePhase from "../components/game/ExecutePhase";
+import ResultPhase from "../components/game/ResultPhase";
+import EndPhase from "../components/game/EndPhase";
 
 export default function Game() {
   // 비 로그인 시 로그인 화면으로
@@ -23,8 +31,16 @@ export default function Game() {
   return (
     <div>
       {isLoading && <LoadingPhase></LoadingPhase>}
-      {!isLoading && phase === "PRE" && <WeaponSelectPhase></WeaponSelectPhase>}
-      {!isLoading && phase === "ATTACK" && <ActionSelectPhase></ActionSelectPhase>}
+      {!isLoading && phase === "PREPARE" && <PreparePhase></PreparePhase>}
+      {!isLoading && phase === "PREDECESSOR" && <PredecessorPhase></PredecessorPhase>}
+      {!isLoading && phase === "ATTACK" && <AttackPhase></AttackPhase>}
+      {!isLoading && phase === "ATTACK_DOUBT" && <AttackDoubtPhase></AttackDoubtPhase>}
+      {!isLoading && phase === "DEFEND" && <DefendPhase></DefendPhase>}
+      {!isLoading && phase === "DEFEND_DOUBT" && <DefendDoubtPhase></DefendDoubtPhase>}
+      {!isLoading && phase === "DOUBT_RESULT" && <DoubtResultPhase></DoubtResultPhase>}
+      {!isLoading && phase === "EXECUTE" && <ExecutePhase></ExecutePhase>}
+      {!isLoading && phase === "RESULT" && <ResultPhase></ResultPhase>}
+      {!isLoading && phase === "END" && <EndPhase></EndPhase>}
     </div>
   );
 }

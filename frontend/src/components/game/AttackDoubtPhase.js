@@ -1,7 +1,7 @@
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 
-export default function ActionSelectPhase() {
+export default function AttackDoubtPhase() {
   return (
     <div>
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>
