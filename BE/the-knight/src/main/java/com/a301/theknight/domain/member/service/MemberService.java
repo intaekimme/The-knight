@@ -33,10 +33,12 @@ public class MemberService {
         Ranking ranking = rankingRepository.findByMemberId(memberId)
                 .orElseGet(() -> Ranking.builder().build());
 
+        Long rankingNumber = rankingRepository.findMemberRanking(memberId);
+
         return MemberInfoResponse.builder()
                 .nickname(member.getNickname())
                 .image(member.getImage())
-                .ranking(rankingRepository.findMemberRanking(memberId))
+                .ranking(rankingNumber == null ? 0L : rankingNumber)
                 .score(ranking.getScore())
                 .win(ranking.getWin())
                 .lose(ranking.getLose())
