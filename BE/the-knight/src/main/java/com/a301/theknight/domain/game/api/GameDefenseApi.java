@@ -26,7 +26,7 @@ public class GameDefenseApi {
         template.convertAndSend(makeConvertUri(gameId));
     }
 
-    @MessageMapping(value = "/games/{gameId}//defense-info")
+    @MessageMapping(value = "/games/{gameId}/defense-info")
     public void defendInfo(@DestinationVariable long gameId) throws  InterruptedException {
         DefenseResponse response = gameDefenseService.getDefenseInfo(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/defense-info"), response);
