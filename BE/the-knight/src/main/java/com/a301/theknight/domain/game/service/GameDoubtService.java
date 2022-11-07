@@ -67,7 +67,7 @@ public class GameDoubtService {
     }
 
     @Transactional
-    public void doubtPass(long gameId, long suspectId, String doubtStatus){
+    public void doubtPass(long gameId, long suspectId){
         RLock lock = redissonClient.getLock(lockKeyGen(gameId));
         try {
             boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
