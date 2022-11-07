@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
+
 @RequiredArgsConstructor
 @RestController
 public class RankingApi {
@@ -17,8 +19,8 @@ public class RankingApi {
     private final RankingService rankingService;
 
     @GetMapping("/api/ranking")
-    public ResponseEntity<?> getMemberHistory(@RequestParam String keyword) {
-        RankingResponse rankingResponse = new RankingResponse();
+    public ResponseEntity<?> getMemberHistory(@RequestParam(required = false) String keyword, Pageable pageable) {
+        RankingResponse rankingResponse = rankingService.getRankings(keyword, pageable);
         return ResponseEntity.ok(rankingResponse);
     }
 }
