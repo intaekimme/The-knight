@@ -5,7 +5,7 @@ import com.a301.theknight.domain.player.dto.*;
 import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
 import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
-import com.a301.theknight.domain.player.dto.response.PlayerExitResponse;
+import com.a301.theknight.domain.player.dto.response.PlayerExitDto;
 import com.a301.theknight.domain.player.dto.response.PlayerTeamResponse;
 import com.a301.theknight.domain.player.service.PlayerService;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +35,14 @@ public class PlayerApi {
     @MessageMapping(value="/games/{gameId}/exit")
     public void exit(@DestinationVariable long gameId,
                      @LoginMemberId long memberId){
-        PlayerExitResponse exitPlayerId = playerService.exit(gameId, memberId);
-        String destination = makeDestinationString(SEND_PREFIX, gameId, "/exit");
-        template.convertAndSend(destination, exitPlayerId);
+        PlayerExitDto exitDto = playerService.exit(gameId, memberId);
+        if (exitDto.isLeaderExited()) {
+            //TODO: /delete에 memberId 바인딩 여부 테스트
+            template.convertAndSend(makeDestinationString(SERVER_PREFIX, gameId, "/delete"), memberId);
+            return;
+        }
+        template.convertAndSend(makeDestinationString(SEND_PREFIX, gameId, "/exit"),
+                exitDto.getPlayerExitResponse());
     }
 
     @MessageMapping(value="/games/{gameId}/team")
