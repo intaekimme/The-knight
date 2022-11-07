@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.attacker.AttackerDto;
+import com.a301.theknight.domain.game.dto.attacker.response.AttackerResponse;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
@@ -25,7 +26,7 @@ public class GameAttackerService {
     @Transactional
     public AttackerDto getAttacker(long gameId) {
 
-        AttackerDto attackerDto;
+        AttackerDto attackerDto = null;
         InGame inGame = gameRedisRepository.getInGame(gameId).orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
         inGame.updateCurrentAttackTeam();
         TeamInfoData teamInfoData = inGame.getCurrentAttackTeam() == Team.A ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
@@ -33,14 +34,16 @@ public class GameAttackerService {
         int attackerIndex = teamInfoData.getCurrentAttackIndex();
         GameOrderDto[] orderList = teamInfoData.getOrderList();
 
-        while (true) {
+        while (attackerDto == null) {
             attackerIndex = ++attackerIndex % capacity;
             long memberId = orderList[attackerIndex].getMemberId();
             InGamePlayer player = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
             if (!player.isDead()) {
                 teamInfoData.updateCurrentAttackIndex(attackerIndex);
-                attackerDto = AttackerDto.builder().memberId(player.getMemberId()).team(player.getTeam() == Team.A ? "A" : "B").build();
-                break;
+                attackerDto = AttackerDto.builder()
+                        .attackerResponseA(AttackerResponse.builder().memberId(memberId).isOpposite(player.getTeam() != Team.A).build())
+                        .attackerResponseB(AttackerResponse.builder().memberId(memberId).isOpposite(player.getTeam() != Team.B).build())
+                        .build();
             }
         }
 

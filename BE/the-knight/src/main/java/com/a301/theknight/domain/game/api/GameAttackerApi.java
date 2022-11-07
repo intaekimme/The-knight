@@ -1,9 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.game.dto.attacker.AttackerDto;
-import com.a301.theknight.domain.game.dto.attacker.response.AttackerResponse;
 import com.a301.theknight.domain.game.service.GameAttackerService;
-import com.a301.theknight.domain.player.entity.Team;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -22,11 +20,9 @@ public class GameAttackerApi {
     public void getAttacker(@DestinationVariable long gameId) {
 
         AttackerDto attackerDto = gameAttackerService.getAttacker(gameId);
-        AttackerResponse responseA = AttackerResponse.builder().memberId(attackerDto.getMemberId()).isOpposite(attackerDto.getTeam().equals("A")).build();
-        AttackerResponse responseB = AttackerResponse.builder().memberId(attackerDto.getMemberId()).isOpposite(attackerDto.getTeam().equals("B")).build();
 
-        template.convertAndSend(makeDestinationUri(gameId, "/a/attacker"), responseA);
-        template.convertAndSend(makeDestinationUri(gameId, "/b/attacker"), responseB);
+        template.convertAndSend(makeDestinationUri(gameId, "/a/attacker"), attackerDto.getAttackerResponseA());
+        template.convertAndSend(makeDestinationUri(gameId, "/b/attacker"), attackerDto.getAttackerResponseB());
     }
 
     private String makeDestinationUri(long gameId, String postfix) {
