@@ -1,8 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.execute.response.AttackerDto;
-import com.a301.theknight.domain.game.dto.execute.response.DefenderDto;
-import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
+import com.a301.theknight.domain.game.dto.execute.response.*;
 import com.a301.theknight.domain.game.dto.pass.response.PassResponse;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
@@ -85,6 +83,7 @@ public class GameExecuteService {
                 .id(turnData.getDefenderId())
                 .hand(defendData.getDefendHand().name())
                 .isDead(defender.isDead())
+                .passedDefense(defendData.isDefendPass())
                 .restCount(nextCount)
                 .build();
 
