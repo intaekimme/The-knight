@@ -8,6 +8,7 @@ import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
+import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
@@ -50,48 +51,50 @@ public class GameEndService {
         // 3. 게임 상태 End로 update
         // 4. GameEndDto 채워서 리턴
 
+        InGame inGame = gameRedisRepository.getInGame(gameId).orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
         Game game = gameRepository.findById(gameId).orElseThrow(() -> new CustomException(GAME_IS_NOT_EXIST));
         game.changeStatus(GameStatus.END);
-        InGame inGame = gameRedisRepository.getInGame(gameId).orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
 
-        long LeaderAId = inGame.getTeamAInfo().getLeaderId();
-        long LeaderBId = inGame.getTeamAInfo().getLeaderId();
-        InGamePlayer LeaderA = gameRedisRepository.getInGamePlayer(gameId, LeaderAId).orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
-
-        String losingTeam = LeaderA.isDead() ? "A" : "B";
         List<PlayerWeaponDto> players = new ArrayList<>();
 
-        GameOrderDto[] orderList = inGame.getTeamAInfo().getOrderList();
-        boolean isWin = losingTeam.equals("B");
+        boolean isAWin = method(gameId, players, inGame.getTeamAInfo());
+        boolean isBWin = method(gameId, players, inGame.getTeamBInfo());
 
-        for (int i = 0; i < 2; i++) {
+        String losingTeam = isAWin ? "A" : "B";
+        long losingLeaderId = losingTeam.equals("A")? inGame.getTeamAInfo().getLeaderId() : inGame.getTeamBInfo().getLeaderId();
+        long winningLeaderId = losingTeam.equals("A")? inGame.getTeamBInfo().getLeaderId() : inGame.getTeamAInfo().getLeaderId();
 
-            for (GameOrderDto gameOrderDto : orderList) {
-                long memberId = gameOrderDto.getMemberId();
-                Member member = memberRepository.findById(memberId).orElseThrow(() -> new CustomException(MEMBER_IS_NOT_EXIST));
-                Player player = playerRepository.findByGameAndMember(game, member).orElseThrow(() -> new CustomException(PLAYER_IS_NOT_EXIST));
-                InGamePlayer inGamePlayer = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
-                Ranking ranking = rankingRepository.findByMemberId(memberId).orElseThrow(() -> new CustomException(RANKING_IS_NOT_EXIST));
-
-                if (isWin) {
-                    player.winGame();
-                    ranking.saveWinScore();
-
-                } else {
-                    player.loseGame();
-                    ranking.saveLoseScore();
-                }
-
-                players.add(PlayerWeaponDto.builder().memberId(memberId).leftWeapon(inGamePlayer.getLeftWeapon().toString()).rightWeapon(inGamePlayer.getRightWeapon().toString()).build());
-            }
-
-            orderList = inGame.getTeamBInfo().getOrderList();
-            isWin = !isWin;
-        }
-        EndResponse endResponseA = EndResponse.builder().isWin(isWin).losingTeam(losingTeam).losingLeaderId(isWin ? LeaderBId : LeaderAId).winningLeaderId(isWin ? LeaderAId : LeaderBId).players(players).build();
-        EndResponse endResponseB = EndResponse.builder().isWin(!isWin).losingTeam(losingTeam).losingLeaderId(isWin ? LeaderBId : LeaderAId).winningLeaderId(isWin ? LeaderAId : LeaderBId).players(players).build();
+        EndResponse endResponseA = EndResponse.builder().isWin(isAWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).build();
+        EndResponse endResponseB = EndResponse.builder().isWin(isBWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).build();
 
         return GameEndDto.builder().endResponseA(endResponseA).endResponseB(endResponseB).build();
+    }
+
+    private boolean method (long gameId, List<PlayerWeaponDto> players, TeamInfoData teamInfoData) {
+        long LeaderId = teamInfoData.getLeaderId();
+        InGamePlayer Leader = gameRedisRepository.getInGamePlayer(gameId, LeaderId).orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+        boolean isWin = !Leader.isDead();
+
+        GameOrderDto[] orderList = teamInfoData.getOrderList();
+
+        for (GameOrderDto gameOrderDto : orderList) {
+            long memberId = gameOrderDto.getMemberId();
+            Player player = playerRepository.findByGameIdAndMemberId(gameId, memberId).orElseThrow(() -> new CustomException(PLAYER_IS_NOT_EXIST));
+            Ranking ranking = rankingRepository.findByMemberId(memberId).orElseThrow(() -> new CustomException(RANKING_IS_NOT_EXIST));
+
+            if (isWin) {
+                player.winGame();
+                ranking.saveWinScore();
+            } else {
+                player.loseGame();
+                ranking.saveLoseScore();
+            }
+
+            InGamePlayer inGamePlayer = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+            players.add(PlayerWeaponDto.builder().memberId(memberId).leftWeapon(inGamePlayer.getLeftWeapon().toString()).rightWeapon(inGamePlayer.getRightWeapon().toString()).build());
+        }
+
+        return isWin;
     }
 
 }

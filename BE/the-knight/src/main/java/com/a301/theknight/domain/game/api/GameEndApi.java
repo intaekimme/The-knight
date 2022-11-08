@@ -23,6 +23,8 @@ public class GameEndApi {
 
         template.convertAndSend(makeDestinationUri(gameId, "/a/end"), gameEndDto.getEndResponseA());
         template.convertAndSend(makeDestinationUri(gameId, "/b/end"), gameEndDto.getEndResponseB());
+
+        //TODO: proceed
     }
 
     private String makeDestinationUri(long gameId, String postfix) {

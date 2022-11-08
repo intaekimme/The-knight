@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @Builder
 public class EndResponse {
-    private boolean isWin;
+    private Boolean isWin;
     private String losingTeam;
     private long losingLeaderId;
     private long winningLeaderId;
