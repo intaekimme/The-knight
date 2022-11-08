@@ -8,7 +8,6 @@ import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.player.entity.Team;
-import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,13 +37,10 @@ public class GameAttackerService {
         while (attackerDto == null) {
             attackerIndex = ++attackerIndex % capacity;
             long memberId = orderList[attackerIndex].getMemberId();
-            InGamePlayer player = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomRestException(INGAME_PLAYER_IS_NOT_EXIST));
+            InGamePlayer player = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
             if (!player.isDead()) {
                 teamInfoData.updateCurrentAttackIndex(attackerIndex);
-                attackerDto = AttackerDto.builder()
-                        .attackerResponseA(AttackerResponse.builder().memberId(memberId).isOpposite(player.getTeam() != Team.A).build())
-                        .attackerResponseB(AttackerResponse.builder().memberId(memberId).isOpposite(player.getTeam() != Team.B).build())
-                        .build();
+                attackerDto = AttackerDto.builder().attackerResponseA(AttackerResponse.builder().memberId(memberId).isOpposite(player.getTeam() != Team.A).build()).attackerResponseB(AttackerResponse.builder().memberId(memberId).isOpposite(player.getTeam() != Team.B).build()).build();
             }
         }
 
