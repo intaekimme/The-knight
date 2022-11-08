@@ -16,23 +16,22 @@ export default function RoomHeader(props) {
 	const exit = () => {
 		console.log("나가기");
 	}
-
 	return (
-		<Grid container item xs={12} sx={{p:10}}>
-			<Grid item xs={7} alignItems="center" sx={{fontSize:props.size}}>
+		<Grid container sx={{ p: 3 }}>
+			<Grid item xs={7} sx={{fontSize:props.size, display: "flex", alignItems: "center"}}>
 				<Button onClick={roomSettingOpen} sx={{color:"gray"}}><SettingsIcon sx={{ fontSize: props.size*2 }} /></Button>
 				<RoomSetting open={open} onClose={ roomSettingClose } />
-				{` #${props.roomData.gameId} ${props.roomData.title} ${props.currentUser}/${props.maxUser}`}
+				<h2>{` #${props.roomData.gameId} ${props.roomData.title} ${props.currentUser}/${props.maxUser}`}</h2>
 			</Grid>
-			<Grid item xs={4} alignItems="center" sx={{ fontSize: props.size*1.2 }}>
-				<Box sx={{width:props.size*8, border: "1px solid black"}}>
+			<Grid item xs={4} sx={{ fontSize: props.size*1.2, display: "flex", justifyContent: "center", alignItems: "center" }}>
+				<Box sx={{width:props.size*10, height: props.size*4, border: "7px solid #4d4d4d", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center"}}>
 					Team&nbsp;
-					<Button sx={{ margin:0.5, color:white, fontSize: props.size, width: props.size*2, height: props.size*2, background:red, border: `1px solid ${red}`, borderRadius: "50%" }}>A</Button>
-					<Button sx={{ margin:0.5, color:white, fontSize: props.size, width: props.size*2, height: props.size*2, background:blue, border: `1px solid ${blue}`, borderRadius: "50%" }}>B</Button>
+					<Button sx={{ margin:0.5, color:white, fontSize: props.size, minWidth: props.size*2, width: props.size*2, height: props.size*2, background:red, border: `1px solid ${red}`, borderRadius: "50%" }}>A</Button>
+					<Button sx={{ margin:0.5, color:white, fontSize: props.size, minWidth: props.size*2, width: props.size*2, height: props.size*2, background:blue, border: `1px solid ${blue}`, borderRadius: "50%" }}>B</Button>
 				</Box>
 			</Grid>
-			<Grid item xs={1} alignItems="center" sx={{textAlign:"right"}}>
-				<Button onClick={exit} sx={{color:"red"}}><LogoutIcon sx={{ fontSize: props.size*2 }} /></Button>
+			<Grid item xs={1} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
+				<LogoutIcon onClick={exit} sx={{ color:"red", fontSize: props.size*2 }} />
 			</Grid>
 		</Grid>
 	);
