@@ -18,6 +18,9 @@ const store = configureStore({
     game: gameReducer,
     tempGame: tempGameListReducer,
   },
+  middleware: getDefaultMiddleware({
+    serializableCheck: false,
+  }),
 });
 
 export default store;

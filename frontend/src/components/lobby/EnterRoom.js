@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
-import {connect, enterRoom} from '../../_slice/websocketSlice';
+import {enterRoomSubscribe} from '../../_slice/websocketSlice';
 import {setRoom, setUsers} from '../../_slice/roomSlice';
 import api from '../../api/api';
 import {onModifyRoom, onState, onChatAll, onChatTeam, onEnterRoom,
@@ -14,43 +14,41 @@ export default function EnterRoom(){
   console.log(gameId);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  dispatch(connect());
-  // console.log(client);
-  // alert(client);
-
+  const stompClient = useSelector(state=>state.websocket.stompClient);
   const payload = {
-    navigate: navigate,
-    url: "/in-room",
-    gameId: gameId,
+    stompClient: stompClient,
     subscribes : [{
-      api: api.subModifyRoom,
+      api: api.subModifyRoom(gameId),
       receiver : onModifyRoom,
     },{
-      api: api.subState,
+      api: api.subState(gameId),
       receiver : onState,
     },{
-      api: api.subChatAll,
+      api: api.subChatAll(gameId),
       receiver : onChatAll,
     },{
-      api: api.subChatTeam,
+      api: api.subChatTeam(gameId, 'a'),
       receiver : onChatTeam,
     },{
-      api: api.subEnterRoom,
+      api: api.subEnterRoom(gameId),
       receiver : onEnterRoom,
     },{
-      api: api.subAllMembersInRoom,
+      api: api.subAllMembersInRoom(gameId),
       receiver : onAllMembersInRoom,
     },{
-      api: api.subSelectTeam,
+      api: api.subSelectTeam(gameId),
       receiver : onSelectTeam,
     },{
-      api: api.subReady,
+      api: api.subReady(gameId),
       receiver : onReady,
     },{
-      api: api.subExitRoom,
+      api: api.subExitRoom(gameId),
       receiver : onExitRoom,
     },],
   }
-  console.log(payload);
-  dispatch(enterRoom(payload));
+  const url = '/in-room';
+  dispatch(enterRoomSubscribe(payload)).then((response)=>{
+    console.log(response);
+    navigate(url);
+  });
 }
