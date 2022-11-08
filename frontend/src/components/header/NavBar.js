@@ -2,6 +2,10 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import api from '../../api/api';
+import { over, Client } from "stompjs";
+import SockJS from "sockjs-client";
+import { setStompClient } from '../../_slice/websocketSlice';
 
 const Header = styled.nav`
   position: sticky;
@@ -60,6 +64,18 @@ const Navigation = styled.div`
   }
 `;
 export default function NavBar() {
+  const dispatch = useDispatch();
+  const stompClient = useSelector(state=>state.websocket.stompClient);
+  React.useEffect(()=>{
+    const loginToken = window.localStorage.getItem("loginToken");
+    if(stompClient === null && loginToken){
+      //  && loginToken!==undefined && loginToken!=="undefined" && loginToken!==null && loginToken!=="null"){
+      const Sock = new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`);
+      let tempClient = over(Sock);
+      console.log(tempClient);
+      dispatch(setStompClient(tempClient));
+    }
+  }, [window.localStorage.getItem("loginToken")]);
   return (
     <Header>
       <StyledMenu>

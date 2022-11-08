@@ -16,7 +16,10 @@ export default function MakeRoom(){
   React.useEffect(()=>{
     if(!isMake){
       setIsMake(true);
-      dispatch(initRoom({navigate:navigate, url:url, roomInfo:roomInfo}));
+      dispatch(initRoom({roomInfo:roomInfo})).then((response)=>{
+        const gameId = response.payload.gameId;
+        navigate(`${url}${gameId}`);
+      });
     }
   }, []);
   
