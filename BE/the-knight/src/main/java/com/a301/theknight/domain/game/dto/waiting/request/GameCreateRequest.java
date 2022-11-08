@@ -6,8 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -17,19 +18,24 @@ public class GameCreateRequest {
     @Size(min=1, max=100, message = "Title(${validatedValue}) can only be between {min} and {max}.")
     private String title;
 
-    @Size(min=4, max=10, message = "The number of people(${validatedValue}) that can be set is between {min} and {max}.")
+    @Min(value = 4, message = "The number of people must be greater than {value}.")
+    @Max(value = 10, message = "The number of people must be less than {value}.")
     private int maxMember;
 
-    @Size(min=0, max=10, message = "The number of sword items(${validatedValue}) that can be set is between {min} and {max}.")
+    @Min(value = 0, message = "The number of sword items must be greater than {value}.")
+    @Max(value = 10, message = "The number of sword items must be less than {value}.")
     private int sword;
 
-    @Size(min=0, max=10, message = "The number of twin items(${validatedValue}) that can be set is between {min} and {max}.")
+    @Min(value = 0, message = "The number of twin items must be greater than {value}.")
+    @Max(value = 10, message = "The number of twin items must be less than {value}.")
     private int twin;
 
-    @Size(min=0, max=10, message = "The number of shield items(${validatedValue}) that can be set is between {min} and {max}.")
+    @Min(value = 0, message = "The number of shield items must be greater than {value}.")
+    @Max(value = 10, message = "The number of shield items must be less than {value}.")
     private int shield;
 
-    @Size(min=0, max=10, message = "The number of hand items(${validatedValue}) that can be set is between {min} and {max}.")
+    @Min(value = 0, message = "The number of hand items must be greater than {value}.")
+    @Max(value = 10, message = "The number of hand items must be less than {value}.")
     private int hand;
 
     public Game toEntity(){
