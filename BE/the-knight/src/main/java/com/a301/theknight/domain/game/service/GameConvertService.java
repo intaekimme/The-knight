@@ -96,13 +96,11 @@ public class GameConvertService {
             case PREPARE:
                 return PREDECESSOR;
             case ATTACK:
-                return ATTACK_DOUBT;
-            case DEFENSE:
-                return DEFENSE_DOUBT;
+                return ATTACK;
+            case DEFENSE: case DEFENSE_DOUBT:
+                return EXECUTE;
             case ATTACK_DOUBT:
                 return DEFENSE;
-            case DEFENSE_DOUBT:
-                return EXECUTE;
         }
         return null;
     }

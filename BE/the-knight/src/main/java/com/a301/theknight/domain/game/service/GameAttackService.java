@@ -5,16 +5,17 @@ import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
+import com.a301.theknight.domain.game.dto.prepare.response.GamePreAttackResponse;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TurnData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
+import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
@@ -23,6 +24,16 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 public class GameAttackService {
 
     private final GameRedisRepository gameRedisRepository;
+
+    @Transactional
+    public GamePreAttackResponse getPreAttack(long gameId) {
+        InGame inGame = getInGame(gameId);
+        Team preAttackTeam = inGame.getCurrentAttackTeam();
+        //TODO: 반대 팀으로 변경 코드 넣기 (이후 공격자 조회 시 팀을 바꾸면서 조회하기 때문)
+        inGame.changeStatus(GameStatus.ATTACK);
+
+        return new GamePreAttackResponse(preAttackTeam);
+    }
 
     @Transactional
     public void attack(long gameId, long memberId, GameAttackRequest gameAttackRequest){

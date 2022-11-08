@@ -10,9 +10,13 @@ import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
 import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtRequest;
-import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponse;
+import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponseDto;
 import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
+import com.a301.theknight.domain.game.dto.prepare.response.GamePreAttackResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.service.*;
+import com.a301.theknight.domain.limit.factory.TimeLimitServiceFactory;
+import com.a301.theknight.domain.limit.template.TimeLimitServiceTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -31,7 +35,32 @@ public class GamePlayingApi {
     private final GameExecuteService gameExecuteService;
 
     private final SendMessageService messageService;
+    private final TimeLimitServiceFactory timeLimitServiceFactory;
 
+    @MessageMapping(value="/games/{gameId}/pre-attack")
+    public void getPreAttack(@Min(1) @DestinationVariable long gameId) throws InterruptedException {
+        GamePreAttackResponse response = gameAttackService.getPreAttack(gameId);
+        messageService.sendData(gameId, "/pre-attack", response);
+
+        messageService.proceedCall(gameId, 500);
+
+        messageService.convertCall(gameId, 3000);
+    }
+
+    // AttackerApi 1개
+    @MessageMapping(value = "/games/{gameId}/attacker")
+    public void getAttacker(@Min(1) @DestinationVariable long gameId) {
+
+        AttackerDto attackerDto = gameAttackerService.getAttacker(gameId);
+
+        messageService.sendData(gameId, "/a/attacker", attackerDto.getAttackerResponseA());
+        messageService.sendData(gameId, "/b/attacker", attackerDto.getAttackerResponseB());
+
+        messageService.proceedCall(gameId, 500);
+
+        TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameId);
+        timeLimitService.executeTimeLimit(gameId);
+    }
 
     // AttackApi 3개
     @MessageMapping(value = "/games/{gameId}/attack")
@@ -47,6 +76,9 @@ public class GamePlayingApi {
         messageService.sendData(gameId, "/attack-info", response);
 
         messageService.proceedCall(gameId, 500);
+
+        TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameId);
+        timeLimitService.executeTimeLimit(gameId);
     }
 
     @MessageMapping(value = "/games/{gameId}/attack-pass")
@@ -56,26 +88,12 @@ public class GamePlayingApi {
         messageService.convertCall(gameId);
     }
 
-    // AttackerApi 1개
-    @MessageMapping(value = "/games/{gameId}/attacker")
-    public void getAttacker(@Min(1) @DestinationVariable long gameId) {
-
-        AttackerDto attackerDto = gameAttackerService.getAttacker(gameId);
-
-        messageService.sendData(gameId, "/a/attacker", attackerDto.getAttackerResponseA());
-        messageService.sendData(gameId, "/b/attacker", attackerDto.getAttackerResponseB());
-
-        messageService.proceedCall(gameId, 500);
-    }
-
-
     // DefenseApi 3개
     @MessageMapping(value = "/games/{gameId}/defense")
     public void defense(@Min(1) @DestinationVariable long gameId, @Valid GameDefenseRequest gameDefenseRequest, @LoginMemberId long memberId) {
         gameDefenseService.defense(gameId, memberId, gameDefenseRequest);
 
         messageService.convertCall(gameId);
-
     }
 
     @MessageMapping(value = "/games/{gameId}/defense-info")
@@ -84,6 +102,9 @@ public class GamePlayingApi {
         messageService.sendData(gameId, "/defense-info", response);
 
         messageService.proceedCall(gameId, 500);
+
+        TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameId);
+        timeLimitService.executeTimeLimit(gameId);
     }
 
     @MessageMapping(value = "/games/{gameId}/defense-pass")
@@ -96,6 +117,7 @@ public class GamePlayingApi {
     // DoubtApi 3개
     @MessageMapping(value = "/games/{gameId}/doubt")
     public void doubt(@Min(1) @DestinationVariable long gameId, @Valid GameDoubtRequest doubtRequest, @LoginMemberId long memberId) {
+        GameStatus curStatus = doubtRequest.getDoubtStatus();
         gameDoubtService.doubt(gameId, memberId, doubtRequest.getSuspected().getId(), doubtRequest.getDoubtStatus());
 
         messageService.convertCall(gameId);
@@ -103,13 +125,12 @@ public class GamePlayingApi {
 
     @MessageMapping(value = "/games/{gameId}/doubt-info")
     public void doubtInfo(@Min(1) @DestinationVariable long gameId) throws InterruptedException {
-        DoubtResponse doubtResponse = gameDoubtService.getDoubtInfo(gameId);
-        messageService.sendData(gameId, "/doubt-info", doubtResponse);
+        DoubtResponseDto doubtDto = gameDoubtService.getDoubtInfo(gameId);
 
+        messageService.sendData(gameId, "/doubt-info", doubtDto.getDoubtResponse());
         messageService.proceedCall(gameId, 500);
 
-        Thread.sleep(10000);
-        messageService.convertCall(gameId);
+        messageService.convertCall(gameId, 3000);
     }
 
     @MessageMapping(value = "/games/{gameId}/doubt-pass")
@@ -125,10 +146,8 @@ public class GamePlayingApi {
         GameExecuteResponse executeResponse = gameExecuteService.executeTurn(gameId);
 
         messageService.sendData(gameId, "/execute", executeResponse);
-
         messageService.proceedCall(gameId, 500);
 
-        Thread.sleep(5000);
-        messageService.convertCall(gameId);
+        messageService.convertCall(gameId, 5000);
     }
 }

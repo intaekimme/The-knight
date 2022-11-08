@@ -23,6 +23,15 @@ public class SendMessageService {
         template.convertAndSend(makeConvertURL(gameId), "");
     }
 
+    public void convertCall(long gameId, long delayMillis) {
+        try {
+            Thread.sleep(delayMillis);
+            convertCall(gameId);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void forceConvertCall(long gameId) {
         template.convertAndSend(makeForceConverURL(gameId), "");
     }
