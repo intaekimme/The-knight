@@ -3,7 +3,6 @@ package com.a301.theknight.domain.game.entity;
 import com.a301.theknight.domain.common.entity.BaseTimeEntity;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
-import com.sun.source.tree.BreakTree;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
