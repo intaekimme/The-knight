@@ -10,7 +10,6 @@ import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
 import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtRequest;
-import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponse;
 import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponseDto;
 import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
 import com.a301.theknight.domain.game.dto.prepare.response.GamePreAttackResponse;
@@ -25,8 +24,6 @@ import org.springframework.stereotype.Controller;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-
-import static com.a301.theknight.domain.game.entity.GameStatus.*;
 
 @RequiredArgsConstructor
 @Controller
