@@ -27,7 +27,7 @@ public class GameApi {
     @GetMapping
     public ResponseEntity<?> getGameList(@Size(max = 100) @RequestParam(required = false) String keyword, Pageable pageable,
                                          @LoginMemberId long memberId) {
-        GameListResponse gameListResponse = gameService.getGameList(keyword, pageable, memberId);
+        GameListResponse gameListResponse = gameService.getGameList(keyword, memberId, pageable);
         return ResponseEntity.ok(gameListResponse);
     }
 

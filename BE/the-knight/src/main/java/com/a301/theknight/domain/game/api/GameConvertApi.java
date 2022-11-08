@@ -1,6 +1,5 @@
 package com.a301.theknight.domain.game.api;
 
-import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
 import com.a301.theknight.domain.game.service.GameConvertService;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +28,16 @@ public class GameConvertApi {
         template.convertAndSend(makeDestinationUri(gameId, "/convert"), gameStatusResponse);
     }
 
+    @MessageMapping(value = "/games/{gameId}/force-convert")
+    public void forceConvert(@DestinationVariable long gameId) {
+        GameStatusResponse gameStatusResponse = gameConvertService.getNextGameStatus(gameId);
+
+        template.convertAndSend(makeDestinationUri(gameId, "/convert"), gameStatusResponse);
+    }
+
     @MessageMapping(value = "/games/{gameId}/convert-complete")
-    public void convertComplete(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId) {
-        List<String> postfixList = gameConvertService.convertComplete(gameId, memberId);
+    public void convertComplete(@Min(1) @DestinationVariable long gameId) {
+        List<String> postfixList = gameConvertService.convertComplete(gameId);
         if (postfixList != null) {
             postfixList.forEach(postfix -> template
                     .convertAndSend(makeServerDestinationUri(gameId, postfix)));

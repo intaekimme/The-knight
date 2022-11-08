@@ -35,8 +35,7 @@ public class GameService {
 
 
     @Transactional(readOnly = true)
-    public GameListResponse getGameList(@Nullable String keyword, Pageable pageable,
-                                        @LoginMemberId long memberId){
+    public GameListResponse getGameList(@Nullable String keyword, long memberId, Pageable pageable){
         getMember(memberId);
         GameListResponse gameListResponse = new GameListResponse();
         Page<Game> gamePage = StringUtil.isBlank(keyword)

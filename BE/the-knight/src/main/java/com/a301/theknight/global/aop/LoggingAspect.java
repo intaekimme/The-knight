@@ -19,7 +19,7 @@ public class LoggingAspect {
 
     private final ObjectMapper objectMapper;
 
-    @Around("within(com.a301.theknight..controller..*)")
+    @Around("within(com.a301.theknight..api..*)")
     public Object loggingController(ProceedingJoinPoint joinPoint) throws Throwable {
         String params = getParams(joinPoint);
         if (params.contains("password")) {
