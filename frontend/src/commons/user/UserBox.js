@@ -54,7 +54,7 @@ export default function UserBox(props) {
         ) : (
           <img
             src={userData.image}
-            alt={userData.image}
+            // alt={userData.image}
             style={{ width: size, height: size }}
           />
         )}

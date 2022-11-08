@@ -74,7 +74,7 @@ export default function NavBar() {
             <Link to="/rank">랭킹</Link>
             <Link to="/login">test Login</Link>
             <Link to="/makeroom">test makeRoom</Link>
-            <Link to="/in-room/1">test enterRoom</Link>
+            <Link to="/room/1">test enterRoom</Link>
           </Navigation>
         </StyledNav>
         <Navigation>
