@@ -2,38 +2,63 @@ import React from "react";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { over, Client } from "stompjs";
 import SockJS from "sockjs-client";
-// import axios from 'axios';
 import api from '../api/api';
 
-// const stompClientInit = null;
-const stompClientInit = over(new WebSocket("ws://localhost:3000"));
-// 드래그중인 값
-export const websocketSlice = createSlice({
-  name: 'websocketValue',
-  initialState:{stompClient: stompClientInit, connect: false, fail: false},
-  reducers:{
-    connect:(state) =>{
-      let stompClient = null;
-      const Sock = new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`);
-      stompClient = over(Sock);
-      stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, ()=>{state.connect = true; state.fail=false;}, (error) => {
-        console.log(error);
-        state.connect = false; state.fail = true;
-      });
-      state.stompClient = stompClient;
-      return stompClient;
-    },
-    enterRoom:(state, action) =>{
-      console.log(action.payload);
-      const subscribes = action.payload.subscribes;
-      for(let i=0;i<action.payload.apis.length;i++){
-        state.stompClient.subscribe(subscribes[i].api(action.payload.gameId),
-          subscribes[i].receiver, (error) => {console.log(error);});
-      }
-      console.log("abc");
-      action.payload.navigate(action.payload.url);
-    }
+const connectWebsocket = createAsyncThunk('websocket/connectWebsocket', async (props, { rejectWithValue }) => {
+  try {
+    let stompClient = null;
+    let connect = false;
+    let fail = false;
+    const Sock = new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`);
+    stompClient = over(Sock);
+    stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}
+      ,()=>{connect = true; fail=false;}
+      ,(error) => { console.log(error); connect = false; fail = true;});
+    console.log("connect 성공");
+    return {stompClient: stompClient};
+  } catch (err) {
+    console.log(props);
+    console.log("connect 실패", err);
+    return rejectWithValue(err);
   }
 });
-export const { connect, enterRoom } = websocketSlice.actions;
-export default websocketSlice.actions;
+
+const enterRoomSubscribe = createAsyncThunk('websocket/enterRoomSubscribe', async (props, { rejectWithValue }) => {
+  try {
+    const subscribes = props.subscribes;
+    for(let i=0;i<subscribes.length;i++){
+      props.stompClient.subscribe(subscribes[i].api,
+        subscribes[i].receiver, (error) => {console.log(error);});
+    }
+    console.log("room subscribe init 성공");
+    return true;
+  } catch (err) {
+    console.log(props);
+    console.log("room subscribe init 실패", err);
+    return rejectWithValue(err);
+  }
+});
+
+const stompClientInit = over(new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`));
+// 드래그중인 값
+export const websocketSlice = createSlice({
+  name: 'websocket',
+  initialState:{stompClient: stompClientInit},
+  reducers:{
+    setStompClient: (state, action) =>{
+      state.stompClient = action.payload;
+    },
+  },
+  extraReducers: {
+    [connectWebsocket.fulfilled]: (state, action) => {
+      state.stompClient = action.payload.stompClient;
+    },
+    [connectWebsocket.rejected]: state => {
+      state.stompClient = stompClientInit;
+    },
+  },
+});
+
+export { connectWebsocket, enterRoomSubscribe };
+export const { setStompClient } = websocketSlice.actions;
+export default websocketSlice.reducer;

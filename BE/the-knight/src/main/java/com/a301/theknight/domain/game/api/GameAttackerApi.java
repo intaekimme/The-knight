@@ -8,6 +8,8 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.constraints.Min;
+
 @Controller
 @RequiredArgsConstructor
 public class GameAttackerApi {
@@ -17,7 +19,7 @@ public class GameAttackerApi {
     private final GameAttackerService gameAttackerService;
 
     @MessageMapping(value = "/games/{gameId}/attacker")
-    public void getAttacker(@DestinationVariable long gameId) {
+    public void getAttacker(@Min(1) @DestinationVariable long gameId) {
 
         AttackerDto attackerDto = gameAttackerService.getAttacker(gameId);
 

@@ -11,6 +11,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 @RequiredArgsConstructor
 @Controller
 public class GameAttackApi {
@@ -21,7 +24,7 @@ public class GameAttackApi {
     private final GameAttackService gameAttackService;
 
     @MessageMapping(value = "/games/{gameId}/attack")
-    public void attack(@DestinationVariable long gameId, GameAttackRequest gameAttackRequest,
+    public void attack(@Min(1) @DestinationVariable long gameId, @Valid GameAttackRequest gameAttackRequest,
                        @LoginMemberId long memberId) {
         gameAttackService.attack(gameId, memberId, gameAttackRequest);
 
@@ -29,7 +32,7 @@ public class GameAttackApi {
     }
 
     @MessageMapping(value="/games/{gameId}/attack-info")
-    public void attackInfo(@DestinationVariable long gameId) throws InterruptedException {
+    public void attackInfo(@Min(1) @DestinationVariable long gameId) throws InterruptedException {
         AttackResponse response = gameAttackService.getAttackInfo(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/attack-info"), response);
 
@@ -38,7 +41,7 @@ public class GameAttackApi {
     }
 
     @MessageMapping(value="/games/{gameId}/attack-pass")
-    public void attackPass(@DestinationVariable long gameId, GameAttackPassRequest gameAttackPassRequest,
+    public void attackPass(@Min(1) @DestinationVariable long gameId, @Valid GameAttackPassRequest gameAttackPassRequest,
                            @LoginMemberId long memberId){
         gameAttackService.isAttackPass(gameId, gameAttackPassRequest, memberId);
         template.convertAndSend(makeConvertUri(gameId));

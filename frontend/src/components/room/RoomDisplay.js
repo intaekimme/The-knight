@@ -77,7 +77,6 @@ export default function RoomDisplay() {
 		const tempDatas = [...initUserDatas];
 		while (tempDatas.length < maxUser) {
 			tempDatas.push(emptyUser);
-			console.log(tempDatas);
 		}
 		setUserDatas(tempDatas);
 	}, [currentUser, maxUser]);

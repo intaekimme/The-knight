@@ -55,14 +55,14 @@ const api = {
   subExitRoom: (gameId) => BASE_URL + WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXIT_ROOM,
 
   // 발행
-  modifyRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + MODIFYSETTING,
-  chat: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CHAT,
+  pubModifyRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + MODIFYSETTING,
+  pubChat: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CHAT,
   // chatTeam: (gameId, team) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CHAT + `${team}`,
-  enterRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ENTER_ROOM,
-  allMembersInRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ALL_MEMBERS,
-  selectTeam: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_TEAM,
-  ready: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + READY,
-  exitRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + EXIT_ROOM,
+  pubEnterRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ENTER_ROOM,
+  pubAllMembersInRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ALL_MEMBERS,
+  pubSelectTeam: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_TEAM,
+  pubReady: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + READY,
+  pubExitRoom: (gameId) => BASE_URL + WEBSOCKET_PUBLISH + GAME + `/${gameId}` + EXIT_ROOM,
 
   gameRoomInfo: (gameId) => BASE_URL + API + GAME + `/${gameId}`,
   getGameList: () => BASE_URL + API + GAME,

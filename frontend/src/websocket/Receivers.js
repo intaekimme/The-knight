@@ -5,30 +5,30 @@ import { modifyRoomSetting, setState, setUsers, changeTeam, changeReady } from '
 export default function Receivers(){
   const dispatch = useDispatch();
   // 방 설정 변경 리시버
-  const onModifyRoom = (payload) =>{
+  const onSubModifyRoom = (payload) =>{
     // {
     //   title: String,
-    //   maxUser: int,
+    //   maxMember: int
     //   sword: int,
     //   twin: int,
     //   shield: int,
     //   hand: int
     // }
     const data = JSON.parse(payload.body);
-    console.log("방설정변경", data);
+    console.log("방설정변경 sub", data);
     dispatch(modifyRoomSetting(data));
   }
   // 현재 진행상태 리시버
-  const onState = (payload) =>{
+  const onSubState = (payload) =>{
     // {
     //   state : String (Enum)
     // }
     const data = JSON.parse(payload.body);
-    console.log("현재 진행상태", data);
+    console.log("현재 진행상태 sub", data);
     dispatch(setState(data));
   }
   // 전체 채팅 리시버
-  const onChatAll = (payload) => {
+  const onSubChatAll = (payload) => {
     // {
     //   memberId : long,
     //   nickname : String,
@@ -46,9 +46,10 @@ export default function Receivers(){
     else{
       console.log(text);
     }
+    console.log("전채 채팅 sub", data);
   }
   // 팀 채팅 리시버
-  const onChatTeam = (payload) => {
+  const onSubChatTeam = (payload) => {
     // {
     //   memberId : long,
     //   nickname : String,
@@ -66,23 +67,24 @@ export default function Receivers(){
     else{
       console.log(text);
     }
+    console.log("팀 채팅 sub", data);
   }
   // 방 입장 리시버
-  const onEnterRoom = (payload) => {
+  const onSubEnterRoom = (payload) => {
     // {
     //   memberId : long,
     //   nickname: String,
     //   image: String,
-    //   image: String
     // }
     const data = JSON.parse(payload.body);
     const text = `${data.nickname}님이 입장하셨습니다.`;
     // 전체채팅으로 뿌려주기
     console.log(text);
     // 전체 멤버 publish
+    console.log("방 입장 sub", data);
   };
   // 방 전체 멤버 리시버
-  const onAllMembersInRoom = (payload) => {
+  const onSubAllMembersInRoom = (payload) => {
     // {
     //   members : [
     //     {
@@ -90,6 +92,7 @@ export default function Receivers(){
     //       nickname : String,
     //       image: String,
     //       team: String,
+    //       readyStatus: Boolean,
     //     },
     //     {
     //     }, 
@@ -97,34 +100,32 @@ export default function Receivers(){
     //   ]
     // }
     const data = JSON.parse(payload.body);
-    console.log("전체 멤버 조회", data);
+    console.log("전체 멤버 조회 sub", data);
     setUsers(data.members);
   };
   // 팀선택 리시버
-  const onSelectTeam = (payload) => {
+  const onSubSelectTeam = (payload) => {
     // {
     //   memberId : long,
     //   team: String
     //   (A, B)
     // }
     const data = JSON.parse(payload.body);
-    console.log("팀선택", data);
+    console.log("팀선택 sub", data);
     changeTeam(data);
   };
   // ready 리시버
-  const onReady = (payload) => {
+  const onSubReady = (payload) => {
     // {
     //   memberId: long,
     //   readyStatus : boolean,
-    //   startFlag??
-    //   setGame,
     // }
     const data = JSON.parse(payload.body);
-    console.log("레디", data);
+    console.log("레디 sub", data);
     changeReady(data);
   };
   // 방 퇴장 리시버
-  const onExitRoom = (payload) => {
+  const onSubExitRoom = (payload) => {
     // {
     //   memberId: long
     //   nickname: long
@@ -134,6 +135,7 @@ export default function Receivers(){
     // 전체채팅으로 뿌려주기
     console.log(text);
     // 전체 멤버 publish
+    console.log("방 퇴장 sub", data);
   };
 }
-export const {onModifyRoom, onState, onChatAll, onChatTeam, onEnterRoom, onAllMembersInRoom, onSelectTeam, onReady, onExitRoom} = Receivers;
+export const {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEnterRoom, onSubAllMembersInRoom, onSubSelectTeam, onSubReady, onSubExitRoom} = Receivers;

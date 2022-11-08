@@ -1,6 +1,5 @@
 package com.a301.theknight.domain.game.api;
 
-import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
 import com.a301.theknight.domain.game.service.GameConvertService;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +8,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class GameConvertApi {
     private final GameConvertService gameConvertService;
 
     @MessageMapping(value = "/games/{gameId}/convert")
-    public void publishConvert(@DestinationVariable long gameId) {
+    public void publishConvert(@Min(1) @DestinationVariable long gameId) {
         GameStatusResponse gameStatusResponse = gameConvertService.getGameStatus(gameId);
 
         template.convertAndSend(makeDestinationUri(gameId, "/convert"), gameStatusResponse);
@@ -36,7 +36,7 @@ public class GameConvertApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/convert-complete")
-    public void convertComplete(@DestinationVariable long gameId) {
+    public void convertComplete(@Min(1) @DestinationVariable long gameId) {
         List<String> postfixList = gameConvertService.convertComplete(gameId);
         if (postfixList != null) {
             postfixList.forEach(postfix -> template
@@ -45,7 +45,7 @@ public class GameConvertApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/proceed")
-    public void proceedGame(@DestinationVariable long gameId) {
+    public void proceedGame(@Min(1) @DestinationVariable long gameId) {
         GameStatusResponse gameStatus = gameConvertService.getGameStatus(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/proceed"), gameStatus);
     }

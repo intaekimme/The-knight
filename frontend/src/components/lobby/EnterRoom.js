@@ -1,56 +1,54 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
-import {connect, enterRoom} from '../../_slice/websocketSlice';
+import {enterRoomSubscribe} from '../../_slice/websocketSlice';
 import {setRoom, setUsers} from '../../_slice/roomSlice';
 import api from '../../api/api';
-import {onModifyRoom, onState, onChatAll, onChatTeam, onEnterRoom,
-  onAllMembersInRoom, onSelectTeam, onReady, onExitRoom} from '../../websocket/Receivers';
+import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEnterRoom,
+  onSubAllMembersInRoom, onSubSelectTeam, onSubReady, onSubExitRoom} from '../../websocket/Receivers';
 
 export default function EnterRoom(){
   const gameId = useParams("gameId").gameId;
   console.log(gameId);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  dispatch(connect());
-  // console.log(client);
-  // alert(client);
-
+  const stompClient = useSelector(state=>state.websocket.stompClient);
   const payload = {
-    navigate: navigate,
-    url: "/in-room",
-    gameId: gameId,
+    stompClient: stompClient,
     subscribes : [{
-      api: api.subModifyRoom,
-      receiver : onModifyRoom,
+      api: api.subModifyRoom(gameId),
+      receiver : onSubModifyRoom,
     },{
-      api: api.subState,
-      receiver : onState,
+      api: api.subState(gameId),
+      receiver : onSubState,
     },{
-      api: api.subChatAll,
-      receiver : onChatAll,
+      api: api.subChatAll(gameId),
+      receiver : onSubChatAll,
     },{
-      api: api.subChatTeam,
-      receiver : onChatTeam,
+      api: api.subChatTeam(gameId, 'a'),
+      receiver : onSubChatTeam,
     },{
-      api: api.subEnterRoom,
-      receiver : onEnterRoom,
+      api: api.subEnterRoom(gameId),
+      receiver : onSubEnterRoom,
     },{
-      api: api.subAllMembersInRoom,
-      receiver : onAllMembersInRoom,
+      api: api.subAllMembersInRoom(gameId),
+      receiver : onSubAllMembersInRoom,
     },{
-      api: api.subSelectTeam,
-      receiver : onSelectTeam,
+      api: api.subSelectTeam(gameId),
+      receiver : onSubSelectTeam,
     },{
-      api: api.subReady,
-      receiver : onReady,
+      api: api.subReady(gameId),
+      receiver : onSubReady,
     },{
-      api: api.subExitRoom,
-      receiver : onExitRoom,
+      api: api.subExitRoom(gameId),
+      receiver : onSubExitRoom,
     },],
   }
-  console.log(payload);
-  dispatch(enterRoom(payload));
+  const url = '/in-room';
+  dispatch(enterRoomSubscribe(payload)).then((response)=>{
+    console.log(response);
+    navigate(url);
+  });
 }

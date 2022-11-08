@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.game.dto.GameCreationResponse;
+import com.a301.theknight.domain.game.dto.waiting.response.GameCreationResponse;
 import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.GameListDto;
@@ -15,6 +15,7 @@ import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
+import jodd.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,12 +38,9 @@ public class GameService {
     public GameListResponse getGameList(@Nullable String keyword, long memberId, Pageable pageable){
         getMember(memberId);
         GameListResponse gameListResponse = new GameListResponse();
-        Page<Game> gamePage = null;
-        if(keyword != null){
-            gamePage = gameRepository.findByTitleIsContaining(keyword, pageable);
-        }else{
-            gamePage = gameRepository.findAll(pageable);
-        }
+        Page<Game> gamePage = StringUtil.isBlank(keyword)
+                ? gameRepository.findAll(pageable)
+                : gameRepository.findByTitleIsContaining(keyword, pageable);
 
         List<GameListDto> gameListDtos = gamePage.stream()
                 .map(game -> GameListDto.builder()
