@@ -11,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 @RequiredArgsConstructor
 @Controller
@@ -21,7 +22,7 @@ public class GameDefenseApi {
     private final GameDefenseService gameDefenseService;
 
     @MessageMapping(value = "/games/{gameId}/defense")
-    public void defense(@DestinationVariable long gameId, @Valid GameDefenseRequest gameDefenseRequest,
+    public void defense(@Min(1) @DestinationVariable long gameId, @Valid GameDefenseRequest gameDefenseRequest,
                         @LoginMemberId long memberId){
         gameDefenseService.defense(gameId, memberId, gameDefenseRequest);
 
@@ -29,7 +30,7 @@ public class GameDefenseApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/defense-info")
-    public void defendInfo(@DestinationVariable long gameId) throws  InterruptedException {
+    public void defendInfo(@Min(1) @DestinationVariable long gameId) throws  InterruptedException {
         DefenseResponse response = gameDefenseService.getDefenseInfo(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/defense-info"), response);
 

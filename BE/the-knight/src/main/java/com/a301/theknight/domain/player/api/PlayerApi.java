@@ -15,6 +15,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class PlayerApi {
     private final PlayerService playerService;
 
     @MessageMapping(value="/games/{gameId}/entry")
-    public void entry(@DestinationVariable long gameId, @LoginMemberId long memberId){
+    public void entry(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId){
         PlayerEntryResponse playerEntryResponse = playerService.entry(gameId, memberId);
 
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/entry");
@@ -35,7 +36,7 @@ public class PlayerApi {
     }
 
     @MessageMapping(value="/games/{gameId}/exit")
-    public void exit(@DestinationVariable long gameId,
+    public void exit(@Min(1) @DestinationVariable long gameId,
                      @LoginMemberId long memberId){
         PlayerExitDto exitDto = playerService.exit(gameId, memberId);
         if (exitDto.isLeaderExited()) {
@@ -48,8 +49,7 @@ public class PlayerApi {
     }
 
     @MessageMapping(value="/games/{gameId}/team")
-    //  TODO Enum valid 처리
-    public void team(@DestinationVariable long gameId, PlayerTeamRequest playerTeamMessage,
+    public void team(@Min(1) @DestinationVariable long gameId, @Valid PlayerTeamRequest playerTeamMessage,
                      @LoginMemberId long memberId){
         PlayerTeamResponse playerTeamResponse = playerService.team(gameId, memberId, playerTeamMessage);
 
@@ -57,7 +57,7 @@ public class PlayerApi {
     }
 
     @MessageMapping(value="/games/{gameId}/ready")
-    public void ready(@DestinationVariable long gameId, @LoginMemberId long memberId,
+    public void ready(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId,
                       @Valid PlayerReadyRequest playerReadyMessage){
         ReadyDto readyDto = playerService.ready(gameId, memberId, playerReadyMessage);
 

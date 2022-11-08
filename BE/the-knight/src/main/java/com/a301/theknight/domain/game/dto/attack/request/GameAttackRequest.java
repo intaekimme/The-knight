@@ -2,6 +2,9 @@ package com.a301.theknight.domain.game.dto.attack.request;
 
 import com.a301.theknight.domain.game.dto.attack.AttackPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
+import com.a301.theknight.domain.game.entity.Weapon;
+import com.a301.theknight.domain.game.entity.redis.Hand;
+import com.a301.theknight.global.validation.ValidEnum;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -13,9 +16,11 @@ public class GameAttackRequest {
     @NotNull(message = "Defender information is required.")
     private DefendPlayerDto defender;
 
-    //  TODO Enum 타입으로 바꾸고 valid 체크하기
+
     @NotNull
-    private String weapon;
+    @ValidEnum(enumClass = Weapon.class)
+    private Weapon weapon;
     @NotNull
-    private String hand;
+    @ValidEnum(enumClass = Hand.class)
+    private Hand hand;
 }

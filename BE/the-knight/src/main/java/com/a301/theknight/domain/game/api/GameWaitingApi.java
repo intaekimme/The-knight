@@ -11,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,7 +23,7 @@ public class GameWaitingApi {
     private final GameWaitingService gameWaitingService;
 
     @MessageMapping(value = "/games/{gameId}/modify")
-    public void modify(@DestinationVariable long gameId, @LoginMemberId long memberId,
+    public void modify(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId,
                        @Valid GameModifyRequest gameModifyRequest) {
         gameWaitingService.modify(gameId, memberId, gameModifyRequest);
 
@@ -30,21 +31,21 @@ public class GameWaitingApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/delete")
-    public void delete(@DestinationVariable long gameId, @LoginMemberId long memberId){
+    public void delete(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId){
         gameWaitingService.delete(gameId, memberId);
 
         template.convertAndSend(makeDestinationString(gameId, "/delete"), "");
     }
 
     @MessageMapping(value="/games/{gameId}/turn")
-    public void turn(@DestinationVariable long gameId){
+    public void turn(@Min(1) @DestinationVariable long gameId){
         String destination = makeDestinationString(gameId, "/turn");
 
         template.convertAndSend(destination);
     }
 
     @MessageMapping(value = "/games/{gameId}/members")
-    public void getGameMemberData(@DestinationVariable long gameId) {
+    public void getGameMemberData(@Min(1) @DestinationVariable long gameId) {
         GameMembersInfoDto membersInfo = gameWaitingService.getMembersInfo(gameId);
 
         template.convertAndSend(makeDestinationString(gameId, "/members"), membersInfo);

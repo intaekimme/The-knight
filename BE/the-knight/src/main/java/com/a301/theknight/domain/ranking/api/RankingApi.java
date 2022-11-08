@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.Size;
+
 @RequiredArgsConstructor
 @RestController
 public class RankingApi {
@@ -16,7 +18,7 @@ public class RankingApi {
     private final RankingService rankingService;
 
     @GetMapping("/api/ranking")
-    public ResponseEntity<?> getMemberHistory(@RequestParam(required = false) String keyword, Pageable pageable) {
+    public ResponseEntity<?> getMemberHistory(@Size(max = 45) @RequestParam(required = false) String keyword, Pageable pageable) {
         RankingResponse rankingResponse = rankingService.getRankings(keyword, pageable);
         return ResponseEntity.ok(rankingResponse);
     }

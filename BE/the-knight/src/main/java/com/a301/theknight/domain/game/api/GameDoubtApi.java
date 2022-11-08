@@ -11,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 @RequiredArgsConstructor
 @Controller
@@ -23,7 +24,7 @@ public class GameDoubtApi {
     private final GameDoubtService gameDoubtService;
 
     @MessageMapping(value = "/games/{gameId}/doubt")
-    public void doubt(@DestinationVariable long gameId, @Valid GameDoubtRequest doubtRequest,
+    public void doubt(@Min(1) @DestinationVariable long gameId, @Valid GameDoubtRequest doubtRequest,
                       @LoginMemberId long memberId) {
         gameDoubtService.doubt(gameId, memberId, doubtRequest.getSuspected().getId(), doubtRequest.getDoubtStatus());
 
@@ -31,7 +32,7 @@ public class GameDoubtApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/doubt-info")
-    public void doubtInfo(@DestinationVariable long gameId) throws InterruptedException {
+    public void doubtInfo(@Min(1) @DestinationVariable long gameId) throws InterruptedException {
         DoubtResponse doubtResponse = gameDoubtService.getDoubtInfo(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/doubt-info"), doubtResponse);
 
@@ -43,7 +44,7 @@ public class GameDoubtApi {
     }
 
     @MessageMapping(value="/games/{gameId}/doubt-pass")
-    public void doubtPass(@DestinationVariable long gameId, @LoginMemberId long memberId){
+    public void doubtPass(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId){
         gameDoubtService.doubtPass(gameId, memberId);
 
         template.convertAndSend(makeConvertUri(gameId));
