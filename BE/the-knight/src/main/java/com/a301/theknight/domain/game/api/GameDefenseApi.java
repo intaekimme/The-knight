@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
+import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
 import com.a301.theknight.domain.game.service.GameDefenseService;
@@ -37,6 +38,14 @@ public class GameDefenseApi {
         Thread.sleep(500);
         template.convertAndSend(makeDestinationUri(gameId, "/proceed"));
     }
+
+    @MessageMapping(value="/games/{gameId}/defense-pass")
+    public void defensePass(@Min(1) @DestinationVariable long gameId, @Valid GameDefensePassRequest gameDefensePassRequest,
+                           @LoginMemberId long memberId){
+        gameDefenseService.isDefensePass(gameId, gameDefensePassRequest, memberId);
+        template.convertAndSend(makeConvertUri(gameId));
+    }
+
     private String makeDestinationUri(long gameId, String postfix) {
         return SEND_PREFIX + gameId + postfix;
     }

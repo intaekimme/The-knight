@@ -56,7 +56,7 @@ root.render(
               <Route path="memberpage" element={<MemberPage />} />
               <Route path="makeroom" element={<MakeRoom />} />
               <Route path="/room/:gameId" element={<EnterRoom />} />
-              <Route path="in-room" element={<Room />} />
+              <Route path="/in-room/:gameId" element={<Room />} />
               <Route path="chat" element={<Chat />} />
               <Route path="chatting" element={<Chatting />} />
             </Route>

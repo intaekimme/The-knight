@@ -6,7 +6,7 @@ import SockJS from "sockjs-client";
 import api from '../../api/api';
 import { login } from "../../_slice/loginSlice";
 import { fetchMemberInfo } from "../../_slice/memberInfoSlice";
-import { setStompClient } from '../../_slice/websocketSlice';
+import { connectWebsocket, setStompClient } from '../../_slice/websocketSlice';
 
 export default function LoginToken() {
   const dispatch = useDispatch();
@@ -23,12 +23,9 @@ export default function LoginToken() {
     dispatch(fetchMemberInfo());
 
     console.log(token);
-    const Sock = new SockJS(`${api.websocket()}?token=${token}`);
-    const tempClient = over(Sock);
-    console.log(tempClient);
-    alert("로그인 되었습니다");
-    dispatch(setStompClient(tempClient));
-    navigate("/");
+    dispatch(connectWebsocket({token:token})).then((res)=>{alert("로그인 되었습니다"); navigate("/");});
+    // alert("로그인 되었습니다");
+    // navigate("/");
   };
   React.useEffect(() => {
     mounted();
