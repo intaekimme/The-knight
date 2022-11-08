@@ -20,8 +20,9 @@ public interface GameRepository extends JpaRepository<Game, Long> {
 
     @Query("select g from Game g join fetch g.players where g.id = :id")
     Optional<Game> findByIdFetchJoin(@Param("id") long gameId);
+
     @Query("SELECT g FROM Game g " +
-            "JOIN FETCH Player " +
+            "JOIN FETCH g.players " +
             "WHERE g.id = :gameId ")
     Optional<Game> findGameWithPlayers(@Param("gameId") long gameId);
 }
