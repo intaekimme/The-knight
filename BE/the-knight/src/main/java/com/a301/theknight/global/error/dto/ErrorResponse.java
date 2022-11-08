@@ -16,7 +16,16 @@ public class ErrorResponse {
     private final LocalDateTime timestamp = LocalDateTime.now();
     private final String name;
     private final String message;
+    private final String status;
     private String parameter;
+
+    public static ErrorResponse toResponse(ErrorCode errorCode){
+        return ErrorResponse.builder()
+                .name(errorCode.name())
+                .message(errorCode.getMessage())
+                .status(errorCode.getHttpStatus().name())
+                .build();
+    }
 
     public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorCode errorCode) {
         return ResponseEntity

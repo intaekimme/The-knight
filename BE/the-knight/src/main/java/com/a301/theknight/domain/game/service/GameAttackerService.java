@@ -8,7 +8,8 @@ import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.player.entity.Team;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class GameAttackerService {
     public AttackerDto getAttacker(long gameId) {
 
         AttackerDto attackerDto = null;
-        InGame inGame = gameRedisRepository.getInGame(gameId).orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+        InGame inGame = gameRedisRepository.getInGame(gameId).orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
         inGame.updateCurrentAttackTeam();
         TeamInfoData teamInfoData = inGame.getCurrentAttackTeam() == Team.A ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
         int capacity = inGame.getMaxMemberNum() / 2;
@@ -37,7 +38,7 @@ public class GameAttackerService {
         while (attackerDto == null) {
             attackerIndex = ++attackerIndex % capacity;
             long memberId = orderList[attackerIndex].getMemberId();
-            InGamePlayer player = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+            InGamePlayer player = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomRestException(INGAME_PLAYER_IS_NOT_EXIST));
             if (!player.isDead()) {
                 teamInfoData.updateCurrentAttackIndex(attackerIndex);
                 attackerDto = AttackerDto.builder()

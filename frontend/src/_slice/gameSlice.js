@@ -73,10 +73,31 @@ const orderInit = {
   B: [null, null, null, null, null],
 }
 
-// PRE, ATTACK, DEFEND, DOUBT, SHIELD, RESULT, END
+// PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFEND, DEFEND_DOUBT, DOUBT_RESULT, EXECUTE, RESULT, END
 const phaseInit = "ATTACK"
+const previousPhaseInit = null
 
 const isLoadingInit = false
+
+const currentAttackerInit = {
+  memberId: 5,
+  nickname: 'Tom',
+  leftCount: 0,
+  rightCount: 0,
+  team: "B",
+  order: 0,
+  weapons: [null, null],
+}
+
+const currentDefenderInit = {
+  memberId: 6,
+  nickname: 'Ria',
+  leftCount: 0,
+  rightCount: 0,
+  team: "B",
+  order: 0,
+  weapons: [null, null],
+}
 
 export const gameSlice = createSlice({
   name: "gameSlice",
@@ -85,7 +106,10 @@ export const gameSlice = createSlice({
     players: playersInit,
     order: orderInit,
     phase: phaseInit,
+    previousPhase: previousPhaseInit,
     isLoading: isLoadingInit,
+    currentAttacker: currentAttackerInit,
+    currentDefender: currentDefenderInit,
   },
   reducers: {
     fetchMe: (state) => {
@@ -135,6 +159,7 @@ export const gameSlice = createSlice({
       }
     },
     fetchPhase: (state, action) => {
+      state.previousPhase = state.phase
       state.phase = action.payload
     },
     switchIsLoading: (state) => {

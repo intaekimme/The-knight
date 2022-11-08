@@ -8,7 +8,8 @@ import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -71,7 +72,7 @@ public class GameDoubtService {
         try {
             boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
             if (!available) {
-                throw new CustomException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
+                throw new CustomRestException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
             }
 
             InGame inGame = getInGame(gameId);
@@ -142,30 +143,30 @@ public class GameDoubtService {
     private void checkDoubtStatus(InGame inGame, String doubtStatus) {
         String gameStatus = inGame.getGameStatus().name();
         if (!gameStatus.equals(doubtStatus)) {
-            throw new CustomException(DO_NOT_FIT_REQUEST_BY_GAME_STATUS);
+            throw new CustomWebSocketException(DO_NOT_FIT_REQUEST_BY_GAME_STATUS);
         }
     }
 
     private void checkOtherTeam(InGamePlayer suspect, InGamePlayer suspected) {
         if (suspect.getTeam().equals(suspected.getTeam())) {
-            throw new CustomException(CAN_NOT_DOUBT_SAME_TEAM);
+            throw new CustomWebSocketException(CAN_NOT_DOUBT_SAME_TEAM);
         }
     }
 
     private void checkDeadState(InGamePlayer suspect, InGamePlayer suspected) {
         if (suspect.isDead() || suspected.isDead()) {
-            throw new CustomException(PLAYER_IS_ALREADY_DEAD);
+            throw new CustomWebSocketException(PLAYER_IS_ALREADY_DEAD);
         }
     }
 
     private InGame getInGame(long gameId) {
         return gameRedisRepository.getInGame(gameId)
-                .orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 
     private InGamePlayer getInGamePlayer(long gameId, long suspectId) {
         return gameRedisRepository.getInGamePlayer(gameId, suspectId)
-                .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
     private String lockKeyGen(long gameId) {

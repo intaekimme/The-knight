@@ -29,8 +29,8 @@ public class GameConvertApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/convert-complete")
-    public void convertComplete(@DestinationVariable long gameId, @LoginMemberId long memberId) {
-        List<String> postfixList = gameConvertService.convertComplete(gameId, memberId);
+    public void convertComplete(@DestinationVariable long gameId) {
+        List<String> postfixList = gameConvertService.convertComplete(gameId);
         if (postfixList != null) {
             postfixList.forEach(postfix -> template
                     .convertAndSend(makeServerDestinationUri(gameId, postfix)));
