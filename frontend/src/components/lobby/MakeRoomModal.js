@@ -115,7 +115,7 @@ export default function MakeRoomModal(props) {
           </Grid>
 				</Grid>
           <Grid sx={{display: 'flex', justifyContent: 'center' }}>
-            <Button variant="outlined" onClick={createRoom}>방 만들기</Button>
+            <Button variant="outlined" onClick={createRoom}>적용</Button>
           </Grid>
 			</Box>
 		</Modal>

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Card, Grid, Pagination } from "@mui/material";
 import GameDescModal from "./GameDescModal";
-import { gameListAll } from "../../_slice/tempGameSlice";
+import { gameDesc, gameListAll } from "../../_slice/tempGameSlice";
 
 export default function GameList() {
   const [isSetting, setIsSetting] = React.useState(false);
@@ -34,6 +34,7 @@ export default function GameList() {
     console.log("gameId", gameId);
     setId(gameId);
     //gameId로 게임 상세정보 불러오기
+    dispatch(gameDesc(gameId));
   }
   //저장되어있는 게임 상세정보 store에서 불러오기
   // const bla =
@@ -56,6 +57,15 @@ export default function GameList() {
   //   }
   //   return arr
   // }
+  
+  //pagination
+  const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = React.useState(6)
+
+  const handleChangePage = (event, newPage) => {
+    console.log(newPage);
+    setPage(newPage)
+  }
 
   return (
     <div>
@@ -75,7 +85,12 @@ export default function GameList() {
         } */}
         <GameDescModal id={id} open={open} onClose={roomSettingClose}></GameDescModal>
       </Grid>
-      <Pagination></Pagination>
+      <Pagination
+        page={page}
+        rowsPerPage={rowsPerPage}
+        onChange={handleChangePage}
+      >
+      </Pagination>
     </div>
   )
 }
