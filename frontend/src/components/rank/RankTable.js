@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
 // import { DataGrid } from '@mui/x-data-grid';
-import InputBase from '@mui/material/InputBase';
-import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
-import { Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
+// import InputBase from '@mui/material/InputBase';
+// import IconButton from '@mui/material/IconButton';
+// import SearchIcon from '@mui/icons-material/Search';
+import { Avatar, ListItem, ListItemAvatar, ListItemText, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { fetchRankAll } from "../../_slice/rankSlice";
 
 // const columns = [
@@ -32,66 +32,94 @@ import { fetchRankAll } from "../../_slice/rankSlice";
 //   const randomSelection = sample[Math.floor(Math.random() * sample.length)];
 //   rows.push(createData(i, ...randomSelection));
 // }
-const originalRows = [
-  { rank: 1, name: "Pizza", score: 200}, { rank: 2, name: "Pizza", score: 200},
-  { rank: 3, name: "Pizza", score: 200}, { rank: 4, name: "Pizza", score: 200},
-  { rank: 5, name: "Pizza", score: 200}, { rank: 6, name: "Pizza", score: 200},
-  { rank: 7, name: "Pizza", score: 200}, { rank: 8, name: "Pizza", score: 200},
-  { rank: 9, name: "chicken", score: 200}, { rank: 10, name: "Pizza", score: 200},
-  { rank: 11, name: "Pizza", score: 200}, { rank: 12, name: "Pizza", score: 200},
-  { rank: 13, name: "Pizza", score: 200}, { rank: 14, name: "Pizza", score: 200},
-  { rank: 15, name: "Pizza", score: 200}, { rank: 16, name: "Pizza", score: 200},
-  { rank: 17, name: "Pizza", score: 200}, { rank: 18, name: "Pizza", score: 200},
-  { rank: 19, name: "Pizza", score: 200}, { rank: 20, name: "Pizza", score: 200},
-  { rank: 21, name: "Pizza", score: 200}, { rank: 22, name: "Pizza", score: 200},
-  { rank: 23, name: "Pizza", score: 200}, { rank: 24, name: "Pizza", score: 200},
-];
+// const originalRows = [
+//   // { rank: 1, name: "Pizza", score: 200}, { rank: 2, name: "Pizza", score: 200},
+//   // { rank: 3, name: "Pizza", score: 200}, { rank: 4, name: "Pizza", score: 200},
+//   // { rank: 5, name: "Pizza", score: 200}, { rank: 6, name: "Pizza", score: 200},
+//   // { rank: 7, name: "Pizza", score: 200}, { rank: 8, name: "Pizza", score: 200},
+//   // { rank: 9, name: "chicken", score: 200}, { rank: 10, name: "Pizza", score: 200},
+//   // { rank: 11, name: "Pizza", score: 200}, { rank: 12, name: "Pizza", score: 200},
+//   // { rank: 13, name: "Pizza", score: 200}, { rank: 14, name: "Pizza", score: 200},
+//   // { rank: 15, name: "Pizza", score: 200}, { rank: 16, name: "Pizza", score: 200},
+//   // { rank: 17, name: "Pizza", score: 200}, { rank: 18, name: "Pizza", score: 200},
+//   // { rank: 19, name: "Pizza", score: 200}, { rank: 20, name: "Pizza", score: 200},
+//   // { rank: 21, name: "Pizza", score: 200}, { rank: 22, name: "Pizza", score: 200},
+//   // { rank: 23, name: "Pizza", score: 200}, { rank: 24, name: "Pizza", score: 200},
+// ];
 
 export default function RankTable() {
   const dispatch = useDispatch();
   React.useEffect(() => {
     dispatch(fetchRankAll());
-  })
+  }, [])
+  const rankRows = useSelector(state => state.rank.rankList)
+  // for (let index = 0; index < originalRows.length; index++) {
+  //   originalRows.pop();
+  // }
+  // for (let index = 0; index < rankRows.length; index++) {
+  //   const row = rankRows[index];
+  //   originalRows.push(row);
+  // }
+  // console.log("zlzl",rankRows);
+  
+  // const [rows, setRows] = React.useState(rankRows);
+  // // const [searched, setSearched] = React.useState("");
+  // const [page, setPage] = React.useState(0)
+  // const [rowsPerPage, setRowsPerPage] = React.useState(20)
 
-  const [rows, setRows] = React.useState(originalRows);
-  const [searched, setSearched] = React.useState("");
-  const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(20)
+  // // const handleChange = (event) => {
+  // //   setSearched(event.target.value);
+  // // };
 
-  const handleChange = (event) => {
-    setSearched(event.target.value);
-  };
+  // // const requestSearch = (searchedVal) => {
+  // //   console.log(searchedVal);
+  // //   const filteredRows = originalRows.filter((row) => {
+  // //     return row.name.toLowerCase().includes(searchedVal.toString().toLowerCase());
+  // //   });
+  // //   setRows(filteredRows);
+  // // };
 
-  const requestSearch = (searchedVal) => {
-    console.log(searchedVal);
-    const filteredRows = originalRows.filter((row) => {
-      return row.name.toLowerCase().includes(searchedVal.toString().toLowerCase());
-    });
-    setRows(filteredRows);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   console.log(newPage);
+  //   setPage(newPage)
+  // }
 
-  const handleChangePage = (event, newPage) => {
-    console.log(newPage);
-    setPage(newPage)
-  }
+  // const [keyword, setKeyword] = React.useState();
+  // const onChangeValue = (e) => {
+  //   setKeyword(e.target.value);
+  // }
+  // const searchRankMem = (e) => {
+  //   // e.preventDefault();
+  //   console.log(keyword);
+  //   dispatch(searchRank(keyword));
+  //   // if (rankRows.length !== 0) {
+  //   //   for (let index = 0; index < originalRows.length; index++) {
+  //   //     originalRows.pop();
+  //   //   }
+  //   //   setRows(rankRows);
+  //   // } else {
+  //   //   return
+  //   // }
+
+  // }
 
   return (
     <>
-    <Paper
+    {/* <Paper
       component="form"
       sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 500 }}
       >
       <InputBase
         sx={{ ml: 1, flex: 1 }}
         placeholder="Search Name"
-        value={searched}
-        onChange={(e) => { handleChange(e);  requestSearch(e.target.value) }}
+        // onChange={(e) => { handleChange(e);  requestSearch(e.target.value) }}
+        // onChange={onChangeValue}
         />
       <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
         <SearchIcon />
       </IconButton>
       </Paper>
-      <br/>
+      <br/> */}
       {/* <Paper style={{ width: '100%' }}>
         <DataGrid
           rows={rows}
@@ -105,31 +133,40 @@ export default function RankTable() {
           <Table aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell align="center" style={{ width: 160 }}>랭킹</TableCell>
-                <TableCell align="center">닉네임</TableCell>
+                <TableCell align="left" sx={{pl:3.5}} style={{ width: 200 }}>랭킹</TableCell>
+                <TableCell align="left" sx={{pl: 30}}>닉네임</TableCell>
                 <TableCell align="center" style={{ width: 160 }}>점수</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-            {rows
-              .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+            {rankRows
+              // .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
               .map((row, i) => (
-                <TableRow key={row.rank}>
-                  <TableCell align="center">{row.rank}</TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
+                <TableRow key={i} >
+                  <TableCell align="left" sx={{pl:5}}>{row.ranking}</TableCell>
+                  <TableCell align="center" sx={{display: 'flex', alignItems: 'center', justifyContent:'center'}}>
+                    <ListItem sx={{ pl:22}}>
+                      <ListItemAvatar>
+                        <Avatar src={row.image} sx={{ width: 40, height: 40 }}/>
+                      </ListItemAvatar>
+                      <ListItemText>
+                        {row.nickname}
+                      </ListItemText>
+                    </ListItem>
+                  </TableCell>
                   <TableCell align="center">{row.score}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TablePagination
-                  count={rows.length}
-                  page={page}
-                  rowsPerPage={rowsPerPage}
-                  onPageChange={handleChangePage}
-                  rowsPerPageOptions={[]}
-                />
+                {/* <TablePagination
+                  // count={rows.length}
+                  // page={page}
+                  // rowsPerPage={rowsPerPage}
+                  // onPageChange={handleChangePage}
+                  // rowsPerPageOptions={[]}
+                /> */}
               </TableRow>
             </TableFooter>
           </Table>

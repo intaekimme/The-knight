@@ -7,7 +7,17 @@ const fetchRankAll = createAsyncThunk('fetchRankAll', async () => {
     const res = await axios.get(api.getRankList(), {
       headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
     });
-    console.log("get rank list", res.data.rankings);
+    return res.data;
+  } catch (err) {
+    return err;
+  }
+})
+const searchRank = createAsyncThunk('searchRank', async (keyword) => {
+  try {
+    const res = await axios.get(api.getRankList()+`?keyword=${keyword}`, {
+      headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
+    });
+    console.log("get searched rank", res.data);
     return res.data;
   } catch (err) {
     return err;
@@ -25,17 +35,23 @@ const rankListInit = [
 
 export const rankSlice = createSlice({
   name: "rankSlice",
-  initialState: { fetchRankAll: rankListInit },
+  initialState: { rankList: rankListInit },
   reducers: {
   },
   extraReducers: {
     [fetchRankAll.fulfilled]: (state, action) => {
-      state.gameListAll = action.payload.rankings;
+      state.rankList = action.payload.rankings;
     },
     [fetchRankAll.rejected]: state => {
-      state.gameListAll = rankListInit;
+      state.rankList = rankListInit;
+    },
+    [searchRank.fulfilled]: (state, action) => {
+      state.rankList = action.payload.rankings;
+    },
+    [searchRank.rejected]: state => {
+      state.rankList = rankListInit;
     },
   },
 });
-export { fetchRankAll };
+export { fetchRankAll, searchRank };
 export default rankSlice.reducer;
