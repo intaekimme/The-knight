@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.a301.theknight.domain.game.entity.GameStatus.*;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
 
@@ -29,8 +31,8 @@ public class GameConvertService {
 
     @Transactional
     public List<String> convertComplete(long gameId) {
-        boolean isFullCount = false;
-        String gameStatus = "";
+        boolean isFullCount;
+        String gameStatus;
 
         RLock lock = redissonClient.getLock(lockKeyGen(gameId));
         try {
@@ -75,6 +77,34 @@ public class GameConvertService {
         gameRedisRepository.saveInGame(gameId, inGame);
 
         return new GameStatusResponse(inGame.getGameStatus().name());
+    }
+
+    @Transactional
+    public GameStatusResponse getNextGameStatus(long gameId) {
+        InGame inGame = getInGame(gameId);
+        inGame.initRequestCount();
+        gameRedisRepository.saveInGame(gameId, inGame);
+
+        GameStatus curStatus = inGame.getGameStatus();
+        GameStatus nextStatus = nextStatus(curStatus);
+
+        return new GameStatusResponse(nextStatus.name());
+    }
+
+    private GameStatus nextStatus(GameStatus curStatus) {
+        switch (curStatus) {
+            case PREPARE:
+                return PREDECESSOR;
+            case ATTACK:
+                return ATTACK_DOUBT;
+            case DEFENSE:
+                return DEFENSE_DOUBT;
+            case ATTACK_DOUBT:
+                return DEFENSE;
+            case DEFENSE_DOUBT:
+                return EXECUTE;
+        }
+        return null;
     }
 
     private InGame getInGame(long gameId) {

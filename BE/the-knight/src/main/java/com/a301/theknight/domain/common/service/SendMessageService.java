@@ -1,5 +1,7 @@
 package com.a301.theknight.domain.common.service;
 
+import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

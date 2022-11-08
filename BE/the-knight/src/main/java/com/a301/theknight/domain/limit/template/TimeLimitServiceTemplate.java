@@ -53,7 +53,6 @@ public abstract class TimeLimitServiceTemplate {
             if (!timeLock.tryLock(1, 1, TimeUnit.SECONDS)) {
                 throw new CustomWebSocketException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
             }
-            //TODO: force convert 받는 API 짜기
             sendMessageService.forceConvertCall(gameId);
 
             runLimitLogic(gameId, curInGame);

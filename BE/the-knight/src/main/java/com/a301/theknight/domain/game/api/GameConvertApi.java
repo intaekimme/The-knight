@@ -28,6 +28,13 @@ public class GameConvertApi {
         template.convertAndSend(makeDestinationUri(gameId, "/convert"), gameStatusResponse);
     }
 
+    @MessageMapping(value = "/games/{gameId}/force-convert")
+    public void forceConvert(@DestinationVariable long gameId) {
+        GameStatusResponse gameStatusResponse = gameConvertService.getNextGameStatus(gameId);
+
+        template.convertAndSend(makeDestinationUri(gameId, "/convert"), gameStatusResponse);
+    }
+
     @MessageMapping(value = "/games/{gameId}/convert-complete")
     public void convertComplete(@DestinationVariable long gameId) {
         List<String> postfixList = gameConvertService.convertComplete(gameId);
