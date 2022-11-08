@@ -29,7 +29,7 @@ import javax.validation.constraints.Min;
 @Controller
 public class GamePlayingApi {
     private final GameAttackService gameAttackService;
-    private final GameAttackerService gameAttackerService;
+
     private final GameDefenseService gameDefenseService;
     private final GameDoubtService gameDoubtService;
     private final GameExecuteService gameExecuteService;
@@ -51,7 +51,7 @@ public class GamePlayingApi {
     @MessageMapping(value = "/games/{gameId}/attacker")
     public void getAttacker(@Min(1) @DestinationVariable long gameId) {
 
-        AttackerDto attackerDto = gameAttackerService.getAttacker(gameId);
+        AttackerDto attackerDto = gameAttackService.getAttacker(gameId);
 
         messageService.sendData(gameId, "/a/attacker", attackerDto.getAttackerResponseA());
         messageService.sendData(gameId, "/b/attacker", attackerDto.getAttackerResponseB());
