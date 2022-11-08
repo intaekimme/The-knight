@@ -3,7 +3,6 @@ package com.a301.theknight.domain.ranking.repository;
 import com.a301.theknight.domain.ranking.dto.RankingDto;
 import com.a301.theknight.domain.ranking.entity.Ranking;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,10 +26,9 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
             "ORDER BY ranking ASC",
             countQuery = "SELECT count(*) " +
                     "FROM ranking AS r LEFT JOIN member AS m " +
-                    "ON r.member_id = m.id " +
-                    "WHERE m.nickname LIKE %:keyword%",
+                    "ON r.member_id = m.id ",
             nativeQuery = true)
-    Page<RankingDto> getRankingList(Pageable pageable);
+    Page<RankingDto> getRankingList();
 
     @Query(value = "SELECT m.nickname, m.image, r.ranking, r.score " +
             "FROM (SELECT member_id, rank() OVER (ORDER BY score DESC) as ranking, score " +
@@ -44,5 +42,5 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
                     "ON r.member_id = m.id " +
                     "WHERE m.nickname LIKE %:keyword%",
             nativeQuery = true)
-    Page<RankingDto> getRankingListByKeyword(@Param("keyword") String keyword, Pageable pageable);
+    Page<RankingDto> getRankingListByKeyword(@Param("keyword") String keyword);
 }
