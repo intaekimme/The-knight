@@ -22,18 +22,22 @@ public class TimeLimitServiceFactory {
     private final RedissonClient redissonClient;
     private final GameRepository gameRepository;
 
+    private final PrepareTimeLimitService prepareTimeLimitService;
+    private final AttackTimeLimitService attackTimeLimitService;
+    private final DefenseTimeLimitService defenseTimeLimitService;
+    private final DoubtTimeLimitService doubtTimeLimitService;
+
     public TimeLimitServiceTemplate getTimeLimitService(GameStatus gameStatus) {
         if (gameStatus != null) {
             switch (gameStatus) {
                 case PREPARE:
-                    return new PrepareTimeLimitService(redisRepository, sendMessageService,
-                            redissonClient, gameRepository);
+                    return prepareTimeLimitService;
                 case ATTACK:
-                    return new AttackTimeLimitService(redisRepository, sendMessageService, redissonClient);
+                    return attackTimeLimitService;
                 case DEFENSE:
-                    return new DefenseTimeLimitService(redisRepository, sendMessageService, redissonClient);
-                case ATTACK_DOUBT: DEFENSE_DOUBT:
-                    return new DoubtTimeLimitService(redisRepository, sendMessageService, redissonClient);
+                    return defenseTimeLimitService;
+                case ATTACK_DOUBT: case DEFENSE_DOUBT:
+                    return doubtTimeLimitService;
             }
         }
         return null;
