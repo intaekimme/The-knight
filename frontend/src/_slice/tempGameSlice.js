@@ -95,8 +95,9 @@ const gameListAll = createAsyncThunk('gameListAll', async () => {
   }
 })
 const searchRoom = createAsyncThunk('searchRoom', async (keyword) => {
+  console.log("검색 키워드", keyword);
   try {
-    const res = await axios.get(api.getGameList(keyword,), {
+    const res = await axios.get(api.getGameList()+`?keyword=${keyword}`, {
       headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
     });
     console.log("get game list", res.data);

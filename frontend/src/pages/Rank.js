@@ -9,8 +9,8 @@ import Table from "../components/test/table";
 export default function Rank() {
   return (
     <Container fixed >
-      {/* <SearchForm/>
-      <br /> */}
+      <SearchForm/>
+      <br />
       <RankTable />
       {/* <Table/> */}
       <br/>
