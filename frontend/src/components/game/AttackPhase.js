@@ -23,14 +23,14 @@ export default function AttackPhase() {
           <Box sx={{ textAlign: "center" }}>공격 선택</Box>
           <Box sx={{ display: "flex", alignItems: 'flex-end', justifyContent: "space-evenly" }}>
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
-              왼손
+              L
               <Box sx={{ width: "23vmin", display: "flex", justifyContent: "space-between" }}>
                 <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>sword</Box>
                 <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>twin sword</Box>
               </Box>
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              오른손
+              R
               <Box sx={{ width: "23vmin", display: "flex", justifyContent: "space-between"}}>
                 <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>sword</Box>
                 <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>twin sword</Box>
