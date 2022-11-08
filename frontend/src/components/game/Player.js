@@ -8,13 +8,15 @@ function Player({ player, isOpp }) {
   const me = useSelector((state) => state.game.me);
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
   const isAttackPhase = useSelector((state) => state.game.phase) === "ATTACK";
+  const isAttackDoubtPhase = useSelector((state) => state.game.phase) === "ATTACK_DOUBT";
+  const isDefendDoubtPhase = useSelector((state) => state.game.phase) === "DEFEND_DOUBT";
   const isMe = player.memberId === me.memberId;
   const isAttacker = player.memberId === currentAttacker.memberId;
   const AttackerIsMe = me.memberId === currentAttacker.memberId;
   const [isHovering, setIsHovering] = useState(false);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", position: "relative"}}>
       <PersonIcon
         // color={isMe && "success"}
         sx={{
@@ -26,7 +28,8 @@ function Player({ player, isOpp }) {
         onMouseOver={() => setIsHovering(true)}
         onMouseOut={() => setIsHovering(false)}
       />
-      <div style={{ ...(isMe && {color: "green"})}}>{player.nickname}</div>
+      <div style={{ ...(isMe && { color: "green" }) }}>{player.nickname}</div>
+      {(isAttackDoubtPhase || isDefendDoubtPhase) && isMe && me.pass && <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>PASS</div>}
     </Box>
   );
 }
