@@ -39,8 +39,8 @@ public class GameDefenseApi {
         template.convertAndSend(makeDestinationUri(gameId, "/proceed"));
     }
 
-    @MessageMapping(value="/games/{gameId}/attack-pass")
-    public void attackPass(@Min(1) @DestinationVariable long gameId, @Valid GameDefensePassRequest gameDefensePassRequest,
+    @MessageMapping(value="/games/{gameId}/defense-pass")
+    public void defensePass(@Min(1) @DestinationVariable long gameId, @Valid GameDefensePassRequest gameDefensePassRequest,
                            @LoginMemberId long memberId){
         gameDefenseService.isDefensePass(gameId, gameDefensePassRequest, memberId);
         template.convertAndSend(makeConvertUri(gameId));
