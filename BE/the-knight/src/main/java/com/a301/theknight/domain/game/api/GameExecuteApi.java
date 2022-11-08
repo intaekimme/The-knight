@@ -8,6 +8,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.constraints.Min;
+
 @RequiredArgsConstructor
 @Controller
 public class GameExecuteApi {
@@ -19,7 +21,7 @@ public class GameExecuteApi {
     private final GameExecuteService gameExecuteService;
 
     @MessageMapping(value = "/games/{gameId}/execute")
-    public void executeTurn(@DestinationVariable long gameId) throws InterruptedException {
+    public void executeTurn(@Min(1) @DestinationVariable long gameId) throws InterruptedException {
         GameExecuteResponse executeResponse = gameExecuteService.executeTurn(gameId);
 
         //DATA전송 -> 누가 누구를 뭘로 공격하는지

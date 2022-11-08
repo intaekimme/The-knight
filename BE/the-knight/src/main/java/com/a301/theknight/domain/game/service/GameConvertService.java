@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.a301.theknight.domain.game.entity.GameStatus.*;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
 
@@ -28,7 +30,10 @@ public class GameConvertService {
     private final RedissonClient redissonClient;
 
     @Transactional
-    public List<String> convertComplete(long gameId, long memberId) {
+    public List<String> convertComplete(long gameId) {
+        boolean isFullCount;
+        String gameStatus;
+
         RLock lock = redissonClient.getLock(lockKeyGen(gameId));
         try {
             boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
@@ -40,13 +45,29 @@ public class GameConvertService {
             inGame.addRequestCount();
             gameRedisRepository.saveInGame(gameId, inGame);
 
-            return inGame.isFullCount() ?
-                    gameConvertUtil.getPostfixList(inGame.getGameStatus().name()) : null;
+            isFullCount = inGame.isFullCount();
+            gameStatus = inGame.getGameStatus().name();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
             lock.unlock();
         }
+        //TODO: inGame의 제한시간 flag가 true면, 화면 전환 완료 flag true로 바꾸고 null리턴
+        if (isFullCount) {
+            RLock timeLock = redissonClient.getLock(timeLockKeyGen(gameId));
+            try {
+                boolean isGetTimeLock = timeLock.tryLock(5, 2, TimeUnit.SECONDS);
+                if (!isGetTimeLock) {
+                    //TODO: 못들어오는 경우는 /convert를 다시 보내주기??
+                }
+                return gameConvertUtil.getPostfixList(gameStatus);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } finally {
+                timeLock.unlock();
+            }
+        }
+        return null;
     }
 
     @Transactional
@@ -56,6 +77,34 @@ public class GameConvertService {
         gameRedisRepository.saveInGame(gameId, inGame);
 
         return new GameStatusResponse(inGame.getGameStatus().name());
+    }
+
+    @Transactional
+    public GameStatusResponse getNextGameStatus(long gameId) {
+        InGame inGame = getInGame(gameId);
+        inGame.initRequestCount();
+        gameRedisRepository.saveInGame(gameId, inGame);
+
+        GameStatus curStatus = inGame.getGameStatus();
+        GameStatus nextStatus = nextStatus(curStatus);
+
+        return new GameStatusResponse(nextStatus.name());
+    }
+
+    private GameStatus nextStatus(GameStatus curStatus) {
+        switch (curStatus) {
+            case PREPARE:
+                return PREDECESSOR;
+            case ATTACK:
+                return ATTACK_DOUBT;
+            case DEFENSE:
+                return DEFENSE_DOUBT;
+            case ATTACK_DOUBT:
+                return DEFENSE;
+            case DEFENSE_DOUBT:
+                return EXECUTE;
+        }
+        return null;
     }
 
     private InGame getInGame(long gameId) {
@@ -70,6 +119,10 @@ public class GameConvertService {
 
     private String lockKeyGen(long gameId) {
         return "game:" + gameId + "_convert_lock";
+    }
+
+    private String timeLockKeyGen(long gameId) {
+        return "time_lock:" + gameId;
     }
 
 }

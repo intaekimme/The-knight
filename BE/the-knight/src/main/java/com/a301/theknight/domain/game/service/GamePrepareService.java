@@ -34,12 +34,6 @@ public class GamePrepareService {
     private final GameRedisRepository redisRepository;
 
     @Transactional
-    public boolean canStartGame(long gameId, String setGame) {
-        Game game = getGame(gameId);
-        return game.isCanStart() && game.getSetGame().equals(setGame);
-    }
-
-    @Transactional
     public GamePlayersInfoDto getPlayersInfo(long gameId) {
         List<PlayerDataDto> playerDataDtoList = getPlayersDataList(gameId);
 
@@ -168,7 +162,7 @@ public class GamePrepareService {
     }
 
     private void checkWeaponSelect(List<InGamePlayer> teamPlayerList, GameWeaponData weaponsData, Game game) {
-        if (weaponsData.isAllSelected()) {
+        if (weaponsData.notAllSelected()) {
             throw new CustomWebSocketException(CAN_NOT_COMPLETE_WEAPON_SELECT);
         }
         GameWeaponData checkWeaponData = GameWeaponData.toWeaponData(game);
@@ -181,7 +175,7 @@ public class GamePrepareService {
             checkWeaponData.choiceWeapon(leftWeapon);
             checkWeaponData.choiceWeapon(rightWeapon);
         });
-        if (checkWeaponData.isAllSelected()) {
+        if (checkWeaponData.notAllSelected()) {
             throw new CustomWebSocketException(CAN_NOT_COMPLETE_WEAPON_SELECT);
         }
     }

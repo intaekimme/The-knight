@@ -20,8 +20,8 @@ public class TurnData implements Serializable {
     public void recordAttackTurn(InGamePlayer attacker, InGamePlayer defender, GameAttackRequest gameAttackRequest){
         this.attackerId = attacker.getMemberId();
         this.attackData = AttackData.builder()
-                .weapon(gameAttackRequest.getWeapon())
-                .hand(gameAttackRequest.getHand())
+                .weapon(gameAttackRequest.getWeapon().name())
+                .hand(gameAttackRequest.getHand().name())
                 .build();
         this.defenderId = defender.getMemberId();
     }
@@ -29,9 +29,9 @@ public class TurnData implements Serializable {
     public void recordDefenseTurn(InGamePlayer defender, GameDefenseRequest gameDefenseRequest){
         this.defenderId = defender.getMemberId();
         this.defendData = DefendData.builder()
-                .hand(gameDefenseRequest.getHand())
+                .hand(gameDefenseRequest.getHand().name())
                 .shieldCount(
-                        gameDefenseRequest.getHand().equals("LEFT") ?
+                        gameDefenseRequest.getHand().name().equals("LEFT") ?
                                 defender.getLeftCount() :
                                 defender.getRightCount()
                 )

@@ -10,10 +10,16 @@ import java.io.Serializable;
 public class DefendData implements Serializable {
     private final Hand defendHand;
     private final int shieldCount;
+    private boolean isDefendPass;
 
     @Builder
     public DefendData(String hand, int shieldCount){
         this.defendHand = Hand.valueOf(hand);
         this.shieldCount = shieldCount;
+        this.isDefendPass = false;
+    }
+
+    public void defendPass(){
+        this.isDefendPass = true;
     }
 }

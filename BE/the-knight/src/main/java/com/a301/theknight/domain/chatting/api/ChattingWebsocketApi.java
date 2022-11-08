@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.security.Principal;
 
 @Controller
@@ -25,8 +27,8 @@ public class ChattingWebsocketApi {
     private final ChattingService chattingService;
 
     @MessageMapping(value = "/games/{gameId}/chat")
-    public void sendMessage(ChattingRequest chattingRequest,
-                            @DestinationVariable long gameId, @LoginMemberId long memberId) {
+    public void sendMessage(@Valid ChattingRequest chattingRequest,
+                            @Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId) {
         ChattingResponse chattingResponse = chattingService.makeResponse(memberId, gameId, chattingRequest);
 
         String destinationUri = makeDestinationUri("/sub/games/", gameId, chattingResponse.getChattingSet());

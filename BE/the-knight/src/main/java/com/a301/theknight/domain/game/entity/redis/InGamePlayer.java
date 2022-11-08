@@ -40,6 +40,11 @@ public class InGamePlayer implements Serializable {
         weaponsData.choiceWeapon(weapon);
     }
 
+    public void randomChoiceWeapon(Weapon weapon) {
+        boolean isLeft = leftWeapon == null;
+        setWeapon(weapon, isLeft);
+    }
+
     public void cancelWeapon(Hand deleteHand, GameWeaponData weaponsData) {
         boolean isLeft = Hand.LEFT.equals(deleteHand);
         weaponsData.returnWeapon(isLeft ? leftWeapon : rightWeapon);

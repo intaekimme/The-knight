@@ -32,7 +32,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
               </div>
               <div>L</div>
             </Box>
-            <Player player={player} />
+            <Player player={player} isOpp={isOpp} />
             <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div style={{ width: 50, height: 50, backgroundColor: "grey" }}>
                 {player.weapons[1] && (
