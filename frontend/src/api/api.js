@@ -77,5 +77,8 @@ const api = {
   goLoading: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,
   readyForNextPhase: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
   nextPhase: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PROCEED,
+
+  //rank 관련
+  getRankList: () => BASE_URL + API + '/ranking',
 }
 export default api;
