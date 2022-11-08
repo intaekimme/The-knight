@@ -36,6 +36,9 @@ public abstract class TimeLimitServiceTemplate {
     private void initLimitTime() {
         limitTimeMap.put(GameStatus.PREPARE.name(), 100L);
         limitTimeMap.put(GameStatus.ATTACK.name(), 60L);
+        limitTimeMap.put(GameStatus.DEFENSE.name(), 60L);
+        limitTimeMap.put(GameStatus.ATTACK_DOUBT.name(), 60L);
+        limitTimeMap.put(GameStatus.DEFENSE_DOUBT.name(), 60L);
     }
 
     public final void timeLimit(long gameId, GameStatus nextStatus) {

@@ -23,11 +23,7 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
             "       FROM ranking) AS r " +
             "LEFT JOIN member AS m " +
             "ON r.member_id = m.id " +
-            "ORDER BY ranking ASC",
-            countQuery = "SELECT count(*) " +
-                    "FROM ranking AS r LEFT JOIN member AS m " +
-                    "ON r.member_id = m.id ",
-            nativeQuery = true)
+            "ORDER BY ranking ASC", nativeQuery = true)
     Page<RankingDto> getRankingList();
 
     @Query(value = "SELECT m.nickname, m.image, r.ranking, r.score " +
@@ -36,11 +32,6 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
             "LEFT JOIN member AS m " +
             "ON r.member_id = m.id " +
             "WHERE m.nickname LIKE %:keyword% " +
-            "ORDER BY ranking ASC",
-            countQuery = "SELECT count(*) " +
-                    "FROM ranking AS r LEFT JOIN member AS m " +
-                    "ON r.member_id = m.id " +
-                    "WHERE m.nickname LIKE %:keyword%",
-            nativeQuery = true)
+            "ORDER BY ranking ASC", nativeQuery = true)
     Page<RankingDto> getRankingListByKeyword(@Param("keyword") String keyword);
 }

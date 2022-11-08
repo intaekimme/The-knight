@@ -33,6 +33,7 @@ public class PlayerApi {
 
         String destination = makeDestinationString(SEND_PREFIX, gameId, "/entry");
         template.convertAndSend(destination, playerEntryResponse);
+        template.convertAndSend(makeDestinationString(SERVER_PREFIX, gameId, "/members"), "");
     }
 
     @MessageMapping(value="/games/{gameId}/exit")
@@ -46,6 +47,7 @@ public class PlayerApi {
         }
         template.convertAndSend(makeDestinationString(SEND_PREFIX, gameId, "/exit"),
                 exitDto.getPlayerExitResponse());
+        template.convertAndSend(makeDestinationString(SERVER_PREFIX, gameId, "/members"), "");
     }
 
     @MessageMapping(value="/games/{gameId}/team")
