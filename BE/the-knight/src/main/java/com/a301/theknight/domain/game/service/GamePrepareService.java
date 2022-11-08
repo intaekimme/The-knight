@@ -15,7 +15,8 @@ import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,17 +34,11 @@ public class GamePrepareService {
     private final GameRedisRepository redisRepository;
 
     @Transactional
-    public boolean canStartGame(long gameId, String setGame) {
-        Game game = getGame(gameId);
-        return game.isCanStart() && game.getSetGame().equals(setGame);
-    }
-
-    @Transactional
     public GamePlayersInfoDto getPlayersInfo(long gameId) {
         List<PlayerDataDto> playerDataDtoList = getPlayersDataList(gameId);
 
         return GamePlayersInfoDto.builder()
-                .maxUser(playerDataDtoList.size())
+                .maxMember(playerDataDtoList.size())
                 .players(playerDataDtoList)
                 .build();
     }
@@ -52,7 +47,7 @@ public class GamePrepareService {
     public GamePrepareDto prepare(long gameId) {
         Game game = getGame(gameId);
         if (!game.isCanStart()) {
-            throw new CustomException(CAN_NOT_PLAYING_GAME);
+            throw new CustomWebSocketException(CAN_NOT_PLAYING_GAME);
         }
         game.changeStatus(GameStatus.PLAYING);
         List<Player> players = game.getPlayers();
@@ -73,10 +68,10 @@ public class GamePrepareService {
         GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
 
         if (!weaponsData.canTakeWeapon(gameWeaponChoiceRequest.getWeapon())) {
-            throw new CustomException(NOT_ENOUGH_WEAPON);
+            throw new CustomWebSocketException(NOT_ENOUGH_WEAPON);
         }
         if (!inGamePlayer.canTakeWeapon()) {
-            throw new CustomException(SELECT_WEAPON_IS_FULL);
+            throw new CustomWebSocketException(SELECT_WEAPON_IS_FULL);
         }
 
         inGamePlayer.choiceWeapon(gameWeaponChoiceRequest.getWeapon(), weaponsData);
@@ -87,11 +82,11 @@ public class GamePrepareService {
     }
 
     @Transactional
-    public GameWeaponResponse cancelWeapon(long gameId, Long memberId, boolean isLeft) {
+    public GameWeaponResponse cancelWeapon(long gameId, Long memberId, Hand deleteHand) {
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
         GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
 
-        inGamePlayer.cancelWeapon(isLeft, weaponsData);
+        inGamePlayer.cancelWeapon(deleteHand, weaponsData);
         redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
         redisRepository.saveGameWeaponData(gameId, inGamePlayer.getTeam(), weaponsData);
 
@@ -99,32 +94,34 @@ public class GamePrepareService {
     }
 
     @Transactional
-    public GameOrderResponse choiceOrder(long gameId, long memberId, GameOrderRequest orderRequest) {
+    public GameOrderResponse choiceOrder(long gameId, long memberId, Team team, GameOrderRequest orderRequest) {
         InGame inGame = getInGame(gameId);
         if (orderRequest.validate(inGame.getMaxMemberNum())) {
-            throw new CustomException(ORDER_NUMBER_IS_INVALID);
+            throw new CustomWebSocketException(ORDER_NUMBER_IS_INVALID);
         }
         int orderNumber = orderRequest.getOrderNumber();
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
-
-        TeamInfoData teamInfoData = inGamePlayer.getTeam().equals(Team.A)
+        if (!inGamePlayer.getTeam().equals(team)) {
+            throw new CustomWebSocketException(NOT_MATCH_REQUEST_TEAM);
+        }
+        TeamInfoData teamInfoData = Team.A.equals(team)
                 ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
         if (alreadySelectedOrderNumber(orderNumber, teamInfoData)) {
             if (inGamePlayer.getOrder() == orderNumber) {
                 return null;
             }
-            throw new CustomException(ALREADY_SELECTED_ORDER_NUMBER);
+            throw new CustomWebSocketException(ALREADY_SELECTED_ORDER_NUMBER);
         }
 
         inGame.choiceOrder(inGamePlayer, orderNumber);
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
 
-        return new GameOrderResponse(inGamePlayer.getTeam(), teamInfoData.getOrderList());
+        return new GameOrderResponse(teamInfoData.getOrderList());
     }
 
     @Transactional
-    public boolean completeSelect(long gameId, long memberId, Team team) {
+    public SelectCompleteDto completeSelect(long gameId, long memberId) {
         InGame inGame = getInGame(gameId);
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
 
@@ -137,6 +134,7 @@ public class GamePrepareService {
 
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
+        Team team = inGamePlayer.getTeam();
         inGame.completeSelect(team);
         if (inGame.isAllSelected()) {
             inGame.changeStatus(GameStatus.PREDECESSOR);
@@ -144,7 +142,7 @@ public class GamePrepareService {
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.deleteGameWeaponData(gameId, team);
 
-        return inGame.isAllSelected();
+        return new SelectCompleteDto(inGame.isAllSelected(), team);
     }
 
     @Transactional
@@ -164,21 +162,21 @@ public class GamePrepareService {
     }
 
     private void checkWeaponSelect(List<InGamePlayer> teamPlayerList, GameWeaponData weaponsData, Game game) {
-        if (weaponsData.isAllSelected()) {
-            throw new CustomException(CAN_NOT_COMPLETE_WEAPON_SELECT);
+        if (weaponsData.notAllSelected()) {
+            throw new CustomWebSocketException(CAN_NOT_COMPLETE_WEAPON_SELECT);
         }
         GameWeaponData checkWeaponData = GameWeaponData.toWeaponData(game);
         teamPlayerList.forEach(inGamePlayer -> {
             Weapon leftWeapon = inGamePlayer.getLeftWeapon();
             Weapon rightWeapon = inGamePlayer.getRightWeapon();
             if (leftWeapon == null || rightWeapon == null) {
-                throw new CustomException(CAN_NOT_COMPLETE_WEAPON_SELECT);
+                throw new CustomWebSocketException(CAN_NOT_COMPLETE_WEAPON_SELECT);
             }
             checkWeaponData.choiceWeapon(leftWeapon);
             checkWeaponData.choiceWeapon(rightWeapon);
         });
-        if (checkWeaponData.isAllSelected()) {
-            throw new CustomException(CAN_NOT_COMPLETE_WEAPON_SELECT);
+        if (checkWeaponData.notAllSelected()) {
+            throw new CustomWebSocketException(CAN_NOT_COMPLETE_WEAPON_SELECT);
         }
     }
 
@@ -186,7 +184,7 @@ public class GamePrepareService {
         Set<Long> idSet = new HashSet<>();
         for (GameOrderDto gameOrderDto : teamInfoData.getOrderList()) {
             if (gameOrderDto == null || !idSet.add(gameOrderDto.getMemberId())) {
-                throw new CustomException(CAN_NOT_COMPLETE_ORDER_SELECT);
+                throw new CustomWebSocketException(CAN_NOT_COMPLETE_ORDER_SELECT);
             }
         }
     }
@@ -194,13 +192,13 @@ public class GamePrepareService {
     private void checkLeaderRequest(InGame inGame, InGamePlayer inGamePlayer) {
         TeamInfoData teamInfoData = inGame.getTeamInfoData(inGamePlayer.getTeam());
         if (teamInfoData.getLeaderId() != inGamePlayer.getMemberId()) {
-            throw new CustomException(GamePlayingErrorCode.CAN_COMPLETE_BY_LEADER);
+            throw new CustomWebSocketException(GamePlayingErrorCode.CAN_COMPLETE_BY_LEADER);
         }
     }
 
     private InGame getInGame(long gameId) {
         return redisRepository.getInGame(gameId)
-                .orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 
     private boolean alreadySelectedOrderNumber(int orderNumber, TeamInfoData teamInfoData) {
@@ -209,7 +207,7 @@ public class GamePrepareService {
 
     private InGamePlayer getInGamePlayer(long gameId, Long memberId) {
         return redisRepository.getInGamePlayer(gameId, memberId)
-                .orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
     private List<PlayerDataDto> getPlayersDataList(long gameId) {
@@ -219,6 +217,7 @@ public class GamePrepareService {
                 .map(inGamePlayer -> PlayerDataDto.builder()
                         .memberId(inGamePlayer.getMemberId())
                         .nickname(inGamePlayer.getNickname())
+                        .team(inGamePlayer.getTeam().name())
                         .leftCount(inGamePlayer.getLeftCount())
                         .rightCount(inGamePlayer.getRightCount())
                         .order(inGamePlayer.getOrder())
@@ -271,7 +270,7 @@ public class GamePrepareService {
 
     private Long getTeamLeaderId(Game game, Team team) {
         return game.getTeamLeader(team)
-                .orElseThrow(() -> new CustomException(ORDER_NUMBER_IS_INVALID)).getMember().getId();
+                .orElseThrow(() -> new CustomWebSocketException(ORDER_NUMBER_IS_INVALID)).getMember().getId();
     }
 
     private TeamInfoData makeTeamInfoData(Game game, long leaderId) {
@@ -293,7 +292,7 @@ public class GamePrepareService {
 
     private GameWeaponData getWeaponsData(long gameId, Team team) {
         return redisRepository.getGameWeaponData(gameId, team)
-                .orElseThrow(() -> new CustomException(WEAPON_DATA_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(WEAPON_DATA_IS_NOT_EXIST));
     }
 
     private List<Player> getTeamPlayerList(List<Player> players, Team team) {
@@ -303,7 +302,7 @@ public class GamePrepareService {
 
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
-                .orElseThrow(() -> new CustomException(GameErrorCode.GAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
 }

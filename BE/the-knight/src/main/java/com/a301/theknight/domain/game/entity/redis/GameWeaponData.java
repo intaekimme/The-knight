@@ -59,7 +59,7 @@ public class GameWeaponData implements Serializable {
         }
     }
 
-    public boolean isAllSelected() {
+    public boolean notAllSelected() {
         return sword != 0 || twin != 0 || shield != 0 || hand != 0;
     }
 }

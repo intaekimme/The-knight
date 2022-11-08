@@ -7,11 +7,11 @@ import java.util.*;
 
 @Component
 public class GameConvertUtil {
-    private final Map<String, List<String>> postfixMap;
+    private final Map<String, List<String>> dataPostfixMap;
 
     public GameConvertUtil() {
-        postfixMap = new HashMap<>();
-        init(postfixMap);
+        dataPostfixMap = new HashMap<>();
+        init(dataPostfixMap);
     }
 
     private void init(Map<String, List<String>> postfixMap) {
@@ -27,6 +27,6 @@ public class GameConvertUtil {
     }
 
     public List<String> getPostfixList(String status) {
-        return postfixMap.get(status);
+        return dataPostfixMap.get(status);
     }
 }

@@ -10,6 +10,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 @Controller
 @RequiredArgsConstructor
 public class GameWaitingApi {
@@ -20,37 +23,29 @@ public class GameWaitingApi {
     private final GameWaitingService gameWaitingService;
 
     @MessageMapping(value = "/games/{gameId}/modify")
-    public void modify(@DestinationVariable long gameId, @LoginMemberId long memberId,
-                       GameModifyRequest gameModifyRequest) {
+    public void modify(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId,
+                       @Valid GameModifyRequest gameModifyRequest) {
         gameWaitingService.modify(gameId, memberId, gameModifyRequest);
 
-        template.convertAndSend(makeDestinationString(gameId, "/modify"), "");
+        template.convertAndSend(makeDestinationString(gameId, "/modify"), gameModifyRequest);
     }
 
     @MessageMapping(value = "/games/{gameId}/delete")
-    public void delete(@DestinationVariable long gameId, @LoginMemberId long memberId){
+    public void delete(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId){
         gameWaitingService.delete(gameId, memberId);
-        String destination = makeDestinationString(gameId, "/delete");
 
-        template.convertAndSend(destination, "");
-    }
-
-    @MessageMapping(value="/games/{gameId}/attacker")
-    public void attacker(@DestinationVariable long gameId){
-        String destination = makeDestinationString(gameId, "/attacker");
-
-        template.convertAndSend(destination);
+        template.convertAndSend(makeDestinationString(gameId, "/delete"), "");
     }
 
     @MessageMapping(value="/games/{gameId}/turn")
-    public void turn(@DestinationVariable long gameId){
+    public void turn(@Min(1) @DestinationVariable long gameId){
         String destination = makeDestinationString(gameId, "/turn");
 
         template.convertAndSend(destination);
     }
 
     @MessageMapping(value = "/games/{gameId}/members")
-    public void getGameMemberData(@DestinationVariable long gameId) {
+    public void getGameMemberData(@Min(1) @DestinationVariable long gameId) {
         GameMembersInfoDto membersInfo = gameWaitingService.getMembersInfo(gameId);
 
         template.convertAndSend(makeDestinationString(gameId, "/members"), membersInfo);

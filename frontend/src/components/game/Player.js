@@ -1,28 +1,34 @@
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import PersonIcon from "@mui/icons-material/Person";
+import Box from "@mui/material/Box";
 
 // 해당 Player가 본인이면 녹색아이콘
-function Player({ player }) {
-  const me = useSelector(state => state.game.me )
+function Player({ player, isOpp }) {
+  const me = useSelector((state) => state.game.me);
+  const currentAttacker = useSelector((state) => state.game.currentAttacker);
+  const isAttackPhase = useSelector((state) => state.game.phase) === "ATTACK";
+  const isMe = player.memberId === me.memberId;
+  const isAttacker = player.memberId === currentAttacker.memberId;
+  const AttackerIsMe = me.memberId === currentAttacker.memberId;
+  const [isHovering, setIsHovering] = useState(false);
 
-  if (player.memberId === me.memberId) {
-    return (
-      <div>
-        <PersonIcon
-          color="success"
-          sx={{ fontSize: 100 }}
-        />
-        <div style={{ color: "green" }}>{player.nickname}</div>
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <PersonIcon sx={{ fontSize: 100 }} />
-        <div>{player.nickname}</div>
-      </div>
-    );
-  }
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+      <PersonIcon
+        // color={isMe && "success"}
+        sx={{
+          ...(isMe && { color: "green" }),
+          ...(isAttacker && { backgroundColor: "yellow", borderRadius: "50%" }),
+          ...(isAttackPhase && AttackerIsMe && isOpp && isHovering && { backgroundColor: "red", borderRadius: "50%" }),
+          fontSize: 100,
+        }}
+        onMouseOver={() => setIsHovering(true)}
+        onMouseOut={() => setIsHovering(false)}
+      />
+      <div style={{ ...(isMe && {color: "green"})}}>{player.nickname}</div>
+    </Box>
+  );
 }
 
 export default Player;

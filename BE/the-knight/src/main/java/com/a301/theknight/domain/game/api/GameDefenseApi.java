@@ -10,6 +10,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 @RequiredArgsConstructor
 @Controller
 public class GameDefenseApi {
@@ -19,15 +22,15 @@ public class GameDefenseApi {
     private final GameDefenseService gameDefenseService;
 
     @MessageMapping(value = "/games/{gameId}/defense")
-    public void defense(@DestinationVariable long gameId, GameDefenseRequest gameDefenseRequest,
+    public void defense(@Min(1) @DestinationVariable long gameId, @Valid GameDefenseRequest gameDefenseRequest,
                         @LoginMemberId long memberId){
         gameDefenseService.defense(gameId, memberId, gameDefenseRequest);
 
         template.convertAndSend(makeConvertUri(gameId));
     }
 
-    @MessageMapping(value = "/games/{gameId}//defense-info")
-    public void defendInfo(@DestinationVariable long gameId) throws  InterruptedException {
+    @MessageMapping(value = "/games/{gameId}/defense-info")
+    public void defendInfo(@Min(1) @DestinationVariable long gameId) throws  InterruptedException {
         DefenseResponse response = gameDefenseService.getDefenseInfo(gameId);
         template.convertAndSend(makeDestinationUri(gameId, "/defense-info"), response);
 

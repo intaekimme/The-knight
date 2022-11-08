@@ -1,7 +1,12 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
+import { over, Client } from "stompjs";
+import SockJS from "sockjs-client";
+import api from '../../api/api';
 import { login } from "../../_slice/loginSlice";
+import { fetchMemberInfo } from "../../_slice/memberInfoSlice";
+import { setStompClient } from '../../_slice/websocketSlice';
 
 export default function LoginToken() {
   const dispatch = useDispatch();
@@ -15,6 +20,14 @@ export default function LoginToken() {
     dispatch(login(token));
     window.localStorage.setItem("loginToken", token);
     window.localStorage.setItem("memberId", memberId);
+    dispatch(fetchMemberInfo());
+
+    console.log(token);
+    const Sock = new SockJS(`${api.websocket()}?token=${token}`);
+    const tempClient = over(Sock);
+    console.log(tempClient);
+    alert("로그인 되었습니다");
+    dispatch(setStompClient(tempClient));
     navigate("/");
   };
   React.useEffect(() => {

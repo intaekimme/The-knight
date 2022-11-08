@@ -9,6 +9,6 @@ import java.util.List;
 @Builder
 @Data
 public class GamePlayersInfoDto {
-    private int maxUser;
+    private int maxMember;
     private List<PlayerDataDto> players;
 }

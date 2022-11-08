@@ -5,7 +5,7 @@ import com.a301.theknight.domain.auth.service.CustomUserDetailsService;
 import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.TokenService;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
@@ -47,7 +47,7 @@ public class StompHandler implements ChannelInterceptor {
 //                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (Exception e) {
-                throw new CustomException(DomainErrorCode.DO_NOT_HAVE_AUTHENTICATION);
+                throw new CustomRestException(DomainErrorCode.DO_NOT_HAVE_AUTHENTICATION);
             }
         }
         return message;

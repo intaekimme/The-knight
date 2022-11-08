@@ -11,14 +11,14 @@ import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.domain.player.service.PlayerService;
-import com.a301.theknight.global.error.exception.CustomException;
-
+import com.a301.theknight.domain.ranking.entity.Ranking;
+import com.a301.theknight.domain.ranking.repository.RankingRepository;
+import com.a301.theknight.global.error.exception.CustomRestException;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.List;
 import java.util.Random;
@@ -37,6 +37,8 @@ public class DummyDataTest {
     @Autowired
     private PlayerRepository playerRepository;
     @Autowired
+    private RankingRepository rankingRepository;
+    @Autowired
     private GameService gameService;
     @Autowired
     private PlayerService playerService;
@@ -44,7 +46,7 @@ public class DummyDataTest {
     private PlayerTeamRequest playerTeamRequest = new PlayerTeamRequest(Team.B);
     private boolean[] visitedMember = new boolean[95];
 
-    private int[] maxUsers = {4, 10, 8, 6};
+    private int[] maxMembers = {4, 10, 8, 6};
     private int[] underStaffed = {7,6,5,2};
     private int[] underStaffedTeam = {3,3,2,1};
 
@@ -53,6 +55,7 @@ public class DummyDataTest {
     void 초기화(){
         playerRepository.deleteAll();
         gameRepository.deleteAll();
+        memberRepository.deleteAll();
     }
 
     @Test
@@ -64,7 +67,7 @@ public class DummyDataTest {
                     "player" + i + "@gmail.com", "player" + i,
                     "player" + i,
                     "player" + i,
-                    "image" + i);
+                    "ROLE_USER");
             memberRepository.save(member);
         }
     }
@@ -94,7 +97,7 @@ public class DummyDataTest {
         List<Member> allMembers = memberRepository.findAll();
 
         Random random = new Random(System.currentTimeMillis());
-        List<Game> allGames = gameRepository.findAll();
+        List<Game> allGames = gameRepository.findAllByFetchJoin();
 
         //  정원이 꽉 찬 방, 플레잉 중인 방
         enterFull(allMembers, random, allGames, 0, 8);
@@ -105,7 +108,7 @@ public class DummyDataTest {
             Game game = allGames.get(i);
 
             while(true){
-                Game g = gameRepository.findById(game.getId()).get();
+                Game g = gameRepository.findByIdFetchJoin(game.getId()).get();
                 if(g.getPlayers().size() < underStaffed[i-8]){
                     enterRoom(allMembers, random, game);
                 } else break;
@@ -122,7 +125,7 @@ public class DummyDataTest {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void 플레이어_팀선택(){
         Random random = new Random(System.currentTimeMillis());
-        List<Game> allGames = gameRepository.findAll();
+        List<Game> allGames = gameRepository.findAllByFetchJoin();
 
         selectTeamFull(random, allGames, 0, 8);
         selectTeamFull(random, allGames, 12, 14);
@@ -131,10 +134,10 @@ public class DummyDataTest {
             Game game = allGames.get(i);
 
             while(true){
-                Game g = gameRepository.findById(game.getId()).get();
+                Game g = gameRepository.findByIdFetchJoin(game.getId()).get();
                 if(getTeamBCount(g) < underStaffedTeam[i-8]){
                     int playerNum = random.nextInt(g.getPlayers().size());
-                    long memberId = game.getPlayers().get(playerNum).getMember().getId();
+                    long memberId = g.getPlayers().get(playerNum).getMember().getId();
                     playerService.team(g.getId(), memberId, playerTeamRequest);
                 }else break;
             }
@@ -142,11 +145,43 @@ public class DummyDataTest {
 
     }
 
+    @Test
+    @Order(6)
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void 기존_회원_랭킹_입력(){
+        Random random = new Random(System.currentTimeMillis());
+        List<Member> allMembers = memberRepository.findAll();
+
+        for(int j=0; j < 94; j++){
+            Ranking ranking = new Ranking(allMembers.get(j));
+
+
+            int total = random.nextInt(501);
+            int win = random.nextInt(501);
+
+            while(total < win){
+                win = random.nextInt(501);
+            }
+            int lose = total - win;
+
+            for(int i=0; i < win; i++){
+                ranking.saveWinScore();
+            }
+            for(int i=0; i < lose; i++){
+                ranking.saveLoseScore();
+            }
+
+            rankingRepository.save(ranking);
+        }
+
+
+    }
+
     private void selectTeamFull(Random random, List<Game> allGames, int start, int end) {
         for(int i = start; i< end; i++){
             Game game = allGames.get(i);
 
-            while(!isEqualPlayerNum(gameRepository.findById(game.getId()).get())){
+            while(!isEqualPlayerNum(gameRepository.findByIdFetchJoin(game.getId()).get())){
                 int playerNum = random.nextInt(game.getCapacity());
                 long memberId = game.getPlayers().get(playerNum).getMember().getId();
                 playerService.team(game.getId(), memberId, playerTeamRequest);
@@ -159,6 +194,7 @@ public class DummyDataTest {
         for(int i = start; i< end; i++){
             Game game = allGames.get(i);
 
+//            Game curGame = gameRepository.findById(game.getId()).get();
             System.out.println("gameId : " + game.getId() + ", maxUsers : " + game.getCapacity() + ", currentUsers : " + game.getPlayers().size());
             while(true){
                 if (enterRoom(allMembers, random, game)) break;
@@ -169,10 +205,10 @@ public class DummyDataTest {
     private boolean enterRoom(List<Member> allMembers, Random random, Game game) {
         int playerNum = getRandomMember(random, 95);
         try{
-            playerService.entry(game.getId(), allMembers.get(playerNum - 1).getId());
             System.out.println("playerNum : " + playerNum + ", maxUsers : " + game.getCapacity() + ", currentUsers : " + game.getPlayers().size());
+            playerService.entry(game.getId(), allMembers.get(playerNum - 1).getId());
             visitedMember[playerNum] = true;
-        }catch(CustomException e){
+        }catch(CustomRestException e){
             System.out.println("exception occur");
             return true;
         }
@@ -180,11 +216,11 @@ public class DummyDataTest {
     }
 
     private GameCreateRequest createRequest(int i){
-        int[] setItemNum = setItem(maxUsers[i % 4]);
+        int[] setItemNum = setItem(maxMembers[i % 4]);
 
         return GameCreateRequest.builder()
                 .title("game" + i)
-                .maxMember(maxUsers[i % 4])
+                .maxMember(maxMembers[i % 4])
                 .sword(setItemNum[0])
                 .twin(setItemNum[1])
                 .shield(setItemNum[2])

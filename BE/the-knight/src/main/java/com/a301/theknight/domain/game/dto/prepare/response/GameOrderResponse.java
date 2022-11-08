@@ -7,6 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class GameOrderResponse {
-    private Team team;
     private GameOrderDto[] orderList;
 }

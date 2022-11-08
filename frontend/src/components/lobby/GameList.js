@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Card, Grid, Pagination } from "@mui/material";
 import GameDescModal from "./GameDescModal";
-import { gameListAll, gameDesc } from "../../_slice/tempGameSlice";
+import { gameListAll } from "../../_slice/tempGameSlice";
 
 export default function GameList() {
   const [isSetting, setIsSetting] = React.useState(false);
@@ -16,7 +16,7 @@ export default function GameList() {
   }, []);
   //temp data
   // const gameList = useSelector(state => state.tempGame.value.gameList)
-
+  
   //real data
   const gameList = useSelector(state => state.tempGame.gameListAll)
   console.log("gmaelistall", gameList);
@@ -27,10 +27,13 @@ export default function GameList() {
   const roomSettingOpen = () => setOpen(true);
   const roomSettingClose = () => setOpen(false);
 
-  const fetchGameInfo = (gameId) => {
+  // gameId props
+  const [id, setId] = React.useState(0);
+  const fetchGameInfo = (gameId, e) => {
+    e.preventDefault();
     console.log("gameId", gameId);
+    setId(gameId);
     //gameId로 게임 상세정보 불러오기
-    dispatch(gameDesc(gameId));
   }
   //저장되어있는 게임 상세정보 store에서 불러오기
   // const bla =
@@ -56,11 +59,11 @@ export default function GameList() {
 
   return (
     <div>
-      <Grid container spacing={3} columnSpacing={5} sx={{ pt: 3, justifyContent: 'center' }}>
+      <Grid container spacing={3} columnSpacing={5} sx={{ pt: 5, justifyContent: 'center' }}>
         {gameList.games && gameList.games.map((game, key) => {
           return (
             <Grid item key={key}>
-              <Card sx={{ width: '23vw', height: '14vw' }} onClick={() => { roomSettingOpen(); fetchGameInfo(game.gameId); }}>
+              <Card sx={{ width: '23vw', height: '14vw' }} onClick={(e) => { roomSettingOpen(); fetchGameInfo(game.gameId, e); }}>
                 {game.title}
               </Card>
             </Grid>
@@ -70,7 +73,7 @@ export default function GameList() {
         {/* {
         gameListRender(gameList)
         } */}
-        <GameDescModal open={open} onClose={roomSettingClose}></GameDescModal>
+        <GameDescModal id={id} open={open} onClose={roomSettingClose}></GameDescModal>
       </Grid>
       <Pagination></Pagination>
     </div>

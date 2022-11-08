@@ -4,7 +4,7 @@ import com.a301.theknight.domain.auth.model.MemberPrincipal;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +20,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByEmail(username)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomRestException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
 
         return MemberPrincipal.builder()
                 .memberId(member.getId())
@@ -30,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public UserDetails loadMemberById(Long id) throws UsernameNotFoundException {
         Member member = memberRepository.findById(id)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomRestException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
 
         return MemberPrincipal.builder()
                 .memberId(member.getId())

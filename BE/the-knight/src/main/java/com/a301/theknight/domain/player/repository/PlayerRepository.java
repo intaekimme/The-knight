@@ -13,4 +13,7 @@ import java.util.Optional;
 public interface PlayerRepository extends JpaRepository<Player, Long>, PlayerCustomRepository {
     Optional<Player> findByMember(Member member);
     Optional<Player> findByGameAndMember(Game game, Member member);
+
+    @Query("select p from Player p where p.member.id = :memberId and p.game.id = :gameId")
+    Optional<Player> findByGameIdAndMemberId(@Param("gameId")long gameId, @Param("memberId") long memberId);
 }

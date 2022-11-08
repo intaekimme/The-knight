@@ -21,8 +21,9 @@ function OrderPicker() {
           item
           xs={((players.maxUser / 2) === 5) ? 2 : (12 / (players.maxUser / 2))}
           key={i}
+          sx={{ display: "flex", justifyContent: "center"}}
         >
-          <div onClick={() => onClick(i)} style={{ width: 80, height: 80, backgroundColor: "#e2e2e2" }}>
+          <div onClick={() => onClick(i)} style={{ width: 80, height: 80, backgroundColor: "#e2e2e2"}}>
             {i + 1}
             {order[me.team] ? (order[me.team][i] ? <Player player={order[me.team][i]}></Player> : null) : null}
           </div>
