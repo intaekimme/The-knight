@@ -6,6 +6,7 @@ const meInit = {
   nickname: "Tom",
   index: 4,
   team: "B",
+  pass: false,
 }
 
 const playersInit = {
@@ -165,7 +166,13 @@ export const gameSlice = createSlice({
     switchIsLoading: (state) => {
       state.isLoading = !state.isLoading
     },
+    selectPass: (state) => {
+      state.me.pass = true
+    },
+    initializePass: (state) => {
+      state.me.pass = false
+    },
   },
 });
-export const { fetchMe, fetchPlayers, selectWeapon, deleteWeapon, selectOrder, fetchPhase, switchIsLoading } = gameSlice.actions;
+export const { fetchMe, fetchPlayers, selectWeapon, deleteWeapon, selectOrder, fetchPhase, switchIsLoading, selectPass, initializePass } = gameSlice.actions;
 export default gameSlice.reducer;
