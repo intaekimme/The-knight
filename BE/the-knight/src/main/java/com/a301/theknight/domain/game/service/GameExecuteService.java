@@ -50,11 +50,13 @@ public class GameExecuteService {
         DefendData defendData = turnData.getDefendData();
 
         int defendCount = defendData.getShieldCount();
+        boolean isDefendPass = defendData.isDefendPass();
+
         Weapon attackWeapon = attackData.getWeapon();
         int resultCount = defendCount - attackWeapon.getCount();
 
         GameStatus nextStatus = GameStatus.ATTACK;
-        if (resultCount < 0) {
+        if (resultCount < 0 || isDefendPass) {
             defender.death();
             if (defender.isLeader()) {
                 nextStatus = GameStatus.END;
