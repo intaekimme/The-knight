@@ -7,13 +7,11 @@ import api from '../api/api';
 const connectWebsocket = createAsyncThunk('websocket/connectWebsocket', async (props, { rejectWithValue }) => {
   try {
     let stompClient = null;
-    let connect = false;
-    let fail = false;
-    const Sock = new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`);
+    const Sock = new SockJS(`${api.websocket()}?token=${props.token}`);
     stompClient = over(Sock);
-    stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}
-      ,()=>{connect = true; fail=false;}
-      ,(error) => { console.log(error); connect = false; fail = true;});
+    stompClient.connect({Authorization: `Bearer ${props.token}`}
+      ,()=>{}
+      ,(error) => { console.log(error); });
     console.log("connect 성공");
     return {stompClient: stompClient};
   } catch (err) {
@@ -54,7 +52,9 @@ export const websocketSlice = createSlice({
       state.stompClient = action.payload.stompClient;
     },
     [connectWebsocket.rejected]: state => {
-      state.stompClient = stompClientInit;
+      const tempClient = over(new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`));
+      tempClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, (res)=>{console.log(res, "connect")}, (err)=>{console.log(err)});
+      state.stompClient = tempClient;
     },
   },
 });

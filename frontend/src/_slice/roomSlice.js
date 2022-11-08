@@ -39,13 +39,13 @@ const usersInfo = createAsyncThunk('usersInfo', async (gameId, { rejectWithValue
 const roomInit = {
   state : -1,
   gameId: -1,
-  title: "",
-  maxUser: -1,
-  currentUser: -1,
-  sword: -1,
-  twin: -1,
-  shield: -1,
-  hand: -1,
+  title: "테스트 제목",
+  maxMember: 4,
+  // currentUser: -1,
+  sword: 0,
+  twin: 0,
+  shield: 0,
+  hand: 0,
 }
 const userInit = [{
   id: -1,
@@ -87,7 +87,7 @@ export const roomSlice = createSlice({
     setState:(state, action) =>{
       state.roomInfo.state = action.payload.state;
     },
-    setUsers:(state, action) =>{
+    setMembers:(state, action) =>{
       state.usersInfo = [...action.payload];
     },
     changeTeam:(state, action) =>{
@@ -134,5 +134,5 @@ export const roomSlice = createSlice({
 });
 
 export { initRoom, roomInfo, usersInfo };
-export const { modifyRoomSetting, setState, setUsers, changeTeam, changeReady } = roomSlice.actions;
+export const { modifyRoomSetting, setState, setMembers, changeTeam, changeReady } = roomSlice.actions;
 export default roomSlice.reducer;

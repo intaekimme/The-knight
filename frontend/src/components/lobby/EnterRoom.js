@@ -1,13 +1,10 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { over } from "stompjs";
-import SockJS from "sockjs-client";
 import {enterRoomSubscribe} from '../../_slice/websocketSlice';
-import {setRoom, setUsers} from '../../_slice/roomSlice';
 import api from '../../api/api';
 import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEnterRoom,
-  onSubAllMembersInRoom, onSubSelectTeam, onSubReady, onSubExitRoom} from '../../websocket/Receivers';
+  onSubAllMembersInRoom, onSubSelectTeam, onSubReady, onSubExitRoom} from '../../websocket/RoomReceivers';
 
 export default function EnterRoom(){
   const gameId = useParams("gameId").gameId;
@@ -46,9 +43,19 @@ export default function EnterRoom(){
       receiver : onSubExitRoom,
     },],
   }
-  const url = '/in-room';
-  dispatch(enterRoomSubscribe(payload)).then((response)=>{
-    console.log(response);
-    navigate(url);
-  });
+  const url = `/in-room/${gameId}`;
+  const [first, setFirst] = React.useState(true);
+  const [isSetting, setIsSetting] = React.useState(false);
+  React.useEffect(()=>{
+    if(isSetting){
+      setIsSetting(false);
+      navigate(url);
+    }
+  },[isSetting]);
+  React.useEffect(()=>{
+    dispatch(enterRoomSubscribe(payload)).then((response)=>{
+      console.log(response);
+      setIsSetting(true);
+    });
+  },[]);
 }
