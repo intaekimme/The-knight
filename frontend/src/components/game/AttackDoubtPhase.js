@@ -42,7 +42,7 @@ export default function AttackDoubtPhase() {
           justifyContent: "space-evenly",
         }}
         > 
-          <Box sx={{ textAlign: "center" }}>__님이 __님을 _쪽 _로 공격했습니다.</Box>
+          <Box sx={{ textAlign: "center" }}>{currentAttacker.nickname}이 __님을 _쪽 _로 공격했습니다.</Box>
           <Box sx={{ display: "flex", alignItems: 'flex-end', justifyContent: "space-evenly" }}>
             <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>의심</Box>
             <Box onClick={ clickPass } sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>Pass</Box>
