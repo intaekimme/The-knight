@@ -2,11 +2,10 @@ package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.game.dto.attacker.AttackerDto;
 import com.a301.theknight.domain.game.service.GameAttackerService;
-import com.a301.theknight.domain.game.util.SendMessageService;
+import com.a301.theknight.domain.common.service.SendMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Controller

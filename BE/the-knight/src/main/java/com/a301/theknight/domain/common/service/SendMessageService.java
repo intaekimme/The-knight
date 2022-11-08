@@ -1,4 +1,4 @@
-package com.a301.theknight.domain.game.util;
+package com.a301.theknight.domain.common.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -24,6 +24,12 @@ public class SendMessageService {
         template.convertAndSend(makeConvertURL(gameId), "");
     }
 
+    public void forceConvertCall(long gameId) {
+        template.convertAndSend(makeForceConverURL(gameId), "");
+    }
+
+
+
     public void proceedCall(long gameId, long delaySeconds) {
         try {
             Thread.sleep(delaySeconds * MILLI);
@@ -44,6 +50,10 @@ public class SendMessageService {
 
     private String makeConvertURL(long gameId) {
         return SERVER_PREFIX + gameId + "/convert";
+    }
+
+    private String makeForceConverURL(long gameId) {
+        return SERVER_PREFIX + gameId + "/force-convert";
     }
 
     private String makeProceedURL(long gameId) {
