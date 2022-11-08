@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 // import InputBase from '@mui/material/InputBase';
 // import IconButton from '@mui/material/IconButton';
 // import SearchIcon from '@mui/icons-material/Search';
-import { Avatar, ListItem, ListItemAvatar, ListItemText, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
+import { Avatar, ListItem, ListItemAvatar, ListItemText, Pagination, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { fetchRankAll } from "../../_slice/rankSlice";
 
 // const columns = [
@@ -64,8 +64,8 @@ export default function RankTable() {
   
   // const [rows, setRows] = React.useState(rankRows);
   // // const [searched, setSearched] = React.useState("");
-  // const [page, setPage] = React.useState(0)
-  // const [rowsPerPage, setRowsPerPage] = React.useState(20)
+  const [page, setPage] = React.useState(0)
+  const [rowsPerPage, setRowsPerPage] = React.useState(20)
 
   // // const handleChange = (event) => {
   // //   setSearched(event.target.value);
@@ -79,10 +79,10 @@ export default function RankTable() {
   // //   setRows(filteredRows);
   // // };
 
-  // const handleChangePage = (event, newPage) => {
-  //   console.log(newPage);
-  //   setPage(newPage)
-  // }
+  const handleChangePage = (event, newPage) => {
+    console.log(newPage);
+    setPage(newPage)
+  }
 
   // const [keyword, setKeyword] = React.useState();
   // const onChangeValue = (e) => {
@@ -159,14 +159,14 @@ export default function RankTable() {
               ))}
             </TableBody>
             <TableFooter>
-              <TableRow>
-                {/* <TablePagination
-                  // count={rows.length}
-                  // page={page}
-                  // rowsPerPage={rowsPerPage}
-                  // onPageChange={handleChangePage}
-                  // rowsPerPageOptions={[]}
-                /> */}
+            <TableRow>
+                <TablePagination
+                  count={rankRows.length}
+                  page={page}
+                  rowsPerPage={rowsPerPage}
+                  onPageChange={handleChangePage}
+                  rowsPerPageOptions={[]}
+                />
               </TableRow>
             </TableFooter>
           </Table>
