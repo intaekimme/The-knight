@@ -102,15 +102,6 @@ public class GamePrepareApi {
         template.convertAndSend(makeDestinationUri(gameId, postfix), new SelectResponse(true));
     }
 
-    @MessageMapping(value="/games/{gameId}/pre-attack")
-    public void getPreAttack(@Min(1) @DestinationVariable long gameId) throws InterruptedException {
-        GamePreAttackResponse response = gamePrepareService.getPreAttack(gameId);
-        template.convertAndSend(makeDestinationUri(gameId, "/pre-attack"), response);
-
-        Thread.sleep(5000);
-        template.convertAndSend(makeServerDestinationUri(gameId, "/proceed"));
-    }
-
     private void sendOrderResponse(long gameId, Team team, GameOrderResponse orderResponse) {
         if (Team.A.equals(team)) {
             template.convertAndSend(makeDestinationUri(gameId,"/a/orders"), orderResponse);

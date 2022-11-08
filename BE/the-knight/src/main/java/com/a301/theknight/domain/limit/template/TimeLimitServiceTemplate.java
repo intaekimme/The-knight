@@ -41,7 +41,7 @@ public abstract class TimeLimitServiceTemplate {
         limitTimeMap.put(GameStatus.DEFENSE_DOUBT.name(), 60L);
     }
 
-    public final void timeLimit(long gameId, GameStatus nextStatus) {
+    public final boolean executeTimeLimit(long gameId) {
         GameStatus preStatus = getInGame(gameId).getGameStatus();
 
         RLock timeLock = null;
@@ -49,7 +49,7 @@ public abstract class TimeLimitServiceTemplate {
             Thread.sleep(limitTimeMap.get(preStatus.name()));
             InGame curInGame = getInGame(gameId);
             if (!preStatus.equals(curInGame.getGameStatus())) {
-                return;
+                return false;
             }
 
             timeLock = redissonClient.getLock(timeLockKeyGen(gameId));
@@ -64,6 +64,7 @@ public abstract class TimeLimitServiceTemplate {
         } finally {
             timeLock.unlock();
         }
+        return true;
     }
 
     public abstract void runLimitLogic(long gameId, InGame inGame);
