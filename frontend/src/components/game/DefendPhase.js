@@ -26,11 +26,11 @@ export default function DefendPhase() {
             <Box sx={{ width: "24vmin", display: "flex", justifyContent: "space-between" }}>
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
                 <Box>L</Box>
-                <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>sword</Box>
+                <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>shield</Box>
               </Box>
               <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
                 <Box>R</Box>
-                <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>twin sword</Box>
+                <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>shield</Box>
               </Box>
             </Box>
             <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>Pass</Box>
