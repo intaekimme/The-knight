@@ -5,7 +5,7 @@ import { Grid } from "@mui/material";
 
 import RoomDisplay from "../components/room/RoomDisplay";
 import Chatting from "../commons/chatting/Chatting";
-import {onPubEnterRoom, onPubAllMembersInRoom} from "../websocket/Publishes";
+import {onPubEnterRoom, onPubAllMembersInRoom} from "../websocket/RoomPublishes";
 
 export default function Room() {
 	const windowData = useSelector((state) => state.windowData.value);

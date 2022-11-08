@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {enterRoomSubscribe} from '../../_slice/websocketSlice';
 import api from '../../api/api';
 import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEnterRoom,
-  onSubAllMembersInRoom, onSubSelectTeam, onSubReady, onSubExitRoom} from '../../websocket/Receivers';
+  onSubAllMembersInRoom, onSubSelectTeam, onSubReady, onSubExitRoom} from '../../websocket/RoomReceivers';
 
 export default function EnterRoom(){
   const gameId = useParams("gameId").gameId;
