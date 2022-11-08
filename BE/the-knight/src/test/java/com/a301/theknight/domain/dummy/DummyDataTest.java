@@ -11,14 +11,14 @@ import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.domain.player.service.PlayerService;
+import com.a301.theknight.domain.ranking.entity.Ranking;
+import com.a301.theknight.domain.ranking.repository.RankingRepository;
 import com.a301.theknight.global.error.exception.CustomRestException;
-
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.List;
 import java.util.Random;
@@ -36,6 +36,8 @@ public class DummyDataTest {
     private GameRepository gameRepository;
     @Autowired
     private PlayerRepository playerRepository;
+    @Autowired
+    private RankingRepository rankingRepository;
     @Autowired
     private GameService gameService;
     @Autowired
@@ -140,6 +142,38 @@ public class DummyDataTest {
                 }else break;
             }
         }
+
+    }
+
+    @Test
+    @Order(6)
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void 기존_회원_랭킹_입력(){
+        Random random = new Random(System.currentTimeMillis());
+        List<Member> allMembers = memberRepository.findAll();
+
+        for(int j=0; j < 94; j++){
+            Ranking ranking = new Ranking(allMembers.get(j));
+
+
+            int total = random.nextInt(501);
+            int win = random.nextInt(501);
+
+            while(total < win){
+                win = random.nextInt(501);
+            }
+            int lose = total - win;
+
+            for(int i=0; i < win; i++){
+                ranking.saveWinScore();
+            }
+            for(int i=0; i < lose; i++){
+                ranking.saveLoseScore();
+            }
+
+            rankingRepository.save(ranking);
+        }
+
 
     }
 

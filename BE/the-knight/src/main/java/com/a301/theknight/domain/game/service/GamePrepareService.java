@@ -108,7 +108,7 @@ public class GamePrepareService {
         int orderNumber = orderRequest.getOrderNumber();
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
         if (!inGamePlayer.getTeam().equals(team)) {
-            throw new CustomException(NOT_MATCH_REQUEST_TEAM);
+            throw new CustomWebSocketException(NOT_MATCH_REQUEST_TEAM);
         }
         TeamInfoData teamInfoData = Team.A.equals(team)
                 ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
