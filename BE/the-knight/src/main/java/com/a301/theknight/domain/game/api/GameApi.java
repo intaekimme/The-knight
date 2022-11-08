@@ -26,7 +26,7 @@ public class GameApi {
 
     @GetMapping
     public ResponseEntity<?> getGameList(@Size(max = 100) @RequestParam(required = false) String keyword,
-                                         @PageableDefault(size = 6, sort = "created_at", direction = Sort.Direction.DESC) Pageable pageable,
+                                         @PageableDefault(size = 6, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                          @LoginMemberId long memberId) {
         GameListResponse gameListResponse = gameService.getGameList(keyword, memberId, pageable);
         return ResponseEntity.ok(gameListResponse);
