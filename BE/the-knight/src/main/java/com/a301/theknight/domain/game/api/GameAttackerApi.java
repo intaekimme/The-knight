@@ -25,9 +25,11 @@ public class GameAttackerApi {
 
         template.convertAndSend(makeDestinationUri(gameId, "/a/attacker"), attackerDto.getAttackerResponseA());
         template.convertAndSend(makeDestinationUri(gameId, "/b/attacker"), attackerDto.getAttackerResponseB());
+
     }
 
     private String makeDestinationUri(long gameId, String postfix) {
         return SEND_PREFIX + gameId + postfix;
     }
+
 }

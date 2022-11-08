@@ -98,4 +98,11 @@ public class Player extends BaseTimeEntity {
     public void setOwner() {
         owner = true;
     }
+
+//    public void updatePlayer(GameResult result, boolean isDead, Weapon leftWeapon, Weapon rightWeapon) {
+//        this.result = result;
+//        this.isDead = isDead;
+//        this.leftWeapon = leftWeapon;
+//        this.rightWeapon = rightWeapon;
+//    }
 }
