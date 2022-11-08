@@ -8,6 +8,7 @@ import jodd.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,7 @@ public class RankingService {
     private final RankingRepository rankingRepository;
 
     @Transactional
-    public RankingResponse getRankings(String keyword, Pageable pageable) {
+    public RankingResponse getRankings(@Nullable String keyword, Pageable pageable) {
         //TODO: 쿼리 테스트 필요!!
         Page<RankingDto> rankings = StringUtils.isBlank(keyword)
                 ? rankingRepository.getRankingList(pageable)
