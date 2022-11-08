@@ -2,12 +2,12 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { Grid } from "@mui/material";
+import { Grid, Box } from "@mui/material";
 import RoomUser from "./RoomUser";
 import RoomHeader from "./RoomHeader";
 
 export default function RoomDisplay() {
-	const size = 40;
+	const size = 25;
 
 	// 방 정보
 	// const roomData = useSelector((state) => state.roomData.value);
@@ -82,9 +82,9 @@ export default function RoomDisplay() {
 	}, [currentUser, maxUser]);
 
   return (
-		<Grid container sx={{minWidth:size*35}}>
+		<Box sx={{display: "flex", flexDirection: "column", alignItems: "center", minWidth:size*35, height: size*23}}>
 			<RoomHeader roomData={roomData} currentUser={currentUser} maxUser={maxUser} size={size}/>
 			<RoomUser userDatas={userDatas} currentUser={currentUser} maxUser={maxUser} size={size}/>
-		</Grid>
+		</Box>
   );
 }
