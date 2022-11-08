@@ -4,8 +4,8 @@ import { Grid } from "@mui/material";
 import UserBox from "../../commons/user/UserBox";
 
 export default function RoomUser(props) {
-	console.log(props.userDatas.slice(0, parseInt(props.maxUser / 2)));
-	console.log(props.userDatas.slice(parseInt(props.maxUser / 2), props.userDatas.length));
+	// console.log(props.userDatas.slice(0, parseInt(props.maxUser / 2)));
+	// console.log(props.userDatas.slice(parseInt(props.maxUser / 2), props.userDatas.length));
 	return (
 		<Grid container item xs={12} sx={{p:10}}>
 			<Grid container justifyContent="center" item xs={12}>

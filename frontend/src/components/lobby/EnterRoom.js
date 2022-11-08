@@ -6,8 +6,8 @@ import SockJS from "sockjs-client";
 import {enterRoomSubscribe} from '../../_slice/websocketSlice';
 import {setRoom, setUsers} from '../../_slice/roomSlice';
 import api from '../../api/api';
-import {onModifyRoom, onState, onChatAll, onChatTeam, onEnterRoom,
-  onAllMembersInRoom, onSelectTeam, onReady, onExitRoom} from '../../websocket/Receivers';
+import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEnterRoom,
+  onSubAllMembersInRoom, onSubSelectTeam, onSubReady, onSubExitRoom} from '../../websocket/Receivers';
 
 export default function EnterRoom(){
   const gameId = useParams("gameId").gameId;
@@ -19,31 +19,31 @@ export default function EnterRoom(){
     stompClient: stompClient,
     subscribes : [{
       api: api.subModifyRoom(gameId),
-      receiver : onModifyRoom,
+      receiver : onSubModifyRoom,
     },{
       api: api.subState(gameId),
-      receiver : onState,
+      receiver : onSubState,
     },{
       api: api.subChatAll(gameId),
-      receiver : onChatAll,
+      receiver : onSubChatAll,
     },{
       api: api.subChatTeam(gameId, 'a'),
-      receiver : onChatTeam,
+      receiver : onSubChatTeam,
     },{
       api: api.subEnterRoom(gameId),
-      receiver : onEnterRoom,
+      receiver : onSubEnterRoom,
     },{
       api: api.subAllMembersInRoom(gameId),
-      receiver : onAllMembersInRoom,
+      receiver : onSubAllMembersInRoom,
     },{
       api: api.subSelectTeam(gameId),
-      receiver : onSelectTeam,
+      receiver : onSubSelectTeam,
     },{
       api: api.subReady(gameId),
-      receiver : onReady,
+      receiver : onSubReady,
     },{
       api: api.subExitRoom(gameId),
-      receiver : onExitRoom,
+      receiver : onSubExitRoom,
     },],
   }
   const url = '/in-room';
