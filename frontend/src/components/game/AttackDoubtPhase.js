@@ -1,12 +1,17 @@
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux"
+import { selectPass, initializePass } from "../../_slice/gameSlice"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
-import { useSelector, useDispatch } from "react-redux"
-import {selectPass} from "../../_slice/gameSlice"
 
 export default function AttackDoubtPhase() {
   const dispatch = useDispatch();
   const me = useSelector(state => state.game.me)
   const currentAttacker = useSelector(state => state.game.currentAttacker)
+
+  useEffect(() => {
+    dispatch(initializePass())
+  }, []);
 
   function clickPass() {
     dispatch(selectPass())
@@ -29,7 +34,7 @@ export default function AttackDoubtPhase() {
           적팀이 의심여부를 선택 중입니다
         </Box>
       )
-    // 공격자 적팀일 때
+    // 공격자가 적팀일 때
     } else {
       return (
         <Box

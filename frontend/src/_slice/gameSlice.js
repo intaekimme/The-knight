@@ -75,7 +75,7 @@ const orderInit = {
 }
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFEND, DEFEND_DOUBT, DOUBT_RESULT, EXECUTE, RESULT, END
-const phaseInit = "DEFEND"
+const phaseInit = "DEFEND_DOUBT"
 const previousPhaseInit = null
 
 const isLoadingInit = false
@@ -91,11 +91,11 @@ const currentAttackerInit = {
 }
 
 const currentDefenderInit = {
-  memberId: 5,
-  nickname: 'Tom',
+  memberId: 3,
+  nickname: "Sara",
   leftCount: 0,
   rightCount: 0,
-  team: "B",
+  team: "A",
   order: 0,
   weapons: [null, null],
 }
