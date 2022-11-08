@@ -11,13 +11,12 @@ import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
-import com.a301.theknight.domain.member.entity.Member;
-import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.domain.ranking.entity.Ranking;
 import com.a301.theknight.domain.ranking.repository.RankingRepository;
-import com.a301.theknight.global.error.exception.CustomException;
+import com.a301.theknight.global.error.exception.CustomRestException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +27,6 @@ import java.util.List;
 import static com.a301.theknight.global.error.errorcode.GameErrorCode.GAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
-import static com.a301.theknight.global.error.errorcode.MemberErrorCode.MEMBER_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.PlayerErrorCode.PLAYER_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.RankingErrorCode.RANKING_IS_NOT_EXIST;
 
@@ -40,7 +38,6 @@ public class GameEndService {
     private final GameRepository gameRepository;
     private final RankingRepository rankingRepository;
     private final PlayerRepository playerRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional
     public GameEndDto gameEnd(long gameId) {
@@ -51,8 +48,8 @@ public class GameEndService {
         // 3. 게임 상태 End로 update
         // 4. GameEndDto 채워서 리턴
 
-        InGame inGame = gameRedisRepository.getInGame(gameId).orElseThrow(() -> new CustomException(INGAME_IS_NOT_EXIST));
-        Game game = gameRepository.findById(gameId).orElseThrow(() -> new CustomException(GAME_IS_NOT_EXIST));
+        InGame inGame = gameRedisRepository.getInGame(gameId).orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
+        Game game = gameRepository.findById(gameId).orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
         game.changeStatus(GameStatus.END);
 
         List<PlayerWeaponDto> players = new ArrayList<>();
@@ -61,8 +58,8 @@ public class GameEndService {
         boolean isBWin = method(gameId, players, inGame.getTeamBInfo());
 
         String losingTeam = isAWin ? "A" : "B";
-        long losingLeaderId = losingTeam.equals("A")? inGame.getTeamAInfo().getLeaderId() : inGame.getTeamBInfo().getLeaderId();
-        long winningLeaderId = losingTeam.equals("A")? inGame.getTeamBInfo().getLeaderId() : inGame.getTeamAInfo().getLeaderId();
+        long losingLeaderId = losingTeam.equals("A") ? inGame.getTeamAInfo().getLeaderId() : inGame.getTeamBInfo().getLeaderId();
+        long winningLeaderId = losingTeam.equals("A") ? inGame.getTeamBInfo().getLeaderId() : inGame.getTeamAInfo().getLeaderId();
 
         EndResponse endResponseA = EndResponse.builder().isWin(isAWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).build();
         EndResponse endResponseB = EndResponse.builder().isWin(isBWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).build();
@@ -70,17 +67,17 @@ public class GameEndService {
         return GameEndDto.builder().endResponseA(endResponseA).endResponseB(endResponseB).build();
     }
 
-    private boolean method (long gameId, List<PlayerWeaponDto> players, TeamInfoData teamInfoData) {
+    private boolean method(long gameId, List<PlayerWeaponDto> players, TeamInfoData teamInfoData) {
         long LeaderId = teamInfoData.getLeaderId();
-        InGamePlayer Leader = gameRedisRepository.getInGamePlayer(gameId, LeaderId).orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+        InGamePlayer Leader = gameRedisRepository.getInGamePlayer(gameId, LeaderId).orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
         boolean isWin = !Leader.isDead();
 
         GameOrderDto[] orderList = teamInfoData.getOrderList();
 
         for (GameOrderDto gameOrderDto : orderList) {
             long memberId = gameOrderDto.getMemberId();
-            Player player = playerRepository.findByGameIdAndMemberId(gameId, memberId).orElseThrow(() -> new CustomException(PLAYER_IS_NOT_EXIST));
-            Ranking ranking = rankingRepository.findByMemberId(memberId).orElseThrow(() -> new CustomException(RANKING_IS_NOT_EXIST));
+            Player player = playerRepository.findByGameIdAndMemberId(gameId, memberId).orElseThrow(() -> new CustomRestException(PLAYER_IS_NOT_EXIST));
+            Ranking ranking = rankingRepository.findByMemberId(memberId).orElseThrow(() -> new CustomRestException(RANKING_IS_NOT_EXIST));
 
             if (isWin) {
                 player.winGame();
@@ -90,7 +87,7 @@ public class GameEndService {
                 ranking.saveLoseScore();
             }
 
-            InGamePlayer inGamePlayer = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomException(INGAME_PLAYER_IS_NOT_EXIST));
+            InGamePlayer inGamePlayer = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
             players.add(PlayerWeaponDto.builder().memberId(memberId).leftWeapon(inGamePlayer.getLeftWeapon().toString()).rightWeapon(inGamePlayer.getRightWeapon().toString()).build());
         }
 
