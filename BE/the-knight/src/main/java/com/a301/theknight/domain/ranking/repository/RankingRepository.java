@@ -19,18 +19,23 @@ public interface RankingRepository extends JpaRepository<Ranking, Long> {
             "WHERE member_id = :memberId", nativeQuery = true)
     Long findMemberRanking(@Param("memberId") long memberId);
 
-    @Query(value = "SELECT m.nickname, m.image, rank() OVER (ORDER BY r.score DESC) AS ranking, r.score " +
-            "FROM ranking AS r LEFT JOIN member AS m " +
+    @Query(value = "SELECT m.nickname, m.image, r.ranking, r.score " +
+            "FROM (SELECT member_id, rank() OVER (ORDER BY score DESC) as ranking, score " +
+            "       FROM ranking) AS r " +
+            "LEFT JOIN member AS m " +
             "ON r.member_id = m.id " +
             "ORDER BY ranking ASC",
             countQuery = "SELECT count(*) " +
                     "FROM ranking AS r LEFT JOIN member AS m " +
-                    "ON r.member_id = m.id ",
+                    "ON r.member_id = m.id " +
+                    "WHERE m.nickname LIKE %:keyword%",
             nativeQuery = true)
     Page<RankingDto> getRankingList(Pageable pageable);
 
-    @Query(value = "SELECT m.nickname, m.image, rank() OVER (ORDER BY r.score DESC) AS ranking, r.score " +
-            "FROM ranking AS r LEFT JOIN member AS m " +
+    @Query(value = "SELECT m.nickname, m.image, r.ranking, r.score " +
+            "FROM (SELECT member_id, rank() OVER (ORDER BY score DESC) as ranking, score " +
+            "       FROM ranking) AS r " +
+            "LEFT JOIN member AS m " +
             "ON r.member_id = m.id " +
             "WHERE m.nickname LIKE %:keyword% " +
             "ORDER BY ranking ASC",
