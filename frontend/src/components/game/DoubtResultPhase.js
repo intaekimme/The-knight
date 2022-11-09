@@ -23,7 +23,6 @@ export default function DoubtResultPhase() {
     )
   }
 
-
   return (
     <Box
       sx={{
