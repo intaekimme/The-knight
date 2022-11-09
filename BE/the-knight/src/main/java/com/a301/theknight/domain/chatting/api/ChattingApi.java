@@ -1,29 +1,23 @@
 package com.a301.theknight.domain.chatting.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.auth.model.MemberPrincipal;
 import com.a301.theknight.domain.chatting.dto.ChattingRequest;
 import com.a301.theknight.domain.chatting.dto.ChattingResponse;
-import com.a301.theknight.domain.chatting.entity.ChattingSet;
 import com.a301.theknight.domain.chatting.service.ChattingService;
+import com.a301.theknight.domain.common.service.SendMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
-public class ChattingWebsocketApi {
+public class ChattingApi {
 
-    private final SimpMessagingTemplate template;
+    private final SendMessageService messageService;
     private final ChattingService chattingService;
 
     @MessageMapping(value = "/games/{gameId}/chat")
@@ -31,15 +25,7 @@ public class ChattingWebsocketApi {
                             @Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId) {
         ChattingResponse chattingResponse = chattingService.makeResponse(memberId, gameId, chattingRequest);
 
-        String destinationUri = makeDestinationUri("/sub/games/", gameId, chattingResponse.getChattingSet());
-        template.convertAndSend(destinationUri, chattingResponse);
-    }
-
-    private String makeDestinationUri(String prefix, long gameId, String chattingSet) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(prefix).append(gameId).append("/").append("chat-").append(chattingSet.toLowerCase());
-
-        return sb.toString();
+        messageService.sendChatData(gameId, chattingResponse.getChattingSet(), chattingResponse);
     }
 
 }
