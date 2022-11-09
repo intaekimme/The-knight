@@ -42,25 +42,6 @@ public class GameExecuteEndService {
     private final RankingRepository rankingRepository;
     private final PlayerRepository playerRepository;
 
-    //  Execute
-    @Transactional
-    public PassResponse pass(long gameId, long memberId) {
-        /*
-        1. inGame State로 공격 패스인지 방어 패스인지
-            -> 방어 패스 : 공격 진행으로 화면 전환 응답 -> 턴 수행으로 메시지 발행
-            -> 공격 패스 : 다음 공격자로 화면 전환 응답 -> 바로 어태커로 메시지 발행
-        */
-        InGame inGame = getInGame(gameId);
-        GameStatus status = inGame.getGameStatus();
-
-        if (GameStatus.ATTACK.equals(status)) {
-            //TODO: 어택 패스 -> 어택 정보 비워주고 다음 공격자로 다시 감.
-            return null;
-        }
-        //TODO: 턴 수행 응답.
-        return null;
-    }
-
     @Transactional
     public GameExecuteResponse executeTurn(long gameId) {
         InGame inGame = getInGame(gameId);
