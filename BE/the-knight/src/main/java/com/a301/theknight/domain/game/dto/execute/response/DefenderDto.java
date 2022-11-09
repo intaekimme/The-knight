@@ -10,4 +10,5 @@ public class DefenderDto {
     private String hand;
     private Boolean isDead;
     private int restCount;
+    private boolean passedDefense;
 }
