@@ -15,8 +15,8 @@ public class SendMessageService {
         template.convertAndSend(makeDestinationUrl(gameId, postfix), payload);
     }
 
-    public void sendDataToServer(long gameId, String postfix, Object payload) {
-        template.convertAndSend(makeServerDestinationUrl(gameId, postfix), payload);
+    public void sendDataToServer(long gameId, String postfix) {
+        template.convertAndSend(makeServerDestinationUrl(gameId, postfix), "");
     }
 
     public void convertCall(long gameId) {
