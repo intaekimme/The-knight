@@ -2,6 +2,7 @@ package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.doubt.response.DoubtPlayerDto;
 import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponse;
+import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponseDto;
 import com.a301.theknight.domain.game.dto.doubt.response.SuspectedPlayerDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.*;
@@ -30,7 +31,7 @@ public class GameDoubtService {
     private final RedissonClient redissonClient;
 
     @Transactional
-    public void doubt(long gameId, long suspectId, long suspectedId, String doubtStatus) {
+    public void doubt(long gameId, long suspectId, long suspectedId, GameStatus doubtStatus) {
         InGame inGame = getInGame(gameId);
         InGamePlayer suspect = getInGamePlayer(gameId, suspectId);
         InGamePlayer suspected = getInGamePlayer(gameId, suspectedId);
@@ -52,7 +53,7 @@ public class GameDoubtService {
     }
 
     @Transactional
-    public DoubtResponse getDoubtInfo(long gameId) {
+    public DoubtResponseDto getDoubtInfo(long gameId) {
         InGame inGame = getInGame(gameId);
         DoubtData doubtData = inGame.getTurnData().getDoubtData();
 
@@ -63,7 +64,7 @@ public class GameDoubtService {
         inGame.clearDoubtData();
         gameRedisRepository.saveInGame(gameId, inGame);
 
-        return doubtResponse;
+        return new DoubtResponseDto(doubtResponse, inGame.getGameStatus());
     }
 
     @Transactional
@@ -134,15 +135,14 @@ public class GameDoubtService {
         return deadPlayer;
     }
 
-    private void validCheck(InGame inGame, String doubtStatus, InGamePlayer suspect, InGamePlayer suspected) {
+    private void validCheck(InGame inGame, GameStatus doubtStatus, InGamePlayer suspect, InGamePlayer suspected) {
         checkDoubtStatus(inGame, doubtStatus);
         checkDeadState(suspect, suspected);
         checkOtherTeam(suspect, suspected);
     }
 
-    private void checkDoubtStatus(InGame inGame, String doubtStatus) {
-        String gameStatus = inGame.getGameStatus().name();
-        if (!gameStatus.equals(doubtStatus)) {
+    private void checkDoubtStatus(InGame inGame, GameStatus doubtStatus) {
+        if (!doubtStatus.equals(inGame.getGameStatus())) {
             throw new CustomWebSocketException(DO_NOT_FIT_REQUEST_BY_GAME_STATUS);
         }
     }

@@ -52,13 +52,13 @@ public class GameConvertService {
         } finally {
             lock.unlock();
         }
-        //TODO: inGame의 제한시간 flag가 true면, 화면 전환 완료 flag true로 바꾸고 null리턴
+
         if (isFullCount) {
             RLock timeLock = redissonClient.getLock(timeLockKeyGen(gameId));
             try {
                 boolean isGetTimeLock = timeLock.tryLock(5, 2, TimeUnit.SECONDS);
                 if (!isGetTimeLock) {
-                    //TODO: 못들어오는 경우는 /convert를 다시 보내주기??
+                    throw new CustomWebSocketException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
                 }
                 return gameConvertUtil.getPostfixList(gameStatus);
             } catch (InterruptedException e) {
@@ -96,13 +96,11 @@ public class GameConvertService {
             case PREPARE:
                 return PREDECESSOR;
             case ATTACK:
-                return ATTACK_DOUBT;
-            case DEFENSE:
-                return DEFENSE_DOUBT;
+                return ATTACK;
+            case DEFENSE: case DEFENSE_DOUBT:
+                return EXECUTE;
             case ATTACK_DOUBT:
                 return DEFENSE;
-            case DEFENSE_DOUBT:
-                return EXECUTE;
         }
         return null;
     }

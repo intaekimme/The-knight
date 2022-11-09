@@ -24,46 +24,8 @@ export default function RoomDisplay() {
 
 	const currentUser = 5;
 	const maxUser = 10;
-
-	// 유저 목록
-	// const userData = useSelector((state) => state.userData.value);
-	const initUserDatas = [{
-		nickname: "닉네임1",
-		image: "url",
-		ranking: 1,
-		score: 100,
-		win: 1,
-		lose: 0,
-	},
-	{
-		nickname: "닉네임2",
-		image: "url",
-		ranking: 1,
-		score: 100,
-		win: 1,
-		lose: 0,
-		},
-		{
-			nickname: "닉네임3",
-			image: "url",
-			ranking: 1,
-			score: 100,
-			win: 1,
-			lose: 0,
-		},
-		{
-			nickname: "닉네임4",
-			image: "url",
-			ranking: 1,
-			score: 100,
-			win: 1,
-			lose: 0,
-		},
-	];
-	const [userDatas, setUserDatas] = React.useState([]);
-	React.useEffect(() => {
-		setUserDatas([...initUserDatas]);
-	}, [])
+	
+	const userDatas = useSelector(state=>state.room.usersInfo);
 	const emptyUser = {
 		nickname: "",
 		image: "",
@@ -72,14 +34,6 @@ export default function RoomDisplay() {
 		win: -1,
 		lose: -1,
 	};
-
-	React.useEffect(() => {
-		const tempDatas = [...initUserDatas];
-		while (tempDatas.length < maxUser) {
-			tempDatas.push(emptyUser);
-		}
-		setUserDatas(tempDatas);
-	}, [currentUser, maxUser]);
 
   return (
 		<Box sx={{display: "flex", flexDirection: "column", alignItems: "center", minWidth:size*35, height: size*23}}>

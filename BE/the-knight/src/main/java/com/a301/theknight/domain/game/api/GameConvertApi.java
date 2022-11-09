@@ -1,11 +1,11 @@
 package com.a301.theknight.domain.game.api;
 
+import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
 import com.a301.theknight.domain.game.service.GameConvertService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import javax.validation.constraints.Min;
@@ -15,46 +15,33 @@ import java.util.List;
 @Controller
 public class GameConvertApi {
 
-    private static final String SEND_PREFIX = "/sub/games/";
-    private static final String SERVER_PREFIX = "/pub/games/";
-    private final SimpMessagingTemplate template;
-
+    private final SendMessageService sendMessageService;
     private final GameConvertService gameConvertService;
 
     @MessageMapping(value = "/games/{gameId}/convert")
     public void publishConvert(@Min(1) @DestinationVariable long gameId) {
         GameStatusResponse gameStatusResponse = gameConvertService.getGameStatus(gameId);
-
-        template.convertAndSend(makeDestinationUri(gameId, "/convert"), gameStatusResponse);
+        sendMessageService.sendData(gameId,"/convert",gameStatusResponse);
     }
 
     @MessageMapping(value = "/games/{gameId}/force-convert")
     public void forceConvert(@DestinationVariable long gameId) {
         GameStatusResponse gameStatusResponse = gameConvertService.getNextGameStatus(gameId);
-
-        template.convertAndSend(makeDestinationUri(gameId, "/convert"), gameStatusResponse);
+        sendMessageService.sendData(gameId,"/convert",gameStatusResponse);
     }
 
     @MessageMapping(value = "/games/{gameId}/convert-complete")
     public void convertComplete(@Min(1) @DestinationVariable long gameId) {
         List<String> postfixList = gameConvertService.convertComplete(gameId);
         if (postfixList != null) {
-            postfixList.forEach(postfix -> template
-                    .convertAndSend(makeServerDestinationUri(gameId, postfix)));
+            postfixList.forEach(postfix -> sendMessageService.sendDataToServer(gameId, postfix));
         }
     }
 
     @MessageMapping(value = "/games/{gameId}/proceed")
     public void proceedGame(@Min(1) @DestinationVariable long gameId) {
         GameStatusResponse gameStatus = gameConvertService.getGameStatus(gameId);
-        template.convertAndSend(makeDestinationUri(gameId, "/proceed"), gameStatus);
+        sendMessageService.sendData(gameId, "/proceed", gameStatus);
     }
 
-    private String makeDestinationUri(long gameId, String postfix) {
-        return SEND_PREFIX + gameId + postfix;
-    }
-
-    private String makeServerDestinationUri(long gameId, String postfix) {
-        return SERVER_PREFIX + gameId + postfix;
-    }
 }

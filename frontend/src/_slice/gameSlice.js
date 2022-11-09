@@ -6,6 +6,7 @@ const meInit = {
   nickname: "Tom",
   index: 4,
   team: "B",
+  pass: false,
 }
 
 const playersInit = {
@@ -74,27 +75,27 @@ const orderInit = {
 }
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFEND, DEFEND_DOUBT, DOUBT_RESULT, EXECUTE, RESULT, END
-const phaseInit = "ATTACK"
+const phaseInit = "DEFEND_DOUBT"
 const previousPhaseInit = null
 
 const isLoadingInit = false
 
 const currentAttackerInit = {
-  memberId: 5,
-  nickname: 'Tom',
+  memberId: 1,
+  nickname: "John",
   leftCount: 0,
   rightCount: 0,
-  team: "B",
+  team: "A",
   order: 0,
   weapons: [null, null],
 }
 
 const currentDefenderInit = {
-  memberId: 6,
-  nickname: 'Ria',
+  memberId: 3,
+  nickname: "Sara",
   leftCount: 0,
   rightCount: 0,
-  team: "B",
+  team: "A",
   order: 0,
   weapons: [null, null],
 }
@@ -165,7 +166,13 @@ export const gameSlice = createSlice({
     switchIsLoading: (state) => {
       state.isLoading = !state.isLoading
     },
+    selectPass: (state) => {
+      state.me.pass = true
+    },
+    initializePass: (state) => {
+      state.me.pass = false
+    },
   },
 });
-export const { fetchMe, fetchPlayers, selectWeapon, deleteWeapon, selectOrder, fetchPhase, switchIsLoading } = gameSlice.actions;
+export const { fetchMe, fetchPlayers, selectWeapon, deleteWeapon, selectOrder, fetchPhase, switchIsLoading, selectPass, initializePass } = gameSlice.actions;
 export default gameSlice.reducer;

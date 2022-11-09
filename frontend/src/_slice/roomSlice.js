@@ -88,6 +88,7 @@ export const roomSlice = createSlice({
       state.roomInfo.state = action.payload.state;
     },
     setMembers:(state, action) =>{
+      console.log(action);
       state.usersInfo = [...action.payload];
     },
     changeTeam:(state, action) =>{
