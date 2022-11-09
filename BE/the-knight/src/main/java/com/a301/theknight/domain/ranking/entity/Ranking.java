@@ -40,7 +40,7 @@ public class Ranking extends BaseTimeEntity {
 
     public void saveLoseScore() {
         //TODO : 점수 기준 정하기
-        score -= 10;
+        score -= 5;
         if (score < 0)
             score = 0;
         lose++;

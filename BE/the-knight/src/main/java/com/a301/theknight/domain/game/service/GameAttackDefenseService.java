@@ -63,8 +63,9 @@ public class GameAttackDefenseService {
     public GamePreAttackResponse getPreAttack(long gameId) {
         InGame inGame = getInGame(gameId);
         Team preAttackTeam = inGame.getCurrentAttackTeam();
-        //TODO: 반대 팀으로 변경 코드 넣기 (이후 공격자 조회 시 팀을 바꾸면서 조회하기 때문)
+
         inGame.changeStatus(ATTACK);
+        gameRedisRepository.saveInGame(gameId, inGame);
 
         return new GamePreAttackResponse(preAttackTeam);
     }
