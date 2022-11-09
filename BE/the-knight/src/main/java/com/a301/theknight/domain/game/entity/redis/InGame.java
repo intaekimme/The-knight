@@ -18,7 +18,6 @@ public class InGame implements Serializable {
     private int maxMemberNum;
     private TurnData turnData;
     private int requestCount;
-
     private int doubtPassCount;
 
     public void initTurnData() {
@@ -44,8 +43,6 @@ public class InGame implements Serializable {
     public boolean isFullCount() {
         return requestCount >= maxMemberNum;
     }
-
-//    public boolean
 
     public TeamInfoData getTeamInfoData(Team team) {
         return Team.A.equals(team) ? teamAInfo : teamBInfo;
@@ -92,4 +89,5 @@ public class InGame implements Serializable {
     public void updateCurrentAttackTeam(){
         this.currentAttackTeam = this.currentAttackTeam == Team.A ? Team.B : Team.A;
     }
+
 }
