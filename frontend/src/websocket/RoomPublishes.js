@@ -43,7 +43,7 @@ const onPubSelectTeam = (payload) => {
   //   team: String
   //   (A, B)
   // }
-  payload.stompClient.send(`${api.pubSelectTeam(payload.gameId)}`, {}, JSON.stringify(payload.selectTeam));
+  payload.stompClient.send(`${api.pubSelectTeam(payload.gameId)}`, {}, JSON.stringify({team: payload.team}));
   console.log("팀 선택 pub", payload);
 };
 // ready publish

@@ -17,16 +17,18 @@ const initRoom = createAsyncThunk('room/initRoom', async (props, { rejectWithVal
   }
 });
 
-const roomInfo = createAsyncThunk('roomInfo', async (gameId, { rejectWithValue }) => {
+const getRoomInfo = createAsyncThunk('room/getRoomInfo', async (gameId, { rejectWithValue }) => {
   try {
-    const res = await axios.get(api.gameRoomInfo(gameId), {});
-    console.log(res.data);
+    console.log(api.gameRoomInfo(gameId));
+    const res = await axios.get(api.gameRoomInfo(gameId), {headers: {Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}});
     return res.data;
   } catch (err) {
+    console.log(err);
     return rejectWithValue(err.response.data);
   }
 });
-const usersInfo = createAsyncThunk('usersInfo', async (gameId, { rejectWithValue }) => {
+
+const getUsersInfo = createAsyncThunk('room/getUsersInfo', async (gameId, { rejectWithValue }) => {
   try {
     const res = await axios.get(api.gameMembersInfo(gameId), {});
     console.log(res.data);
@@ -37,11 +39,11 @@ const usersInfo = createAsyncThunk('usersInfo', async (gameId, { rejectWithValue
 });
 
 const roomInit = {
-  state : -1,
+  // state : -1,
   gameId: -1,
   title: "테스트 제목",
-  maxMember: 4,
-  // currentUser: -1,
+  maxMember: 10,
+  currentMembers: 0,
   sword: 0,
   twin: 0,
   shield: 0,
@@ -77,12 +79,15 @@ export const roomSlice = createSlice({
   initialState:{roomInfo: roomInit, usersInfo: userInit},
   reducers:{
     modifyRoomSetting:(state, action) =>{
-      state.roomInfo.title = action.payload.title;
-      state.roomInfo.maxUser = action.payload.maxUser;
-      state.roomInfo.sword = action.payload.sword;
-      state.roomInfo.twin = action.payload.twin;
-      state.roomInfo.shield = action.payload.shield;
-      state.roomInfo.hand = action.payload.hand;
+      const tempRoomData = {...state.roomInfo};
+      tempRoomData.title = action.payload.title;
+      tempRoomData.maxMember = action.payload.maxMember;
+      tempRoomData.sword = action.payload.sword;
+      tempRoomData.twin = action.payload.twin;
+      tempRoomData.shield = action.payload.shield;
+      tempRoomData.hand = action.payload.hand;
+      state.roomInfo = tempRoomData;
+      console.log(tempRoomData);
     },
     setState:(state, action) =>{
       state.roomInfo.state = action.payload.state;
@@ -92,7 +97,7 @@ export const roomSlice = createSlice({
       state.usersInfo = [...action.payload];
     },
     changeTeam:(state, action) =>{
-      const tempUsersInfo = state.usersInfo;
+      const tempUsersInfo = [...state.usersInfo];
       for(let i=0;i<tempUsersInfo.length;i++){
         if(tempUsersInfo[i].id === action.payload.memberId){
           tempUsersInfo[i].team = action.payload.team;
@@ -119,21 +124,22 @@ export const roomSlice = createSlice({
     [initRoom.rejected]: state => {
       state.roomInfo = roomInit;
     },
-    [roomInfo.fulfilled]: (state, action) => {
+    [getRoomInfo.fulfilled]: (state, action) => {
       state.roomInfo = action.payload;
+      console.log(action.payload);
     },
-    [roomInfo.rejected]: state => {
+    [getRoomInfo.rejected]: state => {
       state.roomInfo = roomInit;
     },
-    [usersInfo.fulfilled]: (state, action) => {
+    [getUsersInfo.fulfilled]: (state, action) => {
       state.usersInfo = [...action.payload];
     },
-    [usersInfo.rejected]: state => {
+    [getUsersInfo.rejected]: state => {
       state.usersInfo = userInit;
     },
   },
 });
 
-export { initRoom, roomInfo, usersInfo };
+export { initRoom, getRoomInfo, getUsersInfo };
 export const { modifyRoomSetting, setState, setMembers, changeTeam, changeReady } = roomSlice.actions;
 export default roomSlice.reducer;

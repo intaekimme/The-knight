@@ -5,34 +5,49 @@ import UserBox from "../../commons/user/UserBox";
 
 export default function RoomUser(props) {
 	const emptyUser = {
-		nickname: "",
-		image: "",
-		ranking: -1,
-		score: -1,
-		win: -1,
-		lose: -1,
+    id: -1,
+    nickname: "",
+    image: "",
+    readyStatus: false,
+    team: 'B',
+    ranking: -1,
+    score: -1,
+    win: -1,
+    lose: -1,
+    empty: true,
 	};
-	const [userDatas, setUserDatas] = React.useState([]);
+	// users 정보
+	const [memberDatas, setMemberDatas] = React.useState([]);
 	React.useEffect(()=>{
-		const tempDatas = [...props.userDatas];
-		while(tempDatas.length < props.maxUser){
+		console.log(props.memberDatas);
+		const tempDatas = [...props.memberDatas];
+		while(tempDatas.length < props.roomData.maxMember){
 			tempDatas.push(emptyUser);
 		}
 		console.log(tempDatas);
-		setUserDatas(tempDatas);
-	}, [props.userDatas]);
+		setMemberDatas(tempDatas);
+	}, [props.memberDatas, props.roomData]);
+	
+	// 방 정보
+	const [roomData, setRoomData] = React.useState(props.roomData);
+	React.useEffect(()=>{
+		if(props.roomData){
+			console.log(props.roomData);
+			setRoomData(props.roomData);
+		}
+	}, [props.roomData]);
 	return (
 		<Box sx={{p: 3, display: "flex", justifyContent: "space-evenly",flexDirection: "column", width: "70%", height: "100%"}}>
 			<Box sx={{display: "flex", justifyContent: "space-evenly"}}>
-				{userDatas.slice(0, parseInt(props.maxUser / 2)).map((userData, index) => (
-					<UserBox key={`user${userData.nickname}${index + parseInt(props.maxUser / 2) - parseInt(props.maxUser / 2)}`}
-						userData={userData} width={props.size * 6} height={props.size * 6}/>
+				{memberDatas.slice(0, parseInt(roomData.maxMember / 2)).map((memberData, index) => (
+					<UserBox key={`user${memberData.nickname}${index + parseInt(roomData.maxMember / 2) - parseInt(roomData.maxMember / 2)}`}
+						userData={memberData} width={props.size * 6} height={props.size * 6}/>
 				))}
 			</Box>
 			<Box sx={{ display: "flex", justifyContent: "space-evenly"}}>
-				{userDatas.slice(parseInt(props.maxUser / 2), userDatas.length).map((userData, index) => (
-					<UserBox key={`user${userData.nickname}${index + parseInt(props.maxUser / 2)}`} 
-					userData={userData} width={props.size*6} height={props.size*6}/>
+				{memberDatas.slice(parseInt(roomData.maxMember / 2), memberDatas.length).map((memberData, index) => (
+					<UserBox key={`user${memberData.nickname}${index + parseInt(roomData.maxMember / 2)}`} 
+					userData={memberData} width={props.size*6} height={props.size*6}/>
 				))}
 			</Box>
 		</Box>
