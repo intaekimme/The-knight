@@ -9,7 +9,7 @@ function Player({ player, isOpp }) {
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
   const isAttackPhase = useSelector((state) => state.game.phase) === "ATTACK";
   const isAttackDoubtPhase = useSelector((state) => state.game.phase) === "ATTACK_DOUBT";
-  const isDefendDoubtPhase = useSelector((state) => state.game.phase) === "DEFEND_DOUBT";
+  const isDefenseDoubtPhase = useSelector((state) => state.game.phase) === "DEFENSE_DOUBT";
   const isMe = player.memberId === me.memberId;
   const isAttacker = player.memberId === currentAttacker.memberId;
   const AttackerIsMe = me.memberId === currentAttacker.memberId;
@@ -29,7 +29,7 @@ function Player({ player, isOpp }) {
         onMouseOut={() => setIsHovering(false)}
       />
       <div style={{ ...(isMe && { color: "green" }) }}>{player.nickname}</div>
-      {(isAttackDoubtPhase || isDefendDoubtPhase) && isMe && me.pass && <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>PASS</div>}
+      {(isAttackDoubtPhase || isDefenseDoubtPhase) && isMe && me.pass && <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>PASS</div>}
     </Box>
   );
 }
