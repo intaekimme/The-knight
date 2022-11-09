@@ -63,7 +63,6 @@ public class GameAttackDefenseService {
         InGame inGame = getInGame(gameId);
         Team preAttackTeam = inGame.getCurrentAttackTeam();
 
-        inGame.setCurrentAttackTeam(getOtherTeam(preAttackTeam)); //공격자 조회 로직으로 인해 반대 팀으로 저장.
         inGame.changeStatus(GameStatus.ATTACK);
         gameRedisRepository.saveInGame(gameId, inGame);
 
@@ -155,10 +154,6 @@ public class GameAttackDefenseService {
             gameRedisRepository.saveInGame(gameId, findInGame);
         }
         throw new CustomWebSocketException(UNABLE_TO_PASS_DEFENSE);
-    }
-
-    private Team getOtherTeam(Team team) {
-        return Team.A.equals(team) ? Team.B : Team.A;
     }
 
     private InGame getInGame(long gameId) {

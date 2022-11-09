@@ -90,7 +90,4 @@ public class InGame implements Serializable {
         this.currentAttackTeam = this.currentAttackTeam == Team.A ? Team.B : Team.A;
     }
 
-    public void setCurrentAttackTeam(Team team) {
-        this.currentAttackTeam = team;
-    }
 }
