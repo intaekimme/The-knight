@@ -1,13 +1,15 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
+import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.waiting.request.GameModifyRequest;
+import com.a301.theknight.domain.game.dto.waiting.response.GameExitResponse;
 import com.a301.theknight.domain.game.dto.waiting.response.GameMembersInfoDto;
+import com.a301.theknight.domain.game.dto.waiting.response.GameModifyResponse;
 import com.a301.theknight.domain.game.service.GameWaitingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import javax.validation.Valid;
@@ -17,43 +19,29 @@ import javax.validation.constraints.Min;
 @RequiredArgsConstructor
 public class GameWaitingApi {
 
-    private static final String SEND_PREFIX = "/sub/games/";
-    private final SimpMessagingTemplate template;
-
+    private final SendMessageService messageService;
     private final GameWaitingService gameWaitingService;
 
     @MessageMapping(value = "/games/{gameId}/modify")
     public void modify(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId,
                        @Valid GameModifyRequest gameModifyRequest) {
-        gameWaitingService.modify(gameId, memberId, gameModifyRequest);
+        GameModifyResponse gameModifyResponse = gameWaitingService.modify(gameId, memberId, gameModifyRequest);
 
-        template.convertAndSend(makeDestinationString(gameId, "/modify"), gameModifyRequest);
+        messageService.sendData(gameId,"/modify", gameModifyResponse);
     }
 
     @MessageMapping(value = "/games/{gameId}/delete")
     public void delete(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId){
-        gameWaitingService.delete(gameId, memberId);
+        GameExitResponse gameExitResponse = gameWaitingService.delete(gameId, memberId);
 
-        template.convertAndSend(makeDestinationString(gameId, "/delete"), "");
-    }
-
-    @MessageMapping(value="/games/{gameId}/turn")
-    public void turn(@Min(1) @DestinationVariable long gameId){
-        String destination = makeDestinationString(gameId, "/turn");
-
-        template.convertAndSend(destination);
+        messageService.sendData(gameId, "/delete", gameExitResponse);
     }
 
     @MessageMapping(value = "/games/{gameId}/members")
     public void getGameMemberData(@Min(1) @DestinationVariable long gameId) {
         GameMembersInfoDto membersInfo = gameWaitingService.getMembersInfo(gameId);
 
-        template.convertAndSend(makeDestinationString(gameId, "/members"), membersInfo);
-    }
-
-
-    private static String makeDestinationString(long gameId, String postfix){
-        return SEND_PREFIX + gameId + postfix;
+        messageService.sendData(gameId, "/members", membersInfo);
     }
 
 }

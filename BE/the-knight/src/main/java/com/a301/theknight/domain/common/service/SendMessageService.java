@@ -9,14 +9,19 @@ import org.springframework.stereotype.Service;
 public class SendMessageService {
     private static final String SEND_PREFIX = "/sub/games/";
     private static final String SERVER_PREFIX = "/pub/games/";
+    private static final String CHAT_INFIX = "/chat-";
     private final SimpMessagingTemplate template;
 
     public void sendData(long gameId, String postfix, Object payload) {
         template.convertAndSend(makeDestinationUrl(gameId, postfix), payload);
     }
 
-    public void sendDataToServer(long gameId, String postfix, Object payload) {
-        template.convertAndSend(makeServerDestinationUrl(gameId, postfix), payload);
+    public void sendChatData(long gameId, String chattingSet, Object payload) {
+        template.convertAndSend(makeChatDestinationUrl(gameId, chattingSet), payload);
+    }
+
+    public void sendDataToServer(long gameId, String postfix) {
+        template.convertAndSend(makeServerDestinationUrl(gameId, postfix), "");
     }
 
     public void convertCall(long gameId) {
@@ -33,7 +38,7 @@ public class SendMessageService {
     }
 
     public void forceConvertCall(long gameId) {
-        template.convertAndSend(makeForceConverURL(gameId), "");
+        template.convertAndSend(makeForceConvertURL(gameId), "");
     }
 
 
@@ -51,6 +56,10 @@ public class SendMessageService {
         return SEND_PREFIX + gameId + postfix;
     }
 
+    private String makeChatDestinationUrl(long gameId, String chattingSet) {
+        return SEND_PREFIX + gameId + CHAT_INFIX + chattingSet.toLowerCase();
+    }
+
     private String makeServerDestinationUrl(long gameId, String postfix) {
         return SERVER_PREFIX + gameId + postfix;
     }
@@ -59,7 +68,7 @@ public class SendMessageService {
         return SERVER_PREFIX + gameId + "/convert";
     }
 
-    private String makeForceConverURL(long gameId) {
+    private String makeForceConvertURL(long gameId) {
         return SERVER_PREFIX + gameId + "/force-convert";
     }
 

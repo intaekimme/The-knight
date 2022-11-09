@@ -74,8 +74,8 @@ const orderInit = {
   B: [null, null, null, null, null],
 }
 
-// PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFEND, DEFEND_DOUBT, DOUBT_RESULT, EXECUTE, RESULT, END
-const phaseInit = "DEFEND_DOUBT"
+// PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
+const phaseInit = "EXECUTE"
 const previousPhaseInit = null
 
 const isLoadingInit = false
@@ -90,7 +90,7 @@ const currentAttackerInit = {
   weapons: [null, null],
 }
 
-const currentDefenderInit = {
+const currentDefenserInit = {
   memberId: 3,
   nickname: "Sara",
   leftCount: 0,
@@ -110,7 +110,7 @@ export const gameSlice = createSlice({
     previousPhase: previousPhaseInit,
     isLoading: isLoadingInit,
     currentAttacker: currentAttackerInit,
-    currentDefender: currentDefenderInit,
+    currentDefenser: currentDefenserInit,
   },
   reducers: {
     fetchMe: (state) => {
