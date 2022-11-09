@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.a301.theknight.domain.game.entity.GameStatus.*;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
 @RequiredArgsConstructor
@@ -63,7 +64,7 @@ public class GameAttackDefenseService {
         InGame inGame = getInGame(gameId);
         Team preAttackTeam = inGame.getCurrentAttackTeam();
         //TODO: 반대 팀으로 변경 코드 넣기 (이후 공격자 조회 시 팀을 바꾸면서 조회하기 때문)
-        inGame.changeStatus(GameStatus.ATTACK);
+        inGame.changeStatus(ATTACK);
 
         return new GamePreAttackResponse(preAttackTeam);
     }
@@ -81,7 +82,7 @@ public class GameAttackDefenseService {
         turn.checkLyingAttack(attacker);
 
         findInGame.recordTurnData(turn);
-        findInGame.changeStatus(GameStatus.ATTACK_DOUBT);
+        findInGame.changeStatus(ATTACK_DOUBT);
         gameRedisRepository.saveInGame(gameId, findInGame);
     }
 
@@ -105,7 +106,7 @@ public class GameAttackDefenseService {
         checkPlayerId(memberId, gameAttackPassRequest.getAttacker().getId());
         InGame findInGame = getInGame(gameId);
 
-        if(findInGame.getGameStatus().equals(GameStatus.ATTACK)) return;
+        if(findInGame.getGameStatus().equals(ATTACK)) return;
         throw new CustomWebSocketException(UNABLE_TO_PASS_ATTACK);
     }
 
@@ -121,7 +122,7 @@ public class GameAttackDefenseService {
         turn.checkLyingDefense(defender);
 
         findInGame.recordTurnData(turn);
-        findInGame.changeStatus(GameStatus.DEFENSE_DOUBT);
+        findInGame.changeStatus(DEFENSE_DOUBT);
         gameRedisRepository.saveInGame(gameId, findInGame);
 
     }
@@ -143,17 +144,16 @@ public class GameAttackDefenseService {
         checkPlayerId(memberId, gameDefensePassRequest.getDefender().getId());
 
         InGame findInGame = getInGame(gameId);
-        if(findInGame.getGameStatus().equals(GameStatus.DEFENSE)){
-            TurnData turnData = findInGame.getTurnData();
-            DefendData defendData = turnData.getDefendData();
-            //  방어자 방어 패스처리
-            defendData.defendPass();
-            //  방어를 패스하므로 공격 모션로 전환
-            findInGame.changeStatus(GameStatus.EXECUTE);
-            //  수정한 인게임 저장
-            gameRedisRepository.saveInGame(gameId, findInGame);
+        if (!DEFENSE.equals(findInGame.getGameStatus())) {
+            throw new CustomWebSocketException(UNABLE_TO_PASS_DEFENSE);
         }
-        throw new CustomWebSocketException(UNABLE_TO_PASS_DEFENSE);
+        TurnData turnData = findInGame.getTurnData();
+        DefendData defendData = turnData.getDefendData();
+        defendData.defendPass();
+
+        findInGame.changeStatus(EXECUTE);
+        gameRedisRepository.saveInGame(gameId, findInGame);
+
     }
 
     private InGame getInGame(long gameId) {
