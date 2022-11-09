@@ -12,7 +12,6 @@ import DefensePhase from "../components/game/DefensePhase";
 import DefenseDoubtPhase from "../components/game/DefenseDoubtPhase";
 import DoubtResultPhase from "../components/game/DoubtResultPhase";
 import ExecutePhase from "../components/game/ExecutePhase";
-import ResultPhase from "../components/game/ResultPhase";
 import EndPhase from "../components/game/EndPhase";
 
 export default function Game() {
@@ -39,7 +38,6 @@ export default function Game() {
       {!isLoading && phase === "DEFENSE_DOUBT" && <DefenseDoubtPhase></DefenseDoubtPhase>}
       {!isLoading && phase === "DOUBT_RESULT" && <DoubtResultPhase></DoubtResultPhase>}
       {!isLoading && phase === "EXECUTE" && <ExecutePhase></ExecutePhase>}
-      {!isLoading && phase === "RESULT" && <ResultPhase></ResultPhase>}
       {!isLoading && phase === "END" && <EndPhase></EndPhase>}
     </div>
   );
