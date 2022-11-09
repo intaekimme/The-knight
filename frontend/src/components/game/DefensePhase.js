@@ -2,14 +2,14 @@ import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 import { useSelector } from "react-redux"
 
-export default function DefendPhase() {
+export default function DefensePhase() {
   const me = useSelector(state => state.game.me)
   const currentAttacker = useSelector(state => state.game.currentAttacker)
-  const currentDefender = useSelector(state => state.game.currentDefender)
+  const currentDefenser = useSelector(state => state.game.currentDefenser)
 
   function BoxRender() {
     // 내가 수비자일 때
-    if (me.memberId === currentDefender.memberId) {
+    if (me.memberId === currentDefenser.memberId) {
       return (
         <Box
         sx={{
@@ -39,7 +39,7 @@ export default function DefendPhase() {
         </Box>
       )
     // 우리 팀이 공격자일 때 
-    } else if (me.team === currentDefender.team) {
+    } else if (me.team === currentDefenser.team) {
       return (
         <Box
           sx={{
