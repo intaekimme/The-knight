@@ -75,7 +75,7 @@ const orderInit = {
 }
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "END"
+const phaseInit = "EXECUTE"
 const previousPhaseInit = null
 
 const isLoadingInit = false
