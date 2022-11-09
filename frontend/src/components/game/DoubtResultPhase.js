@@ -1,12 +1,7 @@
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
-import { useSelector } from "react-redux"
 
 export default function DoubtResultPhase() {
-  const previousPhase = useSelector(state => state.game.previousPhase)
-  const currentAttacker = useSelector(state => state.game.currentAttacker)
-  const currentDefender = useSelector(state => state.game.currentDefender)
-
   function BoxRender() {
     return (
       <Box
