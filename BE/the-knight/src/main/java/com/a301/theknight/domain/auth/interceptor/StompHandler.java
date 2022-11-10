@@ -32,8 +32,8 @@ public class StompHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-        log.info(">>>>>>> [Websocket Request] Command = {}", accessor.getCommand());
-        log.info("  Request Host = {}", accessor.getHost());
+        log.info("=====>> [Websocket Request] {}, Destination = {}", accessor.getCommand(), accessor.getHeader(StompHeaderAccessor.DESTINATION_HEADER));
+
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String accessToken = Objects.requireNonNull(accessor.getFirstNativeHeader("Authorization")).substring(7);
             log.info("  Request Access-Token = {}", accessToken);
@@ -46,7 +46,6 @@ public class StompHandler implements ChannelInterceptor {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberPrincipal, null, memberPrincipal.getAuthorities());
 //                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     accessor.setUser(authentication);
-//                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (Exception e) {
                 throw new CustomRestException(DomainErrorCode.DO_NOT_HAVE_AUTHENTICATION);

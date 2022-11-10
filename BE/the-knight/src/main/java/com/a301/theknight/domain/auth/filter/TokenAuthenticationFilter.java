@@ -33,7 +33,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info(">>>>>>> Request URI = {}", request.getRequestURI());
+        log.info("=====>> Request URI = {}", request.getRequestURI());
         //TODO: 임시로 인증 열어두기, 이후에 다시 제거 필수!!!
         if (request.getRequestURI().contains("/websocket") || request.getRequestURI().contains("/pub")
                 || request.getRequestURI().contains("/sub")) {
