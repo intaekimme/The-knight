@@ -10,6 +10,7 @@ const meInit = {
 }
 
 const playersInit = {
+  state: "",
   maxMember: 6,
   players: [
     {
