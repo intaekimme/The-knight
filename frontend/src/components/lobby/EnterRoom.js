@@ -91,6 +91,7 @@ export default function EnterRoom(){
     // }
     const data = JSON.parse(payload.body);
     const text = `${data.nickname}님이 입장하셨습니다.`;
+    dispatch(onPubAllMembersInRoom({stompClient:stompClient, gameId:gameId}));
     // 전체채팅으로 뿌려주기
     console.log(text);
     // 전체 멤버 publish
@@ -145,6 +146,7 @@ export default function EnterRoom(){
     // }
     const data = JSON.parse(payload.body);
     const text = `${data.nickname}님이 퇴장하셨습니다.`;
+    dispatch(onPubAllMembersInRoom({stompClient:stompClient, gameId:gameId}));
     // 전체채팅으로 뿌려주기
     console.log(text);
     // 전체 멤버 publish

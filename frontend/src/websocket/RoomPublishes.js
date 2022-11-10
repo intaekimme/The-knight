@@ -56,7 +56,7 @@ const onPubReady = (payload) => {
 };
 // 방 퇴장 publish
 const onPubExitRoom = (payload) => {
-  payload.stompClient.send(`${api.pubExitRoom(payload.gameId)}`, {}, JSON.stringify(payload.ready));
-  console.log("ready pub", payload);
+  payload.stompClient.send(`${api.pubExitRoom(payload.gameId)}`);
+  console.log("나가기 pub", payload);
 };
 export {onPubModifyRoom, onPubChat, onPubEnterRoom, onPubAllMembersInRoom, onPubSelectTeam, onPubReady, onPubExitRoom};

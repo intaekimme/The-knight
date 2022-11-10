@@ -7,7 +7,7 @@ import { Grid, Box, Button, Modal } from "@mui/material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import RoomSetting from "../../commons/modal/RoomSetting";
-import {onPubSelectTeam} from "../../websocket/RoomPublishes";
+import {onPubExitRoom, onPubSelectTeam} from "../../websocket/RoomPublishes";
 
 export default function RoomHeader(props) {
 	// 방설정 모달
@@ -21,6 +21,10 @@ export default function RoomHeader(props) {
 	// team A선택
 	const onSelectTeamB = ()=>{
 		onPubSelectTeam({stompClient:props.stompClient, gameId:roomData.gameId, team:'B'});
+	}
+	// 나가기
+	const onExit = () => {
+		onPubExitRoom({stompClient:props.stompClient, gameId:roomData.gameId});
 	}
 
 	// 방 정보
