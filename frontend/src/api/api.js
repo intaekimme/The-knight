@@ -28,10 +28,19 @@ const SELECT_TEAM = '/team';
 const READY = '/ready';
 
 // 인게임
-const ALL_PLAYERS = '/players';
+const PLAYERS_INFO = '/players';
 const CONVERT = '/convert';
 const CONVERT_COMPLETE = '/convert-complete';
 const PROCEED = '/proceed';
+const LEADER = '/leader';
+const COUNT_WEAPON = '/weapons';
+const SELECT_WEAPON = '/weapon-choice';
+const DELETE_WEAPON = '/weapon-delete';
+const TIMER = '/timer';
+const ORDER = '/orders';
+const SELECT_COMPLETE = '/select-complete';
+const ATTACK_FIRST = '/pre-attack';
+const CURRENT_ATTACKER = '/attacker'
 
 const api = {
   exampleFunction: () => BASE_URL + EXAMPLE + `${0}`,
@@ -73,10 +82,30 @@ const api = {
   deleteMember: () => BASE_URL + API + ALL_MEMBERS,
   updateMemberInfo: () => BASE_URL + API + ALL_MEMBERS,
 
-  getAllPalyers: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_PLAYERS,
-  goLoading: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,
-  readyForNextPhase: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
-  nextPhase: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PROCEED,
+  // 인게임
+  subPlayersInfo: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PLAYERS_INFO,
+  subConvert: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,
+  subNextPhase: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PROCEED,
+  subTimer: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + TIMER,
+  subAttackFirst: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ATTACK_FIRST,
+  pubConvertComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
+  pubSelectWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_WEAPON,
+  pubDeleteWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DELETE_WEAPON,
+  pubSelectComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_COMPLETE,
+  // pubAttackFirst: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ATTACK_FIRST,
+  // 인게임 A/B 팀 분기
+  subLeaderA: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/a` + LEADER,
+  subLeaderB: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/b` + LEADER,
+  subCountWeaponA: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/a` + COUNT_WEAPON,
+  subCountWeaponB: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/b` + COUNT_WEAPON,
+  subOrderA: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/a` + ORDER,
+  subOrderB: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/b` + ORDER,
+  subCurrentAttackerA: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/a` + CURRENT_ATTACKER,
+  subCurrentAttackerB: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/b` + CURRENT_ATTACKER,
+  // subSelectCompleteA: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/a` + SELECT_COMPLETE,
+  // subSelectCompleteB: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}/b` + SELECT_COMPLETE,
+  pubOrderA: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}/a` + ORDER,
+  pubOrderB: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}/b` + ORDER,
 
   //rank 관련
   getRankList: () => BASE_URL + API + '/ranking',
