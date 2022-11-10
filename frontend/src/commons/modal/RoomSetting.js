@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-
+import { useSelector } from 'react-redux';
 import { Modal, Box, Button, Grid, Input, InputLabel, MenuItem, FormControl, Select } from "@mui/material";
 import ClearIcon from '@mui/icons-material/Clear';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ItemBox from "../ItemBox";
+import { red, blue } from '../../_css/ReactCSSProperties';
+import {onPubModifyRoom} from "../../websocket/RoomPublishes";
 
 export default function RoomSetting(props) {
 	const modalStyle = {
@@ -25,16 +27,50 @@ export default function RoomSetting(props) {
 		fontSize: 30
 	};
 
-	const inputStyle = {
+	const buttonStyle = {
 		border: `none`,
 		fontSize: 30
 	};
 
-	const [maxUser, setMaxUser] = React.useState('');
-	const [itemCount, setItemCount] = React.useState([1,1,1,1]);
+	// websocket client
+	const stompClient = useSelector((state) => state.websocket.stompClient);
+	// 방 정보
+	const [roomData, setRoomData] = React.useState(props.roomData);
+	// 방제목
+	const [title, setTitle] = React.useState(props.roomData.title);
+	// 최대 유저수
+	const [maxMember, setMaxMember] = React.useState(props.roomData.maxMember);
+	// item count
+	const [itemCount, setItemCount] = React.useState([props.roomData.sword, props.roomData.twin, props.roomData.shield, props.roomData.hand]);
 
-	const maxUserChange = (event) => {
-    setMaxUser(event.target.value);
+	React.useEffect(()=>{
+		if(props.roomData){
+			console.log(props.roomData);
+			setRoomData(props.roomData);
+		}
+	}, [props.roomData]);
+
+	// 설정변경 취소
+	const onModalClose = ()=>{
+		setTitle(roomData.title);
+		setMaxMember(roomData.maxMember);
+		setItemCount([roomData.sword, roomData.twin, roomData.shield, roomData.hand]);
+		props.onClose();
+	}
+	// 설정변경 확정
+	const onChangeSetting = ()=>{
+		const tempRoomData = {...roomData};
+		tempRoomData.title = title;
+		tempRoomData.maxMember = maxMember;
+		tempRoomData.sword = itemCount[0];
+		tempRoomData.twin = itemCount[1];
+		tempRoomData.shield = itemCount[2];
+		tempRoomData.hand = itemCount[3];
+		onPubModifyRoom({stompClient:stompClient, roomInfo:tempRoomData});
+		props.onClose();
+	}
+	const maxMemberChange = (event) => {
+    setMaxMember(event.target.value);
   };
 
 	//아이템 목록
@@ -43,7 +79,15 @@ export default function RoomSetting(props) {
 	//아이템 개수증가
 	const itemCountUp = (index)=>{
 		const tempCount = [...itemCount];
-		tempCount[index]++;
+		let tempSum = 0;
+		tempCount.forEach(count=>{ tempSum+=count; });
+		console.log(tempSum);
+		if(tempSum<maxMember){
+			tempCount[index]++;
+		}
+		else{
+			alert("현재 무기 개수의 합이 최대입니다.");
+		}
 		setItemCount(tempCount);
 	}
 
@@ -56,6 +100,10 @@ export default function RoomSetting(props) {
 		setItemCount(tempCount);
 	}
 
+	const onChangeTitle = (e)=>{
+		setTitle(e.target.value);
+	}
+
 	return (
 		<Modal
 			open={props.open}
@@ -65,12 +113,12 @@ export default function RoomSetting(props) {
 		>
 			<Box sx={modalStyle}>
 				<Box id="modal-modal-title" sx={{ textAlign: "right" }}>
-					<Button onClick={ props.onClose } sx={{ color: "red" }}><ClearIcon /></Button>
+					<Button onClick={ onModalClose } sx={{ color: "red" }}><ClearIcon /></Button>
 				</Box>
-				<Grid id="modal-modal-description" container>
+				<Grid id="modal-modal-description" container sx={{mt:4}}>
 					<Grid container item xs={12} sx={{mt:1, mb:1}}>
 						<Grid item xs={2} sx={titleStyle}>방제목</Grid>
-						<Grid item xs={10}><Input sx={{width:"100%"}}/></Grid>
+						<Grid item xs={10}><Input sx={{width:"100%"}} defaultValue={title} onChange={onChangeTitle}/></Grid>
 					</Grid>
 					<Grid container item xs={12} sx={{mt:1, mb:1}}>
 						<Grid item xs={2} sx={titleStyle}>인원</Grid>
@@ -81,14 +129,15 @@ export default function RoomSetting(props) {
 									<Select
 										labelId="select-label"
 										id="select"
-										value={maxUser}
+										value={maxMember}
+										defaultValue={maxMember}
 										label="인원 수"
-										onChange={maxUserChange}
+										onChange={maxMemberChange}
 									>
-										<MenuItem value={2}>2 vs 2</MenuItem>
-										<MenuItem value={3}>3 vs 3</MenuItem>
-										<MenuItem value={4}>4 vs 4</MenuItem>
-										<MenuItem value={5}>5 vs 5</MenuItem>
+										<MenuItem value={4}>2 vs 2</MenuItem>
+										<MenuItem value={6}>3 vs 3</MenuItem>
+										<MenuItem value={8}>4 vs 4</MenuItem>
+										<MenuItem value={10}>5 vs 5</MenuItem>
 									</Select>
 								</FormControl>
 							</Box>
@@ -113,6 +162,8 @@ export default function RoomSetting(props) {
 							</Grid>
 						))}
 					</Grid>
+					<Grid item xs={6} alignItems="center" sx={{textAlign:"center"}}><Button sx={{...buttonStyle, background: blue}} onClick={onChangeSetting}>확인</Button></Grid>
+					<Grid item xs={6} alignItems="center" sx={{textAlign:"center"}}><Button sx={{...buttonStyle, background: red}} onClick={onModalClose}>취소</Button></Grid>
 				</Grid>
 			</Box>
 		</Modal>
