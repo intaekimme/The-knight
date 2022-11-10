@@ -124,7 +124,7 @@ const gameListInit = [{
   gameId: -1,
   title: ' ',
   status: ' ',
-  maxUser: -1,
+  maxMember: -1,
   currentUser: -1,
 }]
 

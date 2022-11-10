@@ -10,7 +10,7 @@ const meInit = {
 }
 
 const playersInit = {
-  maxUser: 6,
+  maxMember: 6,
   players: [
     {
       memberId: 1,

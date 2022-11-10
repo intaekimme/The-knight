@@ -21,7 +21,7 @@ export default function RoomHeader(props) {
 			<Grid item xs={7} sx={{fontSize:props.size, display: "flex", alignItems: "center"}}>
 				<Button onClick={roomSettingOpen} sx={{color:"gray"}}><SettingsIcon sx={{ fontSize: props.size*2 }} /></Button>
 				<RoomSetting open={open} onClose={ roomSettingClose } />
-				<h2>{` #${props.roomData.gameId} ${props.roomData.title} ${props.currentUser}/${props.maxUser}`}</h2>
+				<h2>{` #${props.roomData.gameId} ${props.roomData.title} ${props.currentUser}/${props.maxMember}`}</h2>
 			</Grid>
 			<Grid item xs={4} sx={{ fontSize: props.size*1.2, display: "flex", justifyContent: "center", alignItems: "center" }}>
 				<Box sx={{width:props.size*10, height: props.size*4, border: "7px solid #4d4d4d", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center"}}>

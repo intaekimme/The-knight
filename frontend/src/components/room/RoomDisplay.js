@@ -23,7 +23,7 @@ export default function RoomDisplay() {
 	};
 
 	const currentUser = 5;
-	const maxUser = 10;
+	const maxMember = 10;
 	
 	const userDatas = useSelector(state=>state.room.usersInfo);
 	const emptyUser = {
@@ -37,8 +37,8 @@ export default function RoomDisplay() {
 
   return (
 		<Box sx={{display: "flex", flexDirection: "column", alignItems: "center", minWidth:size*35, height: size*23}}>
-			<RoomHeader roomData={roomData} currentUser={currentUser} maxUser={maxUser} size={size}/>
-			<RoomUser userDatas={userDatas} currentUser={currentUser} maxUser={maxUser} size={size}/>
+			<RoomHeader roomData={roomData} currentUser={currentUser} maxMember={maxMember} size={size}/>
+			<RoomUser userDatas={userDatas} currentUser={currentUser} maxMember={maxMember} size={size}/>
 		</Box>
   );
 }

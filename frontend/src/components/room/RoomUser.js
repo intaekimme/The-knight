@@ -15,7 +15,7 @@ export default function RoomUser(props) {
 	const [userDatas, setUserDatas] = React.useState([]);
 	React.useEffect(()=>{
 		const tempDatas = [...props.userDatas];
-		while(tempDatas.length < props.maxUser){
+		while(tempDatas.length < props.maxMember){
 			tempDatas.push(emptyUser);
 		}
 		console.log(tempDatas);
@@ -24,14 +24,14 @@ export default function RoomUser(props) {
 	return (
 		<Box sx={{p: 3, display: "flex", justifyContent: "space-evenly",flexDirection: "column", width: "70%", height: "100%"}}>
 			<Box sx={{display: "flex", justifyContent: "space-evenly"}}>
-				{userDatas.slice(0, parseInt(props.maxUser / 2)).map((userData, index) => (
-					<UserBox key={`user${userData.nickname}${index + parseInt(props.maxUser / 2) - parseInt(props.maxUser / 2)}`}
+				{userDatas.slice(0, parseInt(props.maxMember / 2)).map((userData, index) => (
+					<UserBox key={`user${userData.nickname}${index + parseInt(props.maxMember / 2) - parseInt(props.maxMember / 2)}`}
 						userData={userData} width={props.size * 6} height={props.size * 6}/>
 				))}
 			</Box>
 			<Box sx={{ display: "flex", justifyContent: "space-evenly"}}>
-				{userDatas.slice(parseInt(props.maxUser / 2), userDatas.length).map((userData, index) => (
-					<UserBox key={`user${userData.nickname}${index + parseInt(props.maxUser / 2)}`} 
+				{userDatas.slice(parseInt(props.maxMember / 2), userDatas.length).map((userData, index) => (
+					<UserBox key={`user${userData.nickname}${index + parseInt(props.maxMember / 2)}`} 
 					userData={userData} width={props.size*6} height={props.size*6}/>
 				))}
 			</Box>

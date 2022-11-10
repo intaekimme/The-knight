@@ -14,12 +14,12 @@ function OrderPicker() {
   }
 
   function orderList(players) {
-    let arr = ((players.maxUser / 2) === 5) ? [<Grid item xs={1}></Grid>] : [];
-    for (let i = 0; i < (players.maxUser / 2); i++) {
+    let arr = ((players.maxMember / 2) === 5) ? [<Grid item xs={1}></Grid>] : [];
+    for (let i = 0; i < (players.maxMember / 2); i++) {
       arr.push(
         <Grid
           item
-          xs={((players.maxUser / 2) === 5) ? 2 : (12 / (players.maxUser / 2))}
+          xs={((players.maxMember / 2) === 5) ? 2 : (12 / (players.maxMember / 2))}
           key={i}
           sx={{ display: "flex", justifyContent: "center"}}
         >

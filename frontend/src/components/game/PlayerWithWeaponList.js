@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 function PlayerWithWeaponList({ isOpp }) {
   const me = useSelector((state) => state.game.me);
   const players = useSelector((state) => state.game.players);
-  const numberInTeam = players.maxUser / 2;
+  const numberInTeam = players.maxMember / 2;
 
   return (
     <Grid container>

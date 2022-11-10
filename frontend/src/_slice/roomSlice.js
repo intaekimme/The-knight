@@ -78,7 +78,7 @@ export const roomSlice = createSlice({
   reducers:{
     modifyRoomSetting:(state, action) =>{
       state.roomInfo.title = action.payload.title;
-      state.roomInfo.maxUser = action.payload.maxUser;
+      state.roomInfo.maxMember = action.payload.maxMember;
       state.roomInfo.sword = action.payload.sword;
       state.roomInfo.twin = action.payload.twin;
       state.roomInfo.shield = action.payload.shield;
