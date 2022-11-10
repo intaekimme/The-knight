@@ -8,5 +8,6 @@ import java.util.List;
 @Builder
 @Data
 public class GameMembersInfoDto {
+    private long ownerId;
     private List<MemberDataDto> members;
 }

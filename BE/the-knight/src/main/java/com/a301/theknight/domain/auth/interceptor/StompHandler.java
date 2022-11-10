@@ -32,19 +32,20 @@ public class StompHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+        log.info("=====>> [Websocket Request] {}, Destination = {}", accessor.getCommand(), accessor.getHeader(StompHeaderAccessor.DESTINATION_HEADER));
+
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String accessToken = Objects.requireNonNull(accessor.getFirstNativeHeader("Authorization")).substring(7);
-            log.info(" Request Access-Token = {}", accessToken);
+            log.info("  Request Access-Token = {}", accessToken);
             try {
                 if (StringUtils.hasText(accessToken) && tokenService.validateToken(accessToken, tokenProperties.getAccess().getName())) {
                     Long id = tokenService.getId(accessToken);
                     UserDetails userDetails = customUserDetailsService.loadMemberById(id);
                     MemberPrincipal memberPrincipal = (MemberPrincipal) userDetails;
-                    log.info(" Request Member Id = {}, Email = {}", memberPrincipal.getMemberId(), memberPrincipal.getEmail());
+                    log.info("  Request Member Id = {}, Email = {}", memberPrincipal.getMemberId(), memberPrincipal.getEmail());
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberPrincipal, null, memberPrincipal.getAuthorities());
 //                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     accessor.setUser(authentication);
-//                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             } catch (Exception e) {
                 throw new CustomRestException(DomainErrorCode.DO_NOT_HAVE_AUTHENTICATION);

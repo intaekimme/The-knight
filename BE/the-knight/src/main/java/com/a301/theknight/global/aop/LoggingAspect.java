@@ -5,8 +5,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -19,13 +21,26 @@ public class LoggingAspect {
 
     private final ObjectMapper objectMapper;
 
-    @Around("within(com.a301.theknight..api..*)")
-    public Object loggingController(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Pointcut("(within(com.a301.theknight.domain.game.api..*) || within(com.a301.theknight.domain.player.api.PlayerApi))" +
+            "&& !within(com.a301.theknight.domain.game.api.GameApi)")
+    public void onWebSocketApi() { }
+
+    @Pointcut("within(com.a301.theknight.domain.game.service..*) && !within(com.a301.theknight.domain.game.service.GameService)")
+    public void onWebSocketService() { }
+
+    @Pointcut("within(com.a301.theknight.domain.common.service.SendMessageService)")
+    public void onMessageService() { }
+
+    @Pointcut("within(com.a301.theknight.domain.auth.service..*)")
+    public void onSecurityService() { }
+
+    @Around("within(com.a301.theknight..api..*) && !onWebSocketApi()")
+    public Object loggingRestApi(ProceedingJoinPoint joinPoint) throws Throwable {
         String params = getParams(joinPoint);
         if (params.contains("password")) {
             params = changePasswordLog(params);
         }
-        log.info(" [Controller] Method = {}, params = {}", joinPoint.getSignature().getName(), params);
+        log.info(" [REST API] {}, params = {}", joinPoint.getSignature().getName(), params);
         Object result = null;
         try {
             result = joinPoint.proceed();
@@ -36,8 +51,54 @@ public class LoggingAspect {
             if (response != null) {
                 value = objectMapper.writeValueAsString(response.getBody());
             }
-            log.info("<<<<<<< [Response] Response value = {}", value.length() > 100 ? value.substring(0, 100) : value);
+            log.info("<<===== [REST Response] value = {}", value.length() > 100 ? value.substring(0, 100) : value);
         }
+    }
+
+    @Around("onWebSocketApi()")
+    public Object loggingWebsocketApi(ProceedingJoinPoint joinPoint) throws Throwable {
+        String params = getParams(joinPoint);
+        log.info(" [WebSocket API] {}, params = {}", joinPoint.getSignature().getName(), params);
+        Object result = null;
+        try {
+            result = joinPoint.proceed();
+            return result;
+        } finally {
+            log.info(" [End Websocket API] {}", joinPoint.getSignature().getName());
+        }
+    }
+
+    @Around("within(com.a301.theknight.domain..service..*) && !onWebSocketService() && !onMessageService() && !onSecurityService()")
+    public Object loggingRestService(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        try {
+            log.info(" [REST Service] {}", joinPoint.getSignature().getName());
+            return joinPoint.proceed();
+        } finally {
+            long end = System.currentTimeMillis();
+            log.info("  Running Time = {}ms", end - start);
+        }
+    }
+
+    @Around("onWebSocketService() && !onMessageService() && !onSecurityService()")
+    public Object loggingWebsocketService(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        try {
+            log.info(" [WebSocket Service] {}", joinPoint.getSignature().getName());
+            return joinPoint.proceed();
+        } finally {
+            long end = System.currentTimeMillis();
+            log.info("  Running Time = {}ms", end - start);
+        }
+    }
+
+    @Around("onMessageService()")
+    public Object loggingMessageService(ProceedingJoinPoint joinPoint) throws Throwable {
+        Signature signature = joinPoint.getSignature();
+        String params = getParams(joinPoint);
+
+        log.info(" <<- {}, params = {}", signature.getName(), params);
+        return joinPoint.proceed();
     }
 
     private String changePasswordLog(String params) {
@@ -48,17 +109,6 @@ public class LoggingAspect {
             lastIndex = params.length();
         String substring = params.substring(startIndex, lastIndex);
         return params.replace(substring, "xxxxxxxxxxxxx");
-    }
-
-    @Around("within(com.a301.theknight.domain..service..*)")
-    public Object loggingService(ProceedingJoinPoint joinPoint) throws Throwable {
-        long start = System.currentTimeMillis();
-        try {
-            return joinPoint.proceed();
-        } finally {
-            long end = System.currentTimeMillis();
-            log.info(" Service Method = {}, Running Time = {}ms", joinPoint.getSignature().getName(), end - start);
-        }
     }
 
     private String getParams(JoinPoint joinPoint) {

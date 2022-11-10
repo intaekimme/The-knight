@@ -52,11 +52,10 @@ public class PlayerService {
         Member entryMember = getMember(memberId);
         Member owner = entryGame.getOwner().getMember();
 
-        if (!entryMember.getId().equals(owner.getId())) {
+        if (!owner.getId().equals(entryMember.getId())) {
             playerRepository.save(Player.builder()
                     .member(entryMember)
-                    .game(entryGame)
-                    .build());
+                    .game(entryGame).build());
         }
 
         return PlayerEntryResponse.builder()
@@ -150,9 +149,10 @@ public class PlayerService {
     private boolean isEqualPlayerNum(Game game){
         AtomicInteger teamA = new AtomicInteger();
         AtomicInteger teamB = new AtomicInteger();
-        game.getPlayers().stream()
-                .map(player -> Team.A.equals(player.getTeam()) ? teamA.getAndIncrement() : teamB.getAndIncrement())
-                .collect(Collectors.toList());
+        game.getPlayers().forEach(player -> {
+            AtomicInteger addInteger = Team.A.equals(player.getTeam()) ? teamA : teamB;
+            addInteger.getAndIncrement();
+        });
         return teamA.intValue() == teamB.intValue();
     }
 
