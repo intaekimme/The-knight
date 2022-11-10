@@ -1,3 +1,8 @@
+import { useDispatch } from 'react-redux';
+import { fetchPlayers } from '../_slice/gameSlice'
+
+const dispatch = useDispatch();
+
 ////////////////////////////////////////////////
 //////////////////// Common ////////////////////
 ////////////////////////////////////////////////
@@ -5,6 +10,26 @@
 // 전체 플레이어 정보
 const onSubPlayersInfo = (payload) => {
   // Redux에 플레이어 정보 저장
+  // {
+  //   state : String : 현재 게임진행 차례
+  //   maxMember : int (2 vs 2 → 4),
+  //   players : [
+  //     {
+  //       memberId : long,
+  //       nickname : String,
+  //       team: String,
+  //       leftCount : int,
+  //       rightCount : int,
+  //       order : int, (none: 0)
+  //       weapons : []
+  //     },
+  //     {
+  //     }, 
+  //     …
+  //   ]
+  // }
+  const data = JSON.parse(payload.body)
+  dispatch(fetchPlayers(data))
 }
 
 // 최초 화면전환 요청
