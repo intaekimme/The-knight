@@ -1,12 +1,12 @@
 package com.a301.theknight.domain.game.entity.redis;
 
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
 import java.io.Serializable;
 
 
-@Getter
+@Data
 public class DefendData implements Serializable {
     private final Hand defendHand;
     private final int shieldCount;

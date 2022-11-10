@@ -3,11 +3,11 @@ package com.a301.theknight.domain.game.entity.redis;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.entity.Weapon;
-import lombok.Getter;
+import lombok.Data;
 
 import java.io.Serializable;
 
-@Getter
+@Data
 public class TurnData implements Serializable {
     private long attackerId;
     private long defenderId;
