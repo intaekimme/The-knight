@@ -107,7 +107,7 @@ export const roomSlice = createSlice({
       state.usersInfo = tempUsersInfo;
     },
     changeReady:(state, action) =>{
-      const tempUsersInfo = state.usersInfo;
+      const tempUsersInfo = [...state.usersInfo];
       for(let i=0;i<tempUsersInfo.length;i++){
         if(tempUsersInfo[i].id === action.payload.memberId){
           tempUsersInfo[i].readyStatus = action.payload.readyStatus;

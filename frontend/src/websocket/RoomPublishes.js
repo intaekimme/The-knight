@@ -51,7 +51,7 @@ const onPubReady = (payload) => {
   // {
   //   readyStatus : boolean
   // }
-  payload.stompClient.send(`${api.pubReady(payload.gameId)}`, {}, JSON.stringify(payload.ready));
+  payload.stompClient.send(`${api.pubReady(payload.gameId)}`, {}, JSON.stringify({ readyStatus: payload.ready }));
   console.log("ready pub", payload);
 };
 // 방 퇴장 publish

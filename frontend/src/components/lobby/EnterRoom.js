@@ -91,13 +91,6 @@ export default function EnterRoom(){
     // }
     const data = JSON.parse(payload.body);
     const text = `${data.nickname}님이 입장하셨습니다.`;
-
-
-
-
-
-    //이거 지워야함
-    onPubAllMembersInRoom({stompClient:stompClient, gameId:gameId});
     // 전체채팅으로 뿌려주기
     console.log(text);
     // 전체 멤버 publish
@@ -119,7 +112,6 @@ export default function EnterRoom(){
     //     …
     //   ]
     // }
-    console.log(payload);
     const data = JSON.parse(payload.body);
     dispatch(setMembers(data.members));
     console.log("전체 멤버 조회 sub", data);
@@ -143,7 +135,7 @@ export default function EnterRoom(){
     // }
     const data = JSON.parse(payload.body);
     console.log("레디 sub", data);
-    changeReady(data);
+    dispatch(changeReady(data.readyResponseDto));
   };
   // 방 퇴장 리시버
   const onSubExitRoom = (payload) => {

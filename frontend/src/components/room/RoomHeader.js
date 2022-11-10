@@ -10,18 +10,17 @@ import RoomSetting from "../../commons/modal/RoomSetting";
 import {onPubSelectTeam} from "../../websocket/RoomPublishes";
 
 export default function RoomHeader(props) {
-	const stompClient = useSelector(state => state.websocket.stompClient);
 	// 방설정 모달
 	const [open, setOpen] = React.useState(false);
 	const onRoomSettingOpen = () => setOpen(true);
 	const onRoomSettingClose = () => setOpen(false);
 	// team A선택
 	const onSelectTeamA = ()=>{
-		onPubSelectTeam({stompClient:stompClient, gameId:roomData.gameId, team:'A'});
+		onPubSelectTeam({stompClient:props.stompClient, gameId:roomData.gameId, team:'A'});
 	}
 	// team A선택
 	const onSelectTeamB = ()=>{
-		onPubSelectTeam({stompClient:stompClient, gameId:roomData.gameId, team:'B'});
+		onPubSelectTeam({stompClient:props.stompClient, gameId:roomData.gameId, team:'B'});
 	}
 
 	// 방 정보

@@ -1,11 +1,11 @@
 import React from "react";
-import { black, red, blue } from "../../_css/ReactCSSProperties";
+import { black, red, blue, yellow } from "../../_css/ReactCSSProperties";
 import { Grid, Box } from "@mui/material";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 
 export default function UserBox(props) {
-  // member 초기 데이터
-  const [member, setMember] = React.useState({
+  // user 초기 데이터
+  const [user, setUser] = React.useState({
     id: -1,
     nickname: "",
     image: "",
@@ -36,23 +36,22 @@ export default function UserBox(props) {
     }
   }, [props.width, props.height]);
   React.useEffect(() => {
+    console.log(props.userData);
     if (props.userData) {
-      const resultMember = {...member};
-      const tempMember = {...props.userData};
-      if(tempMember.id){resultMember.id = tempMember.id;}
-      if(tempMember.nickname){resultMember.nickname = tempMember.nickname;}
-      if(tempMember.image){resultMember.image = tempMember.image;}
-      if(tempMember.readyStatus){resultMember.readyStatus = tempMember.readyStatus;}
-      if(tempMember.team){resultMember.team = tempMember.team;
-        const tempColor = (tempMember.team==='A') ? red : blue; setTeamColor(tempColor);}
-      if(!tempMember.team){setTeamColor(black);}
-      if(tempMember.ranking){resultMember.ranking = tempMember.ranking;}
-      if(tempMember.score){resultMember.score = tempMember.score;}
-      if(tempMember.win){resultMember.win = tempMember.win;}
-      if(tempMember.lose){resultMember.lose = tempMember.lose;}
-      if(tempMember.empty){resultMember.empty = tempMember.empty;}
-      console.log(resultMember);
-      setMember(resultMember);
+      const tempUser = {...user};
+      if(props.userData.id!==undefined){tempUser.id = props.userData.id;}
+      if(props.userData.nickname!==undefined){tempUser.nickname = props.userData.nickname;}
+      if(props.userData.image!==undefined){tempUser.image = props.userData.image;}
+      if(props.userData.readyStatus!==undefined){tempUser.readyStatus = props.userData.readyStatus;}
+      if(props.userData.team!==undefined){tempUser.team = props.userData.team;
+        const tempColor = (props.userData.team==='A') ? red : blue; setTeamColor(tempColor);}
+      if(props.userData.team===undefined){setTeamColor(black);}
+      if(props.userData.ranking!==undefined){tempUser.ranking = props.userData.ranking;}
+      if(props.userData.score!==undefined){tempUser.score = props.userData.score;}
+      if(props.userData.win!==undefined){tempUser.win = props.userData.win;}
+      if(props.userData.lose!==undefined){tempUser.lose = props.userData.lose;}
+      if(props.userData.empty!==undefined){tempUser.empty = props.userData.empty;}
+      setUser(tempUser);
     }
   }, [props.userData]);
 
@@ -60,6 +59,7 @@ export default function UserBox(props) {
     <Box
       sx={{
         display: "flex",
+        position: "relative",
         flexDirection: "column",
         alignItems: "center",
         width: width,
@@ -68,18 +68,19 @@ export default function UserBox(props) {
 				borderRadius: "10px"
       }}
     >
-      <div sx={{ fontSize: size / 7 }}>{member.nickname}</div>
+      <div sx={{ fontSize: size / 7 }}>{user.nickname}</div>
       <div>
-        {member.empty && member.empty === true ? (
+        {user.empty && user.empty === true ? (
           <QuestionMarkIcon sx={{ pt:1, fontSize: size }} />
         ) : (
           <img
-            src={member.image}
-            // alt={member.image}
+            src={user.image}
+            // alt={user.image}
             style={{ width: size, height: size }}
           />
         )}
       </div>
+      <div style={{position:"absolute", top:"50%", fontWeight:900, fontSize:size/3, color:yellow}}>{ user.readyStatus ? "Ready" : "" }</div>
     </Box>
   );
 }
