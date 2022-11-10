@@ -1,8 +1,11 @@
 package com.a301.theknight.domain.game.dto.prepare;
 
+import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Builder
@@ -15,4 +18,16 @@ public class PlayerDataDto {
     private int rightCount;
     private int order;
     private List<String> weapons;
+
+    public static PlayerDataDto toDto(InGamePlayer inGamePlayer) {
+        return PlayerDataDto.builder()
+                .memberId(inGamePlayer.getMemberId())
+                .nickname(inGamePlayer.getNickname())
+                .team(inGamePlayer.getTeam().name())
+                .leftCount(inGamePlayer.getLeftCount())
+                .rightCount(inGamePlayer.getRightCount())
+                .order(inGamePlayer.getOrder())
+                .weapons(new ArrayList<>(Arrays.asList(inGamePlayer.getLeftWeapon().name(), inGamePlayer.getRightWeapon().name())))
+                .build();
+    }
 }
