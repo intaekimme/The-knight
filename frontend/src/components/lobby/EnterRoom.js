@@ -91,7 +91,13 @@ export default function EnterRoom(){
     // }
     const data = JSON.parse(payload.body);
     const text = `${data.nickname}님이 입장하셨습니다.`;
-    dispatch(onPubAllMembersInRoom({stompClient:stompClient, gameId:gameId}));
+
+
+
+
+
+    //이거 지워야함
+    onPubAllMembersInRoom({stompClient:stompClient, gameId:gameId});
     // 전체채팅으로 뿌려주기
     console.log(text);
     // 전체 멤버 publish
@@ -113,11 +119,12 @@ export default function EnterRoom(){
     //     …
     //   ]
     // }
+    console.log(payload);
     const data = JSON.parse(payload.body);
     dispatch(setMembers(data.members));
     console.log("전체 멤버 조회 sub", data);
   };
-  // 팀선택 리시버
+  // 팀선택 리시버 OK
   const onSubSelectTeam = (payload) => {
     // {
     //   memberId : long,
