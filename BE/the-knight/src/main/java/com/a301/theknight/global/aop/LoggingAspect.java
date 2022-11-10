@@ -25,7 +25,7 @@ public class LoggingAspect {
         if (params.contains("password")) {
             params = changePasswordLog(params);
         }
-        log.info(" [Controller] Method = {}, params = {}", joinPoint.getSignature().getName(), params);
+        log.info("  [Controller] Method = {}, params = {}", joinPoint.getSignature().getName(), params);
         Object result = null;
         try {
             result = joinPoint.proceed();
@@ -54,10 +54,11 @@ public class LoggingAspect {
     public Object loggingService(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         try {
+            log.info("  Service Method = {}", joinPoint.getSignature().getName());
             return joinPoint.proceed();
         } finally {
             long end = System.currentTimeMillis();
-            log.info(" Service Method = {}, Running Time = {}ms", joinPoint.getSignature().getName(), end - start);
+            log.info("  Running Time = {}ms", end - start);
         }
     }
 
