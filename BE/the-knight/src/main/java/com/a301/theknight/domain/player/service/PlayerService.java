@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static com.a301.theknight.global.error.errorcode.GameWaitingErrorCode.*;
 
@@ -117,10 +116,10 @@ public class PlayerService {
         }
 
         return ReadyDto.builder()
-                .readyResponseDto(ReadyResponseDto.builder()
-                        .memberId(readyPlayer.getMember().getId())
-                        .readyStatus(readyPlayer.isReady()).build())
-                .canStart(findGame.isCanStart()).build();
+                .memberId(readyPlayer.getMember().getId())
+                .readyStatus(readyPlayer.isReady())
+                .canStart(findGame.isCanStart())
+                .build();
     }
 
     private Member getMember(long memberId) {
