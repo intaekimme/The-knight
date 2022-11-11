@@ -5,14 +5,14 @@ import { Grid } from "@mui/material";
 
 import RoomDisplay from "../components/room/RoomDisplay";
 import Chatting from "../commons/chatting/Chatting";
-import {onPubEnterRoom} from "../websocket/RoomPublishes";
+import {onPubEntry} from "../websocket/RoomPublishes";
 
 export default function Room() {
 	const windowData = useSelector((state) => state.windowData.value);
 	const stompClient = useSelector((state) => state.websocket.stompClient);
 	const gameId = useParams("gameId").gameId;
 	React.useEffect(()=>{
-		onPubEnterRoom({stompClient:stompClient, gameId:gameId});
+		onPubEntry({stompClient:stompClient, gameId:gameId});
 	}, []);
   return (
 		<Grid container>

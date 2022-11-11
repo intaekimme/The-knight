@@ -19,13 +19,13 @@ const GOOGLE_LOGIN = '/oauth2/authorization/google';
 const GAME = '/games';
 
 // 대기방
+const MODIFY = '/modify';
 const CHAT = '/chat';
-const MODIFYSETTING = '/modify';
-const ENTER_ROOM = '/entry';
-const ALL_MEMBERS = '/members';
-const EXIT_ROOM = '/exit';
-const SELECT_TEAM = '/team';
+const ENTRY = '/entry';
+const MEMBERS = '/members';
+const TEAM = '/team';
 const READY = '/ready';
+const EXIT = '/exit';
 
 // 인게임
 const ALL_PLAYERS = '/players';
@@ -44,34 +44,34 @@ const api = {
   initRoom: () => BASE_URL + API + GAME,
 
   // 구독
-  subModifyRoom: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + MODIFYSETTING,
+  subModifyRoom: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + MODIFY,
   subState: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}`,
   subChatAll: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CHAT + `-all`,
   subChatTeam: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CHAT + `-${team}`,
-  subEnterRoom: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ENTER_ROOM,
-  subAllMembersInRoom: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_MEMBERS,
-  subSelectTeam: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + SELECT_TEAM,
+  subEntry: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ENTRY,
+  subMembers: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + MEMBERS,
+  subSelectTeam: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + TEAM,
   subReady: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + READY,
-  subExitRoom: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXIT_ROOM,
+  subExit: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXIT,
 
   // 발행
-  pubModifyRoom: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + MODIFYSETTING,
+  pubModifyRoom: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + MODIFY,
   pubChat: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CHAT,
   // chatTeam: (gameId, team) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CHAT + `${team}`,
-  pubEnterRoom: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ENTER_ROOM,
-  pubAllMembersInRoom: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ALL_MEMBERS,
-  pubSelectTeam: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_TEAM,
+  pubEntry: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ENTRY,
+  pubMembers: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + MEMBERS,
+  pubSelectTeam: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + TEAM,
   pubReady: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + READY,
-  pubExitRoom: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + EXIT_ROOM,
+  pubExit: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + EXIT,
 
   gameRoomInfo: (gameId) => BASE_URL + API + GAME + `/${gameId}`,
   getGameList: () => BASE_URL + API + GAME,
 
   //memebr 관련
   getMemberHistory: () => BASE_URL + API + '/history',
-  getMemberInfo: () => BASE_URL + API + ALL_MEMBERS,
-  deleteMember: () => BASE_URL + API + ALL_MEMBERS,
-  updateMemberInfo: () => BASE_URL + API + ALL_MEMBERS,
+  getMemberInfo: () => BASE_URL + API + MEMBERS,
+  deleteMember: () => BASE_URL + API + MEMBERS,
+  updateMemberInfo: () => BASE_URL + API + MEMBERS,
 
   getAllPalyers: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_PLAYERS,
   goLoading: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,
