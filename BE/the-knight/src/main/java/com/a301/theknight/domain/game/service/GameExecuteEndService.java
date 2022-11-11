@@ -6,7 +6,6 @@ import com.a301.theknight.domain.game.dto.end.response.EndResponse;
 import com.a301.theknight.domain.game.dto.execute.response.AttackerDto;
 import com.a301.theknight.domain.game.dto.execute.response.DefenderDto;
 import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
-import com.a301.theknight.domain.game.dto.pass.response.PassResponse;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
@@ -75,7 +74,7 @@ public class GameExecuteEndService {
     }
 
     //  End
-    @javax.transaction.Transactional
+    @Transactional
     public GameEndDto gameEnd(long gameId) {
 
         // GameEnd 비즈니스 로직 수행
@@ -84,28 +83,29 @@ public class GameExecuteEndService {
         // 3. 게임 상태 End로 update
         // 4. GameEndDto 채워서 리턴
 
-        InGame inGame = gameRedisRepository.getInGame(gameId).orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
+        InGame inGame = getInGame(gameId);
         Game game = gameRepository.findById(gameId).orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
         game.changeStatus(GameStatus.END);
 
         List<PlayerWeaponDto> players = new ArrayList<>();
 
-        boolean isAWin = method(gameId, players, inGame.getTeamAInfo());
-        boolean isBWin = method(gameId, players, inGame.getTeamBInfo());
+        // 나중에 플레이어 목록을 한 번에 받아오는 메서드를 이용해서 리팩토링?
+        boolean isAWin = updateEndResult(gameId, players, inGame.getTeamAInfo());
+        boolean isBWin = updateEndResult(gameId, players, inGame.getTeamBInfo());
 
-        String losingTeam = isAWin ? "A" : "B";
+        String losingTeam = isAWin ? "B" : "A";
         long losingLeaderId = losingTeam.equals("A") ? inGame.getTeamAInfo().getLeaderId() : inGame.getTeamBInfo().getLeaderId();
         long winningLeaderId = losingTeam.equals("A") ? inGame.getTeamBInfo().getLeaderId() : inGame.getTeamAInfo().getLeaderId();
 
-        EndResponse endResponseA = EndResponse.builder().isWin(isAWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).build();
-        EndResponse endResponseB = EndResponse.builder().isWin(isBWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).build();
+        EndResponse endResponseA = EndResponse.builder().isWin(isAWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).players(players).build();
+        EndResponse endResponseB = EndResponse.builder().isWin(isBWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).players(players).build();
 
         return GameEndDto.builder().endResponseA(endResponseA).endResponseB(endResponseB).build();
     }
 
-    private boolean method(long gameId, List<PlayerWeaponDto> players, TeamInfoData teamInfoData) {
+    private boolean updateEndResult(long gameId, List<PlayerWeaponDto> players, TeamInfoData teamInfoData) {
         long LeaderId = teamInfoData.getLeaderId();
-        InGamePlayer Leader = gameRedisRepository.getInGamePlayer(gameId, LeaderId).orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
+        InGamePlayer Leader = getInGamePlayer(gameId, LeaderId);
         boolean isWin = !Leader.isDead();
 
         GameOrderDto[] orderList = teamInfoData.getOrderList();
@@ -123,7 +123,7 @@ public class GameExecuteEndService {
                 ranking.saveLoseScore();
             }
 
-            InGamePlayer inGamePlayer = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
+            InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
             players.add(PlayerWeaponDto.builder().memberId(memberId).leftWeapon(inGamePlayer.getLeftWeapon().toString()).rightWeapon(inGamePlayer.getRightWeapon().toString()).build());
         }
 
