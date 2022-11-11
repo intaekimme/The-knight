@@ -8,13 +8,4 @@ import lombok.Data;
 public class AttackerResponse {
     private long memberId;
     private boolean isOpposite;
-
-//    public static AttackerResponse toResponse(AttackTeamResponse attackTeamResponse){
-//        return AttackerResponse.builder()
-//                .attacker(attackTeamResponse.getAttacker())
-//                .defender(attackTeamResponse.getDefender())
-//                .weapon(attackTeamResponse.getWeapon())
-//                .hand(attackTeamResponse.getHand())
-//                .build();
-//    }
 }
