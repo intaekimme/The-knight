@@ -34,7 +34,6 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
-@Disabled
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PlayerApiTest {
 
@@ -62,62 +61,6 @@ class PlayerApiTest {
         entryPlayers = new LinkedBlockingDeque<>();
         exitPlayers = new LinkedBlockingDeque<>();
         teamPlayers = new LinkedBlockingDeque<>();
-        멤버_생성();
-        게임방_5vs5_생성();
-        플레이어_생성();
-    }
-
-    private void 멤버_생성(){
-        for(int i=1; i<=10; i++){
-            Member member = Member.builder()
-                    .email("player" + i + "@email.com")
-                    .password("player" + i)
-                    .nickname("player" + i)
-                    .image("image" + i)
-                    .build();
-            memberRepository.save(member);
-        }
-    }
-
-    private void 게임방_5vs5_생성(){
-        Game game = Game.builder()
-                .title("game1")
-                .capacity(10)
-                .sword(4)
-                .twin(2)
-                .shield(3)
-                .hand(1)
-                .build();
-
-        gameRepository.save(game);
-    }
-
-    private void 플레이어_생성(){
-        Game game = gameRepository.findAll().get(0);
-        List<Member> memberList = memberRepository.findAll();
-        for (Member member : memberList) {
-            Player p = Player.builder().member(member).game(game).build();
-            playerRepository.save(p);
-        }
-    }
-
-    @AfterEach
-    void tearDown(){
-        플레이어_삭제();
-        게임방_삭제();
-        멤버_삭제();
-    }
-
-    private void 멤버_삭제(){
-        memberRepository.deleteAll();
-    }
-
-    private void 게임방_삭제(){
-        gameRepository.deleteAll();
-    }
-
-    private void 플레이어_삭제(){
-        playerRepository.deleteAll();
     }
 
     private WebSocketStompClient 웹_소켓_STOMP_CLIENT() {
@@ -133,8 +76,8 @@ class PlayerApiTest {
     @Test
     @Transactional
     void entry() throws InterruptedException, ExecutionException, TimeoutException {
-        Game game = gameRepository.findAll().get(0);
-        Member member = memberRepository.findAll().get(0);
+        Game game = gameRepository.findAll().get(9);
+        Member member = memberRepository.findAll().get(94);
 
         // Settings
         WebSocketStompClient webSocketStompClient = 웹_소켓_STOMP_CLIENT();
