@@ -26,13 +26,26 @@ const enterRoomSubscribe = createAsyncThunk('websocket/enterRoomSubscribe', asyn
     const subscribes = props.subscribes;
     for(let i=0;i<subscribes.length;i++){
       props.stompClient.subscribe(subscribes[i].api,
-        subscribes[i].receiver, (error) => {console.log(error);});
+        subscribes[i].receiver, {id: subscribes[i].id} );
     }
     console.log("room subscribe init 성공");
     return true;
   } catch (err) {
     console.log(props);
     console.log("room subscribe init 실패", err);
+    return rejectWithValue(err);
+  }
+});
+
+const exitRoomUnsubscribe = createAsyncThunk('websocket/exitRoomUnsubscribe', async (props, { rejectWithValue }) => {
+  try {
+    props.stompClient.unsubscribe();
+    alert("room unsubscribe 성공");
+    props.stompClient.disconnect();
+    return true;
+  } catch (err) {
+    console.log(props);
+    console.log("room unsubscribe 실패", err);
     return rejectWithValue(err);
   }
 });
@@ -59,6 +72,6 @@ export const websocketSlice = createSlice({
   },
 });
 
-export { connectWebsocket, enterRoomSubscribe };
+export { connectWebsocket, enterRoomSubscribe, exitRoomUnsubscribe };
 export const { setStompClient } = websocketSlice.actions;
 export default websocketSlice.reducer;
