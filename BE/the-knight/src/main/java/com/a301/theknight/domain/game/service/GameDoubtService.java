@@ -26,7 +26,6 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 @RequiredArgsConstructor
 @Service
 public class GameDoubtService {
-
     private final GameRedisRepository gameRedisRepository;
     private final RedissonClient redissonClient;
 
@@ -103,11 +102,13 @@ public class GameDoubtService {
         }
     }
 
-    private boolean notDoubtStatus(GameStatus gameStatus) {
+    // TODO
+    public boolean notDoubtStatus(GameStatus gameStatus) {
         return !(ATTACK_DOUBT.equals(gameStatus) || DEFENSE_DOUBT.equals(gameStatus));
     }
 
-    private GameStatus getNextGameStatus(DoubtData doubtData) {
+    // TODO
+    public GameStatus getNextGameStatus(DoubtData doubtData) {
         if (doubtData.isDeadLeader()) {
             return END;
         }
@@ -117,7 +118,8 @@ public class GameDoubtService {
         return DoubtStatus.ATTACK.equals(doubtData.getDoubtStatus()) ? DEFENSE : EXECUTE;
     }
 
-    private DoubtResponse makeDoubtResponse(long gameId, DoubtData doubtData) {
+    // TODO
+    public DoubtResponse makeDoubtResponse(long gameId, DoubtData doubtData) {
         InGamePlayer suspect = getInGamePlayer(gameId, doubtData.getSuspectId());
         InGamePlayer suspected = getInGamePlayer(gameId, doubtData.getSuspectedId());
 
@@ -128,37 +130,41 @@ public class GameDoubtService {
                 .doubtResult(doubtData.isDoubtResult()).build();
     }
 
-    private InGamePlayer killByDoubt(InGamePlayer suspect, InGamePlayer suspected, boolean isLying) {
+    // TODO
+    public InGamePlayer killByDoubt(InGamePlayer suspect, InGamePlayer suspected, boolean isLying) {
         InGamePlayer deadPlayer = isLying ? suspected : suspect;
         deadPlayer.death();
 
         return deadPlayer;
     }
 
-    private void validCheck(InGame inGame, GameStatus doubtStatus, InGamePlayer suspect, InGamePlayer suspected) {
+    // TODO
+    public void validCheck(InGame inGame, GameStatus doubtStatus, InGamePlayer suspect, InGamePlayer suspected) {
         checkDoubtStatus(inGame, doubtStatus);
         checkDeadState(suspect, suspected);
         checkOtherTeam(suspect, suspected);
     }
 
-    private void checkDoubtStatus(InGame inGame, GameStatus doubtStatus) {
+    // TODO
+    public void checkDoubtStatus(InGame inGame, GameStatus doubtStatus) {
         if (!doubtStatus.equals(inGame.getGameStatus())) {
             throw new CustomWebSocketException(DO_NOT_FIT_REQUEST_BY_GAME_STATUS);
         }
     }
 
-    private void checkOtherTeam(InGamePlayer suspect, InGamePlayer suspected) {
+    // TODO
+    public void checkOtherTeam(InGamePlayer suspect, InGamePlayer suspected) {
         if (suspect.getTeam().equals(suspected.getTeam())) {
             throw new CustomWebSocketException(CAN_NOT_DOUBT_SAME_TEAM);
         }
     }
 
-    private void checkDeadState(InGamePlayer suspect, InGamePlayer suspected) {
+    // TODO
+    public void checkDeadState(InGamePlayer suspect, InGamePlayer suspected) {
         if (suspect.isDead() || suspected.isDead()) {
             throw new CustomWebSocketException(PLAYER_IS_ALREADY_DEAD);
         }
     }
-
     private InGame getInGame(long gameId) {
         return gameRedisRepository.getInGame(gameId)
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
@@ -169,11 +175,13 @@ public class GameDoubtService {
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
-    private String lockKeyGen(long gameId) {
+    // TODO
+    public String lockKeyGen(long gameId) {
         return "game:" + gameId + "_convert_lock";
     }
 
-    private int getAlivePlayerCount(List<InGamePlayer> inGamePlayers){
+    // TODO
+    public int getAlivePlayerCount(List<InGamePlayer> inGamePlayers){
         return (int)(inGamePlayers.stream().filter(inGamePlayer -> !inGamePlayer.isDead()).count());
     }
 }

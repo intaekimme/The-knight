@@ -1,0 +1,272 @@
+package com.a301.theknight.domain.game.service;
+
+import com.a301.theknight.domain.game.dto.attack.AttackPlayerDto;
+import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
+import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
+import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
+import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
+import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
+import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
+import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
+import com.a301.theknight.domain.game.entity.Weapon;
+import com.a301.theknight.domain.game.entity.redis.*;
+import com.a301.theknight.domain.game.repository.GameRedisRepository;
+import com.a301.theknight.domain.player.entity.Team;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
+
+
+@ExtendWith(MockitoExtension.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+class GameAttackDefenseServiceTest {
+
+    @Mock
+    GameRedisRepository gameRedisRepository;
+
+    @Mock
+    GameAttackDefenseService gameAttackDefenseService;
+
+    private InGame inGame;
+    private TurnData turnData;
+    private InGamePlayer attacker;
+    private InGamePlayer defender;
+
+    @BeforeEach
+    void setup() {
+        //  새로 공격, 방어 요청할 플레이어
+        attacker = InGamePlayer.builder()
+                .memberId(1L)
+                .team(Team.A)
+                .leftWeapon(Weapon.TWIN)
+                .rightWeapon(Weapon.SWORD)
+                .build();
+        defender = InGamePlayer.builder()
+                .memberId(2L)
+                .team(Team.B)
+                .leftWeapon(Weapon.SHIELD)
+                .rightWeapon(Weapon.HAND)
+                .build();
+
+        //  기존 공격, 방어자 정보
+        turnData = new TurnData();
+        turnData.setAttackerId(4L);
+        turnData.setDefenderId(1L);
+
+        inGame = InGame.builder()
+                .turnData(turnData)
+                .gameStatus(GameStatus.ATTACK)
+                .currentAttackTeam(Team.A)
+                .build();
+
+        gameAttackDefenseService = new GameAttackDefenseService(gameRedisRepository);
+        given(gameRedisRepository.getInGame(1L)).willReturn(Optional.of(inGame));
+    }
+
+
+    @Test
+    void getAttacker() {
+    }
+
+    @DisplayName("선공 조회")
+    @Test
+    void getPreAttack() {
+        //  given
+        //  when
+        gameAttackDefenseService.getPreAttack(1L);
+        //  then
+        assertEquals(GameStatus.ATTACK, inGame.getGameStatus());
+    }
+
+    @DisplayName("공격 / 손에 들고 있는 무기로 공격")
+    @Test
+    void attack() {
+        //  given
+        GameAttackRequest attackRequest = new GameAttackRequest();
+        attackRequest.setAttacker(new AttackPlayerDto(1L));
+        attackRequest.setDefender(new DefendPlayerDto(2L));
+        attackRequest.setWeapon(Weapon.TWIN);
+        attackRequest.setHand(Hand.LEFT);
+        given(gameRedisRepository.getInGamePlayer(1L, 1L)).willReturn(Optional.of(attacker));
+        given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
+
+        //when
+        gameAttackDefenseService.attack(1L, 1L, attackRequest);
+
+        //then
+        assertEquals(1L, inGame.getTurnData().getAttackerId());
+        assertEquals(2L, inGame.getTurnData().getDefenderId());
+        assertFalse(inGame.getTurnData().isLyingAttack());
+        assertEquals(GameStatus.ATTACK_DOUBT, inGame.getGameStatus());
+
+    }
+
+    @DisplayName("공격 / 블러핑")
+    @Test
+    void lyingAttack() {
+        // given
+        GameAttackRequest attackRequest = new GameAttackRequest();
+        attackRequest.setAttacker(new AttackPlayerDto(1L));
+        attackRequest.setDefender(new DefendPlayerDto(2L));
+        attackRequest.setWeapon(Weapon.TWIN);
+        attackRequest.setHand(Hand.RIGHT);
+        given(gameRedisRepository.getInGamePlayer(1L, 1L)).willReturn(Optional.of(attacker));
+        given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
+
+        // when
+        gameAttackDefenseService.attack(1L, 1L, attackRequest);
+        // then
+        assertTrue(inGame.getTurnData().isLyingAttack());
+    }
+
+    @DisplayName("공격 / 공격 요청 id와 로그인한 사용자 id가 다른 경우")
+    @Disabled
+    @Test
+    void BadAttackRequest() {
+        // given
+        GameAttackRequest attackRequest = new GameAttackRequest();
+        attackRequest.setAttacker(new AttackPlayerDto(2L));
+
+        // when
+        // then
+        assertThrows(CustomWebSocketException.class, () -> { gameAttackDefenseService.attack(1L, 1L, attackRequest); });
+    }
+
+    @DisplayName("공격 조회")
+    @Test
+    void getAttackInfo() {
+        //  given
+        AttackData attackData = AttackData.builder()
+                .hand(Hand.RIGHT)
+                .weapon(Weapon.TWIN)
+                .build();
+
+        inGame.getTurnData().setAttackData(attackData);
+
+        //  when
+        AttackResponse attackResponse = gameAttackDefenseService.getAttackInfo(1L);
+        //  then
+        assertEquals(4L, attackResponse.getAttacker().getId());
+        assertEquals(1L, attackResponse.getDefender().getId());
+        assertEquals(Weapon.TWIN.name(), attackResponse.getWeapon());
+        assertEquals(Hand.RIGHT.name(), attackResponse.getHand());
+    }
+
+    @DisplayName("공격 패스 / 공격상태에서 패스요청")
+    @Test
+    void isAttackPass() {
+        //  given
+        GameAttackPassRequest gameAttackPassRequest = new GameAttackPassRequest();
+        gameAttackPassRequest.setAttacker(new AttackPlayerDto(1L));
+        inGame.changeStatus(GameStatus.ATTACK);
+
+        //  when
+        gameAttackDefenseService.isAttackPass(1L, gameAttackPassRequest, 1L);
+
+        //  then
+
+    }
+
+    @DisplayName("공격 패스 / 공격 외 상태에서 패스요청")
+    @Test
+    void isNotAttackPass() {
+        // given
+        //  given
+        GameAttackPassRequest gameAttackPassRequest = new GameAttackPassRequest();
+        gameAttackPassRequest.setAttacker(new AttackPlayerDto(1L));
+        inGame.changeStatus(GameStatus.DEFENSE);
+        // when
+        // then
+        assertThrows(CustomWebSocketException.class, () -> {gameAttackDefenseService.isAttackPass(1L, gameAttackPassRequest, 1L);});
+    }
+
+    @DisplayName("방어 / 손에 들고 있는 방패로 방어")
+    @Test
+    void defense() {
+        //  given
+        GameDefenseRequest defenseRequest = new GameDefenseRequest();
+        defenseRequest.setDefender(new DefendPlayerDto(2L));
+        defenseRequest.setWeapon(Weapon.SHIELD);
+        defenseRequest.setHand(Hand.LEFT);
+
+        given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
+        //  when
+        gameAttackDefenseService.defense(1L, 2L, defenseRequest);
+        //  then
+        assertEquals(2L, inGame.getTurnData().getDefenderId());
+        assertFalse(inGame.getTurnData().isLyingDefend());
+        assertEquals(GameStatus.DEFENSE_DOUBT, inGame.getGameStatus());
+    }
+
+    @DisplayName("방어 / 블러핑 방어")
+    @Test
+    void lyingDefense() {
+        GameDefenseRequest defenseRequest = new GameDefenseRequest();
+        defenseRequest.setDefender(new DefendPlayerDto(2L));
+        defenseRequest.setWeapon(Weapon.SHIELD);
+        defenseRequest.setHand(Hand.RIGHT);
+
+        given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
+        //  when
+        gameAttackDefenseService.defense(1L, 2L, defenseRequest);
+        //  then
+        assertTrue(inGame.getTurnData().isLyingDefend());
+    }
+    @DisplayName("방어 조회")
+    @Test
+    void getDefenseInfo() {
+        //  given
+        DefendData defendData = new DefendData(Hand.LEFT, 3);
+        inGame.getTurnData().setDefendData(defendData);
+        //  when
+        DefenseResponse defenseResponse = gameAttackDefenseService.getDefenseInfo(1L);
+        //  then
+        assertEquals(1L, defenseResponse.getDefender().getId());
+        assertEquals(Weapon.SHIELD.name(), defenseResponse.getWeapon());
+        assertEquals(Hand.LEFT.name(), defenseResponse.getHand());
+
+    }
+
+    @DisplayName("방어 패스 / 방어 상태에서 패스요청")
+    @Test
+    void isDefensePass() {
+        //  given
+        DefendPlayerDto defendPlayerDto = new DefendPlayerDto(2L);
+        GameDefensePassRequest defensePassRequest = new GameDefensePassRequest();
+        defensePassRequest.setDefender(defendPlayerDto);
+
+        inGame.changeStatus(GameStatus.DEFENSE);
+
+        DefendData defendData = new DefendData(Hand.LEFT, 3);
+        inGame.getTurnData().setDefendData(defendData);
+        //  when
+        gameAttackDefenseService.isDefensePass(1L, defensePassRequest, 2L);
+        //  then
+        assertTrue(inGame.getTurnData().getDefendData().isDefendPass());
+        assertEquals(GameStatus.EXECUTE, inGame.getGameStatus());
+    }
+
+
+    @DisplayName("방어 패스 / 방어 외 상태에서 방어 패스요청")
+    @Test
+    void isNotDefensePass() {
+        //  given
+        DefendPlayerDto defendPlayerDto = new DefendPlayerDto(2L);
+        GameDefensePassRequest defensePassRequest = new GameDefensePassRequest();
+        defensePassRequest.setDefender(defendPlayerDto);
+
+        inGame.changeStatus(GameStatus.ATTACK);
+        //  when
+        //  then
+        assertThrows(CustomWebSocketException.class, () -> { gameAttackDefenseService.isDefensePass(1L, defensePassRequest, 2L); });
+
+    }
+}
