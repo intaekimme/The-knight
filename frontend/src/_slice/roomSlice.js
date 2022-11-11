@@ -42,6 +42,7 @@ const roomInit = {
   // state : -1,
   gameId: -1,
   title: "테스트 제목",
+  ownerId: -1,
   maxMember: 10,
   currentMembers: 0,
   sword: 0,
@@ -94,7 +95,8 @@ export const roomSlice = createSlice({
     },
     setMembers:(state, action) =>{
       console.log(action);
-      state.usersInfo = [...action.payload];
+      state.usersInfo = [...action.payload.members];
+      state.roomInfo.ownerId = action.payload.ownerId;
     },
     changeTeam:(state, action) =>{
       const tempUsersInfo = [...state.usersInfo];
