@@ -36,7 +36,8 @@ public class GameAttackDefenseService {
     public AttackerDto getAttacker(long gameId) {
 
         AttackerDto attackerDto = null;
-        InGame inGame = gameRedisRepository.getInGame(gameId).orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
+        InGame inGame = gameRedisRepository.getInGame(gameId)
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
         inGame.updateCurrentAttackTeam();
         TeamInfoData teamInfoData = inGame.getCurrentAttackTeam() == Team.A ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
         int capacity = inGame.getMaxMemberNum() / 2;
@@ -46,10 +47,20 @@ public class GameAttackDefenseService {
         while (attackerDto == null) {
             attackerIndex = ++attackerIndex % capacity;
             long memberId = orderList[attackerIndex].getMemberId();
-            InGamePlayer player = gameRedisRepository.getInGamePlayer(gameId, memberId).orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
+            InGamePlayer player = gameRedisRepository.getInGamePlayer(gameId, memberId).
+                    orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
             if (!player.isDead()) {
                 teamInfoData.updateCurrentAttackIndex(attackerIndex);
-                attackerDto = AttackerDto.builder().attackerResponseA(AttackerResponse.builder().memberId(memberId).isOpposite(player.getTeam() != Team.A).build()).attackerResponseB(AttackerResponse.builder().memberId(memberId).isOpposite(player.getTeam() != Team.B).build()).build();
+                attackerDto = AttackerDto.builder()
+                        .attackerResponseA(AttackerResponse.builder()
+                                .memberId(memberId)
+                                .isOpposite(player.getTeam() != Team.A)
+                                .build())
+                        .attackerResponseB(AttackerResponse.builder()
+                                .memberId(memberId)
+                                .isOpposite(player.getTeam() != Team.B)
+                                .build())
+                        .build();
             }
         }
 

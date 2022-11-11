@@ -3,7 +3,6 @@ package com.a301.theknight.domain.game.api;
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.waiting.request.GameModifyRequest;
-import com.a301.theknight.domain.game.dto.waiting.response.GameExitResponse;
 import com.a301.theknight.domain.game.dto.waiting.response.GameMembersInfoDto;
 import com.a301.theknight.domain.game.dto.waiting.response.GameModifyResponse;
 import com.a301.theknight.domain.game.service.GameWaitingService;
@@ -28,13 +27,6 @@ public class GameWaitingApi {
         GameModifyResponse gameModifyResponse = gameWaitingService.modify(gameId, memberId, gameModifyRequest);
 
         messageService.sendData(gameId,"/modify", gameModifyResponse);
-    }
-
-    @MessageMapping(value = "/games/{gameId}/delete")
-    public void delete(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId){
-        GameExitResponse gameExitResponse = gameWaitingService.delete(gameId, memberId);
-
-        messageService.sendData(gameId, "/delete", gameExitResponse);
     }
 
     @MessageMapping(value = "/games/{gameId}/members")
