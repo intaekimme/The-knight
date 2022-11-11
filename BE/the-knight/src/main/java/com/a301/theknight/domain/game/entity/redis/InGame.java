@@ -5,7 +5,6 @@ import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Team;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -14,7 +13,6 @@ import java.io.Serializable;
 public class InGame implements Serializable {
     private GameStatus gameStatus;
     private Team currentAttackTeam;
-    @Setter
     private TeamInfoData teamAInfo;
     private TeamInfoData teamBInfo;
     private int maxMemberNum;

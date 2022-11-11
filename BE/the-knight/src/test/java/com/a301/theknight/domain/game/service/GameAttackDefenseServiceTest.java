@@ -44,6 +44,8 @@ class GameAttackDefenseServiceTest {
     private InGamePlayer attacker;
     private InGamePlayer defender;
 
+    private List<InGamePlayer> TeamA;
+
     @BeforeEach
     void setup() {
         //  새로 공격, 방어 요청할 플레이어
@@ -65,28 +67,8 @@ class GameAttackDefenseServiceTest {
         turnData.setAttackerId(4L);
         turnData.setDefenderId(1L);
 
-        inGame = InGame.builder()
-                .turnData(turnData)
-                .gameStatus(GameStatus.ATTACK)
-                .currentAttackTeam(Team.A)
-                .maxMemberNum(4)
-                .build();
-
-        gameAttackDefenseService = new GameAttackDefenseService(gameRedisRepository);
-        lenient().when(gameRedisRepository.getInGame(1L)).thenReturn(Optional.of(inGame));
-//        given(gameRedisRepository.getInGame(1L)).willReturn(Optional.of(inGame));
-    }
-
-
-    @DisplayName("공격자 조회 / A팀 조회")
-    @Test
-    void getAttacker() {
-        //  given
-        //  이전 공격이 B팀인 상황
-        inGame.updateCurrentAttackTeam();
-
         GameOrderDto[] orderList = new GameOrderDto[3];
-        List<InGamePlayer> TeamA = new ArrayList<>();
+        TeamA = new ArrayList<>();
 
         TeamA.add(attacker);
         orderList[0] = GameOrderDto.builder().memberId(attacker.getMemberId()).build();
@@ -112,14 +94,33 @@ class GameAttackDefenseServiceTest {
             }
         }
 
-        TeamInfoData teamInfoData = TeamInfoData.builder()
+        TeamInfoData teamAInfoData = TeamInfoData.builder()
                 .currentAttackIndex(3)
                 .orderList(orderList)
                 .leaderId(5L)
                 .selected(false)
                 .build();
 
-        inGame.setTeamAInfo(teamInfoData);
+        inGame = InGame.builder()
+                .turnData(turnData)
+                .gameStatus(GameStatus.ATTACK)
+                .currentAttackTeam(Team.A)
+                .maxMemberNum(4)
+                .teamAInfo(teamAInfoData)
+                .build();
+
+        inGame.updateCurrentAttackTeam();
+
+        gameAttackDefenseService = new GameAttackDefenseService(gameRedisRepository);
+        lenient().when(gameRedisRepository.getInGame(1L)).thenReturn(Optional.of(inGame));
+//        given(gameRedisRepository.getInGame(1L)).willReturn(Optional.of(inGame));
+    }
+
+
+    @DisplayName("공격자 조회 / A팀 조회")
+    @Test
+    void getAttacker() {
+        //  given
 
         for(int i=0; i<3; i++){
             lenient().when(gameRedisRepository.getInGamePlayer(1L, (i*2) + 1)).thenReturn(Optional.of(TeamA.get(i)));
