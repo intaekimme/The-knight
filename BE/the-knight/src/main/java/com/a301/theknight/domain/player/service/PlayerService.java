@@ -75,9 +75,12 @@ public class PlayerService {
         Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
 
-        return new PlayerExitDto(exitPlayer.isLeader(), PlayerExitResponse.builder()
+        PlayerExitDto exitDto = new PlayerExitDto(exitPlayer.isLeader(), PlayerExitResponse.builder()
                 .memberId(exitPlayer.getMember().getId())
                 .nickname(exitPlayer.getMember().getNickname()).build());
+        playerRepository.delete(exitPlayer);
+
+        return exitDto;
     }
 
     @Transactional

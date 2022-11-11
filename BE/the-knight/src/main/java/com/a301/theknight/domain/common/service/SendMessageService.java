@@ -1,5 +1,8 @@
 package com.a301.theknight.domain.common.service;
 
+import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
+import com.a301.theknight.domain.game.entity.GameStatus;
+import com.a301.theknight.domain.game.util.GameConvertUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -8,9 +11,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class SendMessageService {
     private static final String SEND_PREFIX = "/sub/games/";
-    private static final String SERVER_PREFIX = "/pub/games/";
     private static final String CHAT_INFIX = "/chat-";
+
     private final SimpMessagingTemplate template;
+    private final GameConvertUtil gameConvertUtil;
 
     public void sendData(long gameId, String postfix, Object payload) {
         template.convertAndSend(makeDestinationUrl(gameId, postfix), payload);
@@ -20,16 +24,9 @@ public class SendMessageService {
         template.convertAndSend(makeChatDestinationUrl(gameId, chattingSet), payload);
     }
 
-    public void sendDataToServer(long gameId, String postfix) {
-        template.convertAndSend(makeServerDestinationUrl(gameId, postfix), "");
-    }
-
-    public void sendDataToServer(long gameId, String postfix, Object payload) {
-        template.convertAndSend(makeServerDestinationUrl(gameId, postfix), payload);
-    }
-
     public void convertCall(long gameId) {
-        template.convertAndSend(makeConvertURL(gameId), "");
+        GameStatusResponse response = gameConvertUtil.convertScreen(gameId);
+        sendData(gameId, "/convert", response);
     }
 
     public void convertCall(long gameId, long delayMillis) {
@@ -42,15 +39,17 @@ public class SendMessageService {
     }
 
     public void forceConvertCall(long gameId) {
-        template.convertAndSend(makeForceConvertURL(gameId), "");
+        GameStatusResponse response = gameConvertUtil.forceConvertScreen(gameId);
+        sendData(gameId, "/convert", response);
     }
-
 
     public void proceedCall(long gameId, long delayMillis) {
         try {
+            GameStatus gameStatus = gameConvertUtil.getGameStatus(gameId);
             Thread.sleep(delayMillis);
 
-            template.convertAndSend(makeProceedURL(gameId), "");
+            //TODO: 제한시간을 응답에 담아서 보내주기
+            sendData(gameId, "/proceed", "time");
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -64,19 +63,4 @@ public class SendMessageService {
         return SEND_PREFIX + gameId + CHAT_INFIX + chattingSet.toLowerCase();
     }
 
-    private String makeServerDestinationUrl(long gameId, String postfix) {
-        return SERVER_PREFIX + gameId + postfix;
-    }
-
-    private String makeConvertURL(long gameId) {
-        return SERVER_PREFIX + gameId + "/convert";
-    }
-
-    private String makeForceConvertURL(long gameId) {
-        return SERVER_PREFIX + gameId + "/force-convert";
-    }
-
-    private String makeProceedURL(long gameId) {
-        return SERVER_PREFIX + gameId + "/proceed";
-    }
 }

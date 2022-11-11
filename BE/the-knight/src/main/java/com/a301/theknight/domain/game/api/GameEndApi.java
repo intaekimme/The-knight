@@ -23,7 +23,6 @@ public class GameEndApi {
         messageService.sendData(gameId, "/a/end", gameEndDto.getEndResponseA());
         messageService.sendData(gameId, "/b/end", gameEndDto.getEndResponseB());
 
-        //Proceed
         messageService.proceedCall(gameId, 5000);
     }
 

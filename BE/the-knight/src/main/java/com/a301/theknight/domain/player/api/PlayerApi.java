@@ -2,6 +2,8 @@ package com.a301.theknight.domain.player.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.common.service.SendMessageService;
+import com.a301.theknight.domain.game.dto.waiting.response.GameExitResponse;
+import com.a301.theknight.domain.game.service.GameWaitingService;
 import com.a301.theknight.domain.player.dto.ReadyDto;
 import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
 import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
@@ -23,14 +25,13 @@ public class PlayerApi {
 
     private final SendMessageService messageService;
     private final PlayerService playerService;
+    private final GameWaitingService gameWaitingService;
 
     @MessageMapping(value="/games/{gameId}/entry")
     public void entry(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId){
         PlayerEntryResponse playerEntryResponse = playerService.entry(gameId, memberId);
 
         messageService.sendData(gameId,"/entry", playerEntryResponse);
-
-        messageService.sendDataToServer(gameId, "/members");
     }
 
     @MessageMapping(value="/games/{gameId}/exit")
@@ -38,8 +39,8 @@ public class PlayerApi {
                      @LoginMemberId long memberId){
         PlayerExitDto exitDto = playerService.exit(gameId, memberId);
         if (exitDto.isLeaderExited()) {
-            //TODO: /delete에 memberId 바인딩 여부 테스트
-            messageService.sendDataToServer(gameId, "/delete", memberId);
+            GameExitResponse exitResponse = gameWaitingService.delete(gameId, memberId);
+            messageService.sendData(gameId, "/delete", exitResponse);
             return;
         }
         messageService.sendData(gameId, "/exit", exitDto.getPlayerExitResponse());
