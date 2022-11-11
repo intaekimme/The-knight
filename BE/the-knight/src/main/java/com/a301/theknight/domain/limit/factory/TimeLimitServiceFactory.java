@@ -25,8 +25,9 @@ public class TimeLimitServiceFactory {
                 return defenseTimeLimitService;
             case ATTACK_DOUBT: case DEFENSE_DOUBT:
                 return doubtTimeLimitService;
+            default:
+                return defaultTimeLimitService;
         }
-        return defaultTimeLimitService;
     }
 
 }

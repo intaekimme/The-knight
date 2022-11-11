@@ -24,6 +24,7 @@ public class DoubtTimeLimitService extends TimeLimitServiceTemplate {
     public void runLimitLogic(long gameId, InGame inGame) {
         GameStatus curStatus = inGame.getGameStatus();
         GameStatus nextStatus = ATTACK_DOUBT.equals(curStatus) ? DEFENSE : EXECUTE;
+
         inGame.changeStatus(nextStatus);
         redisRepository.saveInGame(gameId, inGame);
     }

@@ -1,12 +1,12 @@
 package com.a301.theknight.domain.game.util;
 
-import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
 import com.a301.theknight.domain.game.dto.convert.PostfixDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
+import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RLock;
@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
-import static com.a301.theknight.domain.game.entity.GameStatus.DEFENSE;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 
 @Service
@@ -42,7 +41,7 @@ public class GameConvertUtil {
         postfixMap.put(GameStatus.PREDECESSOR.name(), "/pre-attack");
         postfixMap.put(GameStatus.ATTACK.name(), "/attacker");
         postfixMap.put(GameStatus.ATTACK_DOUBT.name(), "/attack-info");
-        postfixMap.put(GameStatus.DEFENSE.name(), "/attack-info");
+        postfixMap.put(GameStatus.DEFENSE.name(), "");
         postfixMap.put(GameStatus.DEFENSE_DOUBT.name(), "/defense-info");
         postfixMap.put(GameStatus.DOUBT_RESULT.name(), "/doubt-info");
         postfixMap.put(GameStatus.EXECUTE.name(), "/execute");
@@ -137,7 +136,7 @@ public class GameConvertUtil {
             case ATTACK_DOUBT:
                 return DEFENSE;
         }
-        return null;
+        throw new CustomWebSocketException(GamePlayingErrorCode.WRONG_GAME_STATUS);
     }
 
     private InGame getInGame(long gameId) {
