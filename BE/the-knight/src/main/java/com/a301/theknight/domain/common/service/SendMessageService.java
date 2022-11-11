@@ -1,8 +1,11 @@
 package com.a301.theknight.domain.common.service;
 
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
+import com.a301.theknight.domain.game.dto.convert.LimitTimeDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.util.GameConvertUtil;
+import com.a301.theknight.domain.limit.factory.TimeLimitServiceFactory;
+import com.a301.theknight.domain.limit.template.TimeLimitServiceTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ public class SendMessageService {
 
     private final SimpMessagingTemplate template;
     private final GameConvertUtil gameConvertUtil;
+    private final TimeLimitServiceFactory timeLimitServiceFactory;
 
     public void sendData(long gameId, String postfix, Object payload) {
         template.convertAndSend(makeDestinationUrl(gameId, postfix), payload);
@@ -48,8 +52,9 @@ public class SendMessageService {
             GameStatus gameStatus = gameConvertUtil.getGameStatus(gameId);
             Thread.sleep(delayMillis);
 
-            //TODO: 제한시간을 응답에 담아서 보내주기
-            sendData(gameId, "/proceed", "time");
+            sendData(gameId, "/proceed", LimitTimeDto.toDto(gameStatus));
+            TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameStatus);
+            timeLimitService.executeTimeLimit(gameId);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

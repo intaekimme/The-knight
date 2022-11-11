@@ -17,8 +17,6 @@ import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.service.GameAttackDefenseService;
 import com.a301.theknight.domain.game.service.GameDoubtService;
 import com.a301.theknight.domain.game.service.GameExecuteEndService;
-import com.a301.theknight.domain.limit.factory.TimeLimitServiceFactory;
-import com.a301.theknight.domain.limit.template.TimeLimitServiceTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -34,9 +32,7 @@ public class GamePlayingApi {
 
     private final GameDoubtService gameDoubtService;
     private final GameExecuteEndService gameExecuteEndService;
-
     private final SendMessageService messageService;
-    private final TimeLimitServiceFactory timeLimitServiceFactory;
 
     @MessageMapping(value="/games/{gameId}/pre-attack")
     public void getPreAttack(@Min(1) @DestinationVariable long gameId) throws InterruptedException {
@@ -58,9 +54,6 @@ public class GamePlayingApi {
         messageService.sendData(gameId, "/b/attacker", attackerDto.getAttackerResponseB());
 
         messageService.proceedCall(gameId, 500);
-
-        TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameId);
-        timeLimitService.executeTimeLimit(gameId);
     }
 
     // AttackApi 3개
@@ -77,9 +70,6 @@ public class GamePlayingApi {
         messageService.sendData(gameId, "/attack-info", response);
 
         messageService.proceedCall(gameId, 500);
-
-        TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameId);
-        timeLimitService.executeTimeLimit(gameId);
     }
 
     @MessageMapping(value = "/games/{gameId}/attack-pass")
@@ -103,9 +93,6 @@ public class GamePlayingApi {
         messageService.sendData(gameId, "/defense-info", response);
 
         messageService.proceedCall(gameId, 500);
-
-        TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameId);
-        timeLimitService.executeTimeLimit(gameId);
     }
 
     @MessageMapping(value = "/games/{gameId}/defense-pass")
