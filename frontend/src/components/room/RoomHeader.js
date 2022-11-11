@@ -39,7 +39,11 @@ export default function RoomHeader(props) {
 	return (
 		<Grid container sx={{ p: 3 }}>
 			<Grid item xs={7} sx={{fontSize:props.size, display: "flex", alignItems: "center"}}>
-				<Button onClick={ onRoomSettingOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button>
+				{props.roomData.ownerId && props.roomData.ownerId.toString()===window.localStorage.getItem("memberId")
+				?	<Button onClick={ onRoomSettingOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button>
+				: <div />
+				}
+				{/* <Button onClick={ onRoomSettingOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button> */}
 				<RoomSetting roomData={roomData} open={open} onClose={ onRoomSettingClose } />
 				<h2>{` #${roomData.gameId} ${roomData.title} ${props.memberDatas.length}/${roomData.maxMember}`}</h2>
 			</Grid>
