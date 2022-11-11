@@ -53,7 +53,7 @@ public class GamePrepareService {
         List<Player> players = game.getPlayers();
 
         choiceLeader(players);
-        initInGameData(gameId, game);
+        initInGameData(game);
         makeInGamePlayerData(gameId, players);
         makeWeaponsData(game);
 
@@ -96,7 +96,7 @@ public class GamePrepareService {
     @Transactional
     public GameOrderResponse choiceOrder(long gameId, long memberId, Team team, GameOrderRequest orderRequest) {
         InGame inGame = getInGame(gameId);
-        if (orderRequest.validate(inGame.getMaxMemberNum())) {
+        if (!orderRequest.validate(inGame.getMaxMemberNum() / 2)) {
             throw new CustomWebSocketException(ORDER_NUMBER_IS_INVALID);
         }
         int orderNumber = orderRequest.getOrderNumber();
@@ -113,7 +113,7 @@ public class GamePrepareService {
             throw new CustomWebSocketException(ALREADY_SELECTED_ORDER_NUMBER);
         }
 
-        inGame.choiceOrder(inGamePlayer, orderNumber);
+        inGame.choiceOrder(inGamePlayer, orderNumber, teamInfoData);
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
 
@@ -146,9 +146,12 @@ public class GamePrepareService {
     }
 
     private GameLeaderDto getLeadersData(Game game) {
+        Long teamALeaderId = getTeamLeaderId(game, Team.A);
+        Long teamBLeaderId = getTeamLeaderId(game, Team.B);
+
         return GameLeaderDto.builder()
-                .teamA(new TeamLeaderDto(getTeamLeaderId(game, Team.A)))
-                .teamB(new TeamLeaderDto(getTeamLeaderId(game, Team.B))).build();
+                .teamA(new TeamLeaderDto(teamALeaderId == null ? 0 : teamALeaderId))
+                .teamB(new TeamLeaderDto(teamBLeaderId == null ? 0 : teamBLeaderId)).build();
     }
 
     private void checkWeaponSelect(List<InGamePlayer> teamPlayerList, GameWeaponData weaponsData, Game game) {
@@ -204,15 +207,7 @@ public class GamePrepareService {
         List<InGamePlayer> playerList = redisRepository.getInGamePlayerList(gameId);
 
         return playerList.stream()
-                .map(inGamePlayer -> PlayerDataDto.builder()
-                        .memberId(inGamePlayer.getMemberId())
-                        .nickname(inGamePlayer.getNickname())
-                        .team(inGamePlayer.getTeam().name())
-                        .leftCount(inGamePlayer.getLeftCount())
-                        .rightCount(inGamePlayer.getRightCount())
-                        .order(inGamePlayer.getOrder())
-                        .weapons(new ArrayList<>(Arrays.asList(inGamePlayer.getLeftWeapon().name(), inGamePlayer.getRightWeapon().name())))
-                        .build())
+                .map(inGamePlayer -> PlayerDataDto.toDto(inGamePlayer))
                 .collect(Collectors.toList());
     }
 
@@ -221,8 +216,8 @@ public class GamePrepareService {
         List<Player> teamB = getTeamPlayerList(players, Team.B);
 
         Random random = new Random();
-        int teamALeaderIndex = random.nextInt(teamA.size() - 1);
-        int teamBLeaderIndex = random.nextInt(teamB.size() - 1);
+        int teamALeaderIndex = random.nextInt(teamA.size());
+        int teamBLeaderIndex = random.nextInt(teamB.size());
 
         Player teamALeader = teamA.get(teamALeaderIndex);
         Player teamBLeader = teamB.get(teamBLeaderIndex);
@@ -243,13 +238,13 @@ public class GamePrepareService {
         redisRepository.saveInGamePlayerAll(gameId, inGamePlayers);
     }
 
-    private void initInGameData(long gameId, Game game) {
-        Team firstAttackTeam = (int) (Math.random() * 10) % 2 == 0 ? Team.A : Team.B;
+    private void initInGameData(Game game) {
+        Team firstAttackTeam = getRandomFirstAttackTeam();
 
         TeamInfoData teamAInfo = makeTeamInfoData(game, getTeamLeaderId(game, Team.A));
         TeamInfoData teamBInfo = makeTeamInfoData(game, getTeamLeaderId(game, Team.B));
 
-        redisRepository.saveInGame(gameId, InGame.builder()
+        redisRepository.saveInGame(game.getId(), InGame.builder()
                 .gameStatus(GameStatus.PREPARE)
                 .currentAttackTeam(firstAttackTeam)
                 .maxMemberNum(game.getCapacity())
@@ -258,18 +253,23 @@ public class GamePrepareService {
                 .turnData(new TurnData()).build());
     }
 
-    private Long getTeamLeaderId(Game game, Team team) {
-        return game.getTeamLeader(team)
-                .orElseThrow(() -> new CustomWebSocketException(ORDER_NUMBER_IS_INVALID)).getMember().getId();
+    private Team getRandomFirstAttackTeam() {
+        return (int) (Math.random() * 10) % 2 == 0 ? Team.A : Team.B;
     }
 
-    private TeamInfoData makeTeamInfoData(Game game, long leaderId) {
+    private Long getTeamLeaderId(Game game, Team team) {
+        return game.getTeamLeader(team)
+                .orElseThrow(() -> new CustomWebSocketException(ORDER_NUMBER_IS_INVALID))
+                .getMember().getId();
+    }
+
+    private TeamInfoData makeTeamInfoData(Game game, Long leaderId) {
         int peopleNum = game.getPlayers().size() / 2;
 
         return TeamInfoData.builder()
                 .currentAttackIndex(peopleNum - 1)
                 .orderList(new GameOrderDto[peopleNum])
-                .leaderId(leaderId).build();
+                .leaderId(leaderId == null ? 0 : leaderId).build();
     }
 
     private void makeWeaponsData(Game game) {
