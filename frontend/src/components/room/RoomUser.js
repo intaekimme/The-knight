@@ -69,7 +69,7 @@ export default function RoomUser(props) {
 					? 
 					<Button onClick={onReady} style={{
 							position: "absolute", bottom: 0, right: -props.size * 3, width: props.size * 3, height: props.size * 3,
-							border: `${props.size / 10}px solid ${black}`, borderRadius: "50%", background: ready ? `${gray}` : `${yellow}`, color: black, fontSize: props.size / 2, fontWeight: 900
+							border: `${props.size / 10}px solid ${black}`, borderRadius: "50%", background: ready ? gray : yellow, color: black, fontSize: props.size / 2, fontWeight: 900
 					}}>
 						Start
 					</Button>
