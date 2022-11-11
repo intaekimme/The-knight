@@ -6,7 +6,6 @@ import com.a301.theknight.domain.game.dto.end.response.EndResponse;
 import com.a301.theknight.domain.game.dto.execute.response.AttackerDto;
 import com.a301.theknight.domain.game.dto.execute.response.DefenderDto;
 import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
-import com.a301.theknight.domain.game.dto.pass.response.PassResponse;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
@@ -93,12 +92,12 @@ public class GameExecuteEndService {
         boolean isAWin = method(gameId, players, inGame.getTeamAInfo());
         boolean isBWin = method(gameId, players, inGame.getTeamBInfo());
 
-        String losingTeam = isAWin ? "A" : "B";
+        String losingTeam = isAWin ? "B" : "A";
         long losingLeaderId = losingTeam.equals("A") ? inGame.getTeamAInfo().getLeaderId() : inGame.getTeamBInfo().getLeaderId();
         long winningLeaderId = losingTeam.equals("A") ? inGame.getTeamBInfo().getLeaderId() : inGame.getTeamAInfo().getLeaderId();
 
-        EndResponse endResponseA = EndResponse.builder().isWin(isAWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).build();
-        EndResponse endResponseB = EndResponse.builder().isWin(isBWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).build();
+        EndResponse endResponseA = EndResponse.builder().isWin(isAWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).players(players).build();
+        EndResponse endResponseB = EndResponse.builder().isWin(isBWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).players(players).build();
 
         return GameEndDto.builder().endResponseA(endResponseA).endResponseB(endResponseB).build();
     }

@@ -30,7 +30,7 @@ public class PlayerApi {
 
         messageService.sendData(gameId,"/entry", playerEntryResponse);
 
-        messageService.sendData(gameId, "/members", "");
+        messageService.sendDataToServer(gameId, "/members");
     }
 
     @MessageMapping(value="/games/{gameId}/exit")
@@ -39,11 +39,10 @@ public class PlayerApi {
         PlayerExitDto exitDto = playerService.exit(gameId, memberId);
         if (exitDto.isLeaderExited()) {
             //TODO: /delete에 memberId 바인딩 여부 테스트
-            messageService.sendData(gameId, "/delete", memberId);
+            messageService.sendDataToServer(gameId, "/delete", memberId);
             return;
         }
         messageService.sendData(gameId, "/exit", exitDto.getPlayerExitResponse());
-        messageService.sendData(gameId, "/delete", memberId);
     }
 
     @MessageMapping(value="/games/{gameId}/team")

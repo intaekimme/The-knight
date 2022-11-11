@@ -1,9 +1,9 @@
 package com.a301.theknight.domain.auth.handler;
 
 import com.a301.theknight.domain.auth.model.TokenSet;
-import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.TokenService;
 import com.a301.theknight.domain.auth.util.CookieUtils;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -28,7 +28,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final TokenService tokenService;
     private final TokenProperties tokenProperties;
-//    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -39,7 +38,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         long memberId = tokenService.getId(tokenSet.getAccess());
 
         String targetUrl = makeRedirectUrl(request, tokenSet.getAccess(), memberId);
-        log.info(" Redirect_url = {}", targetUrl);
         if (response.isCommitted()) {
             log.debug("Response is already committed. Can't redirect {}", targetUrl);
             return;
@@ -48,10 +46,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String refreshTokenName = tokenProperties.getRefresh().getName();
         CookieUtils.addCookie(response, refreshTokenName,
                 tokenSet.getRefresh(), (int) tokenProperties.getRefresh().getExpiredTime());
-
-//        Map<String, String> map = new HashMap<>();
-//        map.put(accessTokenName, tokenSet.getAccess());
-//        response.getWriter().println(objectMapper.writeValueAsString(map));
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }

@@ -10,7 +10,7 @@ public class CustomWebSocketException extends RuntimeException implements Custom
     private final ErrorCode errorCode;
 
     public CustomWebSocketException(ErrorCode errorCode) {
-        log.info("<<< [Error Occur] : Error name = {}, status = {} message = {}", errorCode.name(), errorCode.getHttpStatus(), errorCode.getMessage());
+        log.info("<<<< [Error Occur] : Error name = {}, status = {} message = {}", errorCode.name(), errorCode.getHttpStatus(), errorCode.getMessage());
         this.errorCode = errorCode;
     }
 }
