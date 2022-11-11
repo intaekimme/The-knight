@@ -5,9 +5,11 @@ import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
+import com.a301.theknight.domain.game.dto.attacker.AttackerDto;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
+import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.*;
@@ -19,10 +21,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.lenient;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -36,9 +41,10 @@ class GameAttackDefenseServiceTest {
     GameAttackDefenseService gameAttackDefenseService;
 
     private InGame inGame;
-    private TurnData turnData;
     private InGamePlayer attacker;
     private InGamePlayer defender;
+
+    private List<InGamePlayer> TeamA;
 
     @BeforeEach
     void setup() {
@@ -57,23 +63,78 @@ class GameAttackDefenseServiceTest {
                 .build();
 
         //  기존 공격, 방어자 정보
-        turnData = new TurnData();
+        TurnData turnData = new TurnData();
         turnData.setAttackerId(4L);
         turnData.setDefenderId(1L);
+
+        GameOrderDto[] orderList = new GameOrderDto[3];
+        TeamA = new ArrayList<>();
+
+        TeamA.add(attacker);
+        orderList[0] = GameOrderDto.builder().memberId(attacker.getMemberId()).build();
+
+        for(int i=1; i < 3; i++){
+            long memberId = (i * 2) + 1;
+            orderList[i] = GameOrderDto.builder().memberId(memberId).build();
+            if(i==1){
+                TeamA.add(InGamePlayer.builder()
+                        .memberId(memberId)
+                        .team(Team.A)
+                        .leftWeapon(Weapon.TWIN)
+                        .rightWeapon(Weapon.SWORD)
+                        .isDead(true)
+                        .build());
+            }else{
+                TeamA.add(InGamePlayer.builder()
+                        .memberId(memberId)
+                        .team(Team.A)
+                        .leftWeapon(Weapon.TWIN)
+                        .rightWeapon(Weapon.SWORD)
+                        .build());
+            }
+        }
+
+        TeamInfoData teamAInfoData = TeamInfoData.builder()
+                .currentAttackIndex(3)
+                .orderList(orderList)
+                .leaderId(5L)
+                .selected(false)
+                .build();
 
         inGame = InGame.builder()
                 .turnData(turnData)
                 .gameStatus(GameStatus.ATTACK)
                 .currentAttackTeam(Team.A)
+                .maxMemberNum(4)
+                .teamAInfo(teamAInfoData)
                 .build();
 
+        inGame.updateCurrentAttackTeam();
+
         gameAttackDefenseService = new GameAttackDefenseService(gameRedisRepository);
-        given(gameRedisRepository.getInGame(1L)).willReturn(Optional.of(inGame));
+        lenient().when(gameRedisRepository.getInGame(1L)).thenReturn(Optional.of(inGame));
+//        given(gameRedisRepository.getInGame(1L)).willReturn(Optional.of(inGame));
     }
 
 
+    @DisplayName("공격자 조회 / A팀 조회")
     @Test
     void getAttacker() {
+        //  given
+
+        for(int i=0; i<3; i++){
+            lenient().when(gameRedisRepository.getInGamePlayer(1L, (i*2) + 1)).thenReturn(Optional.of(TeamA.get(i)));
+        }
+
+        //  when
+        AttackerDto attackerDto = gameAttackDefenseService.getAttacker(1L);
+
+        //  then
+        assertEquals(1L, attackerDto.getAttackerResponseA().getMemberId());
+        assertEquals(1L, attackerDto.getAttackerResponseB().getMemberId());
+        assertFalse(attackerDto.getAttackerResponseA().isOpposite());
+        assertTrue(attackerDto.getAttackerResponseB().isOpposite());
+
     }
 
     @DisplayName("선공 조회")
@@ -128,7 +189,6 @@ class GameAttackDefenseServiceTest {
     }
 
     @DisplayName("공격 / 공격 요청 id와 로그인한 사용자 id가 다른 경우")
-    @Disabled
     @Test
     void BadAttackRequest() {
         // given
@@ -137,7 +197,7 @@ class GameAttackDefenseServiceTest {
 
         // when
         // then
-        assertThrows(CustomWebSocketException.class, () -> { gameAttackDefenseService.attack(1L, 1L, attackRequest); });
+        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.attack(1L, 1L, attackRequest));
     }
 
     @DisplayName("공격 조회")
@@ -185,7 +245,7 @@ class GameAttackDefenseServiceTest {
         inGame.changeStatus(GameStatus.DEFENSE);
         // when
         // then
-        assertThrows(CustomWebSocketException.class, () -> {gameAttackDefenseService.isAttackPass(1L, gameAttackPassRequest, 1L);});
+        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.isAttackPass(1L, gameAttackPassRequest, 1L));
     }
 
     @DisplayName("방어 / 손에 들고 있는 방패로 방어")
@@ -266,7 +326,7 @@ class GameAttackDefenseServiceTest {
         inGame.changeStatus(GameStatus.ATTACK);
         //  when
         //  then
-        assertThrows(CustomWebSocketException.class, () -> { gameAttackDefenseService.isDefensePass(1L, defensePassRequest, 2L); });
+        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.isDefensePass(1L, defensePassRequest, 2L));
 
     }
 }

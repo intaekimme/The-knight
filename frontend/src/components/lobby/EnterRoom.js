@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {enterRoomSubscribe} from '../../_slice/websocketSlice';
+import {enterRoomSubscribe, exitRoomUnsubscribe} from '../../_slice/websocketSlice';
 import api from '../../api/api';
-// import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEnterRoom,
-//   onSubAllMembersInRoom, onSubSelectTeam, onSubReady, onSubExitRoom} from '../../websocket/RoomReceivers';
+// import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEntry,
+//   onSubMembers, onSubSelectTeam, onSubReady, onSubExit} from '../../websocket/RoomReceivers';
 import { getRoomInfo, modifyRoomSetting, setState, setMembers, changeTeam, changeReady } from '../../_slice/roomSlice';
-import { onPubAllMembersInRoom, onPubEnterRoom } from '../../websocket/RoomPublishes';
+import { onPubMembers } from '../../websocket/RoomPublishes';
 
 export default function EnterRoom(){
   const navigate = useNavigate();
@@ -15,9 +15,7 @@ export default function EnterRoom(){
   console.log(gameId);
   const dispatch = useDispatch();
 
-
-
-  // 방 설정 변경 리시버 OK
+  // 방 설정 변경 리시버
   const onSubModifyRoom = (payload) => {
     // {
     //   title: String,
@@ -82,8 +80,8 @@ export default function EnterRoom(){
     }
     console.log("팀 채팅 sub", data);
   };
-  // 방 입장 리시버 OK
-  const onSubEnterRoom = (payload) => {
+  // 방 입장 리시버
+  const onSubEntry = (payload) => {
     // {
     //   memberId : long,
     //   nickname: String,
@@ -91,14 +89,14 @@ export default function EnterRoom(){
     // }
     const data = JSON.parse(payload.body);
     const text = `${data.nickname}님이 입장하셨습니다.`;
-    dispatch(onPubAllMembersInRoom({stompClient:stompClient, gameId:gameId}));
+    onPubMembers({stompClient:stompClient, gameId:gameId});
     // 전체채팅으로 뿌려주기
     console.log(text);
     // 전체 멤버 publish
     console.log("방 입장 sub", data);
   };
-  // 방 전체 멤버 리시버 OK
-  const onSubAllMembersInRoom = (payload) => {
+  // 방 전체 멤버 리시버
+  const onSubMembers = (payload) => {
     // {
     //   members : [
     //     {
@@ -117,7 +115,7 @@ export default function EnterRoom(){
     dispatch(setMembers(data.members));
     console.log("전체 멤버 조회 sub", data);
   };
-  // 팀선택 리시버 OK
+  // 팀선택 리시버
   const onSubSelectTeam = (payload) => {
     // {
     //   memberId : long,
@@ -139,54 +137,71 @@ export default function EnterRoom(){
     dispatch(changeReady(data.readyResponseDto));
   };
   // 방 퇴장 리시버
-  const onSubExitRoom = (payload) => {
+  const onSubExit = (payload) => {
     // {
     //   memberId: long
     //   nickname: long
     // }
     const data = JSON.parse(payload.body);
     const text = `${data.nickname}님이 퇴장하셨습니다.`;
-    dispatch(onPubAllMembersInRoom({stompClient:stompClient, gameId:gameId}));
-    // 전체채팅으로 뿌려주기
-    console.log(text);
-    // 전체 멤버 publish
-    console.log("방 퇴장 sub", data);
+    if(data.memberId.toString()===window.localStorage.getItem("memberId")){
+      dispatch(exitRoomUnsubscribe({stompClient:stompClient, gameId:gameId})).then(()=>{
+        navigate('/lobby');
+      }).catch((err)=>{
+        console.log(err);
+      });
+    }
+    else{
+      onPubMembers({stompClient:stompClient, gameId:gameId});
+      // 전체채팅으로 뿌려주기
+      console.log(text);
+      // 전체 멤버 publish
+      console.log("방 퇴장 sub", data);
+    }
   };
 
-
+  // subscribe data
   const payload = {
     stompClient: stompClient,
     subscribes : [{
       api: api.subModifyRoom(gameId),
       receiver : onSubModifyRoom,
+      id: "modifyRoom",
     },{
       api: api.subState(gameId),
       receiver : onSubState,
+      id: "state",
     },{
       api: api.subChatAll(gameId),
       receiver : onSubChatAll,
+      id: "chatAll",
     },{
       api: api.subChatTeam(gameId, 'a'),
       receiver : onSubChatTeam,
+      id: "chatTeam",
     },{
-      api: api.subEnterRoom(gameId),
-      receiver : onSubEnterRoom,
+      api: api.subEntry(gameId),
+      receiver : onSubEntry,
+      id: "entry",
     },{
-      api: api.subAllMembersInRoom(gameId),
-      receiver : onSubAllMembersInRoom,
+      api: api.subMembers(gameId),
+      receiver : onSubMembers,
+      id: "members",
     },{
       api: api.subSelectTeam(gameId),
       receiver : onSubSelectTeam,
+      id: "selectTeam",
     },{
       api: api.subReady(gameId),
       receiver : onSubReady,
+      id: "ready",
     },{
-      api: api.subExitRoom(gameId),
-      receiver : onSubExitRoom,
+      api: api.subExit(gameId),
+      receiver : onSubExit,
+      id: "exit",
     },],
   }
   const url = `/in-room/${gameId}`;
-  const [first, setFirst] = React.useState(true);
   const [isSetting, setIsSetting] = React.useState(false);
   React.useEffect(()=>{
     if(isSetting){
@@ -194,6 +209,7 @@ export default function EnterRoom(){
       navigate(url);
     }
   },[isSetting]);
+  
   React.useEffect(()=>{
     dispatch(enterRoomSubscribe(payload)).then((response)=>{
       console.log(response);

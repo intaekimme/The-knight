@@ -14,4 +14,5 @@ public class GameInfoResponse {
     private int twin;
     private int shield;
     private int hand;
+    private long ownerId;
 }

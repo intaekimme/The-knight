@@ -3,11 +3,11 @@ import { useSelector } from "react-redux";
 
 import { white, red, blue, black } from "../../_css/ReactCSSProperties";
 
-import { Grid, Box, Button, Modal } from "@mui/material";
+import { Grid, Box, Button } from "@mui/material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import RoomSetting from "../../commons/modal/RoomSetting";
-import {onPubExitRoom, onPubSelectTeam} from "../../websocket/RoomPublishes";
+import {onPubExit, onPubSelectTeam} from "../../websocket/RoomPublishes";
 
 export default function RoomHeader(props) {
 	// 방설정 모달
@@ -24,7 +24,7 @@ export default function RoomHeader(props) {
 	}
 	// 나가기
 	const onExit = () => {
-		onPubExitRoom({stompClient:props.stompClient, gameId:roomData.gameId});
+		onPubExit({stompClient:props.stompClient, gameId:roomData.gameId});
 	}
 
 	// 방 정보
@@ -35,14 +35,11 @@ export default function RoomHeader(props) {
 			setRoomData(props.roomData);
 		}
 	}, [props.roomData]);
-
-	const exit = () => {
-		console.log("나가기");
-	}
+	
 	return (
 		<Grid container sx={{ p: 3 }}>
 			<Grid item xs={7} sx={{fontSize:props.size, display: "flex", alignItems: "center"}}>
-				<Button onClick={ onRoomSettingOpen } sx={{color:"gray"}}><SettingsIcon sx={{ fontSize: props.size*2 }} /></Button>
+				<Button onClick={ onRoomSettingOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button>
 				<RoomSetting roomData={roomData} open={open} onClose={ onRoomSettingClose } />
 				<h2>{` #${roomData.gameId} ${roomData.title} ${props.memberDatas.length}/${roomData.maxMember}`}</h2>
 			</Grid>
@@ -56,7 +53,7 @@ export default function RoomHeader(props) {
 				</Box>
 			</Grid>
 			<Grid item xs={1} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-				<LogoutIcon onClick={exit} sx={{ color:"red", fontSize: props.size*2 }} />
+				<Button onClick={onExit}><LogoutIcon sx={{ color:"red", fontSize: props.size*2 }} /></Button>
 			</Grid>
 		</Grid>
 	);
