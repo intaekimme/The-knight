@@ -63,7 +63,7 @@ class GameExecuteEndServiceTest {
     PlayerRepository playerRepository;
 
     @BeforeEach
-     void beforeAll() {
+     void beforeEach() {
         testMember1 = Member.builder()
                 .nickname("테스트멤버1")
                 .image("image")
