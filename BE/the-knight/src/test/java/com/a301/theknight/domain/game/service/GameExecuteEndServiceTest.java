@@ -18,9 +18,7 @@ import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.domain.ranking.entity.Ranking;
 import com.a301.theknight.domain.ranking.repository.RankingRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -34,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
+@TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 class GameExecuteEndServiceTest {
 
     @InjectMocks
@@ -87,13 +86,14 @@ class GameExecuteEndServiceTest {
         testRanking3 = Ranking.builder().member(testMember3).build();
         testRanking4 = Ranking.builder().member(testMember4).build();
 
-        testRanking1.saveWinScore();    // 20
+        testRanking1.saveWinScore();    // 15
         testRanking1.saveWinScore();
-        testRanking2.saveWinScore();    // 5
-        testRanking2.saveLoseScore();
-        testRanking3.saveWinScore();    // 15
+        testRanking1.saveLoseScore();
+//        testRanking2                  // 0
+        testRanking3.saveWinScore();    // 20
         testRanking3.saveWinScore();
-        testRanking3.saveLoseScore();
+        testRanking4.saveWinScore();    // 5
+        testRanking4.saveLoseScore();
 
         testGame = Game.builder()
                 .title("테스트게임")
@@ -178,6 +178,19 @@ class GameExecuteEndServiceTest {
     }
 
     @Test
+    @Order(2)
+    @DisplayName("게임 턴 수행 테스트")
+    void gameExecute() throws Exception {
+        //given
+
+        //when
+
+        //then
+
+    }
+
+    @Test
+    @Order(1)
     @DisplayName("게임 종료 테스트")
     void gameEnd() throws Exception {
         // 게임 관련된 데이터 만들기
@@ -201,13 +214,9 @@ class GameExecuteEndServiceTest {
         given(rankingRepository.findByMemberId(memberId3)).willReturn(Optional.of(testRanking3));
         given(rankingRepository.findByMemberId(memberId4)).willReturn(Optional.of(testRanking4));
 
-        int[] scores = {30, 15, 5, 0};
-
-        // 게임 종료 실행했을 때
+        // 게임 종료 실행
         // when
         GameEndDto gameEndDto = gameExecuteEndService.gameEnd(gameId);
-        System.out.println(gameEndDto.getEndResponseA().getLosingTeam());
-        System.out.println(gameEndDto.getEndResponseB().getLosingTeam());
 
 //        1. Game의 status가 END로 변경되는지 확인
 //        2. ranking 사용자들 점수가 정확한 값인지를 확인
@@ -217,14 +226,12 @@ class GameExecuteEndServiceTest {
 
 //        1. Game의 status가 END로 변경되는지 확인
         assertEquals(GameStatus.END, testGame.getStatus());
-        // memberId를 이 클래스의 static 변수와 해야하는지 gameEndDto에 담긴 memberId와 해야하는지 모르겠음
 
-        int i = 0;
 //        2. ranking 사용자들 점수가 0이거나 바뀌었는지 확인
-        for (PlayerWeaponDto player : gameEndDto.getEndResponseA().getPlayers()) {
-            // 여기 get()써도 되나?
-            assertEquals(scores[i++], rankingRepository.findByMemberId(player.getMemberId()).get().getScore());
-        }
+        assertEquals(10, rankingRepository.findByMemberId(memberId1).get().getScore());
+        assertEquals(0, rankingRepository.findByMemberId(memberId2).get().getScore());
+        assertEquals(30, rankingRepository.findByMemberId(memberId3).get().getScore());
+        assertEquals(15, rankingRepository.findByMemberId(memberId4).get().getScore());
 
 //        3. Player의 게임 결과가 이긴 팀은 WIN, 진 팀은 LOSE로 변경되는지 확인
         assertEquals(GameResult.LOSE, playerRepository.findByGameIdAndMemberId(gameId, memberId1).get().getResult());
