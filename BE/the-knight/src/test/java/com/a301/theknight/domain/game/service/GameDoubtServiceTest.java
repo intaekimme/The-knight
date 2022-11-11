@@ -6,10 +6,7 @@ import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.player.entity.Team;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -46,8 +43,8 @@ class GameDoubtServiceTest {
     void setup() {
         TurnData turnData = new TurnData();
         turnData.setAttackData(AttackData.builder()
-                .hand(Hand.LEFT.name())
-                .weapon(Weapon.SWORD.name())
+                .hand(Hand.LEFT)
+                .weapon(Weapon.SWORD)
                 .build());
 
         inGame = InGame.builder()

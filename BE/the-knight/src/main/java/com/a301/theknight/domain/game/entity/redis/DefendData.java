@@ -13,8 +13,8 @@ public class DefendData implements Serializable {
     private boolean isDefendPass;
 
     @Builder
-    public DefendData(String hand, int shieldCount){
-        this.defendHand = Hand.valueOf(hand);
+    public DefendData(Hand hand, int shieldCount){
+        this.defendHand = hand;
         this.shieldCount = shieldCount;
         this.isDefendPass = false;
     }

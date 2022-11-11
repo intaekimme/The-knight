@@ -13,8 +13,8 @@ public class AttackData implements Serializable {
     private final Weapon weapon;
 
     @Builder
-    public AttackData(String weapon, String hand) {
-        this.attackHand = Hand.valueOf(hand);
-        this.weapon = Weapon.valueOf(weapon);
+    public AttackData(Weapon weapon, Hand hand) {
+        this.attackHand = hand;
+        this.weapon = weapon;
     }
 }
