@@ -5,6 +5,7 @@ import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
+import com.a301.theknight.domain.game.dto.doubt.response.DoubtPassResponse;
 import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
@@ -122,8 +123,9 @@ public class GamePlayingApi {
 
     @MessageMapping(value = "/games/{gameId}/doubt-pass")
     public void doubtPass(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId) {
-        gameDoubtService.doubtPass(gameId, memberId);
+        DoubtPassResponse doubtPassResponse = gameDoubtService.doubtPass(gameId, memberId);
 
+        messageService.sendData(gameId, "/doubt-pass", doubtPassResponse);
         messageService.convertCall(gameId);
     }
 
