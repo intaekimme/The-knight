@@ -303,8 +303,8 @@ class GameExecuteEndServiceTest {
         //then
         assertFalse(testInGamePlayer4.isDead());
         assertEquals(GameStatus.ATTACK, testInGame.getGameStatus());
-        assertEquals(AttackerDto.builder().id(memberId1).weapon(Weapon.SWORD.name()).hand(Hand.LEFT.name()).build(), gameExecuteResponse.getAttacker());
-        assertEquals(DefenderDto.builder().id(memberId4).hand(Hand.LEFT.name()).isDead(false).restCount(2).passedDefense(false).build(), gameExecuteResponse.getDefender());
+        assertEquals(AttackerDto.builder().memberId(memberId1).weapon(Weapon.SWORD.name()).hand(Hand.LEFT.name()).build(), gameExecuteResponse.getAttacker());
+        assertEquals(DefenderDto.builder().memberId(memberId4).hand(Hand.LEFT.name()).isDead(false).restCount(2).passedDefense(false).build(), gameExecuteResponse.getDefender());
         assertEquals("A", gameExecuteResponse.getAttackTeam());
     }
 

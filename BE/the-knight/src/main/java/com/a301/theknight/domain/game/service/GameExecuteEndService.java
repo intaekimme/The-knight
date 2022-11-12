@@ -135,12 +135,12 @@ public class GameExecuteEndService {
         DefendData defendData = turnData.getDefendData();
 
         AttackerDto attackerDto = AttackerDto.builder()
-                .id(turnData.getAttackerId())
+                .memberId(turnData.getAttackerId())
                 .hand(attackData.getAttackHand().name())
                 .weapon(attackData.getWeapon().name())
                 .build();
         DefenderDto defenderDto = DefenderDto.builder()
-                .id(turnData.getDefenderId())
+                .memberId(turnData.getDefenderId())
                 .hand(defendData.getDefendHand().name())
                 .isDead(defender.isDead())
                 .restCount(nextCount)

@@ -83,7 +83,7 @@ public class GamePrepareApi {
             return;
         }
 
-        String postfix = Team.A.equals(selectCompleteDto.getSelectTeam()) ? "/a/select" : "/b/select";
+        String postfix = Team.A.equals(selectCompleteDto.getSelectTeam()) ? "/a/select-complete" : "/b/select-complete";
         messageService.sendData(gameId, postfix, new SelectResponse(true));
     }
 
