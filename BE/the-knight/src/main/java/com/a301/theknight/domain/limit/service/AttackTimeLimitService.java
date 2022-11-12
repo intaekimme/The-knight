@@ -1,6 +1,5 @@
 package com.a301.theknight.domain.limit.service;
 
-import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.limit.template.TimeLimitServiceTemplate;
@@ -10,8 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class AttackTimeLimitService extends TimeLimitServiceTemplate {
 
-    public AttackTimeLimitService(GameRedisRepository redisRepository, SendMessageService sendMessageService, RedissonClient redissonClient) {
-        super(redisRepository, sendMessageService, redissonClient);
+    public AttackTimeLimitService(GameRedisRepository redisRepository, RedissonClient redissonClient) {
+        super(redisRepository, redissonClient);
     }
 
     @Override

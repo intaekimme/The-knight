@@ -1,6 +1,5 @@
 package com.a301.theknight.domain.limit.service;
 
-import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
@@ -27,9 +26,8 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
     private final GameRedisRepository redisRepository;
     private final GameRepository gameRepository;
 
-    public PrepareTimeLimitService(GameRedisRepository redisRepository, SendMessageService sendMessageService,
-                                   RedissonClient redissonClient, GameRepository gameRepository) {
-        super(redisRepository, sendMessageService, redissonClient);
+    public PrepareTimeLimitService(GameRedisRepository redisRepository, RedissonClient redissonClient, GameRepository gameRepository) {
+        super(redisRepository, redissonClient);
         this.redisRepository = redisRepository;
         this.gameRepository = gameRepository;
     }
@@ -58,19 +56,12 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
     }
 
     private void saveWeaponData(long gameId, Team team) {
-        /*
-         * 무기 랜덤 지정
-         * 1. Game에서 무기 정보 받아오기
-         * 2. LinkedList에 해당 무기들을 하나씩 저장
-         * 3. 무기 랜덤 선택
-         *       -> List길이로 Random돌려서 나온 숫자를 리스트 인덱스, 사용 후 그 인덱스 지우기
-         * 4. 해당 무기 넣어주기.
-         * */
         Game game = getGame(gameId);
         GameWeaponData weaponData = GameWeaponData.toWeaponData(game);
-        List<Weapon> weaponList = makeWeaponList(weaponData);
 
+        List<Weapon> weaponList = makeWeaponList(weaponData);
         List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
+
         teamPlayerList.forEach(inGamePlayer -> {
             inGamePlayer.randomChoiceWeapon(randomChoiceInList(weaponList));
             inGamePlayer.randomChoiceWeapon(randomChoiceInList(weaponList));
@@ -80,14 +71,9 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
     }
 
     private void saveOrderData(long gameId, Team team, TeamInfoData teamInfoData) {
-        /*
-         * 랜덤 순서 지정
-         * 1. redis에서 팀 플레이어 리스트 가져오기
-         * 2. 랜덤 초이스
-         * 3. 해당 플레이어를 order에 저장.
-         * */
         List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
         int playerSize = teamPlayerList.size();
+
         for (int i = 0; i < playerSize; i++) {
             InGamePlayer randomPlayer = randomChoiceInList(teamPlayerList);
 

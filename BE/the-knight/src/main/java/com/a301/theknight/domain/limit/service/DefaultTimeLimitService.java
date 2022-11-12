@@ -1,6 +1,5 @@
 package com.a301.theknight.domain.limit.service;
 
-import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.DoubtData;
 import com.a301.theknight.domain.game.entity.redis.DoubtStatus;
@@ -13,15 +12,16 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
-import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.WRONG_GAME_STATUS;
 
 @Service
 public class DefaultTimeLimitService extends TimeLimitServiceTemplate {
 
     private final GameRedisRepository redisRepository;
 
-    public DefaultTimeLimitService(GameRedisRepository redisRepository, SendMessageService sendMessageService, RedissonClient redissonClient) {
-        super(redisRepository, sendMessageService, redissonClient);
+    public DefaultTimeLimitService(GameRedisRepository redisRepository, RedissonClient redissonClient) {
+        super(redisRepository, redissonClient);
         this.redisRepository = redisRepository;
     }
 
