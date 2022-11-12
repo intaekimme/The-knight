@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import { Grid, Box, Button } from "@mui/material";
 import UserBox from "../../commons/user/UserBox";
-import { black, red, yellow } from "../../_css/ReactCSSProperties";
+import { black, red, yellow, gray } from "../../_css/ReactCSSProperties";
 import { onPubReady } from "../../websocket/RoomPublishes";
 
 export default function RoomUser(props) {
@@ -65,12 +65,22 @@ export default function RoomUser(props) {
 					<UserBox key={`user${memberData.nickname}${index + parseInt(roomData.maxMember / 2)}`} 
 					userData={memberData} width={props.size*6} height={props.size*6}/>
 				))}
-				<Button onClick={onReady} style={{
-						position: "absolute", bottom: 0, right: -props.size * 3, width: props.size * 3, height: props.size * 3,
-						border: `${props.size / 10}px solid ${black}`, borderRadius: "50%", background: yellow, color: black, fontSize: props.size / 2, fontWeight: 900
-				}}>
-					{ready ? "Cancel" : "Ready"}
-				</Button>
+				{roomData.ownerId && roomData.ownerId.toString()===window.localStorage.getItem("memberId")
+					? 
+					<Button onClick={onReady} style={{
+							position: "absolute", bottom: 0, right: -props.size * 3, width: props.size * 3, height: props.size * 3,
+							border: `${props.size / 10}px solid ${black}`, borderRadius: "50%", background: ready ? gray : yellow, color: black, fontSize: props.size / 2, fontWeight: 900
+					}}>
+						Start
+					</Button>
+					: 
+					<Button onClick={onReady} style={{
+							position: "absolute", bottom: 0, right: -props.size * 3, width: props.size * 3, height: props.size * 3,
+							border: `${props.size / 10}px solid ${black}`, borderRadius: "50%", background: yellow, color: black, fontSize: props.size / 2, fontWeight: 900
+					}}>
+						{ready ? "Cancel" : "Ready"}
+					</Button>
+				}
 			</Box>
 		</Box>
 	);

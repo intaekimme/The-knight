@@ -112,7 +112,7 @@ export default function EnterRoom(){
     //   ]
     // }
     const data = JSON.parse(payload.body);
-    dispatch(setMembers(data.members));
+    dispatch(setMembers(data));
     console.log("전체 멤버 조회 sub", data);
   };
   // 팀선택 리시버
@@ -134,7 +134,8 @@ export default function EnterRoom(){
     // }
     const data = JSON.parse(payload.body);
     console.log("레디 sub", data);
-    dispatch(changeReady(data.readyResponseDto));
+    dispatch(changeReady(data));
+    // dispatch(changeReady(data.readyResponseDto));
   };
   // 방 퇴장 리시버
   const onSubExit = (payload) => {

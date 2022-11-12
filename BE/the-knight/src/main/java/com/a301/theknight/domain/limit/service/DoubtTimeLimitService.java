@@ -1,6 +1,5 @@
 package com.a301.theknight.domain.limit.service;
 
-import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
@@ -15,8 +14,8 @@ public class DoubtTimeLimitService extends TimeLimitServiceTemplate {
 
     private final GameRedisRepository redisRepository;
 
-    public DoubtTimeLimitService(GameRedisRepository redisRepository, SendMessageService sendMessageService, RedissonClient redissonClient) {
-        super(redisRepository, sendMessageService, redissonClient);
+    public DoubtTimeLimitService(GameRedisRepository redisRepository, RedissonClient redissonClient) {
+        super(redisRepository, redissonClient);
         this.redisRepository = redisRepository;
     }
 
@@ -24,6 +23,7 @@ public class DoubtTimeLimitService extends TimeLimitServiceTemplate {
     public void runLimitLogic(long gameId, InGame inGame) {
         GameStatus curStatus = inGame.getGameStatus();
         GameStatus nextStatus = ATTACK_DOUBT.equals(curStatus) ? DEFENSE : EXECUTE;
+
         inGame.changeStatus(nextStatus);
         redisRepository.saveInGame(gameId, inGame);
     }
