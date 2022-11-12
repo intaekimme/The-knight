@@ -8,14 +8,14 @@ import lombok.Data;
 @Builder
 @Data
 public class SuspectedPlayerDto {
-    private long id;
+    private long memberId;
     private String weapon;
     private String hand;
     private Boolean isDead;
 
     public static SuspectedPlayerDto toDto(InGamePlayer suspected, Hand hand) {
         return SuspectedPlayerDto.builder()
-                .id(suspected.getMemberId())
+                .memberId(suspected.getMemberId())
                 .hand(hand.name())
                 .weapon(Hand.LEFT.equals(hand) ? suspected.getLeftWeapon().name() : suspected.getRightWeapon().name())
                 .isDead(suspected.isDead())

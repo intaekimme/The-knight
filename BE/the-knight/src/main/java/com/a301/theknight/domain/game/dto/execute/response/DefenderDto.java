@@ -6,7 +6,7 @@ import lombok.Data;
 @Builder
 @Data
 public class DefenderDto {
-    private long id;
+    private long memberId;
     private String hand;
     private Boolean isDead;
     private int restCount;

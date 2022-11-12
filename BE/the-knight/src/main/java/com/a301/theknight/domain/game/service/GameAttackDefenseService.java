@@ -12,7 +12,6 @@ import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.dto.prepare.response.GamePreAttackResponse;
-import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
@@ -84,12 +83,12 @@ public class GameAttackDefenseService {
 
     @Transactional
     public void attack(long gameId, long memberId, GameAttackRequest gameAttackRequest){
-        checkPlayerId(memberId, gameAttackRequest.getAttacker().getId());
+        checkPlayerId(memberId, gameAttackRequest.getAttacker().getMemberId());
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
 
-        InGamePlayer attacker = getInGamePlayer(gameId, gameAttackRequest.getAttacker().getId());
-        InGamePlayer defender = getInGamePlayer(gameId, gameAttackRequest.getDefender().getId());
+        InGamePlayer attacker = getInGamePlayer(gameId, gameAttackRequest.getAttacker().getMemberId());
+        InGamePlayer defender = getInGamePlayer(gameId, gameAttackRequest.getDefender().getMemberId());
         turn.recordAttackTurn(attacker, defender, gameAttackRequest);
         turn.checkLyingAttack(attacker);
 
@@ -115,7 +114,7 @@ public class GameAttackDefenseService {
 
     @Transactional
     public void isAttackPass(long gameId, GameAttackPassRequest gameAttackPassRequest, long memberId) {
-        checkPlayerId(memberId, gameAttackPassRequest.getAttacker().getId());
+        checkPlayerId(memberId, gameAttackPassRequest.getAttacker().getMemberId());
         InGame findInGame = getInGame(gameId);
 
         if(findInGame.getGameStatus().equals(ATTACK)) return;
@@ -125,11 +124,11 @@ public class GameAttackDefenseService {
     //  Defense
     @Transactional
     public void defense(long gameId, long memberId, GameDefenseRequest gameDefenseRequest){
-        checkPlayerId(memberId, gameDefenseRequest.getDefender().getId());
+        checkPlayerId(memberId, gameDefenseRequest.getDefender().getMemberId());
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
 
-        InGamePlayer defender = getInGamePlayer(gameId,  gameDefenseRequest.getDefender().getId());
+        InGamePlayer defender = getInGamePlayer(gameId,  gameDefenseRequest.getDefender().getMemberId());
         turn.recordDefenseTurn(defender, gameDefenseRequest);
         turn.checkLyingDefense(defender);
 
@@ -153,7 +152,7 @@ public class GameAttackDefenseService {
 
     @Transactional
     public void isDefensePass(long gameId, GameDefensePassRequest gameDefensePassRequest, long memberId){
-        checkPlayerId(memberId, gameDefensePassRequest.getDefender().getId());
+        checkPlayerId(memberId, gameDefensePassRequest.getDefender().getMemberId());
 
         InGame findInGame = getInGame(gameId);
         if (!DEFENSE.equals(findInGame.getGameStatus())) {

@@ -214,8 +214,8 @@ class GameAttackDefenseServiceTest {
         //  when
         AttackResponse attackResponse = gameAttackDefenseService.getAttackInfo(1L);
         //  then
-        assertEquals(4L, attackResponse.getAttacker().getId());
-        assertEquals(1L, attackResponse.getDefender().getId());
+        assertEquals(4L, attackResponse.getAttacker().getMemberId());
+        assertEquals(1L, attackResponse.getDefender().getMemberId());
         assertEquals(Weapon.TWIN.name(), attackResponse.getWeapon());
         assertEquals(Hand.RIGHT.name(), attackResponse.getHand());
     }
@@ -289,7 +289,7 @@ class GameAttackDefenseServiceTest {
         //  when
         DefenseResponse defenseResponse = gameAttackDefenseService.getDefenseInfo(1L);
         //  then
-        assertEquals(1L, defenseResponse.getDefender().getId());
+        assertEquals(1L, defenseResponse.getDefender().getMemberId());
         assertEquals(Weapon.SHIELD.name(), defenseResponse.getWeapon());
         assertEquals(Hand.LEFT.name(), defenseResponse.getHand());
 

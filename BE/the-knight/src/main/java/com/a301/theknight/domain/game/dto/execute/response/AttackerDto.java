@@ -6,7 +6,7 @@ import lombok.Data;
 @Builder
 @Data
 public class AttackerDto {
-    private long id;
+    private long memberId;
     private String weapon;
     private String hand;
 }
