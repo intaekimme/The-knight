@@ -21,7 +21,7 @@ public abstract class TimeLimitServiceTemplate {
     private final GameRedisRepository redisRepository;
     private final RedissonClient redissonClient;
 
-    public final boolean executeTimeLimit(long gameId, SendMessageService sendMessageService) {
+    public final void executeTimeLimit(long gameId, SendMessageService sendMessageService) {
         GameStatus preStatus = getInGame(gameId).getGameStatus();
 
         RLock timeLock = null;
@@ -29,7 +29,7 @@ public abstract class TimeLimitServiceTemplate {
             Thread.sleep(preStatus.getLimitSeconds());
             InGame curInGame = getInGame(gameId);
             if (!preStatus.equals(curInGame.getGameStatus())) {
-                return false;
+                return;
             }
 
             timeLock = redissonClient.getLock(timeLockKeyGen(gameId));
@@ -42,9 +42,10 @@ public abstract class TimeLimitServiceTemplate {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            timeLock.unlock();
+            if (timeLock != null && timeLock.isLocked()) {
+                timeLock.unlock();
+            }
         }
-        return true;
     }
 
     public abstract void runLimitLogic(long gameId, InGame inGame);
