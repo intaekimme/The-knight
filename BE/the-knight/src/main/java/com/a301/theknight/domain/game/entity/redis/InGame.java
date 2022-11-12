@@ -94,8 +94,9 @@ public class InGame implements Serializable {
         turnData.setDoubtData(null);
     }
 
-    public void updateCurrentAttackTeam(){
+    public Team updateCurrentAttackTeam(){
         this.currentAttackTeam = this.currentAttackTeam == Team.A ? Team.B : Team.A;
+        return this.currentAttackTeam;
     }
 
 }

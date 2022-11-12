@@ -5,7 +5,7 @@ import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
-import com.a301.theknight.domain.game.dto.attacker.AttackerDto;
+import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
@@ -48,10 +48,9 @@ public class GamePlayingApi {
     @MessageMapping(value = "/games/{gameId}/attacker")
     public void getAttacker(@Min(1) @DestinationVariable long gameId) {
 
-        AttackerDto attackerDto = gameAttackDefenseService.getAttacker(gameId);
+        MemberTeamResponse memberTeamResponse = gameAttackDefenseService.getAttacker(gameId);
 
-        messageService.sendData(gameId, "/a/attacker", attackerDto.getAttackerResponseA());
-        messageService.sendData(gameId, "/b/attacker", attackerDto.getAttackerResponseB());
+        messageService.sendData(gameId, "/attacker", memberTeamResponse);
 
         messageService.proceedCall(gameId, 500);
     }

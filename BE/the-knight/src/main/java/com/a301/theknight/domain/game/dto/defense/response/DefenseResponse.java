@@ -1,13 +1,13 @@
 package com.a301.theknight.domain.game.dto.defense.response;
 
-import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
+import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
 public class DefenseResponse {
-    private DefendPlayerDto defender;
+    private MemberTeamResponse defender;
     private String weapon;
     private String hand;
 }
