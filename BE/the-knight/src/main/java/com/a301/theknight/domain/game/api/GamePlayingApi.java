@@ -2,17 +2,15 @@ package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.common.service.SendMessageService;
-import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
-import com.a301.theknight.domain.game.dto.doubt.response.DoubtPassResponse;
-import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
-import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
 import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtRequest;
+import com.a301.theknight.domain.game.dto.doubt.response.DoubtPassResponse;
 import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponseDto;
 import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
+import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
 import com.a301.theknight.domain.game.dto.prepare.response.GamePreAttackResponse;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.service.GameAttackDefenseService;
@@ -73,8 +71,8 @@ public class GamePlayingApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/attack-pass")
-    public void attackPass(@Min(1) @DestinationVariable long gameId, @Valid GameAttackPassRequest gameAttackPassRequest, @LoginMemberId long memberId) {
-        gameAttackDefenseService.isAttackPass(gameId, gameAttackPassRequest, memberId);
+    public void attackPass(@Min(1) @DestinationVariable long gameId,  @LoginMemberId long memberId) {
+        gameAttackDefenseService.isAttackPass(gameId, memberId);
 
         messageService.convertCall(gameId);
     }
@@ -96,8 +94,8 @@ public class GamePlayingApi {
     }
 
     @MessageMapping(value = "/games/{gameId}/defense-pass")
-    public void defensePass(@Min(1) @DestinationVariable long gameId, @Valid GameDefensePassRequest gameDefensePassRequest, @LoginMemberId long memberId) {
-        gameAttackDefenseService.isDefensePass(gameId, gameDefensePassRequest, memberId);
+    public void defensePass(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId) {
+        gameAttackDefenseService.isDefensePass(gameId, memberId);
 
         messageService.convertCall(gameId);
     }
@@ -125,7 +123,8 @@ public class GamePlayingApi {
     public void doubtPass(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId) {
         DoubtPassResponse doubtPassResponse = gameDoubtService.doubtPass(gameId, memberId);
 
-        messageService.sendData(gameId, "/doubt-pass", doubtPassResponse);
+        if(doubtPassResponse != null)
+            messageService.sendData(gameId, "/doubt-pass", doubtPassResponse);
         messageService.convertCall(gameId);
     }
 
