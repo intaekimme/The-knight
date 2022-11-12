@@ -19,10 +19,9 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ING
 @Component
 public abstract class TimeLimitServiceTemplate {
     private final GameRedisRepository redisRepository;
-    private final SendMessageService sendMessageService;
     private final RedissonClient redissonClient;
 
-    public final boolean executeTimeLimit(long gameId) {
+    public final boolean executeTimeLimit(long gameId, SendMessageService sendMessageService) {
         GameStatus preStatus = getInGame(gameId).getGameStatus();
 
         RLock timeLock = null;
