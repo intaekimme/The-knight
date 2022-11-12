@@ -1,15 +1,12 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.attack.AttackPlayerDto;
-import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
-import com.a301.theknight.domain.game.dto.attacker.AttackerDto;
-import com.a301.theknight.domain.game.dto.attacker.response.AttackerResponse;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
+import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.dto.prepare.response.GamePreAttackResponse;
 import com.a301.theknight.domain.game.entity.Weapon;
@@ -32,40 +29,30 @@ public class GameAttackDefenseService {
 
     //  Attacker
     @Transactional
-    public AttackerDto getAttacker(long gameId) {
+    public MemberTeamResponse getAttacker(long gameId) {
 
-        AttackerDto attackerDto = null;
-        InGame inGame = gameRedisRepository.getInGame(gameId)
-                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
-        inGame.updateCurrentAttackTeam();
-        TeamInfoData teamInfoData = inGame.getCurrentAttackTeam() == Team.A ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
+        MemberTeamResponse memberTeamResponse = null;
+        InGame inGame = getInGame(gameId);
+        TeamInfoData teamInfoData = inGame.updateCurrentAttackTeam() == Team.A ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
         int capacity = inGame.getMaxMemberNum() / 2;
         int attackerIndex = teamInfoData.getCurrentAttackIndex();
         GameOrderDto[] orderList = teamInfoData.getOrderList();
 
-        while (attackerDto == null) {
+        while (memberTeamResponse == null) {
             attackerIndex = ++attackerIndex % capacity;
             long memberId = orderList[attackerIndex].getMemberId();
-            InGamePlayer player = gameRedisRepository.getInGamePlayer(gameId, memberId).
-                    orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
+            InGamePlayer player = getInGamePlayer(gameId, memberId);
             if (!player.isDead()) {
                 teamInfoData.updateCurrentAttackIndex(attackerIndex);
-                attackerDto = AttackerDto.builder()
-                        .attackerResponseA(AttackerResponse.builder()
-                                .memberId(memberId)
-                                .isOpposite(player.getTeam() != Team.A)
-                                .build())
-                        .attackerResponseB(AttackerResponse.builder()
-                                .memberId(memberId)
-                                .isOpposite(player.getTeam() != Team.B)
-                                .build())
-                        .build();
+                memberTeamResponse = MemberTeamResponse.builder()
+                        .memberId(memberId)
+                        .team(player.getTeam().name()).build();
             }
         }
 
         gameRedisRepository.saveInGame(gameId, inGame);
 
-        return attackerDto;
+        return memberTeamResponse;
     }
 
     //  Attack
@@ -82,7 +69,7 @@ public class GameAttackDefenseService {
 
 
     @Transactional
-    public void attack(long gameId, long memberId, GameAttackRequest gameAttackRequest){
+    public void attack(long gameId, long memberId, GameAttackRequest gameAttackRequest) {
         checkPlayerId(memberId, gameAttackRequest.getAttacker().getMemberId());
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
@@ -97,15 +84,24 @@ public class GameAttackDefenseService {
         gameRedisRepository.saveInGame(gameId, findInGame);
     }
 
-   @Transactional
+    @Transactional
     public AttackResponse getAttackInfo(long gameId) {
 
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
 
+        long attackerId = turn.getAttackerId();
+        long defenderId = turn.getDefenderId();
+
         return AttackResponse.builder()
-                .attacker(new AttackPlayerDto(turn.getAttackerId()))
-                .defender(new DefendPlayerDto(turn.getDefenderId()))
+                .attacker(MemberTeamResponse.builder()
+                        .memberId(attackerId)
+                        .team(getInGamePlayer(gameId, attackerId).getTeam().name())
+                        .build())
+                .defender(MemberTeamResponse.builder()
+                        .memberId(defenderId)
+                        .team(getInGamePlayer(gameId, defenderId).getTeam().name())
+                        .build())
                 .weapon(turn.getAttackData().getWeapon().name())
                 .hand(turn.getAttackData().getAttackHand().name())
                 .build();
@@ -117,18 +113,18 @@ public class GameAttackDefenseService {
         checkPlayerId(memberId, gameAttackPassRequest.getAttacker().getMemberId());
         InGame findInGame = getInGame(gameId);
 
-        if(findInGame.getGameStatus().equals(ATTACK)) return;
+        if (findInGame.getGameStatus().equals(ATTACK)) return;
         throw new CustomWebSocketException(UNABLE_TO_PASS_ATTACK);
     }
 
     //  Defense
     @Transactional
-    public void defense(long gameId, long memberId, GameDefenseRequest gameDefenseRequest){
+    public void defense(long gameId, long memberId, GameDefenseRequest gameDefenseRequest) {
         checkPlayerId(memberId, gameDefenseRequest.getDefender().getMemberId());
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
 
-        InGamePlayer defender = getInGamePlayer(gameId,  gameDefenseRequest.getDefender().getMemberId());
+        InGamePlayer defender = getInGamePlayer(gameId, gameDefenseRequest.getDefender().getMemberId());
         turn.recordDefenseTurn(defender, gameDefenseRequest);
         turn.checkLyingDefense(defender);
 
@@ -139,19 +135,24 @@ public class GameAttackDefenseService {
     }
 
     @Transactional
-    public DefenseResponse getDefenseInfo(long game) {
-        InGame findInGame = getInGame(game);
+    public DefenseResponse getDefenseInfo(long gameId) {
+        InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
 
+        long defenderId = turn.getDefenderId();
+
         return DefenseResponse.builder()
-                .defender(new DefendPlayerDto(turn.getDefenderId()))
+                .defender(MemberTeamResponse.builder()
+                        .memberId(defenderId)
+                        .team(getInGamePlayer(gameId, defenderId).getTeam().name())
+                        .build())
                 .weapon(Weapon.SHIELD.name())
                 .hand(turn.getDefendData().getDefendHand().name())
                 .build();
     }
 
     @Transactional
-    public void isDefensePass(long gameId, GameDefensePassRequest gameDefensePassRequest, long memberId){
+    public void isDefensePass(long gameId, GameDefensePassRequest gameDefensePassRequest, long memberId) {
         checkPlayerId(memberId, gameDefensePassRequest.getDefender().getMemberId());
 
         InGame findInGame = getInGame(gameId);
@@ -177,14 +178,14 @@ public class GameAttackDefenseService {
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
-    private TurnData getTurnData(InGame inGame){
-       if(inGame.isTurnDataEmpty()){
-           inGame.initTurnData();
-       }
+    private TurnData getTurnData(InGame inGame) {
+        if (inGame.isTurnDataEmpty()) {
+            inGame.initTurnData();
+        }
         return inGame.getTurnData();
     }
 
-    private void checkPlayerId(long memberId, long playerId){
+    private void checkPlayerId(long memberId, long playerId) {
         if (memberId != playerId) {
             throw new CustomWebSocketException(PLAYER_IS_NOT_USER_WHO_LOGGED_IN);
         }

@@ -5,7 +5,7 @@ import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
-import com.a301.theknight.domain.game.dto.attacker.AttackerDto;
+import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
@@ -127,13 +127,11 @@ class GameAttackDefenseServiceTest {
         }
 
         //  when
-        AttackerDto attackerDto = gameAttackDefenseService.getAttacker(1L);
+        MemberTeamResponse memberTeamResponse = gameAttackDefenseService.getAttacker(1L);
 
         //  then
-        assertEquals(1L, attackerDto.getAttackerResponseA().getMemberId());
-        assertEquals(1L, attackerDto.getAttackerResponseB().getMemberId());
-        assertFalse(attackerDto.getAttackerResponseA().isOpposite());
-        assertTrue(attackerDto.getAttackerResponseB().isOpposite());
+        assertEquals(1L, memberTeamResponse.getMemberId());
+        assertEquals("A", memberTeamResponse.getTeam());
 
     }
 
