@@ -11,13 +11,13 @@ import javax.validation.constraints.Positive;
 @Builder
 public class DoubtPlayerDto {
     @Positive(message = "Id can only be positive.")
-    private long id;
+    private long memberId;
     @NotNull(message = "Death information is required")
     private Boolean isDead;
 
     public static DoubtPlayerDto toDto(InGamePlayer suspect) {
         return DoubtPlayerDto.builder()
-                .id(suspect.getMemberId())
+                .memberId(suspect.getMemberId())
                 .isDead(suspect.isDead()).build();
     }
 }

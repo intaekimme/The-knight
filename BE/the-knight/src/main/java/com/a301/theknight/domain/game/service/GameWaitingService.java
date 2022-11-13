@@ -46,6 +46,7 @@ public class GameWaitingService {
                 .collect(Collectors.toList());
 
         return GameMembersInfoDto.builder()
+                .ownerId(game.getOwner().getMember().getId())
                 .members(members)
                 .build();
     }

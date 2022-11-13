@@ -2,14 +2,13 @@ package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.common.service.SendMessageService;
+import com.a301.theknight.domain.game.dto.prepare.GamePlayersInfoDto;
 import com.a301.theknight.domain.game.dto.prepare.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponDeleteRequest;
 import com.a301.theknight.domain.game.dto.prepare.response.*;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.service.GamePrepareService;
-import com.a301.theknight.domain.limit.factory.TimeLimitServiceFactory;
-import com.a301.theknight.domain.limit.template.TimeLimitServiceTemplate;
 import com.a301.theknight.domain.player.entity.Team;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -25,7 +24,6 @@ public class GamePrepareApi {
     private final GamePrepareService gamePrepareService;
 
     private final SendMessageService messageService;
-    private final TimeLimitServiceFactory timeLimitServiceFactory;
 
     @MessageMapping(value = "/games/{gameId}/prepare")
     public void prepareGameStart(@Min(1) @DestinationVariable long gameId) {
@@ -39,16 +37,14 @@ public class GamePrepareApi {
         getGamePlayerData(gameId);
 
         messageService.proceedCall(gameId, 500);
-
-        TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameId);
-        timeLimitService.executeTimeLimit(gameId);
     }
 
     @MessageMapping(value = "/games/{gameId}/players")
     public void getGamePlayerData(@DestinationVariable @Min(1) long gameId) {
         GamePlayersInfoDto playersInfo = gamePrepareService.getPlayersInfo(gameId);
 
-        messageService.sendData(gameId, "/players", playersInfo);
+        messageService.sendData(gameId, "/a/players", playersInfo.getGamePlayersInfoResponseA());
+        messageService.sendData(gameId, "/b/players", playersInfo.getGamePlayersInfoResponseB());
     }
 
     @MessageMapping(value="/games/{gameId}/weapon-choice")
@@ -89,7 +85,7 @@ public class GamePrepareApi {
             return;
         }
 
-        String postfix = Team.A.equals(selectCompleteDto.getSelectTeam()) ? "/a/select" : "/b/select";
+        String postfix = Team.A.equals(selectCompleteDto.getSelectTeam()) ? "/a/select-complete" : "/b/select-complete";
         messageService.sendData(gameId, postfix, new SelectResponse(true));
     }
 

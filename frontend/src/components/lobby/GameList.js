@@ -16,7 +16,7 @@ export default function GameList() {
   }, []);
   //temp data
   // const gameList = useSelector(state => state.tempGame.value.gameList)
-  
+
   //real data
   const gameList = useSelector(state => state.tempGame.gameListAll)
   console.log("gmaelistall", gameList);
@@ -57,7 +57,7 @@ export default function GameList() {
   //   }
   //   return arr
   // }
-  
+
   //pagination
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(6)
@@ -65,6 +65,7 @@ export default function GameList() {
   const handleChangePage = (event, newPage) => {
     console.log(newPage);
     setPage(newPage)
+    dispatch(gameListAll(page - 1));
   }
 
   return (
@@ -86,7 +87,9 @@ export default function GameList() {
         <GameDescModal id={id} open={open} onClose={roomSettingClose}></GameDescModal>
       </Grid>
       <Pagination
+        sx={{ pt: 2, display: 'flex', justifyContent: 'center' }}
         page={page}
+        count={5}
         rowsPerPage={rowsPerPage}
         onChange={handleChangePage}
       >

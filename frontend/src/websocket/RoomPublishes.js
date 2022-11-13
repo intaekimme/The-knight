@@ -28,13 +28,13 @@ const onPubChat = (payload) => {
   console.log("채팅 pub", payload);
 }
 // 방 입장 publish
-const onPubEnterRoom = (payload) => {
-  payload.stompClient.send(`${api.pubEnterRoom(payload.gameId)}`);
+const onPubEntry = (payload) => {
+  payload.stompClient.send(`${api.pubEntry(payload.gameId)}`);
   console.log("방 입장 pub", payload);
 };
 // 방 전체 멤버 publish
-const onPubAllMembersInRoom = (payload) => {
-  payload.stompClient.send(`${api.pubAllMembersInRoom(payload.gameId)}`);
+const onPubMembers = (payload) => {
+  payload.stompClient.send(`${api.pubMembers(payload.gameId)}`);
   console.log("방 전체 멤버 pub", payload);
 };
 // 팀선택 publish
@@ -43,7 +43,7 @@ const onPubSelectTeam = (payload) => {
   //   team: String
   //   (A, B)
   // }
-  payload.stompClient.send(`${api.pubSelectTeam(payload.gameId)}`, {}, JSON.stringify(payload.selectTeam));
+  payload.stompClient.send(`${api.pubSelectTeam(payload.gameId)}`, {}, JSON.stringify({team: payload.team}));
   console.log("팀 선택 pub", payload);
 };
 // ready publish
@@ -51,12 +51,12 @@ const onPubReady = (payload) => {
   // {
   //   readyStatus : boolean
   // }
-  payload.stompClient.send(`${api.pubReady(payload.gameId)}`, {}, JSON.stringify(payload.ready));
+  payload.stompClient.send(`${api.pubReady(payload.gameId)}`, {}, JSON.stringify({ readyStatus: payload.ready }));
   console.log("ready pub", payload);
 };
 // 방 퇴장 publish
-const onPubExitRoom = (payload) => {
-  payload.stompClient.send(`${api.pubExitRoom(payload.gameId)}`, {}, JSON.stringify(payload.ready));
-  console.log("ready pub", payload);
+const onPubExit = (payload) => {
+  payload.stompClient.send(`${api.pubExit(payload.gameId)}`);
+  console.log("나가기 pub", payload);
 };
-export {onPubModifyRoom, onPubChat, onPubEnterRoom, onPubAllMembersInRoom, onPubSelectTeam, onPubReady, onPubExitRoom};
+export {onPubModifyRoom, onPubChat, onPubEntry, onPubMembers, onPubSelectTeam, onPubReady, onPubExit};

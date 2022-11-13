@@ -44,8 +44,6 @@ public class Game extends BaseTimeEntity {
 
     private boolean canStart;
 
-    private String setGame;
-
     @Builder
     public Game(String title, int sword, int twin, int shield, int hand, int capacity){
         this.title = title;
@@ -85,8 +83,6 @@ public class Game extends BaseTimeEntity {
     public void completeReady() {
         canStart = true;
     }
-
-    public String setGameMessage() { return this.setGame = UUID.randomUUID().toString(); }
 
     public Optional<Player> getTeamLeader(Team team) {
         return players.stream()

@@ -52,7 +52,7 @@ public class TokenService {
 
         String accessToken = createJwt(member, tokenProperties.getAccess().getName());
         String refreshToken = createJwt(member, tokenProperties.getRefresh().getName());
-        log.info(" Issue New Token : Access-Token = {}, Refresh-Token = {}", accessToken, refreshToken);
+        log.info("  Issue New Token : Access-Token = {}, Refresh-Token = {}", accessToken, refreshToken);
 
         member.saveRefreshToken(refreshToken);
         return new TokenSet(accessToken, refreshToken);
@@ -89,10 +89,7 @@ public class TokenService {
             Claims body = Jwts.parser().setSigningKey(tokenProperties.getSecret()).parseClaimsJws(token).getBody();
             String getType = (String) body.get("type");
             if (tokenType.equals(getType)) {
-                if (tokenType.equals(tokenProperties.getAccess().getName()) && isInBlackList(token)) {
-                    return false;
-                }
-                return true;
+                return !tokenType.equals(tokenProperties.getAccess().getName()) || !isInBlackList(token);
             }
         } catch (SecurityException | MalformedJwtException e) {
             log.info("JWT Signature is wrong.");

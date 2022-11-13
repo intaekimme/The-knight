@@ -24,14 +24,22 @@ public class InGame implements Serializable {
         turnData = new TurnData();
     }
 
-    public void choiceOrder(InGamePlayer inGamePlayer, int orderNumber) {
+    public void choiceOrder(InGamePlayer inGamePlayer, int orderNumber, TeamInfoData teamInfoData) {
+        GameOrderDto playerOrderInfo = null;
+        int preOrderNumber = inGamePlayer.getOrder();
+        if (preOrderNumber != 0) {
+            playerOrderInfo = teamInfoData.getOrderList()[preOrderNumber - 1];
+            teamInfoData.getOrderList()[preOrderNumber - 1] = null;
+        }
         inGamePlayer.saveOrder(orderNumber);
 
-        TeamInfoData teamInfoData = inGamePlayer.getTeam().equals(Team.A) ? teamAInfo : teamBInfo;
-        teamInfoData.getOrderList()[orderNumber - 1] = GameOrderDto.builder()
-                .memberId(inGamePlayer.getMemberId())
-                .nickname(inGamePlayer.getNickname())
-                .image(inGamePlayer.getImage()).build();
+        if (playerOrderInfo == null) {
+            playerOrderInfo = GameOrderDto.builder()
+                    .memberId(inGamePlayer.getMemberId())
+                    .nickname(inGamePlayer.getNickname())
+                    .image(inGamePlayer.getImage()).build();
+        }
+        teamInfoData.getOrderList()[orderNumber - 1] = playerOrderInfo;
     }
 
     public void addRequestCount() {
@@ -86,8 +94,9 @@ public class InGame implements Serializable {
         turnData.setDoubtData(null);
     }
 
-    public void updateCurrentAttackTeam(){
+    public Team updateCurrentAttackTeam(){
         this.currentAttackTeam = this.currentAttackTeam == Team.A ? Team.B : Team.A;
+        return this.currentAttackTeam;
     }
 
 }

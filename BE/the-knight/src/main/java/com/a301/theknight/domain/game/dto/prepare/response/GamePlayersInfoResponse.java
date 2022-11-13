@@ -8,7 +8,7 @@ import java.util.List;
 
 @Builder
 @Data
-public class GamePlayersInfoDto {
+public class GamePlayersInfoResponse {
     private int maxMember;
     private List<PlayerDataDto> players;
 }

@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static com.a301.theknight.global.error.errorcode.GameWaitingErrorCode.*;
 
@@ -52,11 +51,10 @@ public class PlayerService {
         Member entryMember = getMember(memberId);
         Member owner = entryGame.getOwner().getMember();
 
-        if (!entryMember.getId().equals(owner.getId())) {
+        if (!owner.getId().equals(entryMember.getId())) {
             playerRepository.save(Player.builder()
                     .member(entryMember)
-                    .game(entryGame)
-                    .build());
+                    .game(entryGame).build());
         }
 
         return PlayerEntryResponse.builder()
@@ -76,9 +74,12 @@ public class PlayerService {
         Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
 
-        return new PlayerExitDto(exitPlayer.isLeader(), PlayerExitResponse.builder()
+        PlayerExitDto exitDto = new PlayerExitDto(exitPlayer.isLeader(), PlayerExitResponse.builder()
                 .memberId(exitPlayer.getMember().getId())
                 .nickname(exitPlayer.getMember().getNickname()).build());
+        playerRepository.delete(exitPlayer);
+
+        return exitDto;
     }
 
     @Transactional
@@ -115,10 +116,10 @@ public class PlayerService {
         }
 
         return ReadyDto.builder()
-                .readyResponseDto(ReadyResponseDto.builder()
-                        .memberId(readyPlayer.getMember().getId())
-                        .readyStatus(readyPlayer.isReady()).build())
-                .canStart(findGame.isCanStart()).build();
+                .memberId(readyPlayer.getMember().getId())
+                .readyStatus(readyPlayer.isReady())
+                .canStart(findGame.isCanStart())
+                .build();
     }
 
     private Member getMember(long memberId) {
@@ -150,9 +151,10 @@ public class PlayerService {
     private boolean isEqualPlayerNum(Game game){
         AtomicInteger teamA = new AtomicInteger();
         AtomicInteger teamB = new AtomicInteger();
-        game.getPlayers().stream()
-                .map(player -> Team.A.equals(player.getTeam()) ? teamA.getAndIncrement() : teamB.getAndIncrement())
-                .collect(Collectors.toList());
+        game.getPlayers().forEach(player -> {
+            AtomicInteger addInteger = Team.A.equals(player.getTeam()) ? teamA : teamB;
+            addInteger.getAndIncrement();
+        });
         return teamA.intValue() == teamB.intValue();
     }
 
