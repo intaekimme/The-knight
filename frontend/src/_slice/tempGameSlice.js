@@ -77,7 +77,7 @@ import axios from 'axios';
 // ]
 // }
 
-const gameListAll = createAsyncThunk('gameListAll', async () => {
+const gameListAll = createAsyncThunk('gameListAll', async (page) => {
   // return axios({
   //   method: "get",
   //   url: api.getGameList()
@@ -85,7 +85,7 @@ const gameListAll = createAsyncThunk('gameListAll', async () => {
   //   .then(response => response.data)
   //   .catch(err => { console.log(err); })
   try {
-    const res = await axios.get(api.getGameList(), {
+    const res = await axios.get(api.getGameList() + `?page=${page}`, {
       headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
     });
     console.log("get game list", res.data);
@@ -97,7 +97,7 @@ const gameListAll = createAsyncThunk('gameListAll', async () => {
 const searchRoom = createAsyncThunk('searchRoom', async (keyword) => {
   console.log("검색 키워드", keyword);
   try {
-    const res = await axios.get(api.getGameList()+`?keyword=${keyword}`, {
+    const res = await axios.get(api.getGameList() + `?keyword=${keyword}`, {
       headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
     });
     console.log("get game list", res.data);
