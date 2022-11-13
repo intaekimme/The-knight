@@ -1,5 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
+import com.a301.theknight.domain.game.dto.prepare.GamePlayersInfoDto;
 import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
 import com.a301.theknight.domain.game.dto.prepare.TeamLeaderDto;
 import com.a301.theknight.domain.game.dto.prepare.request.GameOrderRequest;
@@ -35,11 +36,24 @@ public class GamePrepareService {
 
     @Transactional
     public GamePlayersInfoDto getPlayersInfo(long gameId) {
-        List<PlayerDataDto> playerDataDtoList = getPlayersDataList(gameId);
+        List<PlayerDataDto> playerDataDtoListA = getPlayersDataList(gameId);
+        List<PlayerDataDto> playerDataDtoListB = new ArrayList<>();
+        for (PlayerDataDto playerDataDto : playerDataDtoListA) {
+            playerDataDtoListB.add(playerDataDto.copyDto());
+        }
+
+        playerDataDtoListA.stream().filter(p -> p.getTeam().equals("B")).forEach(PlayerDataDto::resetWeapons);
+        playerDataDtoListB.stream().filter(p -> p.getTeam().equals("A")).forEach(PlayerDataDto::resetWeapons);
 
         return GamePlayersInfoDto.builder()
-                .maxMember(playerDataDtoList.size())
-                .players(playerDataDtoList)
+                .gamePlayersInfoResponseA(GamePlayersInfoResponse.builder()
+                        .maxMember(playerDataDtoListA.size())
+                        .players(playerDataDtoListA)
+                        .build())
+                .gamePlayersInfoResponseB(GamePlayersInfoResponse.builder()
+                        .maxMember(playerDataDtoListB.size())
+                        .players(playerDataDtoListB)
+                        .build())
                 .build();
     }
 
