@@ -30,4 +30,20 @@ public class PlayerDataDto {
                 .weapons(new ArrayList<>(Arrays.asList(inGamePlayer.getLeftWeapon().name(), inGamePlayer.getRightWeapon().name())))
                 .build();
     }
+
+    public PlayerDataDto copyDto() {
+        return PlayerDataDto.builder()
+                .memberId(memberId)
+                .nickname(nickname)
+                .team(team)
+                .leftCount(leftCount)
+                .rightCount(rightCount)
+                .order(order)
+                .weapons(weapons)
+                .build();
+    }
+
+    public void resetWeapons() {
+        this.weapons = new ArrayList<>();
+    }
 }

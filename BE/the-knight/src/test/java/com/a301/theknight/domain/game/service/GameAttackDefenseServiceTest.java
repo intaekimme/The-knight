@@ -1,14 +1,11 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.attack.AttackPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
-import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
-import com.a301.theknight.domain.game.dto.attacker.AttackerDto;
-import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
+import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
@@ -127,13 +124,11 @@ class GameAttackDefenseServiceTest {
         }
 
         //  when
-        AttackerDto attackerDto = gameAttackDefenseService.getAttacker(1L);
+        MemberTeamResponse memberTeamResponse = gameAttackDefenseService.getAttacker(1L);
 
         //  then
-        assertEquals(1L, attackerDto.getAttackerResponseA().getMemberId());
-        assertEquals(1L, attackerDto.getAttackerResponseB().getMemberId());
-        assertFalse(attackerDto.getAttackerResponseA().isOpposite());
-        assertTrue(attackerDto.getAttackerResponseB().isOpposite());
+        assertEquals(1L, memberTeamResponse.getMemberId());
+        assertEquals("A", memberTeamResponse.getTeam());
 
     }
 
@@ -152,7 +147,6 @@ class GameAttackDefenseServiceTest {
     void attack() {
         //  given
         GameAttackRequest attackRequest = new GameAttackRequest();
-        attackRequest.setAttacker(new AttackPlayerDto(1L));
         attackRequest.setDefender(new DefendPlayerDto(2L));
         attackRequest.setWeapon(Weapon.TWIN);
         attackRequest.setHand(Hand.LEFT);
@@ -175,7 +169,6 @@ class GameAttackDefenseServiceTest {
     void lyingAttack() {
         // given
         GameAttackRequest attackRequest = new GameAttackRequest();
-        attackRequest.setAttacker(new AttackPlayerDto(1L));
         attackRequest.setDefender(new DefendPlayerDto(2L));
         attackRequest.setWeapon(Weapon.TWIN);
         attackRequest.setHand(Hand.RIGHT);
@@ -193,11 +186,10 @@ class GameAttackDefenseServiceTest {
     void BadAttackRequest() {
         // given
         GameAttackRequest attackRequest = new GameAttackRequest();
-        attackRequest.setAttacker(new AttackPlayerDto(2L));
 
         // when
         // then
-        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.attack(1L, 1L, attackRequest));
+        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.attack(1L, 2L, attackRequest));
     }
 
     @DisplayName("공격 조회")
@@ -214,8 +206,8 @@ class GameAttackDefenseServiceTest {
         //  when
         AttackResponse attackResponse = gameAttackDefenseService.getAttackInfo(1L);
         //  then
-        assertEquals(4L, attackResponse.getAttacker().getId());
-        assertEquals(1L, attackResponse.getDefender().getId());
+        assertEquals(4L, attackResponse.getAttacker().getMemberId());
+        assertEquals(1L, attackResponse.getDefender().getMemberId());
         assertEquals(Weapon.TWIN.name(), attackResponse.getWeapon());
         assertEquals(Hand.RIGHT.name(), attackResponse.getHand());
     }
@@ -224,12 +216,10 @@ class GameAttackDefenseServiceTest {
     @Test
     void isAttackPass() {
         //  given
-        GameAttackPassRequest gameAttackPassRequest = new GameAttackPassRequest();
-        gameAttackPassRequest.setAttacker(new AttackPlayerDto(1L));
         inGame.changeStatus(GameStatus.ATTACK);
 
         //  when
-        gameAttackDefenseService.isAttackPass(1L, gameAttackPassRequest, 1L);
+        gameAttackDefenseService.isAttackPass(1L, 1L);
 
         //  then
 
@@ -239,13 +229,10 @@ class GameAttackDefenseServiceTest {
     @Test
     void isNotAttackPass() {
         // given
-        //  given
-        GameAttackPassRequest gameAttackPassRequest = new GameAttackPassRequest();
-        gameAttackPassRequest.setAttacker(new AttackPlayerDto(1L));
         inGame.changeStatus(GameStatus.DEFENSE);
         // when
         // then
-        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.isAttackPass(1L, gameAttackPassRequest, 1L));
+        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.isAttackPass(1L, 1L));
     }
 
     @DisplayName("방어 / 손에 들고 있는 방패로 방어")
@@ -253,8 +240,6 @@ class GameAttackDefenseServiceTest {
     void defense() {
         //  given
         GameDefenseRequest defenseRequest = new GameDefenseRequest();
-        defenseRequest.setDefender(new DefendPlayerDto(2L));
-        defenseRequest.setWeapon(Weapon.SHIELD);
         defenseRequest.setHand(Hand.LEFT);
 
         given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
@@ -270,8 +255,6 @@ class GameAttackDefenseServiceTest {
     @Test
     void lyingDefense() {
         GameDefenseRequest defenseRequest = new GameDefenseRequest();
-        defenseRequest.setDefender(new DefendPlayerDto(2L));
-        defenseRequest.setWeapon(Weapon.SHIELD);
         defenseRequest.setHand(Hand.RIGHT);
 
         given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
@@ -289,7 +272,7 @@ class GameAttackDefenseServiceTest {
         //  when
         DefenseResponse defenseResponse = gameAttackDefenseService.getDefenseInfo(1L);
         //  then
-        assertEquals(1L, defenseResponse.getDefender().getId());
+        assertEquals(1L, defenseResponse.getDefender().getMemberId());
         assertEquals(Weapon.SHIELD.name(), defenseResponse.getWeapon());
         assertEquals(Hand.LEFT.name(), defenseResponse.getHand());
 
@@ -299,16 +282,12 @@ class GameAttackDefenseServiceTest {
     @Test
     void isDefensePass() {
         //  given
-        DefendPlayerDto defendPlayerDto = new DefendPlayerDto(2L);
-        GameDefensePassRequest defensePassRequest = new GameDefensePassRequest();
-        defensePassRequest.setDefender(defendPlayerDto);
-
         inGame.changeStatus(GameStatus.DEFENSE);
 
         DefendData defendData = new DefendData(Hand.LEFT, 3);
         inGame.getTurnData().setDefendData(defendData);
         //  when
-        gameAttackDefenseService.isDefensePass(1L, defensePassRequest, 2L);
+        gameAttackDefenseService.isDefensePass(1L, 2L);
         //  then
         assertTrue(inGame.getTurnData().getDefendData().isDefendPass());
         assertEquals(GameStatus.EXECUTE, inGame.getGameStatus());
@@ -319,14 +298,10 @@ class GameAttackDefenseServiceTest {
     @Test
     void isNotDefensePass() {
         //  given
-        DefendPlayerDto defendPlayerDto = new DefendPlayerDto(2L);
-        GameDefensePassRequest defensePassRequest = new GameDefensePassRequest();
-        defensePassRequest.setDefender(defendPlayerDto);
-
         inGame.changeStatus(GameStatus.ATTACK);
         //  when
         //  then
-        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.isDefensePass(1L, defensePassRequest, 2L));
+        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.isDefensePass(1L,2L));
 
     }
 }

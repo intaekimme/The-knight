@@ -45,6 +45,7 @@ public class GameConvertUtil {
         postfixMap.put(GameStatus.DEFENSE_DOUBT.name(), "/defense-info");
         postfixMap.put(GameStatus.DOUBT_RESULT.name(), "/doubt-info");
         postfixMap.put(GameStatus.EXECUTE.name(), "/execute");
+        postfixMap.put(GameStatus.END.name(), "/end");
     }
 
     @Transactional

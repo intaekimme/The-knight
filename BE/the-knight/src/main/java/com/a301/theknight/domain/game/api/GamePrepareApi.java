@@ -2,6 +2,7 @@ package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.common.service.SendMessageService;
+import com.a301.theknight.domain.game.dto.prepare.GamePlayersInfoDto;
 import com.a301.theknight.domain.game.dto.prepare.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponDeleteRequest;
@@ -42,7 +43,8 @@ public class GamePrepareApi {
     public void getGamePlayerData(@DestinationVariable @Min(1) long gameId) {
         GamePlayersInfoDto playersInfo = gamePrepareService.getPlayersInfo(gameId);
 
-        messageService.sendData(gameId, "/players", playersInfo);
+        messageService.sendData(gameId, "/a/players", playersInfo.getGamePlayersInfoResponseA());
+        messageService.sendData(gameId, "/b/players", playersInfo.getGamePlayersInfoResponseB());
     }
 
     @MessageMapping(value="/games/{gameId}/weapon-choice")
@@ -83,7 +85,7 @@ public class GamePrepareApi {
             return;
         }
 
-        String postfix = Team.A.equals(selectCompleteDto.getSelectTeam()) ? "/a/select" : "/b/select";
+        String postfix = Team.A.equals(selectCompleteDto.getSelectTeam()) ? "/a/select-complete" : "/b/select-complete";
         messageService.sendData(gameId, postfix, new SelectResponse(true));
     }
 
