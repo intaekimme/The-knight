@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface GameRepository extends JpaRepository<Game, Long> {
+public interface GameRepository extends JpaRepository<Game, Long>, GameCustomRepository {
     @EntityGraph(attributePaths = {"players"})
     Page<Game> findByTitleIsContaining(String keyword, Pageable pageable);
 
