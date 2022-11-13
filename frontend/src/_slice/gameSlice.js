@@ -6,7 +6,6 @@ const meInit = {
   nickname: "Tom",
   index: 4,
   team: "B",
-  pass: false,
 };
 
 const timerInit = {
@@ -75,27 +74,20 @@ const playersInit = {
   ],
 };
 
-const leaderInit = {
-  A: null,
-  B: null
-}
+const leaderInit = 0;
 
-const attackFirstInit = ""
+const attackFirstInit = "";
 
-const orderInit = {
-  A: [null, null, null, null, null],
-  B: [null, null, null, null, null],
-};
+const orderInit = [null, null, null, null, null];
 
 const countWeaponInit = {
-  A: {},
-  B: {},
-}
+  sword: 0,
+  twin: 0,
+  shield: 0,
+  hand: 0,
+};
 
-const isSelectCompleteInit = {
-  A: false,
-  B: false,
-}
+const isSelectCompleteInit = false;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
 const phaseInit = "EXECUTE";
@@ -126,6 +118,42 @@ const defenseInfoInit = {
   hand: "",
 }
 
+const doubtInfoInit =   {
+  doubtResponse : {
+    suspect : {
+      memberId : 0,
+      isDead : false,
+    },
+    suspected : {
+      memberId : 0,
+      isDead : false,
+      weapon: "",
+      hand: "",
+    },
+    doubtTeam: "",
+    doubtResult: false,
+  },
+  doubtStatus : "",
+}
+
+const doubtPassInit = []
+
+const executeInfoInit = {
+  attackTeam: "",
+  attacker: {
+    memberId: 0,
+    weapon: "",
+    hand: "",
+  },
+  defender : {
+    memberId: 0,
+    hand: "",
+    isDead: false,
+    restCount: 0,
+   passedDefense: false,
+  }
+}
+
 const endInfoInit = {
   isWin: true,
   losingteam: "B",
@@ -152,6 +180,9 @@ export const gameSlice = createSlice({
     currentDefenser: currentDefenserInit,
     attackInfo: attackInfoInit,
     defenseInfo: defenseInfoInit,
+    doubtInfo: doubtInfoInit,
+    doubtPass: doubtPassInit,
+    executeInfo: executeInfoInit,
     endInfo: endInfoInit,
   },
   reducers: {
@@ -199,29 +230,29 @@ export const gameSlice = createSlice({
     },
     selectOrder: (state, action) => {
       // 선택한 순서가 비어있고, 유저가 이미 선택한 순서가 없을 때
-      if (!state.order[state.me.team][action.payload]) {
+      if (!state.order[action.payload]) {
         for (let i = 0; i < state.order[state.me.team].length; i++) {
           // 선택한 순서가 비어있고, (다른 순서를 이미 선택해뒀을 때)
-          if (state.order[state.me.team][i]) {
+          if (state.order[i]) {
             if (
-              state.order[state.me.team][i].memberId ===
+              state.order[i].memberId ===
               state.players.players[state.me.index].memberId
             ) {
-              state.order[state.me.team][i] = null;
+              state.order[i] = null;
             }
           }
         }
-        state.order[state.me.team][action.payload] = state.players.players[state.me.index];
+        state.order[action.payload] = state.players.players[state.me.index];
         // (선택한 순서가 차있고), 유저가 선택했던 순서일 때
       } else if (
-        state.order[state.me.team][action.payload].memberId ===
+        state.order[action.payload].memberId ===
         state.players.players[state.me.index].memberId
       ) {
-        state.order[state.me.team][action.payload] = null;
+        state.order[action.payload] = null;
       }
     },
     fetchOrder: (state, action) => {
-      state.order[state.me.team] = action.payload;
+      state.order = action.payload;
     },
     fetchPhase: (state, action) => {
       state.previousPhase = state.phase;
@@ -240,16 +271,16 @@ export const gameSlice = createSlice({
       state.endInfo = action.payload;
     },
     setLeader: (state, action) => {
-      state.leader[state.me.team] = action.payload;
+      state.leader = action.payload;
     },
     setAttackFirst: (state, action) => {
       state.attackFirst = action.payload;
     },
     fetchCountWeapon: (state, action) => {
-      state.countweapon[state.me.team] = action.payload;
+      state.countweapon = action.payload;
     },
     selectComplete: (state) => {
-      state.isSelectComplete[state.me.team] = true;
+      state.isSelectComplete = true;
     },
     fetchCurrentAttacker: (state, action) => {
       state.currentAttacker = action.payload;
@@ -263,6 +294,15 @@ export const gameSlice = createSlice({
     fetchDefenseInfo: (state, action) => {
       state.defenseInfo = action.payload;
     },
+    fetchDoubtInfo: (state, action) => {
+      state.doubtInfo = action.payload;
+    },
+    fetchExecuteInfo: (state, action) => {
+      state.executeInfo = action.payload;
+    },
+    addDoubtPass: (state, action) => {
+      state.doubtPass.push(action.payload);
+    }
   },
 });
 export const {
@@ -288,5 +328,8 @@ export const {
   fetchCurrentDefenser,
   fetchAttackInfo,
   fetchDefenseInfo,
+  fetchDoubtInfo,
+  fetchExecuteInfo,
+  addDoubtPass,
 } = gameSlice.actions;
 export default gameSlice.reducer;

@@ -51,6 +51,7 @@ const DOUBT = '/doubt'
 const DOUBT_INFO = '/doubt-info'
 const EXECUTE = '/execute'
 const END = '/end'
+const DOUBT_PASS = '/doubt-pass'
 
 const api = {
   exampleFunction: () => BASE_URL + EXAMPLE + `${0}`,
@@ -93,7 +94,7 @@ const api = {
   updateMemberInfo: () => BASE_URL + API + ALL_MEMBERS,
 
   // 인게임
-  subPlayersInfo: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PLAYERS_INFO,
+  subPlayersInfo: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase + PLAYERS_INFO,
   subConvert: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,
   subNextPhase: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PROCEED,
   subTimer: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + TIMER,
@@ -109,6 +110,7 @@ const api = {
   subExecute: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXECUTE,
   subEnd: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase + END,
   subConvertComplete: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT_COMPLETE,
+  subDoubtPass: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_PASS,
   pubConvertComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
   pubPostfix: (gameId, postfix) => WEBSOCKET_PUBLISH + GAME + `/${gameId}/${postfix}`,
   pubSelectWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_WEAPON,
@@ -120,6 +122,7 @@ const api = {
   pubDefensePass: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DEFENSE_PASS,
   pubDoubt: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DOUBT,
   pubOrder: (gameId, team) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + `/${team}`.toLowerCase + ORDER,
+  pubDoubtPass: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DOUBT_PASS,
 
   //rank 관련
   getRankList: () => BASE_URL + API + '/ranking',

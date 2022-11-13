@@ -15,6 +15,9 @@ import {
   fetchCurrentDefenser,
   fetchAttackInfo,
   fetchDefenseInfo,
+  fetchDoubtInfo,
+  fetchExecuteInfo,
+  addDoubtPass,
 } from "../_slice/gameSlice";
 import api from "../api/api";
 
@@ -60,11 +63,17 @@ const onSubConvert = (payload) => {
     stompClient.subscribe(api.subLeader(gameId, myTeam), onSubLeader);
     stompClient.subscribe(api.subCountWeapon(gameId, myTeam), onSubCountWeapon);
     stompClient.subscribe(api.subOrder(gameId, myTeam), onSubOrder);
-    stompClient.subscribe(api.subSelectComplete(gameId, myTeam), onSubSelectComplete);
+    stompClient.subscribe(
+      api.subSelectComplete(gameId, myTeam),
+      onSubSelectComplete
+    );
   } else if (nextPhase === "PREDECESSOR") {
     stompClient.subscribe(api.subAttackFirst(gameId), onSubAttackFirst);
   } else if (nextPhase === "ATTACK") {
-    stompClient.subscribe(api.subCurrentAttacker(gameId, myTeam), onSubCurrentAttacker);
+    stompClient.subscribe(
+      api.subCurrentAttacker(gameId, myTeam),
+      onSubCurrentAttacker
+    );
   } else if (nextPhase === "ATTACK_DOUBT") {
     stompClient.subscribe(api.subAttackInfo(gameId), onSubAttackInfo);
   } else if (nextPhase === "DEFENSE") {
@@ -206,10 +215,8 @@ const onSubCurrentAttacker = (payload) => {
   //   team: String,
   // }
   const data = JSON.parse(payload.body);
-  dispatch(fetchCurrentAttacker(data))
+  dispatch(fetchCurrentAttacker(data));
 };
-
-// 공격패스
 
 ////////////////////////////////////////////////
 ///////////////// Attack Doubt /////////////////
@@ -231,15 +238,23 @@ const onSubAttackInfo = (payload) => {
   //   hand : String (LEFT, RIGHT)
   // }
   const data = JSON.parse(payload.body);
-  dispatch(fetchCurrentDefenser(data.defenser))
-  dispatch(fetchAttackInfo(data))
+  dispatch(fetchCurrentDefenser(data.defenser));
+  dispatch(fetchAttackInfo(data));
+};
+
+// 의심 패스
+const onSubDoubtPass = (payload) => {
+  // {
+  //   memberId : long,
+  //   nickname : String
+  // }
+  const data = JSON.parse(payload.body);
+  dispatch(addDoubtPass(data.memberId));
 };
 
 ////////////////////////////////////////////////
 /////////////////// Defense ////////////////////
 ////////////////////////////////////////////////
-
-// 방어패스
 
 ////////////////////////////////////////////////
 ///////////////// Defense Doubt ////////////////
@@ -259,16 +274,56 @@ const onSubDefenseInfo = (payload) => {
   dispatch(fetchDefenseInfo(data));
 };
 
+// 의심 패스 (onSubDoubtPass)
+
 ////////////////////////////////////////////////
 ///////////////// Doubt Result /////////////////
 ////////////////////////////////////////////////
 
 // 의심정보
-const onSubDoubtInfo = () => {};
+const onSubDoubtInfo = (payload) => {
+  // {
+  //   doubtResponse : {
+  //     suspect : {
+  //       memberId : long : 의심하는 사람 Id,
+  //       isDead : boolean : 사망 여부,
+  //     }
+  //     suspected : {
+  //       memberId : long : 의심 당하는 사람
+  //       isDead : boolean : 사망 여부,
+  //       weapon: String,
+  //       hand: String
+  //     }
+  //     doubtTeam: String (A,B),
+  //     doubtResult: boolean
+  //   },
+  //   doubtStatus : String (ATTACK_DOUBT, DEFENSE_DOUBT)
+  // }
+  const data = JSON.parse(payload.body);
+  dispatch(fetchDoubtInfo(data));
+};
 
 ////////////////////////////////////////////////
 /////////////////// Execute ////////////////////
 ////////////////////////////////////////////////
 
 // 애니메이션 수행 정보
-const onSubExecute = () => {};
+const onSubExecute = (payload) => {
+  // {
+  //   attackTeam: String (A, B)
+  //   attacker: {
+  //     memberId: long,
+  //     weapon: String,
+  //     hand: String,
+  //   },
+  //   defender : {
+  //     memberId: long,
+  //     hand: String,
+  //     isDead: boolean,
+  //     restCount: int,
+  //    passedDefense: boolean
+  //   }
+  // }
+  const data = JSON.parse(payload.body);
+  dispatch(fetchExecuteInfo(data));
+};
