@@ -14,7 +14,7 @@ export default function AttackDoubtPhase() {
   }, []);
 
   function clickPass() {
-    dispatch(selectPass())
+    "패스 클릭!"
   }
 
   function BoxRender() {

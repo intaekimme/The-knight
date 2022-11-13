@@ -39,6 +39,11 @@ export default function RoomHeader(props) {
 	return (
 		<Grid container sx={{ p: 3 }}>
 			<Grid item xs={7} sx={{fontSize:props.size, display: "flex", alignItems: "center"}}>
+<<<<<<< frontend/src/components/room/RoomHeader.js
+				<Button onClick={roomSettingOpen} sx={{color:"gray"}}><SettingsIcon sx={{ fontSize: props.size*2 }} /></Button>
+				<RoomSetting open={open} onClose={ roomSettingClose } />
+				<h2>{` #${props.roomData.gameId} ${props.roomData.title} ${props.currentUser}/${props.maxMember}`}</h2>
+=======
 				{props.roomData.ownerId && props.roomData.ownerId.toString()===window.localStorage.getItem("memberId")
 				?	<Button onClick={ onRoomSettingOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button>
 				: <div />
@@ -46,6 +51,7 @@ export default function RoomHeader(props) {
 				{/* <Button onClick={ onRoomSettingOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button> */}
 				<RoomSetting roomData={roomData} open={open} onClose={ onRoomSettingClose } />
 				<h2>{` #${roomData.gameId} ${roomData.title} ${props.memberDatas.length}/${roomData.maxMember}`}</h2>
+>>>>>>> frontend/src/components/room/RoomHeader.js
 			</Grid>
 			<Grid item xs={4} sx={{ fontSize: props.size*1.2, display: "flex", justifyContent: "center", alignItems: "center" }}>
 				<Box sx={{width:props.size*10, height: props.size*4, border: "7px solid #4d4d4d", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center"}}>

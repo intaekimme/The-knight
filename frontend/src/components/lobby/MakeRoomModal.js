@@ -30,10 +30,10 @@ export default function MakeRoomModal(props) {
 		fontSize: 22
 	};
 
-	const [maxUser, setMaxUser] = React.useState('');
+	const [maxMember, setMaxUser] = React.useState('');
 	const [itemCount, setItemCount] = React.useState([1,1,1,1]);
 
-	const maxUserChange = (event) => {
+	const maxMemberChange = (event) => {
     setMaxUser(event.target.value);
   };
 
@@ -81,9 +81,9 @@ export default function MakeRoomModal(props) {
 										labelId="select-label"
 										size="small"
 										id="select"
-										value={maxUser}
+										value={maxMember}
 										defaultValue='2 vs 2'
-										onChange={maxUserChange}
+										onChange={maxMemberChange}
 									>
 										<MenuItem value={2}>2 vs 2</MenuItem>
 										<MenuItem value={3}>3 vs 3</MenuItem>

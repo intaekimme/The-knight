@@ -28,10 +28,30 @@ const READY = '/ready';
 const EXIT = '/exit';
 
 // 인게임
-const ALL_PLAYERS = '/players';
+const PLAYERS_INFO = '/players';
 const CONVERT = '/convert';
 const CONVERT_COMPLETE = '/convert-complete';
 const PROCEED = '/proceed';
+const LEADER = '/leader';
+const COUNT_WEAPON = '/weapons';
+const SELECT_WEAPON = '/weapon-choice';
+const DELETE_WEAPON = '/weapon-delete';
+const TIMER = '/timer';
+const ORDER = '/orders';
+const SELECT_COMPLETE = '/select-complete';
+const ATTACK_FIRST = '/pre-attack';
+const CURRENT_ATTACKER = '/attacker'
+const ATTACK = '/attack'
+const DEFENSE = '/defense'
+const ATTACK_INFO = '/attack-info'
+const DEFENSE_INFO = '/defense-info'
+const ATTACK_PASS = '/attack-pass'
+const DEFENSE_PASS = '/defense-pass'
+const DOUBT = '/doubt'
+const DOUBT_INFO = '/doubt-info'
+const EXECUTE = '/execute'
+const END = '/end'
+const DOUBT_PASS = '/doubt-pass'
 
 const api = {
   exampleFunction: () => BASE_URL + EXAMPLE + `${0}`,
@@ -73,10 +93,36 @@ const api = {
   deleteMember: () => BASE_URL + API + MEMBERS,
   updateMemberInfo: () => BASE_URL + API + MEMBERS,
 
-  getAllPalyers: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ALL_PLAYERS,
-  goLoading: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,
-  readyForNextPhase: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
-  nextPhase: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PROCEED,
+  // 인게임
+  subPlayersInfo: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase + PLAYERS_INFO,
+  subConvert: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT,
+  subNextPhase: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + PROCEED,
+  subTimer: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + TIMER,
+  subLeader: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase + LEADER,
+  subCountWeapon: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase + COUNT_WEAPON,
+  subOrder: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase + ORDER,
+  subSelectComplete: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase + SELECT_COMPLETE,
+  subAttackFirst: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ATTACK_FIRST,
+  subCurrentAttacker: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase + CURRENT_ATTACKER,
+  subAttackInfo: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ATTACK_INFO,
+  subDefenseInfo: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DEFENSE_INFO,
+  subDoubtInfo: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_INFO,
+  subExecute: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXECUTE,
+  subEnd: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase + END,
+  subConvertComplete: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT_COMPLETE,
+  subDoubtPass: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_PASS,
+  pubConvertComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
+  pubPostfix: (gameId, postfix) => WEBSOCKET_PUBLISH + GAME + `/${gameId}/${postfix}`,
+  pubSelectWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_WEAPON,
+  pubDeleteWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DELETE_WEAPON,
+  pubSelectComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_COMPLETE,
+  pubAttack: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ATTACK,
+  pubDefense: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DEFENSE,
+  pubAttackPass: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + ATTACK_PASS,
+  pubDefensePass: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DEFENSE_PASS,
+  pubDoubt: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DOUBT,
+  pubOrder: (gameId, team) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + `/${team}`.toLowerCase + ORDER,
+  pubDoubtPass: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DOUBT_PASS,
 
   //rank 관련
   getRankList: () => BASE_URL + API + '/ranking',

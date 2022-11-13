@@ -4,7 +4,7 @@ export default function TestMakeRoom(){
   const testRoomInfo = {
     memberId: window.localStorage.getItem("memberId"),
     title: "방제목",
-    maxUser: 4,
+    maxMember: 4,
     currentUser: 0,
     // capacity: 4,
     // participant: 0,

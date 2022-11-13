@@ -22,6 +22,10 @@ export default function RoomUser(props) {
 	const [memberDatas, setMemberDatas] = React.useState([]);
 	const [ready, setReady] = React.useState(false);
 	React.useEffect(()=>{
+<<<<<<< frontend/src/components/room/RoomUser.js
+		const tempDatas = [...props.userDatas];
+		while(tempDatas.length < props.maxMember){
+=======
 		console.log(props.memberDatas);
 		const tempDatas = [...props.memberDatas];
 		for (let i = 0; i < tempDatas.length; i++){
@@ -31,6 +35,7 @@ export default function RoomUser(props) {
 			}
 		}
 		while(tempDatas.length < props.roomData.maxMember){
+>>>>>>> frontend/src/components/room/RoomUser.js
 			tempDatas.push(emptyUser);
 		}
 		console.log(tempDatas);
@@ -55,6 +60,17 @@ export default function RoomUser(props) {
 	return (
 		<Box sx={{p: 3, display: "flex", justifyContent: "space-evenly",flexDirection: "column", width: "100%", height: "100%"}}>
 			<Box sx={{display: "flex", justifyContent: "space-evenly"}}>
+<<<<<<< frontend/src/components/room/RoomUser.js
+				{userDatas.slice(0, parseInt(props.maxMember / 2)).map((userData, index) => (
+					<UserBox key={`user${userData.nickname}${index + parseInt(props.maxMember / 2) - parseInt(props.maxMember / 2)}`}
+						userData={userData} width={props.size * 6} height={props.size * 6}/>
+				))}
+			</Box>
+			<Box sx={{ display: "flex", justifyContent: "space-evenly"}}>
+				{userDatas.slice(parseInt(props.maxMember / 2), userDatas.length).map((userData, index) => (
+					<UserBox key={`user${userData.nickname}${index + parseInt(props.maxMember / 2)}`} 
+					userData={userData} width={props.size*6} height={props.size*6}/>
+=======
 				{memberDatas.slice(0, parseInt(roomData.maxMember / 2)).map((memberData, index) => (
 					<UserBox key={`user${memberData.nickname}${index + parseInt(roomData.maxMember / 2) - parseInt(roomData.maxMember / 2)}`}
 						userData={memberData} width={props.size * 6} height={props.size * 6}/>
@@ -64,6 +80,7 @@ export default function RoomUser(props) {
 				{memberDatas.slice(parseInt(roomData.maxMember / 2), memberDatas.length).map((memberData, index) => (
 					<UserBox key={`user${memberData.nickname}${index + parseInt(roomData.maxMember / 2)}`} 
 					userData={memberData} width={props.size*6} height={props.size*6}/>
+>>>>>>> frontend/src/components/room/RoomUser.js
 				))}
 				{roomData.ownerId && roomData.ownerId.toString()===window.localStorage.getItem("memberId")
 					? 

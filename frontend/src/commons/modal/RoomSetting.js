@@ -32,6 +32,13 @@ export default function RoomSetting(props) {
 		fontSize: 30
 	};
 
+<<<<<<< frontend/src/commons/modal/RoomSetting.js
+	const [maxMember, setMaxUser] = React.useState('');
+	const [itemCount, setItemCount] = React.useState([1,1,1,1]);
+
+	const maxMemberChange = (event) => {
+    setMaxUser(event.target.value);
+=======
 	// websocket client
 	const stompClient = useSelector((state) => state.websocket.stompClient);
 	// 방 정보
@@ -71,6 +78,7 @@ export default function RoomSetting(props) {
 	}
 	const maxMemberChange = (event) => {
     setMaxMember(event.target.value);
+>>>>>>> frontend/src/commons/modal/RoomSetting.js
   };
 
 	//아이템 목록
@@ -130,7 +138,10 @@ export default function RoomSetting(props) {
 										labelId="select-label"
 										id="select"
 										value={maxMember}
+<<<<<<< frontend/src/commons/modal/RoomSetting.js
+=======
 										defaultValue={maxMember}
+>>>>>>> frontend/src/commons/modal/RoomSetting.js
 										label="인원 수"
 										onChange={maxMemberChange}
 									>
