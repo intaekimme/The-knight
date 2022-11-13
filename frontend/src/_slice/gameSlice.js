@@ -136,7 +136,7 @@ const doubtInfoInit =   {
   doubtStatus : "",
 }
 
-const doubtPassInit = []
+const doubtPassListInit = []
 
 const executeInfoInit = {
   attackTeam: "",
@@ -181,7 +181,7 @@ export const gameSlice = createSlice({
     attackInfo: attackInfoInit,
     defenseInfo: defenseInfoInit,
     doubtInfo: doubtInfoInit,
-    doubtPass: doubtPassInit,
+    doubtPassList: doubtPassListInit,
     executeInfo: executeInfoInit,
     endInfo: endInfoInit,
   },
@@ -261,11 +261,8 @@ export const gameSlice = createSlice({
     switchIsLoading: (state) => {
       state.isLoading = !state.isLoading;
     },
-    selectPass: (state) => {
-      state.me.pass = true;
-    },
     initializePass: (state) => {
-      state.me.pass = false;
+      state.doubtPassList = [];
     },
     setEndInfo: (state, action) => {
       state.endInfo = action.payload;
@@ -301,7 +298,7 @@ export const gameSlice = createSlice({
       state.executeInfo = action.payload;
     },
     addDoubtPass: (state, action) => {
-      state.doubtPass.push(action.payload);
+      state.doubtPassList.push(action.payload);
     }
   },
 });
@@ -317,7 +314,6 @@ export const {
   fetchOrder,
   fetchPhase,
   switchIsLoading,
-  selectPass,
   initializePass,
   setEndInfo,
   setLeader,
