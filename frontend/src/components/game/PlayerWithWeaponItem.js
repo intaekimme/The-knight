@@ -4,7 +4,6 @@ import { deleteWeapon } from "../../_slice/gameSlice";
 import { Grid, Box } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 
-// 추후에 isMe 삭제
 function PlayerWithWeaponItem({ player, isOpp }) {
   const phase = useSelector((state) => state.game.phase);
   const dispatch = useDispatch();

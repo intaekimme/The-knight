@@ -24,7 +24,7 @@ function OrderPicker() {
         >
           <div onClick={() => onClick(i)} style={{ width: 80, height: 80, backgroundColor: "#e2e2e2"}}>
             {i + 1}
-            (order[i] ? <Player player={order[i]}></Player> : null)
+            {order[i] ? <Player player={order[i]}></Player> : null}
           </div>
         </Grid>
       );
