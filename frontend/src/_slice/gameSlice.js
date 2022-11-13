@@ -171,7 +171,7 @@ export const gameSlice = createSlice({
     leader: leaderInit,
     attakFirst: attackFirstInit,
     order: orderInit,
-    countweapon: countWeaponInit,
+    countWeapon: countWeaponInit,
     isSelectComplete: isSelectCompleteInit,
     phase: phaseInit,
     previousPhase: previousPhaseInit,

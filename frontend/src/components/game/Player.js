@@ -8,6 +8,7 @@ function Player({ player, isOpp }) {
   const me = useSelector((state) => state.game.me);
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
   const doubtPassList = useSelector((state) => state.game.doubtPassList);
+  const players = useSelector((state) => state.game.players);
   const isAttackPhase = useSelector((state) => state.game.phase) === "ATTACK";
   const isAttackDoubtPhase =
     useSelector((state) => state.game.phase) === "ATTACK_DOUBT";
@@ -37,7 +38,7 @@ function Player({ player, isOpp }) {
             AttackerIsMe &&
             isOpp &&
             isHovering && { backgroundColor: "red", borderRadius: "50%" }),
-          fontSize: 100,
+          fontSize: 420 / (players.maxMember / 2),
         }}
         onMouseOver={() => setIsHovering(true)}
         onMouseOut={() => setIsHovering(false)}

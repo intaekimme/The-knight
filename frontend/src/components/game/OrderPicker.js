@@ -1,28 +1,50 @@
 import { useSelector, useDispatch } from "react-redux";
-import { selectOrder } from "../../_slice/gameSlice"
-import Player from "./Player"
+import { selectOrder } from "../../_slice/gameSlice";
+import Player from "./Player";
 import Grid from "@mui/material/Grid";
 
 function OrderPicker() {
   const dispatch = useDispatch();
-  const players = useSelector(state => state.game.players)
-  const order = useSelector(state => state.game.order)
+  const players = useSelector((state) => state.game.players);
+  const order = useSelector((state) => state.game.order);
+  const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
 
   function onClick(order) {
-    dispatch(selectOrder(order))
+    dispatch(selectOrder(order));
   }
 
   function orderList(players) {
-    let arr = ((players.maxMember / 2) === 5) ? [<Grid item xs={1}></Grid>] : [];
-    for (let i = 0; i < (players.maxMember / 2); i++) {
+    let arr =
+      players.maxMember / 2 === 5
+        ? [
+            <Grid
+              item
+              xs={1}
+            ></Grid>,
+          ]
+        : [];
+    for (let i = 0; i < players.maxMember / 2; i++) {
       arr.push(
         <Grid
           item
-          xs={((players.maxMember / 2) === 5) ? 2 : (12 / (players.maxMember / 2))}
+          xs={players.maxMember / 2 === 5 ? 2 : 12 / (players.maxMember / 2)}
           key={i}
-          sx={{ display: "flex", justifyContent: "center"}}
+          sx={{ display: "flex", justifyContent: "center" }}
         >
-          <div onClick={() => onClick(i)} style={{ width: 80, height: 80, backgroundColor: "#e2e2e2"}}>
+          <div
+            onClick={() => onClick(i)}
+            style={{
+              width: "12vmin",
+              height: "12vmin",
+              ...(isSelectComplete
+                ? { backgroundColor: "#646464" }
+                : { backgroundColor: "#f0f0f0" }),
+              border: "7px solid #7406FF",
+              borderRadius: "10px",
+              display: "flex",
+              justifyContent: "center"
+            }}
+          >
             {i + 1}
             {order[i] ? <Player player={order[i]}></Player> : null}
           </div>

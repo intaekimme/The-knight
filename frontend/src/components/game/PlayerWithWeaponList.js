@@ -1,31 +1,28 @@
 import { useSelector } from "react-redux";
 import PlayerWithWeaponItem from "./PlayerWithWeaponItem";
-import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
 
 function PlayerWithWeaponList({ isOpp }) {
   const me = useSelector((state) => state.game.me);
   const players = useSelector((state) => state.game.players);
-  const numberInTeam = players.maxMember / 2;
 
   return (
-    <Grid container>
+    <Box sx={{ width: "100%", display: "flex", justifyContent: "space-evenly"}}>
       {players.players
         .filter((player) => (isOpp ? player.team !== me.team : player.team === me.team))
         .map((player, index) => {
           return (
-            <Grid
-              item
-              xs={numberInTeam === 5 ? 2 : 12 / numberInTeam}
+            <Box
               key={player.memberId}
             >
               <PlayerWithWeaponItem
                 player={player}
                 isOpp={isOpp}
               />
-            </Grid>
+            </Box>
           );
         })}
-    </Grid>
+    </Box>
   );
 }
 

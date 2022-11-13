@@ -2,10 +2,11 @@ import Player from "./Player";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteWeapon } from "../../_slice/gameSlice";
 import { Grid, Box } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
+import CloseIcon from '@mui/icons-material/Close';
 
 function PlayerWithWeaponItem({ player, isOpp }) {
   const phase = useSelector((state) => state.game.phase);
+  const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
   const dispatch = useDispatch();
   function deleteLeft() {
     dispatch(deleteWeapon("left"));
@@ -18,34 +19,96 @@ function PlayerWithWeaponItem({ player, isOpp }) {
     <div>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Box sx={{ display: "flex", flexDirection: "column" }}>
-          <Box sx={{ display: "flex"}}>
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <div style={{ width: 50, height: 50, backgroundColor: "grey" }}>
-                {player.weapons[0] && (
-                  <CancelIcon
+          <Box sx={{ display: "flex" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                transform: "translate(20%)",
+              }}
+            >
+              <div
+                style={{
+                  width: "5vmin",
+                  height: "5vmin",
+                  ...(isSelectComplete
+                    ? { backgroundColor: "#646464" }
+                    : { backgroundColor: "#f0f0f0" }),
+                  border: "7px solid #4d4d4d",
+                  borderRadius: "10px",
+                  position: "relative",
+                }}
+              >
+                {player.weapons[0] && !isSelectComplete && (
+                  <CloseIcon
                     onClick={deleteLeft}
-                    style={isOpp && { display: "none" }}
-                  ></CancelIcon>
+                    sx={{
+                      ...(isOpp && { display: "none" }),
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      transform: "translate(-70%, -70%)",
+                      backgroundColor: "#d9d9d9",
+                      border: "3px solid #33363f",
+                      borderRadius: "50%",
+                      fontSize: "small",
+                    }}
+                  ></CloseIcon>
                 )}
-                <span style={isOpp && { display: "none" }}>{player.weapons[0]}</span>
+                <span style={isOpp && { display: "none" }}>
+                  {player.weapons[0]}
+                </span>
               </div>
               <div>L</div>
             </Box>
-            <Player player={player} isOpp={isOpp} />
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <div style={{ width: 50, height: 50, backgroundColor: "grey" }}>
-                {player.weapons[1] && (
-                  <CancelIcon
+            <Player
+              player={player}
+              isOpp={isOpp}
+            />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                transform: "translate(-20%)",
+              }}
+            >
+              <div
+                style={{
+                  width: "5vmin",
+                  height: "5vmin",
+                  ...(isSelectComplete
+                    ? { backgroundColor: "#646464" }
+                    : { backgroundColor: "#f0f0f0" }),
+                  border: "7px solid #4d4d4d",
+                  borderRadius: "10px",
+                  position: "relative",
+                }}
+              >
+                {player.weapons[1] && !isSelectComplete && (
+                  <CloseIcon
                     onClick={deleteRight}
-                    style={isOpp && { display: "none" }}
-                  ></CancelIcon>
+                    sx={{
+                      ...(isOpp && { display: "none" }),
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      transform: "translate(-70%, -70%)",
+                      backgroundColor: "#d9d9d9",
+                      border: "3px solid #33363f",
+                      borderRadius: "50%",
+                      fontSize: "small",
+                    }}
+                  ></CloseIcon>
                 )}
-                <span style={isOpp && { display: "none" }}>{player.weapons[1]}</span>
+                <span style={isOpp && { display: "none" }}>
+                  {player.weapons[1]}
+                </span>
               </div>
               <div>R</div>
             </Box>
           </Box>
-          {/* 순서 표시하는 로직 필요 */}
           {phase !== "PREPARE" ? (
             <div
               style={{
