@@ -80,14 +80,6 @@ export const roomSlice = createSlice({
   initialState:{roomInfo: roomInit, usersInfo: userInit},
   reducers:{
     modifyRoomSetting:(state, action) =>{
-<<<<<<< frontend/src/_slice/roomSlice.js
-      state.roomInfo.title = action.payload.title;
-      state.roomInfo.maxMember = action.payload.maxMember;
-      state.roomInfo.sword = action.payload.sword;
-      state.roomInfo.twin = action.payload.twin;
-      state.roomInfo.shield = action.payload.shield;
-      state.roomInfo.hand = action.payload.hand;
-=======
       const tempRoomData = {...state.roomInfo};
       tempRoomData.title = action.payload.title;
       tempRoomData.maxMember = action.payload.maxMember;
@@ -97,7 +89,6 @@ export const roomSlice = createSlice({
       tempRoomData.hand = action.payload.hand;
       state.roomInfo = tempRoomData;
       console.log(tempRoomData);
->>>>>>> frontend/src/_slice/roomSlice.js
     },
     setState:(state, action) =>{
       state.roomInfo.state = action.payload.state;
