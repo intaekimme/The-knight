@@ -1,9 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.attack.request.GameAttackPassRequest;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
-import com.a301.theknight.domain.game.dto.defense.request.GameDefensePassRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.defense.response.DefenseResponse;
 import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
@@ -70,11 +68,10 @@ public class GameAttackDefenseService {
 
     @Transactional
     public void attack(long gameId, long memberId, GameAttackRequest gameAttackRequest) {
-        checkPlayerId(memberId, gameAttackRequest.getAttacker().getMemberId());
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
 
-        InGamePlayer attacker = getInGamePlayer(gameId, gameAttackRequest.getAttacker().getMemberId());
+        InGamePlayer attacker = getInGamePlayer(gameId, memberId);
         InGamePlayer defender = getInGamePlayer(gameId, gameAttackRequest.getDefender().getMemberId());
         turn.recordAttackTurn(attacker, defender, gameAttackRequest);
         turn.checkLyingAttack(attacker);
@@ -109,9 +106,9 @@ public class GameAttackDefenseService {
     }
 
     @Transactional
-    public void isAttackPass(long gameId, GameAttackPassRequest gameAttackPassRequest, long memberId) {
-        checkPlayerId(memberId, gameAttackPassRequest.getAttacker().getMemberId());
+    public void isAttackPass(long gameId, long memberId) {
         InGame findInGame = getInGame(gameId);
+        getInGamePlayer(gameId, memberId);
 
         if (findInGame.getGameStatus().equals(ATTACK)) return;
         throw new CustomWebSocketException(UNABLE_TO_PASS_ATTACK);
@@ -120,11 +117,10 @@ public class GameAttackDefenseService {
     //  Defense
     @Transactional
     public void defense(long gameId, long memberId, GameDefenseRequest gameDefenseRequest) {
-        checkPlayerId(memberId, gameDefenseRequest.getDefender().getMemberId());
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
 
-        InGamePlayer defender = getInGamePlayer(gameId, gameDefenseRequest.getDefender().getMemberId());
+        InGamePlayer defender = getInGamePlayer(gameId, memberId);
         turn.recordDefenseTurn(defender, gameDefenseRequest);
         turn.checkLyingDefense(defender);
 
@@ -152,10 +148,9 @@ public class GameAttackDefenseService {
     }
 
     @Transactional
-    public void isDefensePass(long gameId, GameDefensePassRequest gameDefensePassRequest, long memberId) {
-        checkPlayerId(memberId, gameDefensePassRequest.getDefender().getMemberId());
-
+    public void isDefensePass(long gameId, long memberId) {
         InGame findInGame = getInGame(gameId);
+        getInGamePlayer(gameId, memberId);
         if (!DEFENSE.equals(findInGame.getGameStatus())) {
             throw new CustomWebSocketException(UNABLE_TO_PASS_DEFENSE);
         }
@@ -184,12 +179,5 @@ public class GameAttackDefenseService {
         }
         return inGame.getTurnData();
     }
-
-    private void checkPlayerId(long memberId, long playerId) {
-        if (memberId != playerId) {
-            throw new CustomWebSocketException(PLAYER_IS_NOT_USER_WHO_LOGGED_IN);
-        }
-    }
-
 
 }

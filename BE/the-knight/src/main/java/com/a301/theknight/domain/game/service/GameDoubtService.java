@@ -1,9 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.doubt.response.DoubtPlayerDto;
-import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponse;
-import com.a301.theknight.domain.game.dto.doubt.response.DoubtResponseDto;
-import com.a301.theknight.domain.game.dto.doubt.response.SuspectedPlayerDto;
+import com.a301.theknight.domain.game.dto.doubt.response.*;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
@@ -67,7 +64,7 @@ public class GameDoubtService {
     }
 
     @Transactional
-    public void doubtPass(long gameId, long suspectId){
+    public DoubtPassResponse doubtPass(long gameId, long suspectId){
         RLock lock = redissonClient.getLock(lockKeyGen(gameId));
         try {
             boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
@@ -79,7 +76,7 @@ public class GameDoubtService {
             GameStatus gameStatus = inGame.getGameStatus();
             InGamePlayer suspect = getInGamePlayer(gameId, suspectId);
             if (suspect.isDead() || notDoubtStatus(gameStatus)) {
-                return;
+                return null;
             }
 
             Team suspectTeam = suspect.getTeam();
@@ -95,6 +92,11 @@ public class GameDoubtService {
                 inGame.initDoubtPassCount();
             }
             gameRedisRepository.saveInGame(gameId, inGame);
+
+            return DoubtPassResponse.builder()
+                    .memberId(suspect.getMemberId())
+                    .nickname(suspect.getNickname())
+                    .build();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {

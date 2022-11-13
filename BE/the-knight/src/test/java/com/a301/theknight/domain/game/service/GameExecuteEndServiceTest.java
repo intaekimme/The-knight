@@ -1,6 +1,5 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.attack.AttackPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
@@ -193,15 +192,15 @@ class GameExecuteEndServiceTest {
         given(gameRedisRepository.getInGamePlayer(gameId, memberId4)).willReturn(Optional.of(testInGamePlayer4));
 
         GameAttackRequest gameAttackRequest = new GameAttackRequest();
-        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
+//        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
         gameAttackRequest.setDefender(new DefendPlayerDto(memberId4));
         gameAttackRequest.setWeapon(Weapon.TWIN);
         gameAttackRequest.setHand(Hand.LEFT);
 
         GameDefenseRequest gameDefenseRequest = new GameDefenseRequest();
-        gameDefenseRequest.setDefender(new DefendPlayerDto(memberId4));
+//        gameDefenseRequest.setDefender(new DefendPlayerDto(memberId4));
         gameDefenseRequest.setHand(Hand.LEFT);
-        gameDefenseRequest.setWeapon(Weapon.HAND);
+
 
         testInGame.getTurnData().recordAttackTurn(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
         testInGame.getTurnData().recordDefenseTurn(testInGamePlayer4, gameDefenseRequest);
@@ -224,15 +223,15 @@ class GameExecuteEndServiceTest {
         testInGamePlayer4.changeCount(1, Hand.LEFT);
 
         GameAttackRequest gameAttackRequest = new GameAttackRequest();
-        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
+//        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
         gameAttackRequest.setDefender(new DefendPlayerDto(memberId4));
         gameAttackRequest.setWeapon(Weapon.TWIN);
         gameAttackRequest.setHand(Hand.LEFT);
 
         GameDefenseRequest gameDefenseRequest = new GameDefenseRequest();
-        gameDefenseRequest.setDefender(new DefendPlayerDto(memberId4));
+//        gameDefenseRequest.setDefender(new DefendPlayerDto(memberId4));
         gameDefenseRequest.setHand(Hand.LEFT);
-        gameDefenseRequest.setWeapon(Weapon.HAND);
+
 
         testInGame.getTurnData().recordAttackTurn(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
         testInGame.getTurnData().recordDefenseTurn(testInGamePlayer4, gameDefenseRequest);
@@ -253,15 +252,15 @@ class GameExecuteEndServiceTest {
         given(gameRedisRepository.getInGamePlayer(gameId, memberId3)).willReturn(Optional.of(testInGamePlayer3));
 
         GameAttackRequest gameAttackRequest = new GameAttackRequest();
-        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
+//        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
         gameAttackRequest.setDefender(new DefendPlayerDto(memberId3));
         gameAttackRequest.setWeapon(Weapon.TWIN);
         gameAttackRequest.setHand(Hand.LEFT);
 
         GameDefenseRequest gameDefenseRequest = new GameDefenseRequest();
-        gameDefenseRequest.setDefender(new DefendPlayerDto(memberId3));
+//        gameDefenseRequest.setDefender(new DefendPlayerDto(memberId3));
         gameDefenseRequest.setHand(Hand.LEFT);
-        gameDefenseRequest.setWeapon(Weapon.HAND);
+
 
         testInGame.getTurnData().recordAttackTurn(testInGamePlayer1, testInGamePlayer3, gameAttackRequest);
         testInGame.getTurnData().recordDefenseTurn(testInGamePlayer3, gameDefenseRequest);
@@ -284,15 +283,15 @@ class GameExecuteEndServiceTest {
         testInGamePlayer4.changeCount(3, Hand.LEFT);
 
         GameAttackRequest gameAttackRequest = new GameAttackRequest();
-        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
+//        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
         gameAttackRequest.setDefender(new DefendPlayerDto(memberId4));
         gameAttackRequest.setWeapon(Weapon.SWORD);
         gameAttackRequest.setHand(Hand.LEFT);
 
         GameDefenseRequest gameDefenseRequest = new GameDefenseRequest();
-        gameDefenseRequest.setDefender(new DefendPlayerDto(memberId4));
+//        gameDefenseRequest.setDefender(new DefendPlayerDto(memberId4));
         gameDefenseRequest.setHand(Hand.LEFT);
-        gameDefenseRequest.setWeapon(Weapon.HAND);
+
 
         testInGame.getTurnData().recordAttackTurn(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
         testInGame.getTurnData().recordDefenseTurn(testInGamePlayer4, gameDefenseRequest);
