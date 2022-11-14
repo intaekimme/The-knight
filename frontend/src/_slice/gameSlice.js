@@ -126,14 +126,14 @@ const countWeaponInit = {
 const isSelectCompleteInit = false;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "PREPARE";
+const phaseInit = "ATTACK_DOUBT";
 const previousPhaseInit = null;
 
-const isLoadingInit = true;
+const isLoadingInit = false;
 
 const currentAttackerInit = {
-  memberId: 1,
-  team: "A",
+  memberId: 6,
+  team: "B",
 };
 
 const currentDefenderInit = {
@@ -147,8 +147,16 @@ const selectAttackInit = {
 }
 
 const attackInfoInit = {
-  attacker: {},
-  defender: {},
+  attacker: {
+    memberId: 0,
+    nickname: "",
+    team: "",
+  },
+  defender: {
+    memberId: 0,
+    nickname: "",
+    team: ""
+  },
   weapon: "",
   hand: "",
 }
