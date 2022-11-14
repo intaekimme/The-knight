@@ -21,7 +21,7 @@ public class GameConvertApi {
     public void convertComplete(@Min(1) @DestinationVariable long gameId) {
         PostfixDto postfixDto = gameConvertUtil.completeConvertPrepare(gameId);
         if (postfixDto != null) {
-            sendMessageService.sendData(gameId, "/complete", postfixDto);
+            sendMessageService.sendData(gameId, "/convert-complete", postfixDto);
         }
     }
 }
