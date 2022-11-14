@@ -1,12 +1,12 @@
 //backend Local
-const BASE_URL = 'http://localhost:8080';
+// const BASE_URL = 'http://localhost:8080';
 //backend 배포
-// const BASE_URL = 'https://sword-shield.co.kr';
+const BASE_URL = 'https://sword-shield.co.kr';
 
 //frontend Local
-const LOGIN_REDIRECT = 'http://localhost:3000/islogin';
+// const LOGIN_REDIRECT = 'http://localhost:3000/islogin';
 //frontend 배포
-// const LOGIN_REDIRECT = 'https://sword-shield.co.kr/islogin';
+const LOGIN_REDIRECT = 'https://sword-shield.co.kr/islogin';
 
 const API = '/api';
 const WEBSOCKET = '/websocket';
