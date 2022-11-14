@@ -69,7 +69,7 @@ export default function GameWebSocket() {
     } else if (nextPhase === "PREDECESSOR") {
       stompClient.subscribe(api.subAttackFirst(gameId), onSubAttackFirst);
     } else if (nextPhase === "ATTACK") {
-      stompClient.subscribe(api.subCurrentAttacker(gameId, myTeam), onSubCurrentAttacker);
+      stompClient.subscribe(api.subCurrentAttacker(gameId), onSubCurrentAttacker);
     } else if (nextPhase === "ATTACK_DOUBT") {
       stompClient.subscribe(api.subAttackInfo(gameId), onSubAttackInfo);
     } else if (nextPhase === "DEFENSE") {

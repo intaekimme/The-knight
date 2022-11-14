@@ -126,7 +126,7 @@ const countWeaponInit = {
 const isSelectCompleteInit = false;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "PREDECESSOR";
+const phaseInit = "PREPARE";
 const previousPhaseInit = null;
 
 const isLoadingInit = false;
@@ -140,6 +140,11 @@ const currentDefenderInit = {
   memberId: 3,
   team: "A",
 };
+
+const selectAttackInit = {
+  weapon: null,
+  hand: null,
+}
 
 const attackInfoInit = {
   attacker: {},
@@ -214,6 +219,7 @@ export const gameSlice = createSlice({
     isLoading: isLoadingInit,
     currentAttacker: currentAttackerInit,
     currentDefender: currentDefenderInit,
+    selectAttack: selectAttackInit,
     attackInfo: attackInfoInit,
     defenseInfo: defenseInfoInit,
     doubtInfo: doubtInfoInit,
@@ -249,20 +255,6 @@ export const gameSlice = createSlice({
     },
     fetchPlayers: (state, action) => {
       state.players = action.payload;
-    },
-    selectWeapon: (state, action) => {
-      if (!state.players.players[state.me.index].weapons[0]) {
-        state.players.players[state.me.index].weapons[0] = action.payload;
-      } else if (!state.players.players[state.me.index].weapons[1]) {
-        state.players.players[state.me.index].weapons[1] = action.payload;
-      }
-    },
-    deleteWeapon: (state, action) => {
-      if (action.payload === "left") {
-        state.players.players[state.me.index].weapons[0] = null;
-      } else if (action.payload === "right") {
-        state.players.players[state.me.index].weapons[1] = null;
-      }
     },
     fetchOrder: (state, action) => {
       state.order = action.payload;
@@ -312,7 +304,11 @@ export const gameSlice = createSlice({
     },
     addDoubtPass: (state, action) => {
       state.doubtPassList.push(action.payload);
-    }
+    },
+    selectWeaponForAttack: (state, action) => { 
+      state.selectAttack.weapon = action.payload.weapon;
+      state.selectAttack.hand = action.payload.hand;
+    },
   },
 });
 export const {
@@ -321,8 +317,6 @@ export const {
   countTimer,
   stopCountTimer,
   fetchPlayers,
-  selectWeapon,
-  deleteWeapon,
   fetchOrder,
   fetchPhase,
   switchIsLoading,
@@ -339,5 +333,6 @@ export const {
   fetchDoubtInfo,
   fetchExecuteInfo,
   addDoubtPass,
+  selectWeaponForAttack,
 } = gameSlice.actions;
 export default gameSlice.reducer;
