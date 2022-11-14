@@ -102,6 +102,10 @@ export default function GameWebSocket() {
     // }
     const data = JSON.parse(payload.body);
     dispatch(fetchPhase(data.gameStatus));
+
+    if (data.gameStatus === "PREPARE") {
+      dispatch(switchIsLoading())
+    }
   };
 
   // 제한시간 (변경사항이 많을 것으로 예상)
@@ -340,9 +344,6 @@ export default function GameWebSocket() {
 
     // 구독 완료 pub
     stompClient.send(api.pubConvertComplete(gameId), {}, {});
-
-    // 로딩스피너 해제
-    dispatch(switchIsLoading())
   }, []);
 
   return <div></div>;
