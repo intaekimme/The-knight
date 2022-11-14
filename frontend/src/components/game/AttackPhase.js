@@ -168,7 +168,7 @@ export default function AttackPhase() {
           sx={{
             width: "70vmin",
             height: "40vmin",
-            backgroundColor: "grey",
+            backgroundColor: "#d9d9d9",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -184,7 +184,7 @@ export default function AttackPhase() {
           sx={{
             width: "70vmin",
             height: "40vmin",
-            backgroundColor: "grey",
+            backgroundColor: "#d9d9d9",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
