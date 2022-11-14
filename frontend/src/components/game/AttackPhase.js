@@ -143,7 +143,7 @@ export default function AttackPhase() {
               </Box>
             </Box>
             <Box
-              onClick={onPass}
+              onClick={() => onPass}
               sx={{
                 width: "10vmin",
                 height: "10vmin",

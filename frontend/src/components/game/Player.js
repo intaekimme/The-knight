@@ -70,7 +70,7 @@ function Player({ player, isOpp }) {
             isHovering && { background: "radial-gradient(red 10%, white 90%)", borderRadius: "50%" }),
             fontSize: size[String(players.maxMember / 2)],
           }}
-        onClick={isAttackPhase && AttackerIsMe && isOpp && selectAttack.weapon && onSelectPlayer}
+        onClick={(isAttackPhase && AttackerIsMe && isOpp && selectAttack.weapon) ? (() => onSelectPlayer) : undefined}
         onMouseOver={() => setIsHovering(true)}
         onMouseOut={() => setIsHovering(false)}
       />
