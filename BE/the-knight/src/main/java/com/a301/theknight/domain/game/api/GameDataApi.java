@@ -35,7 +35,6 @@ public class GameDataApi {
         }
 
         GameDataService dataTemplate = dataTemplateFactory.getGameDataTemplate(gameId);
-
         dataTemplate.makeData(gameId);
         dataTemplate.sendScreenData(gameId, messageService);
 

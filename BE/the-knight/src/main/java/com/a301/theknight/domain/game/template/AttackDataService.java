@@ -32,8 +32,7 @@ public class AttackDataService implements GameDataService {
     public void sendScreenData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
 
-        TeamInfoData teamInfoData = Team.A.equals(inGame.getCurrentAttackTeam()) ?
-                inGame.getTeamAInfo() : inGame.getTeamBInfo();
+        TeamInfoData teamInfoData = getTeamInfoData(inGame);
         int maxMembers = inGame.getMaxMemberNum() / 2;
 
         int nextAttackerIndex = findNextAttacker(gameId, maxMembers, teamInfoData);
@@ -44,7 +43,13 @@ public class AttackDataService implements GameDataService {
         MemberTeamResponse response = MemberTeamResponse.builder()
                 .memberId(nextAttackerId)
                 .team(inGame.getCurrentAttackTeam().name()).build();
+
         messageService.sendData(gameId, "/attacker", response);
+    }
+
+    private TeamInfoData getTeamInfoData(InGame inGame) {
+        return Team.A.equals(inGame.getCurrentAttackTeam()) ?
+                inGame.getTeamAInfo() : inGame.getTeamBInfo();
     }
 
     private int findNextAttacker(long gameId, int maxMembers, TeamInfoData teamInfoData) {

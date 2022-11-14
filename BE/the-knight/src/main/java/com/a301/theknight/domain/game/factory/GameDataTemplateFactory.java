@@ -19,6 +19,7 @@ public class GameDataTemplateFactory {
     private final PrepareDataService prepareDataTemplate;
     private final PredecessorDataService predecessorDataService;
     private final AttackDataService attackDataService;
+    private final DefenseDataService defenseDataService;
     private final AttackDoubtDataService attackDoubtDataService;
     private final DefenseDoubtDataService defenseDoubtDataService;
     private final DoubtResultDataService doubtResultDataService;
@@ -35,6 +36,8 @@ public class GameDataTemplateFactory {
                 return predecessorDataService;
             case ATTACK:
                 return attackDataService;
+            case DEFENSE:
+                return defenseDataService;
             case ATTACK_DOUBT:
                 return attackDoubtDataService;
             case DEFENSE_DOUBT:
