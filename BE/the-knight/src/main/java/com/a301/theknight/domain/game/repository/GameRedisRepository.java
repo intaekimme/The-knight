@@ -146,7 +146,6 @@ public class GameRedisRepository {
     }
 
     private void saveData(String key, String jsonData) {
-        redisTemplate.delete(key);
         redisTemplate.opsForValue().set(key, jsonData);
     }
 
