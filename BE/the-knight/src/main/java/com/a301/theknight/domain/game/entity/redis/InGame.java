@@ -3,13 +3,13 @@ package com.a301.theknight.domain.game.entity.redis;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Team;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InGame {
     private GameStatus gameStatus;
     private Team currentAttackTeam;
@@ -19,6 +19,16 @@ public class InGame {
     private TurnData turnData;
     private int requestCount;
     private int doubtPassCount;
+
+    @Builder
+    public InGame(GameStatus gameStatus, Team currentAttackTeam, TeamInfoData teamAInfo, TeamInfoData teamBInfo, int maxMemberNum, TurnData turnData) {
+        this.gameStatus = gameStatus;
+        this.currentAttackTeam = currentAttackTeam;
+        this.teamAInfo = teamAInfo;
+        this.teamBInfo = teamBInfo;
+        this.maxMemberNum = maxMemberNum;
+        this.turnData = turnData;
+    }
 
     public void initTurnData() {
         turnData = new TurnData();

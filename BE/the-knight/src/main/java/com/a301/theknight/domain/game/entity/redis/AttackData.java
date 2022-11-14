@@ -4,11 +4,8 @@ import com.a301.theknight.domain.game.entity.Weapon;
 import lombok.Builder;
 import lombok.Data;
 
-import java.io.Serializable;
-
-
 @Data
-public class AttackData implements Serializable {
+public class AttackData {
     private final Hand attackHand;
     private final Weapon weapon;
 

@@ -2,14 +2,14 @@ package com.a301.theknight.domain.game.entity.redis;
 
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.player.entity.Team;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
-@Builder
 @Getter
-public class InGamePlayer implements Serializable {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class InGamePlayer {
     private Long memberId;
     private String nickname;
     private String image;
@@ -21,10 +21,17 @@ public class InGamePlayer implements Serializable {
     private int order;
     private boolean isDead;
     private boolean isLeader;
-    /*
-    * - 패스 여부
-    * - FakeWeapon
-    * */
+
+    @Builder
+    public InGamePlayer(Long memberId, String nickname, String image, Team team, int leftCount, int rightCount, boolean isLeader) {
+        this.memberId = memberId;
+        this.nickname = nickname;
+        this.image = image;
+        this.team = team;
+        this.leftCount = leftCount;
+        this.rightCount = rightCount;
+        this.isLeader = isLeader;
+    }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
