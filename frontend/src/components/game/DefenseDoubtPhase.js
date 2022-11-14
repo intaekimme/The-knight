@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 export default function DefenseDoubtPhase() {
   const dispatch = useDispatch();
   const me = useSelector(state => state.game.me)
+  const timer = useSelector((state) => state.game.timer).timer;
   const currentDefender = useSelector(state => state.game.currentDefender)
 
   useEffect(() => {
@@ -25,13 +26,17 @@ export default function DefenseDoubtPhase() {
           sx={{
             width: "70vmin",
             height: "40vmin",
-            backgroundColor: "grey",
+            backgroundColor: "#d9d9d9",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            position: "relative"
           }}
         >
-          적팀이 의심여부를 선택 중입니다
+          <Box sx={{ fontSize: "2.5vmin" }}>적팀이 의심여부를 선택 중입니다</Box>
+          <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
+            제한시간 : {timer}
+          </Box>
         </Box>
       )
     // 방어자가 적팀일 때

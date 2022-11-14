@@ -80,7 +80,7 @@ export default function AttackDoubtPhase() {
           <Box sx={{ fontSize: "2.5vmin" }}>
             적팀이 의심여부를 선택 중입니다
           </Box>
-          <Box sx={{ position: "absolute", bottom: "2vmin" }}>
+          <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
             제한시간 : {timer}
           </Box>
         </Box>
