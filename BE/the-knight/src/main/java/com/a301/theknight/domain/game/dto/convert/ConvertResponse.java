@@ -5,6 +5,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class GameStatusResponse {
+public class ConvertResponse {
+    private String postfix;
     private String gameStatus;
 }

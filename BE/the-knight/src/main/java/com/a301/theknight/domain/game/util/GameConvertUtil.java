@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.game.util;
 
-import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
+import com.a301.theknight.domain.game.dto.convert.ConvertResponse;
 import com.a301.theknight.domain.game.dto.convert.PostfixDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
+import static com.a301.theknight.global.error.errorcode.DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 
 @Service
@@ -49,16 +50,17 @@ public class GameConvertUtil {
     }
 
     @Transactional
-    public GameStatusResponse convertScreen(long gameId) {
+    public ConvertResponse convertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
         inGame.initRequestCount();
         gameRedisRepository.saveInGame(gameId, inGame);
 
-        return new GameStatusResponse(inGame.getGameStatus().name());
+        GameStatus gameStatus = inGame.getGameStatus();
+        return new ConvertResponse(getPostfix(gameStatus), gameStatus.name());
     }
 
     @Transactional
-    public GameStatusResponse forceConvertScreen(long gameId) {
+    public ConvertResponse forceConvertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
         inGame.initRequestCount();
         gameRedisRepository.saveInGame(gameId, inGame);
@@ -66,7 +68,7 @@ public class GameConvertUtil {
         GameStatus curStatus = inGame.getGameStatus();
         GameStatus nextStatus = nextStatus(curStatus);
 
-        return new GameStatusResponse(nextStatus.name());
+        return new ConvertResponse(getPostfix(nextStatus), nextStatus.name());
     }
 
     @Transactional
@@ -111,6 +113,24 @@ public class GameConvertUtil {
         return null;
     }
 
+    @Transactional
+    public boolean requestCounting(long gameId) {
+        RLock countLock = redissonClient.getLock(generateCountKey(gameId));
+        try {
+            tryAcquireCountLock(countLock);
+
+            InGame inGame = getInGame(gameId);
+            inGame.addRequestCount();
+            gameRedisRepository.saveInGame(gameId, inGame);
+
+            return inGame.isFullCount();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            unLock(countLock);
+        }
+    }
+
     public GameStatus getGameStatus(long gameId) {
         return getInGame(gameId).getGameStatus();
     }
@@ -144,5 +164,23 @@ public class GameConvertUtil {
     private InGame getInGame(long gameId) {
         return gameRedisRepository.getInGame(gameId)
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
+    }
+
+
+
+    private void tryAcquireCountLock(RLock countLock) throws InterruptedException {
+        if (!countLock.tryLock(5, 1, TimeUnit.SECONDS)) {
+            throw new CustomWebSocketException(FAIL_TO_ACQUIRE_REDISSON_LOCK);
+        }
+    }
+
+    private void unLock(RLock countLock) {
+        if (countLock != null && countLock.isLocked()) {
+            countLock.unlock();
+        }
+    }
+
+    private String generateCountKey(long gameId) {
+        return "game_count_lock:" + gameId;
     }
 }

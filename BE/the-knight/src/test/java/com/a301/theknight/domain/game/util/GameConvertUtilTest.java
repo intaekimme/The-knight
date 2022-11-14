@@ -42,8 +42,8 @@ class GameConvertUtilTest {
         gameConvertUtil = new GameConvertUtil(gameRedisRepository, redissonClient);
         inGame = InGame.builder()
                 .gameStatus(GameStatus.ATTACK)
-                .requestCount(0)
                 .build();
+        inGame.initRequestCount();
     }
 
     @Test

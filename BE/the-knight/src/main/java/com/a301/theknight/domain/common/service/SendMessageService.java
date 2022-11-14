@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.common.service;
 
-import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
+import com.a301.theknight.domain.game.dto.convert.ConvertResponse;
 import com.a301.theknight.domain.game.dto.convert.ProceedResponse;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.util.GameConvertUtil;
@@ -29,7 +29,7 @@ public class SendMessageService {
     }
 
     public void convertCall(long gameId) {
-        GameStatusResponse response = gameConvertUtil.convertScreen(gameId);
+        ConvertResponse response = gameConvertUtil.convertScreen(gameId);
         sendData(gameId, "/convert", response);
     }
 
@@ -43,7 +43,7 @@ public class SendMessageService {
     }
 
     public void forceConvertCall(long gameId) {
-        GameStatusResponse response = gameConvertUtil.forceConvertScreen(gameId);
+        ConvertResponse response = gameConvertUtil.forceConvertScreen(gameId);
         sendData(gameId, "/convert", response);
     }
 
