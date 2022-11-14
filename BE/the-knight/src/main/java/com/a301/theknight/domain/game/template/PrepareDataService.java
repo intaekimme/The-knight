@@ -39,7 +39,6 @@ public class PrepareDataService implements GameDataService {
         if (!game.isCanStart()) {
             throw new CustomWebSocketException(CAN_NOT_PLAYING_GAME);
         }
-        game.changeStatus(GameStatus.PLAYING);
         List<Player> players = game.getPlayers();
 
         choiceLeader(players);

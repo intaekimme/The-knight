@@ -1,5 +1,6 @@
-package com.a301.theknight.domain.game.service;
+package com.a301.theknight.domain.game.template;
 
+import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.end.response.GameEndResponse;
 import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
 import com.a301.theknight.domain.game.entity.Game;
@@ -29,42 +30,42 @@ import static com.a301.theknight.global.error.errorcode.RankingErrorCode.RANKING
 
 @RequiredArgsConstructor
 @Service
-public class GameExecuteEndService {
+public class EndDataService implements GameDataService {
 
-    private final GameRedisRepository gameRedisRepository;
+    private final GameRedisRepository redisRepository;
     private final GameRepository gameRepository;
     private final RankingRepository rankingRepository;
     private final PlayerRepository playerRepository;
 
-    //  End
+    @Override
     @Transactional
-    public GameEndResponse gameEnd(long gameId) {
-
-        // GameEnd 비즈니스 로직 수행
-        // 1. 게임 상태 End로 update
-        // 2. player update(result만)
-        // 3. Ranking 점수 갱신
-        // 4. GameEndResponse 채워서 리턴
-
-        InGame inGame = getInGame(gameId);
-        Game game = gameRepository.findById(gameId).orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
+    public void makeData(long gameId) {
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
         game.changeStatus(GameStatus.END);
+    }
+
+    @Override
+    @Transactional
+    public void sendScreenData(long gameId, SendMessageService messageService) {
+        InGame inGame = getInGame(gameId);
 
         long teamALeaderId = inGame.getTeamAInfo().getLeaderId();
         long teamBLeaderId = inGame.getTeamBInfo().getLeaderId();
+
         String winningTeam = getInGamePlayer(gameId, teamALeaderId).isDead() ? "B" : "A";
         List<PlayerDataDto> players = updatePlayerAndRanking(gameId, winningTeam);
 
-        return GameEndResponse.builder()
+        GameEndResponse response = GameEndResponse.builder()
                 .winningTeam(winningTeam)
                 .teamALeaderId(teamALeaderId)
                 .teamBLeaderId(teamBLeaderId)
-                .players(players)
-                .build();
+                .players(players).build();
+        messageService.sendData(gameId, "/end", response);
     }
 
     private List<PlayerDataDto> updatePlayerAndRanking(long gameId, String winningTeam) {
-        List<InGamePlayer> playerList = gameRedisRepository.getInGamePlayerList(gameId);
+        List<InGamePlayer> playerList = redisRepository.getInGamePlayerList(gameId);
 
         for (InGamePlayer inGamePlayer : playerList) {
             long memberId = inGamePlayer.getMemberId();
@@ -87,13 +88,14 @@ public class GameExecuteEndService {
                 .collect(Collectors.toList());
     }
 
-    private InGame getInGame(long gameId) {
-        return gameRedisRepository.getInGame(gameId)
-                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
+
+    private InGamePlayer getInGamePlayer(long gameId, long memberId) {
+        return redisRepository.getInGamePlayer(gameId, memberId)
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
-    private InGamePlayer getInGamePlayer(long gameId, Long memberId) {
-        return gameRedisRepository.getInGamePlayer(gameId, memberId)
-                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
+    private InGame getInGame(long gameId) {
+        return redisRepository.getInGame(gameId)
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 }
