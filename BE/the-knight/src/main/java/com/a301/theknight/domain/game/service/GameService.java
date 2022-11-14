@@ -80,7 +80,7 @@ public class GameService {
                 .twin(findGame.getTwin())
                 .shield(findGame.getShield())
                 .hand(findGame.getHand())
-                .ownerId(findGame.getOwner().getId())
+                .ownerId(findGame.getOwner().getMember().getId())
                 .build();
     }
 
