@@ -34,6 +34,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                 flexDirection: "column",
                 alignItems: "center",
                 transform: "translate(20%)",
+                zIndex: 1,
               }}
             >
               <div
@@ -80,6 +81,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                 flexDirection: "column",
                 alignItems: "center",
                 transform: "translate(-20%)",
+                zIndex: 1,
               }}
             >
               <div
