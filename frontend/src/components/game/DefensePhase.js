@@ -1,12 +1,17 @@
+import { useSelector } from "react-redux";
+import api from "../../api/api"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
-import { useSelector } from "react-redux";
 
 export default function DefensePhase() {
   const me = useSelector((state) => state.game.me);
   const timer = useSelector((state) => state.game.timer).timer;
   const attackInfo = useSelector((state) => state.game.attackInfo);
   const currentDefender = useSelector((state) => state.game.currentDefender);
+  // const stompClient = useSelector((state) => state.websocket.stompClient);
+  // const memberId = parseInt(window.localStorage.getItem("memberId"));
+  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
   const weaponsKr = {
     SWORD: "검",
     TWIN: "쌍검",
@@ -17,6 +22,30 @@ export default function DefensePhase() {
     LEFT: "왼쪽",
     RIGHT: "오른쪽",
   };
+
+  const onPubDefense = (payload) => {
+    // {
+    //   hand : String (LEFT, RIGHT)
+    // }
+    const data = {
+      hand: payload
+    }
+    // stompClient.send(api.pubDefense(gameId), {}, JSON.stringify(data));
+    console.log(data)
+  }
+
+  const onPubDefensePass = () => {
+    // stompClient.send(api.pubDefensePass(gameId), {}, {});
+    console.log("패스!")
+  }
+
+  function selectShield(hand) {
+    onPubDefense(hand)
+  }
+
+  function selectPass() {
+    onPubDefensePass()
+  }
 
   function BoxRender() {
     // 내가 수비자일 때
@@ -60,6 +89,7 @@ export default function DefensePhase() {
               >
                 <Box sx={{ fontSize: "2.7vmin" }}>L</Box>
                 <Box
+                  onClick={() => selectShield("LEFT")}
                   sx={{
                     width: "10vmin",
                     height: "10vmin",
@@ -80,6 +110,7 @@ export default function DefensePhase() {
               >
                 <Box sx={{ fontSize: "2.7vmin" }}>R</Box>
                 <Box
+                  onClick={() => selectShield("RIGHT")}
                   sx={{
                     width: "10vmin",
                     height: "10vmin",
@@ -93,6 +124,7 @@ export default function DefensePhase() {
               </Box>
             </Box>
             <Box
+              onClick={() => selectPass()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
