@@ -4,8 +4,19 @@ import { useSelector } from "react-redux";
 
 export default function DefensePhase() {
   const me = useSelector((state) => state.game.me);
-  const currentAttacker = useSelector((state) => state.game.currentAttacker);
+  const timer = useSelector((state) => state.game.timer).timer;
+  const attackInfo = useSelector((state) => state.game.attackInfo);
   const currentDefender = useSelector((state) => state.game.currentDefender);
+  const weaponsKr = {
+    SWORD: "검",
+    TWIN: "쌍검",
+    SHIELD: "방패",
+    HAND: "맨손",
+  };
+  const side = {
+    LEFT: "왼쪽",
+    RIGHT: "오른쪽",
+  };
 
   function BoxRender() {
     // 내가 수비자일 때
@@ -23,7 +34,8 @@ export default function DefensePhase() {
           }}
         >
           <Box sx={{ textAlign: "center", fontSize: "2.7vmin" }}>
-            {currentAttacker.nickname}의 _쪽 _으로 공격 받았습니다.
+            {attackInfo.attacker.nickname}의 {side[attackInfo.hand]}{" "}
+            {weaponsKr[attackInfo.weapon]}(으)로 공격 받았습니다
           </Box>
           <Box
             sx={{
@@ -96,7 +108,18 @@ export default function DefensePhase() {
               Pass
             </Box>
           </Box>
-          <Box sx={{ textAlign: "center", fontSize: "2vmin", position: "absolute", left: "50%", bottom: "2vmin", transform: "translate(-50%)" }}>제한시간: 100</Box>
+          <Box
+            sx={{
+              textAlign: "center",
+              fontSize: "2vmin",
+              position: "absolute",
+              left: "50%",
+              bottom: "2vmin",
+              transform: "translate(-50%)",
+            }}
+          >
+            제한시간: {timer}
+          </Box>
         </Box>
       );
       // 우리 팀이 공격자일 때
@@ -114,7 +137,18 @@ export default function DefensePhase() {
           }}
         >
           <Box sx={{ fontSize: "2.5vmin" }}>아군이 방어를 선택 중입니다</Box>
-          <Box sx={{ textAlign: "center", fontSize: "2vmin", position: "absolute", left: "50%", bottom: "2vmin", transform: "translate(-50%)" }}>제한시간: 100</Box>
+          <Box
+            sx={{
+              textAlign: "center",
+              fontSize: "2vmin",
+              position: "absolute",
+              left: "50%",
+              bottom: "2vmin",
+              transform: "translate(-50%)",
+            }}
+          >
+            제한시간: {timer}
+          </Box>
         </Box>
       );
       // 적팀이 공격자일 때
@@ -132,7 +166,18 @@ export default function DefensePhase() {
           }}
         >
           <Box sx={{ fontSize: "2.5vmin" }}>적팀이 방어를 선택 중입니다</Box>
-          <Box sx={{ textAlign: "center", fontSize: "2vmin", position: "absolute", left: "50%", bottom: "2vmin", transform: "translate(-50%)" }}>제한시간: 100</Box>
+          <Box
+            sx={{
+              textAlign: "center",
+              fontSize: "2vmin",
+              position: "absolute",
+              left: "50%",
+              bottom: "2vmin",
+              transform: "translate(-50%)",
+            }}
+          >
+            제한시간: {timer}
+          </Box>
         </Box>
       );
     }

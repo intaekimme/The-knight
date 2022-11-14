@@ -102,7 +102,7 @@ export default function AttackDoubtPhase() {
           <Box sx={{ textAlign: "center", fontSize: "2.7vmin" }}>
             {attackInfo.attacker.nickname}이(가) {attackInfo.defender.nickname}
             을(를) {side[attackInfo.hand]} {weaponsKr[attackInfo.weapon]}(으)로
-            공격했습니다.
+            공격했습니다
           </Box>
           <Box
             sx={{
