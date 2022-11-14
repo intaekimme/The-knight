@@ -1,23 +1,24 @@
 import Player from "./Player";
 import { useDispatch, useSelector } from "react-redux";
-import api from "../../api/api"
+import api from "../../api/api";
 import { Grid, Box } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 
 function PlayerWithWeaponItem({ player, isOpp }) {
   const phase = useSelector((state) => state.game.phase);
   const players = useSelector((state) => state.game.players);
+  const attackInfo = useSelector((state) => state.game.attackInfo);
   const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
-  const dispatch = useDispatch();
+
   const size = {
     2: "7vmin",
     3: "7vmin",
     4: "6vmin",
     5: "5vmin",
-  }
+  };
 
   // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = window.localStorage.getItem("memberId");
+  // const memberId = parseInt(window.localStorage.getItem("memberId"));
   // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
   // const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
@@ -27,14 +28,14 @@ function PlayerWithWeaponItem({ player, isOpp }) {
     //     (LEFT, RIGHT)
     // }
     const data = {
-      deleteHand: payload
-    }
+      deleteHand: payload,
+    };
     // stompClient.send(api.pubDeleteWeapon, {}, data);
-    console.log(data)
-  }
+    console.log(data);
+  };
 
   function deleteHand(hand) {
-    onPubDeleteWeapon(hand)
+    onPubDeleteWeapon(hand);
   }
 
   return (
@@ -53,12 +54,20 @@ function PlayerWithWeaponItem({ player, isOpp }) {
             >
               <div
                 style={{
-                  width: size[(players.maxMember / 2)],
-                  height: size[(players.maxMember / 2)],
-                  ...(isSelectComplete
+                  width: size[players.maxMember / 2],
+                  height: size[players.maxMember / 2],
+                  border: "7px solid #4d4d4d",
+                  ...((phase === "PREPARE" && isSelectComplete) || isOpp
                     ? { backgroundColor: "#646464" }
                     : { backgroundColor: "#f0f0f0" }),
-                  border: "7px solid #4d4d4d",
+                  ...((phase === "ATTACK_DOUBT" ||
+                    phase === "DEFENSE" ||
+                    phase === "DEFENSE_DOUBT") &&
+                    player.memberId === attackInfo.attacker.memberId &&
+                    attackInfo.hand === "LEFT" && {
+                      backgroundColor: "#e45826",
+                      border: "7px solid #a27b5c",
+                    }),
                   borderRadius: "10px",
                   position: "relative",
                 }}
@@ -85,7 +94,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
               </div>
               <Box sx={{ fontSize: "2vmin" }}>L</Box>
             </Box>
-            <Box sx={{ position: "relative"}}>
+            <Box sx={{ position: "relative" }}>
               <Player
                 player={player}
                 isOpp={isOpp}
@@ -121,12 +130,20 @@ function PlayerWithWeaponItem({ player, isOpp }) {
             >
               <div
                 style={{
-                  width: size[(players.maxMember / 2)],
-                  height: size[(players.maxMember / 2)],
-                  ...(isSelectComplete
+                  width: size[players.maxMember / 2],
+                  height: size[players.maxMember / 2],
+                  border: "7px solid #4d4d4d",
+                  ...((phase === "PREPARE" && isSelectComplete) || isOpp
                     ? { backgroundColor: "#646464" }
                     : { backgroundColor: "#f0f0f0" }),
-                  border: "7px solid #4d4d4d",
+                  ...((phase === "ATTACK_DOUBT" ||
+                    phase === "DEFENSE" ||
+                    phase === "DEFENSE_DOUBT") &&
+                    player.memberId === attackInfo.attacker.memberId &&
+                    attackInfo.hand === "RIGHT" && {
+                      backgroundColor: "#e45826",
+                      border: "7px solid #a27b5c",
+                    }),
                   borderRadius: "10px",
                   position: "relative",
                 }}

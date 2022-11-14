@@ -50,7 +50,7 @@ export default function DefenseDoubtPhase() {
           <Box sx={{ textAlign: "center" }}>{currentDefender.nickname}이 _쪽 방패로 방어했습니다.</Box>
           <Box sx={{ display: "flex", alignItems: 'flex-end', justifyContent: "space-evenly" }}>
             <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>의심</Box>
-            <Box onClick={ clickPass } sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>Pass</Box>
+            <Box onClick={() => clickPass} sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>Pass</Box>
           </Box>
           <Box sx={{ textAlign: "center"}}>제한시간: 100</Box>
         </Box>
