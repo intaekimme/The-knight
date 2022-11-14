@@ -53,6 +53,7 @@ public class GamePrepareApi {
         GameWeaponResponse weaponResponse = gamePrepareService.choiceWeapon(gameId, memberId, gameWeaponChoiceRequest);
 
         sendWeaponResponse(gameId, weaponResponse.getTeam(), weaponResponse.getGameWeaponData());
+        getGamePlayerData(gameId);
     }
 
     @MessageMapping(value="/games/{gameId}/weapon-delete")
@@ -61,6 +62,7 @@ public class GamePrepareApi {
         GameWeaponResponse weaponResponse = gamePrepareService.cancelWeapon(gameId, memberId, weaponDeleteRequest.getDeleteHand());
 
         sendWeaponResponse(gameId, weaponResponse.getTeam(), weaponResponse.getGameWeaponData());
+        getGamePlayerData(gameId);
     }
 
     @MessageMapping(value="/games/{gameId}/{team}/orders")
