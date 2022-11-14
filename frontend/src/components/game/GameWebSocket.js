@@ -61,6 +61,7 @@ export default function GameWebSocket() {
   const onSubConvert = (payload) => {
     // {
     //   gameStatus : String,
+    //   postfix: String,
     // }
     const data = JSON.parse(payload.body);
     const nextPhase = data.gameStatus;
@@ -85,15 +86,6 @@ export default function GameWebSocket() {
     }
 
     // 준비완료 pub
-    stompClient.send(api.pubConvertComplete(gameId), {}, {});
-  };
-
-  // 다음 phase에 필요한 정보 요청
-  const onSubConvertComplete = (payload) => {
-    // {
-    //   postfix: String,
-    // }
-    const data = JSON.parse(payload.body);
     stompClient.send(api.pubPostfix(gameId, data.postfix), {}, {});
   };
 
@@ -328,7 +320,6 @@ export default function GameWebSocket() {
     stompClient.subscribe(api.subConvert(gameId), onSubConvert);
     stompClient.subscribe(api.subNextPhase(gameId), onSubNextPhase);
     stompClient.subscribe(api.subEnd(gameId, myTeam), onSubEnd);
-    stompClient.subscribe(api.subConvertComplete(gameId), onSubConvertComplete);
 
     // for prepare
     stompClient.subscribe(api.subLeader(gameId, myTeam), onSubLeader);
