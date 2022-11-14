@@ -3,7 +3,6 @@ package com.a301.theknight.domain.player.entity;
 import com.a301.theknight.domain.common.entity.BaseTimeEntity;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameResult;
-import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -17,7 +16,8 @@ import javax.persistence.*;
 @Entity
 public class Player extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -33,20 +33,6 @@ public class Player extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private GameResult result;
-
-    private int leftCount;
-
-    private int rightCount;
-
-    @Enumerated(EnumType.STRING)
-    private Weapon leftWeapon;
-
-    @Enumerated(EnumType.STRING)
-    private Weapon rightWeapon;
-
-    private int sequence;
-
-    private boolean isDead;
 
     private boolean isReady;
 
@@ -71,8 +57,8 @@ public class Player extends BaseTimeEntity {
         game.getPlayers().add(this);
     }
 
-    public void exitGame(){
-        if(this.game  != null){
+    public void exitGame() {
+        if (this.game != null) {
             this.game.getPlayers().remove(this);
         }
     }
@@ -89,7 +75,9 @@ public class Player extends BaseTimeEntity {
         result = GameResult.LOSE;
     }
 
-    public void ready(boolean isReady) { this.isReady = isReady; }
+    public void ready(boolean isReady) {
+        this.isReady = isReady;
+    }
 
     public void becomeLeader() {
         isLeader = true;
