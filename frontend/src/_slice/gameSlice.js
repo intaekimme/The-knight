@@ -126,7 +126,7 @@ const countWeaponInit = {
 const isSelectCompleteInit = false;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "PREPARE";
+const phaseInit = "PREDECESSOR";
 const previousPhaseInit = null;
 
 const isLoadingInit = false;
@@ -186,7 +186,7 @@ const executeInfoInit = {
     hand: "",
     isDead: false,
     restCount: 0,
-   passedDefense: false,
+    passedDefense: false,
   }
 }
 

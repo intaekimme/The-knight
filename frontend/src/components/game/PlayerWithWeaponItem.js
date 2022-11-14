@@ -26,7 +26,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
   return (
     <div>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Box sx={{ display: "flex", flexDirection: "column" }}>
+        <Box>
           <Box sx={{ display: "flex" }}>
             <Box
               sx={{
@@ -69,12 +69,33 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                   {player.weapons[0]}
                 </span>
               </div>
-              <div>L</div>
+              <Box sx={{ fontSize: "2vmin" }}>L</Box>
             </Box>
-            <Player
-              player={player}
-              isOpp={isOpp}
-            />
+            <Box sx={{ position: "relative"}}>
+              <Player
+                player={player}
+                isOpp={isOpp}
+              />
+              {phase !== "PREPARE" ? (
+                <div
+                  style={{
+                    width: "3vmin",
+                    height: "3vmin",
+                    border: "3px solid black",
+                    backgroundColor: "white",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    position: "absolute",
+                    bottom: "2.5vmin",
+                    left: ".5vmin",
+                    fontSize: "2vmin",
+                  }}
+                >
+                  {player.order}
+                </div>
+              ) : null}
+            </Box>
             <Box
               sx={{
                 display: "flex",
@@ -116,23 +137,9 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                   {player.weapons[1]}
                 </span>
               </div>
-              <div>R</div>
+              <Box sx={{ fontSize: "2vmin" }}>R</Box>
             </Box>
           </Box>
-          {phase !== "PREPARE" ? (
-            <div
-              style={{
-                width: 30,
-                height: 30,
-                border: "solid",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {player.order}
-            </div>
-          ) : null}
         </Box>
       </Box>
     </div>

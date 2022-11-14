@@ -36,7 +36,6 @@ function Player({ player, isOpp }) {
       }}
     >
       <PersonIcon
-        // color={isMe && "success"}
         sx={{
           ...(isMe && { color: "green" }),
           ...(isAttacker && { backgroundColor: "yellow", borderRadius: "50%" }),
@@ -49,7 +48,7 @@ function Player({ player, isOpp }) {
         onMouseOver={() => setIsHovering(true)}
         onMouseOut={() => setIsHovering(false)}
       />
-      <div style={{ ...(isMe && { color: "green" }) }}>{player.nickname}</div>
+      <Box sx={{ ...(isMe && { color: "green" }), fontSize: "2vmin" }}>{player.nickname}</Box>
       {(isAttackDoubtPhase || isDefenseDoubtPhase) && isPass && (
         <div
           style={{
