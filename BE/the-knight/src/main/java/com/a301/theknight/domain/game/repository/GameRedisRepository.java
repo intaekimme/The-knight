@@ -155,8 +155,6 @@ public class GameRedisRepository {
     }
 
     private <T> void saveAllHashData(String key, Map<String, String> dataMap) {
-        redisTemplate.opsForHash().delete(key);
-
         redisTemplate.opsForHash().putAll(key, dataMap);
     }
 
