@@ -45,6 +45,7 @@ export default function AttackPhase() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-evenly",
+            position: "relative",
           }}
         >
           <Box sx={{ textAlign: "center", fontSize: "3.5vmin" }}>공격 선택</Box>
@@ -158,7 +159,7 @@ export default function AttackPhase() {
               PASS
             </Box>
           </Box>
-          <Box sx={{ textAlign: "center", fontSize: "2vmin" }}>제한시간 : {timer}</Box>
+          <Box sx={{ textAlign: "center", fontSize: "2vmin", position: "absolute", left: "50%", bottom: "2vmin", transform: "translate(-50%)" }}>제한시간 : {timer}</Box>
         </Box>
       );
       // 우리 팀이 공격자일 때
@@ -172,9 +173,11 @@ export default function AttackPhase() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            position: "relative",
           }}
         >
           <Box sx={{ fontSize: "2.5vmin" }}>아군이 공격을 선택 중입니다</Box>
+          <Box sx={{ textAlign: "center", fontSize: "2vmin", position: "absolute", left: "50%", bottom: "2vmin", transform: "translate(-50%)" }}>제한시간 : {timer}</Box>
         </Box>
       );
       // 적팀이 공격자일 때
@@ -188,9 +191,11 @@ export default function AttackPhase() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            position: "relative",
           }}
         >
           <Box sx={{ fontSize: "2.5vmin" }}>적팀이 공격을 선택 중입니다</Box>
+          <Box sx={{ textAlign: "center", fontSize: "2vmin", position: "absolute", left: "50%", bottom: "2vmin", transform: "translate(-50%)" }}>제한시간 : {timer}</Box>
         </Box>
       );
     }
