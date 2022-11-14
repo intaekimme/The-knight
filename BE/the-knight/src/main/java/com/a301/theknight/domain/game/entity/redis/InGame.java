@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Getter
 @Builder
-public class InGame implements Serializable {
+public class InGame {
     private GameStatus gameStatus;
     private Team currentAttackTeam;
     private TeamInfoData teamAInfo;

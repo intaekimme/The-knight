@@ -3,6 +3,8 @@ package com.a301.theknight.domain.player.service;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
+import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
+import com.a301.theknight.domain.game.entity.redis.TurnData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
@@ -167,7 +169,11 @@ public class PlayerService {
     }
 
     private InGame makeInGame(Game game) {
-        return redisRepository.saveInGame(game.getId(), InGame.builder()
-                .gameStatus(GameStatus.PREPARE).build());
+        InGame initInGame = InGame.builder()
+                .gameStatus(GameStatus.PREPARE)
+                .teamAInfo(TeamInfoData.builder().build())
+                .teamBInfo(TeamInfoData.builder().build()).build();
+
+        return redisRepository.saveInGame(game.getId(), initInGame);
     }
 }

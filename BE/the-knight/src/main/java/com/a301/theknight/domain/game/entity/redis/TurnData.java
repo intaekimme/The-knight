@@ -8,7 +8,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class TurnData implements Serializable {
+public class TurnData {
     private long attackerId;
     private long defenderId;
     private AttackData attackData;
