@@ -5,11 +5,11 @@ import { useSelector } from "react-redux"
 export default function DefensePhase() {
   const me = useSelector(state => state.game.me)
   const currentAttacker = useSelector(state => state.game.currentAttacker)
-  const currentDefenser = useSelector(state => state.game.currentDefenser)
+  const currentDefender = useSelector(state => state.game.currentDefender)
 
   function BoxRender() {
     // 내가 수비자일 때
-    if (me.memberId === currentDefenser.memberId) {
+    if (me.memberId === currentDefender.memberId) {
       return (
         <Box
         sx={{
@@ -39,7 +39,7 @@ export default function DefensePhase() {
         </Box>
       )
     // 우리 팀이 공격자일 때 
-    } else if (me.team === currentDefenser.team) {
+    } else if (me.team === currentDefender.team) {
       return (
         <Box
           sx={{

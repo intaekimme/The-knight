@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import static org.mockito.BDDMockito.given;
 import static org.junit.jupiter.api.Assertions.*;
-@Disabled
 @ExtendWith(MockitoExtension.class)
 class GameServiceTest {
 

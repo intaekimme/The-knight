@@ -61,8 +61,8 @@ class GameAttackDefenseServiceTest {
 
         //  기존 공격, 방어자 정보
         TurnData turnData = new TurnData();
-        turnData.setAttackerId(4L);
-        turnData.setDefenderId(1L);
+        turnData.setAttackerId(1L);
+        turnData.setDefenderId(2L);
 
         GameOrderDto[] orderList = new GameOrderDto[3];
         TeamA = new ArrayList<>();
@@ -202,12 +202,14 @@ class GameAttackDefenseServiceTest {
                 .build();
 
         inGame.getTurnData().setAttackData(attackData);
+        given(gameRedisRepository.getInGamePlayer(1L, 1L)).willReturn(Optional.of(attacker));
+        given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
 
         //  when
         AttackResponse attackResponse = gameAttackDefenseService.getAttackInfo(1L);
         //  then
-        assertEquals(4L, attackResponse.getAttacker().getMemberId());
-        assertEquals(1L, attackResponse.getDefender().getMemberId());
+        assertEquals(1L, attackResponse.getAttacker().getMemberId());
+        assertEquals(2L, attackResponse.getDefender().getMemberId());
         assertEquals(Weapon.TWIN.name(), attackResponse.getWeapon());
         assertEquals(Hand.RIGHT.name(), attackResponse.getHand());
     }
@@ -217,6 +219,7 @@ class GameAttackDefenseServiceTest {
     void isAttackPass() {
         //  given
         inGame.changeStatus(GameStatus.ATTACK);
+        given(gameRedisRepository.getInGamePlayer(1L, 1L)).willReturn(Optional.of(attacker));
 
         //  when
         gameAttackDefenseService.isAttackPass(1L, 1L);
@@ -269,10 +272,12 @@ class GameAttackDefenseServiceTest {
         //  given
         DefendData defendData = new DefendData(Hand.LEFT, 3);
         inGame.getTurnData().setDefendData(defendData);
+        given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
+
         //  when
         DefenseResponse defenseResponse = gameAttackDefenseService.getDefenseInfo(1L);
         //  then
-        assertEquals(1L, defenseResponse.getDefender().getMemberId());
+        assertEquals(2L, defenseResponse.getDefender().getMemberId());
         assertEquals(Weapon.SHIELD.name(), defenseResponse.getWeapon());
         assertEquals(Hand.LEFT.name(), defenseResponse.getHand());
 
@@ -286,6 +291,8 @@ class GameAttackDefenseServiceTest {
 
         DefendData defendData = new DefendData(Hand.LEFT, 3);
         inGame.getTurnData().setDefendData(defendData);
+
+        given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
         //  when
         gameAttackDefenseService.isDefensePass(1L, 2L);
         //  then

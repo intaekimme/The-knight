@@ -5,11 +5,9 @@ import com.a301.theknight.domain.game.entity.Weapon;
 import lombok.Builder;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Builder
 @Data
-public class GameWeaponData implements Serializable {
+public class GameWeaponData {
     private int sword;
     private int twin;
     private int shield;

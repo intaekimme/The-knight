@@ -1,16 +1,30 @@
 import { useSelector, useDispatch } from "react-redux";
-import { selectOrder } from "../../_slice/gameSlice";
+import api from "../../api/api"
 import Player from "./Player";
 import Grid from "@mui/material/Grid";
 
 function OrderPicker() {
-  const dispatch = useDispatch();
   const players = useSelector((state) => state.game.players);
   const order = useSelector((state) => state.game.order);
   const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
 
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = window.localStorage.getItem("memberId");
+  const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const onPubOrder = (payload) => {
+    // {
+    //   orderNumber : int
+    // }
+    const data = {
+      orderNumber: payload
+    }
+    stompClient.send(api.pubOrder(gameId, myTeam), {}, JSON.stringify(data));
+  }
+
   function onClick(order) {
-    dispatch(selectOrder(order));
+    onPubOrder(order + 1);
   }
 
   function orderList(players) {
