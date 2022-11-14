@@ -136,20 +136,20 @@ const currentAttackerInit = {
   team: "A",
 };
 
-const currentDefenserInit = {
+const currentDefenderInit = {
   memberId: 3,
   team: "A",
 };
 
 const attackInfoInit = {
   attacker: {},
-  defenser: {},
+  defender: {},
   weapon: "",
   hand: "",
 }
 
 const defenseInfoInit = {
-  defenser: {},
+  defender: {},
   weapon: "",
   hand: "",
 }
@@ -213,7 +213,7 @@ export const gameSlice = createSlice({
     previousPhase: previousPhaseInit,
     isLoading: isLoadingInit,
     currentAttacker: currentAttackerInit,
-    currentDefenser: currentDefenserInit,
+    currentDefender: currentDefenderInit,
     attackInfo: attackInfoInit,
     defenseInfo: defenseInfoInit,
     doubtInfo: doubtInfoInit,
@@ -264,29 +264,6 @@ export const gameSlice = createSlice({
         state.players.players[state.me.index].weapons[1] = null;
       }
     },
-    selectOrder: (state, action) => {
-      // 선택한 순서가 비어있고, 유저가 이미 선택한 순서가 없을 때
-      if (!state.order[action.payload]) {
-        for (let i = 0; i < state.order[state.me.team].length; i++) {
-          // 선택한 순서가 비어있고, (다른 순서를 이미 선택해뒀을 때)
-          if (state.order[i]) {
-            if (
-              state.order[i].memberId ===
-              state.players.players[state.me.index].memberId
-            ) {
-              state.order[i] = null;
-            }
-          }
-        }
-        state.order[action.payload] = state.players.players[state.me.index];
-        // (선택한 순서가 차있고), 유저가 선택했던 순서일 때
-      } else if (
-        state.order[action.payload].memberId ===
-        state.players.players[state.me.index].memberId
-      ) {
-        state.order[action.payload] = null;
-      }
-    },
     fetchOrder: (state, action) => {
       state.order = action.payload;
     },
@@ -318,8 +295,8 @@ export const gameSlice = createSlice({
     fetchCurrentAttacker: (state, action) => {
       state.currentAttacker = action.payload;
     },
-    fetchCurrentDefenser: (state, action) => {
-      state.currentDefenser = action.payload;
+    fetchCurrentDefender: (state, action) => {
+      state.currentDefender = action.payload;
     },
     fetchAttackInfo: (state, action) => {
       state.attackInfo = action.payload;
@@ -346,7 +323,6 @@ export const {
   fetchPlayers,
   selectWeapon,
   deleteWeapon,
-  selectOrder,
   fetchOrder,
   fetchPhase,
   switchIsLoading,
@@ -357,7 +333,7 @@ export const {
   fetchCountWeapon,
   selectComplete,
   fetchCurrentAttacker,
-  fetchCurrentDefenser,
+  fetchCurrentDefender,
   fetchAttackInfo,
   fetchDefenseInfo,
   fetchDoubtInfo,

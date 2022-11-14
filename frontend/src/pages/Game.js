@@ -13,6 +13,7 @@ import DefenseDoubtPhase from "../components/game/DefenseDoubtPhase";
 import DoubtResultPhase from "../components/game/DoubtResultPhase";
 import ExecutePhase from "../components/game/ExecutePhase";
 import EndPhase from "../components/game/EndPhase";
+import GameWebSocket from "../components/game/GameWebSocket";
 
 export default function Game() {
   // 비 로그인 시 로그인 화면으로
@@ -29,6 +30,7 @@ export default function Game() {
   
   return (
     <div>
+      <GameWebSocket></GameWebSocket>
       {isLoading && <LoadingPhase></LoadingPhase>}
       {!isLoading && phase === "PREPARE" && <PreparePhase></PreparePhase>}
       {!isLoading && phase === "PREDECESSOR" && <PredecessorPhase></PredecessorPhase>}
