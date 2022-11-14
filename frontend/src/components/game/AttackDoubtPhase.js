@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectPass, initializePass } from "../../_slice/gameSlice";
+import api from "../../api/api"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 
@@ -21,12 +22,44 @@ export default function AttackDoubtPhase() {
     RIGHT: "오른쪽",
   };
 
+  // const stompClient = useSelector((state) => state.websocket.stompClient);
+  // const memberId = parseInt(window.localStorage.getItem("memberId"));
+  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
   useEffect(() => {
     dispatch(initializePass());
   }, []);
 
+  const onPubDoubt = () => {
+    // {
+    //   suspected : {
+    //     memberId : long : 의심 당하는 사람
+    //   },
+    //   doubtStatus: String
+    //    (ATTACK_DOUBT, DEFENSE_DOUBT)
+    // }
+    const data = {
+      suspected: {
+        memberId: attackInfo.attacker.memberId
+      },
+      doubtStatus: "ATTACK_DOUBT"
+    }
+    // stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
+    console.log(data)
+  }
+
+  const onPubDoubtPass = () => {
+    // stompClient.send(api.pubDoubtPass(gameId), {}, {});
+    console.log("패스");
+  }
+
+  function clickDoubt() {
+    onPubDoubt()
+  }
+
   function clickPass() {
-    "패스 클릭!";
+    onPubDoubtPass()
   }
 
   function BoxRender() {
@@ -79,6 +112,7 @@ export default function AttackDoubtPhase() {
             }}
           >
             <Box
+              onClick={() => clickDoubt}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
@@ -94,7 +128,7 @@ export default function AttackDoubtPhase() {
               의심
             </Box>
             <Box
-              onClick={clickPass}
+              onClick={() => clickPass}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
