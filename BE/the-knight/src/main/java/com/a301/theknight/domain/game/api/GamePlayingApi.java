@@ -43,17 +43,6 @@ public class GamePlayingApi {
         messageService.convertCall(gameId, 3000);
     }
 
-    // AttackerApi 1개
-    @MessageMapping(value = "/games/{gameId}/attacker")
-    public void getAttacker(@Min(1) @DestinationVariable long gameId) {
-
-        MemberTeamResponse memberTeamResponse = gameAttackDefenseService.getAttacker(gameId);
-
-        messageService.sendData(gameId, "/attacker", memberTeamResponse);
-
-        messageService.proceedCall(gameId, 500);
-    }
-
     // AttackApi 3개
     @MessageMapping(value = "/games/{gameId}/attack")
     public void attack(@Min(1) @DestinationVariable long gameId, @Valid GameAttackRequest gameAttackRequest, @LoginMemberId long memberId) {

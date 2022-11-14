@@ -3,7 +3,7 @@ package com.a301.theknight.domain.game.factory;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.template.GameDataService;
-import com.a301.theknight.domain.game.template.PredecessorDataService;
+import com.a301.theknight.domain.game.template.AttackDataService;
 import com.a301.theknight.domain.game.template.PrepareDataService;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class GameDataTemplateFactory {
     private final GameRedisRepository gameRedisRepository;
 
     private final PrepareDataService prepareDataTemplate;
-    private final PredecessorDataService predecessorDataService;
+    private final AttackDataService attackDataService;
 
     public GameDataService getGameDataTemplate(long gameId) {
         GameStatus gameStatus = getGameStatus(gameId);
@@ -26,7 +26,7 @@ public class GameDataTemplateFactory {
             case PREPARE:
                 return prepareDataTemplate;
             case PREDECESSOR:
-                return predecessorDataService;
+                return attackDataService;
         }
         return null;
     }
