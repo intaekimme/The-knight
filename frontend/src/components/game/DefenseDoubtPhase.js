@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 export default function DefenseDoubtPhase() {
   const dispatch = useDispatch();
   const me = useSelector(state => state.game.me)
-  const currentDefenser = useSelector(state => state.game.currentDefenser)
+  const currentDefender = useSelector(state => state.game.currentDefender)
 
   useEffect(() => {
     dispatch(initializePass())
@@ -19,7 +19,7 @@ export default function DefenseDoubtPhase() {
 
   function BoxRender() {
     // 방어자가 우리 팀일 때
-    if (me.team === currentDefenser.team) {
+    if (me.team === currentDefender.team) {
       return (
         <Box
           sx={{
@@ -47,7 +47,7 @@ export default function DefenseDoubtPhase() {
           justifyContent: "space-evenly",
         }}
         > 
-          <Box sx={{ textAlign: "center" }}>{currentDefenser.nickname}이 _쪽 방패로 방어했습니다.</Box>
+          <Box sx={{ textAlign: "center" }}>{currentDefender.nickname}이 _쪽 방패로 방어했습니다.</Box>
           <Box sx={{ display: "flex", alignItems: 'flex-end', justifyContent: "space-evenly" }}>
             <Box sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>의심</Box>
             <Box onClick={ clickPass } sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2"}}>Pass</Box>

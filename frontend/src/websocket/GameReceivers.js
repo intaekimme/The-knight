@@ -12,7 +12,7 @@ import {
   fetchCountWeapon,
   selectComplete,
   fetchCurrentAttacker,
-  fetchCurrentDefenser,
+  fetchCurrentDefender,
   fetchAttackInfo,
   fetchDefenseInfo,
   fetchDoubtInfo,
@@ -229,7 +229,7 @@ const onSubAttackInfo = (payload) => {
   //     memberId: long : 해당 유저가 공격을 진행할 것이다,
   //     team: String
   //   }
-  //   defenser : {
+  //   defender : {
   //     memberId: long : 공격 대상자(=다음 방어자),
   //     team: String
   //   }
@@ -238,7 +238,7 @@ const onSubAttackInfo = (payload) => {
   //   hand : String (LEFT, RIGHT)
   // }
   const data = JSON.parse(payload.body);
-  dispatch(fetchCurrentDefenser(data.defenser));
+  dispatch(fetchCurrentDefender(data.defender));
   dispatch(fetchAttackInfo(data));
 };
 
@@ -263,7 +263,7 @@ const onSubDoubtPass = (payload) => {
 // 방어정보
 const onSubDefenseInfo = (payload) => {
   // {
-  //   defenser : {
+  //   defender : {
   //     memberId: long : 방어자,
   //   }
   //   weapon : String : 사용 선언무기
