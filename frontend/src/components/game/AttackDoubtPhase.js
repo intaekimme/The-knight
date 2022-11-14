@@ -80,9 +80,15 @@ export default function AttackDoubtPhase() {
           >
             <Box
               sx={{
-                width: "11vmin",
-                height: "11vmin",
-                backgroundColor: "#e2e2e2",
+                width: "10vmin",
+                height: "10vmin",
+                backgroundColor: "#f0f0f0",
+                border: "7px solid #4d4d4d",
+                borderRadius: "10px",
+                fontSize: "3.5vmin",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               의심
@@ -90,9 +96,15 @@ export default function AttackDoubtPhase() {
             <Box
               onClick={clickPass}
               sx={{
-                width: "11vmin",
-                height: "11vmin",
-                backgroundColor: "#e2e2e2",
+                width: "10vmin",
+                height: "10vmin",
+                backgroundColor: "#f0f0f0",
+                border: "7px solid #4d4d4d",
+                borderRadius: "10px",
+                fontSize: "3.5vmin",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               Pass
