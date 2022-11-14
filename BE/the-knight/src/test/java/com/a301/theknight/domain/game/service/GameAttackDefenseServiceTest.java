@@ -49,15 +49,16 @@ class GameAttackDefenseServiceTest {
         attacker = InGamePlayer.builder()
                 .memberId(1L)
                 .team(Team.A)
-                .leftWeapon(Weapon.TWIN)
-                .rightWeapon(Weapon.SWORD)
                 .build();
+        attacker.randomChoiceWeapon(Weapon.TWIN);
+        attacker.randomChoiceWeapon(Weapon.SWORD);
+
         defender = InGamePlayer.builder()
                 .memberId(2L)
                 .team(Team.B)
-                .leftWeapon(Weapon.SHIELD)
-                .rightWeapon(Weapon.HAND)
                 .build();
+        defender.randomChoiceWeapon(Weapon.SHIELD);
+        defender.randomChoiceWeapon(Weapon.HAND);
 
         //  기존 공격, 방어자 정보
         TurnData turnData = new TurnData();
@@ -73,29 +74,22 @@ class GameAttackDefenseServiceTest {
         for(int i=1; i < 3; i++){
             long memberId = (i * 2) + 1;
             orderList[i] = GameOrderDto.builder().memberId(memberId).build();
+            InGamePlayer player = InGamePlayer.builder()
+                    .memberId(memberId)
+                    .team(Team.A)
+                    .build();
+            player.randomChoiceWeapon(Weapon.TWIN);
+            player.randomChoiceWeapon(Weapon.SWORD);
             if(i==1){
-                TeamA.add(InGamePlayer.builder()
-                        .memberId(memberId)
-                        .team(Team.A)
-                        .leftWeapon(Weapon.TWIN)
-                        .rightWeapon(Weapon.SWORD)
-                        .isDead(true)
-                        .build());
-            }else{
-                TeamA.add(InGamePlayer.builder()
-                        .memberId(memberId)
-                        .team(Team.A)
-                        .leftWeapon(Weapon.TWIN)
-                        .rightWeapon(Weapon.SWORD)
-                        .build());
+                player.death();
             }
+            TeamA.add(player);
         }
 
         TeamInfoData teamAInfoData = TeamInfoData.builder()
                 .currentAttackIndex(3)
                 .orderList(orderList)
                 .leaderId(5L)
-                .selected(false)
                 .build();
 
         inGame = InGame.builder()
