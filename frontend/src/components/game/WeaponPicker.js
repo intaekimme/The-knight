@@ -1,21 +1,39 @@
 import { useDispatch, useSelector } from "react-redux";
-import { selectWeapon } from "../../_slice/gameSlice";
-
+import api from "../../api/api"
 import { Box, Grid } from "@mui/material";
 
 function WeaponPicker() {
   const dispatch = useDispatch();
-  const weapons = ["sword", "twin", "shield", "hand"];
+  const weapons = ["SWORD", "TWIN", "SHIELD", "HAND"];
   const countWeapon = useSelector((state) => state.game.countWeapon);
   const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
-  function onClick(weapon) {
-    dispatch(selectWeapon(weapon));
+  
+  // const stompClient = useSelector((state) => state.websocket.stompClient);
+  // const memberId = window.localStorage.getItem("memberId");
+  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const onPubSelectWeapon = (payload) => {
+    // {
+    //   weapon : String
+    //    (SWORD, TWIN, SHEILD, HAND, HIDE)
+    // }
+    const data = {
+      weapon: payload
+    }
+    console.log(data);
+    // stompClient.send(api.pubSelectWeapon(gameId), {}, JSON.stringify(data)); 
   }
+
+  const onClick = (weapon) => {
+    onPubSelectWeapon(weapon)
+  }
+
   const weaponsKr = {
-    sword: "검",
-    twin: "쌍검",
-    shield: "방패",
-    hand: "맨손",
+    SWORD: "검",
+    TWIN: "쌍검",
+    SHIELD: "방패",
+    HAND: "맨손",
   }
 
   return (
