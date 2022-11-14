@@ -17,7 +17,6 @@ export default function EnterRoom(){
 
   // 방 설정 변경 리시버
   const onSubModifyRoom = (payload) => {
-    console.log("방설정변경 sub", data);
     // {
     //   title: String,
     //   maxMember: int
@@ -27,20 +26,20 @@ export default function EnterRoom(){
     //   hand: int
     // }
     const data = JSON.parse(payload.body);
+    console.log("방설정변경 sub", data);
     dispatch(modifyRoomSetting(data));
   };
   // 현재 진행상태 리시버
   const onSubState = (payload) => {
-    console.log("현재 진행상태 sub", data);
     // {
     //   state : String (Enum)
     // }
     const data = JSON.parse(payload.body);
+    console.log("현재 진행상태 sub", data);
     dispatch(setState(data));
   };
   // 전체 채팅 리시버
   const onSubChatAll = (payload) => {
-    console.log("전채 채팅 sub", data);
     // {
     //   memberId : long,
     //   nickname : String,
@@ -49,6 +48,7 @@ export default function EnterRoom(){
     //    (ALL, A, B)
     // }
     const data = JSON.parse(payload.body);
+    console.log("전채 채팅 sub", data);
     const text = `${data.nickname} : ${data.content}`;
     // 내 채팅일 때 오른쪽에 표시
     if (data.memberId === window.localStorage.getItem("memberId")) {
@@ -61,7 +61,6 @@ export default function EnterRoom(){
   };
   // 팀 채팅 리시버
   const onSubChatTeam = (payload) => {
-    console.log("팀 채팅 sub", data);
     // {
     //   memberId : long,
     //   nickname : String,
@@ -70,6 +69,7 @@ export default function EnterRoom(){
     //    (ALL, A, B)
     // }
     const data = JSON.parse(payload.body);
+    console.log("팀 채팅 sub", data);
     const text = `${data.nickname} : ${data.content}`;
     // 내 채팅일 때 오른쪽에 표시
     if (data.memberId === window.localStorage.getItem("memberId")) {
@@ -82,13 +82,13 @@ export default function EnterRoom(){
   };
   // 방 입장 리시버
   const onSubEntry = (payload) => {
-    console.log("방 입장 sub", data);
     // {
     //   memberId : long,
     //   nickname: String,
     //   image: String,
     // }
     const data = JSON.parse(payload.body);
+    console.log("방 입장 sub", data);
     const text = `${data.nickname}님이 입장하셨습니다.`;
     onPubMembers({stompClient:stompClient, gameId:gameId});
     // 전체채팅으로 뿌려주기
@@ -97,7 +97,6 @@ export default function EnterRoom(){
   };
   // 방 전체 멤버 리시버
   const onSubMembers = (payload) => {
-    console.log("전체 멤버 조회 sub", data);
     // {
     //   members : [
     //     {
@@ -113,27 +112,28 @@ export default function EnterRoom(){
     //   ]
     // }
     const data = JSON.parse(payload.body);
+    console.log("전체 멤버 조회 sub", data);
     dispatch(setMembers(data));
   };
   // 팀선택 리시버
   const onSubSelectTeam = (payload) => {
-    console.log("팀선택 sub", data);
     // {
     //   memberId : long,
     //   team: String
     //   (A, B)
     // }
     const data = JSON.parse(payload.body);
+    console.log("팀선택 sub", data);
     dispatch(changeTeam(data));
   };
   // ready 리시버
   const onSubReady = (payload) => {
-    console.log("레디 sub", data);
     // {
     //   memberId: long,
     //   readyStatus : boolean,
     // }
     const data = JSON.parse(payload.body);
+    console.log("레디 sub", data);
     const payloadData = {
       navigate: navigate,
       url: '/game',
@@ -147,12 +147,12 @@ export default function EnterRoom(){
   };
   // 방 퇴장 리시버
   const onSubExit = (payload) => {
-    console.log("방 퇴장 sub", data);
     // {
     //   memberId: long
     //   nickname: long
     // }
     const data = JSON.parse(payload.body);
+    console.log("방 퇴장 sub", data);
     const text = `${data.nickname}님이 퇴장하셨습니다.`;
     if(data.memberId.toString()===window.localStorage.getItem("memberId")){
       dispatch(exitRoomUnsubscribe({stompClient:stompClient, gameId:gameId})).then(()=>{
