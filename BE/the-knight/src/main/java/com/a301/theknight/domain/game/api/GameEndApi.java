@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.common.service.SendMessageService;
-import com.a301.theknight.domain.game.dto.end.GameEndDto;
+import com.a301.theknight.domain.game.dto.end.response.GameEndResponse;
 import com.a301.theknight.domain.game.service.GameExecuteEndService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -18,10 +18,9 @@ public class GameEndApi {
     @MessageMapping(value = "/games/{gameId}/end")
     public void gameEnd(@DestinationVariable long gameId) {
 
-        GameEndDto gameEndDto = gameExecuteEndService.gameEnd(gameId);
+        GameEndResponse gameEndResponse = gameExecuteEndService.gameEnd(gameId);
 
-        messageService.sendData(gameId, "/a/end", gameEndDto.getEndResponseA());
-        messageService.sendData(gameId, "/b/end", gameEndDto.getEndResponseB());
+        messageService.sendData(gameId, "/end", gameEndResponse);
 
         messageService.proceedCall(gameId, 5000);
     }
