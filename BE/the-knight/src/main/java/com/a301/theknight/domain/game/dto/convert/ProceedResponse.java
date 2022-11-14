@@ -6,10 +6,11 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class LimitTimeDto {
+public class ProceedResponse {
+    private GameStatus gameStatus;
     private long limitTime;
 
-    public static LimitTimeDto toDto(GameStatus gameStatus) {
-        return new LimitTimeDto(gameStatus.getLimitSeconds());
+    public static ProceedResponse toDto(GameStatus gameStatus) {
+        return new ProceedResponse(gameStatus, gameStatus.getLimitSeconds());
     }
 }
