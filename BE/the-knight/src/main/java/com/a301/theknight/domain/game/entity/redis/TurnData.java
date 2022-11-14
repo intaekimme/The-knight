@@ -5,8 +5,6 @@ import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.entity.Weapon;
 import lombok.Data;
 
-import java.io.Serializable;
-
 @Data
 public class TurnData {
     private long attackerId;
