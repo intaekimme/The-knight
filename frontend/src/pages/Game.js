@@ -30,7 +30,7 @@ export default function Game() {
   
   return (
     <div>
-      {/* <GameWebSocket></GameWebSocket> */}
+      <GameWebSocket></GameWebSocket>
       {isLoading && <LoadingPhase></LoadingPhase>}
       {!isLoading && phase === "PREPARE" && <PreparePhase></PreparePhase>}
       {!isLoading && phase === "PREDECESSOR" && <PredecessorPhase></PredecessorPhase>}

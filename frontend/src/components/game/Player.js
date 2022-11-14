@@ -23,7 +23,7 @@ function Player({ player, isOpp }) {
   const isPass = doubtPassList.includes(player.memberId);
 
   // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = window.localStorage.getItem("memberId");
+  // const memberId = parseInt(window.localStorage.getItem("memberId"));
   // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
   // const gameId = useSelector((state) => state.room.roomInfo).gameId;
   

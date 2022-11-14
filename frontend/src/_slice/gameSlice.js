@@ -129,7 +129,7 @@ const isSelectCompleteInit = false;
 const phaseInit = "PREPARE";
 const previousPhaseInit = null;
 
-const isLoadingInit = false;
+const isLoadingInit = true;
 
 const currentAttackerInit = {
   memberId: 1,
@@ -229,7 +229,7 @@ export const gameSlice = createSlice({
   },
   reducers: {
     setMe: (state) => {
-      const memberId = window.localStorage.getItem("memberId");
+      const memberId = parseInt(window.localStorage.getItem("memberId"));
       const player = state.players.players.find((player) => player.memberId === memberId);
       const playerIndex = state.players.players.findIndex((player) => player.memberId === memberId);
 

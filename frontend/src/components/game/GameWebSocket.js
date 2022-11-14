@@ -26,8 +26,8 @@ import {
 export default function GameWebSocket() {
   const dispatch = useDispatch();
   const stompClient = useSelector((state) => state.websocket.stompClient);
-  const memberId = window.localStorage.getItem("memberId");
-  const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  const myId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === myId).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   // sub 함수
@@ -72,9 +72,11 @@ export default function GameWebSocket() {
       stompClient.subscribe(api.subCurrentAttacker(gameId), onSubCurrentAttacker);
     } else if (nextPhase === "ATTACK_DOUBT") {
       stompClient.subscribe(api.subAttackInfo(gameId), onSubAttackInfo);
+      stompClient.subscribe(api.subDoubtPass(gameId), onSubDoubtPass);
     } else if (nextPhase === "DEFENSE") {
     } else if (nextPhase === "DEFENSE_DOUBT") {
       stompClient.subscribe(api.subDefenseInfo(gameId), onSubDefenseInfo);
+      stompClient.subscribe(api.subDoubtPass(gameId), onSubDoubtPass);
     } else if (nextPhase === "DOUBT_RESULT") {
       stompClient.subscribe(api.subDoubtInfo(gameId), onSubDoubtInfo);
     } else if (nextPhase === "EXECUTE") {
@@ -92,29 +94,22 @@ export default function GameWebSocket() {
     //   postfix: String,
     // }
     const data = JSON.parse(payload.body);
-    stompClient.send(api.pubPostfix(gameId, data.posfix), {}, {});
+    stompClient.send(api.pubPostfix(gameId, data.postfix), {}, {});
   };
 
   // 실제 화면전환
   const onSubNextPhase = (payload) => {
     // {
     //   gameStatus : String,
+    //   limitTime: long,
     // }
     const data = JSON.parse(payload.body);
     dispatch(fetchPhase(data.gameStatus));
+    dispatch(setTimer(data.limitTime));
 
     if (data.gameStatus === "PREPARE") {
       dispatch(switchIsLoading())
     }
-  };
-
-  // 제한시간 (변경사항이 많을 것으로 예상)
-  const onSubTimer = (payload) => {
-    // {
-    //   remainTime : int
-    // }
-    const data = JSON.parse(payload.body);
-    dispatch(setTimer(data.remainTime));
 
     const intervalObject = setInterval(() => {
       // 1초씩 감소
@@ -332,7 +327,6 @@ export default function GameWebSocket() {
     stompClient.subscribe(api.subPlayersInfo(gameId, myTeam), onSubPlayersInfo);
     stompClient.subscribe(api.subConvert(gameId), onSubConvert);
     stompClient.subscribe(api.subNextPhase(gameId), onSubNextPhase);
-    stompClient.subscribe(api.subTimer(gameId), onSubTimer);
     stompClient.subscribe(api.subEnd(gameId, myTeam), onSubEnd);
     stompClient.subscribe(api.subConvertComplete(gameId), onSubConvertComplete);
 
