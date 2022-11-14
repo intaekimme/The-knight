@@ -17,7 +17,9 @@ import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,14 +27,12 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,14 +66,13 @@ class GamePrepareServiceTest {
                 .memberId(1L)
                 .nickname("test player")
                 .image("image")
-                .isDead(false)
                 .leftCount(1)
                 .rightCount(2)
-                .leftWeapon(Weapon.SWORD)
-                .rightWeapon(Weapon.HAND)
                 .team(Team.B)
-                .order(3)
                 .isLeader(false).build();
+        testPlayer.randomChoiceWeapon(Weapon.SWORD);
+        testPlayer.randomChoiceWeapon(Weapon.HAND);
+        testPlayer.saveOrder(3);
 
         //when
         PlayerDataDto playerDataDto = PlayerDataDto.toDto(testPlayer);
@@ -228,9 +227,11 @@ class GamePrepareServiceTest {
         GameWeaponData gameWeaponData = makeWeaponData(SWORD - 1, TWIN, SHIELD - 1, HAND);
         InGamePlayer inGamePlayer = InGamePlayer.builder()
                 .memberId(testMemberAId)
-                .leftWeapon(Weapon.SWORD)
-                .rightWeapon(Weapon.SHIELD)
                 .team(Team.A).build();
+
+        inGamePlayer.randomChoiceWeapon(Weapon.SWORD);
+        inGamePlayer.randomChoiceWeapon(Weapon.SHIELD);
+
         given(gameRedisRepository.getGameWeaponData(testGameId, Team.A))
                 .willReturn(Optional.of(gameWeaponData));
         given(gameRedisRepository.getInGamePlayer(testGameId, testMemberAId))
@@ -250,9 +251,10 @@ class GamePrepareServiceTest {
         GameWeaponData gameWeaponData = makeWeaponData(SWORD - 1, TWIN, SHIELD - 1, HAND);
         InGamePlayer inGamePlayer = InGamePlayer.builder()
                 .memberId(testMemberAId)
-                .leftWeapon(Weapon.SWORD)
-                .rightWeapon(Weapon.SHIELD)
                 .team(Team.A).build();
+        inGamePlayer.randomChoiceWeapon(Weapon.SWORD);
+        inGamePlayer.randomChoiceWeapon(Weapon.SHIELD);
+
         given(gameRedisRepository.getGameWeaponData(testGameId, Team.A))
                 .willReturn(Optional.of(gameWeaponData));
         given(gameRedisRepository.getInGamePlayer(testGameId, testMemberAId))
@@ -289,9 +291,11 @@ class GamePrepareServiceTest {
         request.setOrderNumber(CAPACITY / 2 - 1);
         InGamePlayer inGamePlayer = InGamePlayer.builder()
                 .memberId(testMemberAId)
-                .leftWeapon(Weapon.SWORD)
-                .rightWeapon(Weapon.SHIELD)
                 .team(Team.A).build();
+
+        inGamePlayer.randomChoiceWeapon(Weapon.SWORD);
+        inGamePlayer.randomChoiceWeapon(Weapon.SHIELD);
+
         given(gameRedisRepository.getInGamePlayer(testGameId, testMemberAId))
                 .willReturn(Optional.of(inGamePlayer));
         //when
@@ -440,11 +444,13 @@ class GamePrepareServiceTest {
 
         List<InGamePlayer> inGamePlayerList = new ArrayList<>();
         players.forEach(player -> {
-            inGamePlayerList.add(InGamePlayer.builder()
+            InGamePlayer anotherInGamePlayer = InGamePlayer.builder()
                     .memberId(player.getMember().getId())
-                    .team(Team.A)
-                    .leftWeapon(Weapon.SWORD)
-                    .rightWeapon(Weapon.SHIELD).build());
+                    .team(Team.A).build();
+
+            anotherInGamePlayer.randomChoiceWeapon(Weapon.SWORD);
+            anotherInGamePlayer.randomChoiceWeapon(Weapon.SHIELD);
+            inGamePlayerList.add(anotherInGamePlayer);
         });
 
         given(gameRedisRepository.getGameWeaponData(testGameId, Team.A))
@@ -498,11 +504,13 @@ class GamePrepareServiceTest {
             weaponList.add(Weapon.HAND);
         }
         for (int i = 0; i + 1 < CAPACITY; i += 2) {
-            inGamePlayerList.add(InGamePlayer.builder()
-                    .memberId(players.get(1).getMember().getId())
-                    .team(Team.A)
-                    .leftWeapon(weaponList.get(i))
-                    .rightWeapon(weaponList.get(i + 1)).build());
+            InGamePlayer inGamePlayer = InGamePlayer.builder()
+                            .memberId(players.get(1).getMember().getId())
+                            .team(Team.A).build();
+            inGamePlayer.randomChoiceWeapon(weaponList.get(i));
+            inGamePlayer.randomChoiceWeapon(weaponList.get(i + 1));
+
+            inGamePlayerList.add(inGamePlayer);
         }
 
         return inGamePlayerList;
