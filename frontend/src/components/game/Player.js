@@ -19,6 +19,12 @@ function Player({ player, isOpp }) {
   const AttackerIsMe = me.memberId === currentAttacker.memberId;
   const isPass = doubtPassList.includes(player.memberId);
   const [isHovering, setIsHovering] = useState(false);
+  const size = {
+    2: "14vmin",
+    3: "13vmin",
+    4: "12vmin",
+    5: "11vmin",
+  }
 
   return (
     <Box
@@ -38,7 +44,7 @@ function Player({ player, isOpp }) {
             AttackerIsMe &&
             isOpp &&
             isHovering && { backgroundColor: "red", borderRadius: "50%" }),
-          fontSize: 420 / (players.maxMember / 2),
+          fontSize: size[String(players.maxMember / 2)],
         }}
         onMouseOver={() => setIsHovering(true)}
         onMouseOut={() => setIsHovering(false)}

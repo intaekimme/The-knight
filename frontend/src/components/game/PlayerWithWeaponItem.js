@@ -6,8 +6,16 @@ import CloseIcon from '@mui/icons-material/Close';
 
 function PlayerWithWeaponItem({ player, isOpp }) {
   const phase = useSelector((state) => state.game.phase);
+  const players = useSelector((state) => state.game.players);
   const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
   const dispatch = useDispatch();
+  const size = {
+    2: "7vmin",
+    3: "7vmin",
+    4: "6vmin",
+    5: "5vmin",
+  }
+
   function deleteLeft() {
     dispatch(deleteWeapon("left"));
   }
@@ -30,8 +38,8 @@ function PlayerWithWeaponItem({ player, isOpp }) {
             >
               <div
                 style={{
-                  width: "5vmin",
-                  height: "5vmin",
+                  width: size[(players.maxMember / 2)],
+                  height: size[(players.maxMember / 2)],
                   ...(isSelectComplete
                     ? { backgroundColor: "#646464" }
                     : { backgroundColor: "#f0f0f0" }),
@@ -76,8 +84,8 @@ function PlayerWithWeaponItem({ player, isOpp }) {
             >
               <div
                 style={{
-                  width: "5vmin",
-                  height: "5vmin",
+                  width: size[(players.maxMember / 2)],
+                  height: size[(players.maxMember / 2)],
                   ...(isSelectComplete
                     ? { backgroundColor: "#646464" }
                     : { backgroundColor: "#f0f0f0" }),

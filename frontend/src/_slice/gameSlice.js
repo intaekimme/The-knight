@@ -2,10 +2,10 @@ import React from "react";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const meInit = {
-  memberId: 5,
-  nickname: "Tom",
-  index: 4,
-  team: "B",
+  memberId: 1,
+  nickname: "John",
+  index: 0,
+  team: "A",
 };
 
 const timerInit = {
@@ -44,24 +44,24 @@ const playersInit = {
       order: 0,
       weapons: [null, null],
     },
-    {
-      memberId: 4,
-      nickname: "Bob",
-      leftCount: 0,
-      rightCount: 0,
-      team: "B",
-      order: 0,
-      weapons: [null, null],
-    },
-    {
-      memberId: 5,
-      nickname: "Tom",
-      leftCount: 0,
-      rightCount: 0,
-      team: "B",
-      order: 0,
-      weapons: [null, null],
-    },
+    // {
+    //   memberId: 4,
+    //   nickname: "Bob",
+    //   leftCount: 0,
+    //   rightCount: 0,
+    //   team: "A",
+    //   order: 0,
+    //   weapons: [null, null],
+    // },
+    // {
+    //   memberId: 5,
+    //   nickname: "Tom",
+    //   leftCount: 0,
+    //   rightCount: 0,
+    //   team: "A",
+    //   order: 0,
+    //   weapons: [null, null],
+    // },
     {
       memberId: 6,
       nickname: "Ria",
@@ -71,6 +71,42 @@ const playersInit = {
       order: 0,
       weapons: [null, null],
     },
+    {
+      memberId: 7,
+      nickname: "FTX",
+      leftCount: 0,
+      rightCount: 0,
+      team: "B",
+      order: 0,
+      weapons: [null, null],
+    },
+    {
+      memberId: 8,
+      nickname: "Sam",
+      leftCount: 0,
+      rightCount: 0,
+      team: "B",
+      order: 0,
+      weapons: [null, null],
+    },
+    // {
+    //   memberId: 9,
+    //   nickname: "Sung",
+    //   leftCount: 0,
+    //   rightCount: 0,
+    //   team: "B",
+    //   order: 0,
+    //   weapons: [null, null],
+    // },
+    // {
+    //   memberId: 10,
+    //   nickname: "SSAFY",
+    //   leftCount: 0,
+    //   rightCount: 0,
+    //   team: "B",
+    //   order: 0,
+    //   weapons: [null, null],
+    // },
   ],
 };
 
