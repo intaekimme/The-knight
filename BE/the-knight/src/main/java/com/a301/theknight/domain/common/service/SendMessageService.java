@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.common.service;
 
 import com.a301.theknight.domain.game.dto.convert.GameStatusResponse;
-import com.a301.theknight.domain.game.dto.convert.LimitTimeDto;
+import com.a301.theknight.domain.game.dto.convert.ProceedResponse;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.util.GameConvertUtil;
 import com.a301.theknight.domain.limit.factory.TimeLimitServiceFactory;
@@ -52,7 +52,7 @@ public class SendMessageService {
             GameStatus gameStatus = gameConvertUtil.getGameStatus(gameId);
             Thread.sleep(delayMillis);
 
-            sendData(gameId, "/proceed", LimitTimeDto.toDto(gameStatus));
+            sendData(gameId, "/proceed", ProceedResponse.toDto(gameStatus));
             TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameStatus);
             timeLimitService.executeTimeLimit(gameId, this);
         } catch (InterruptedException e) {
