@@ -100,6 +100,7 @@ public class GameConvertUtil {
                 if (!isGetTimeLock) {
                     throw new CustomWebSocketException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
                 }
+
                 return new PostfixDto(getPostfix(gameStatus));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
