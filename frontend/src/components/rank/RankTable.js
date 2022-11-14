@@ -61,7 +61,7 @@ export default function RankTable() {
   //   originalRows.push(row);
   // }
   // console.log("zlzl",rankRows);
-  
+
   // const [rows, setRows] = React.useState(rankRows);
   // // const [searched, setSearched] = React.useState("");
   const [page, setPage] = React.useState(0)
@@ -105,7 +105,7 @@ export default function RankTable() {
 
   return (
     <>
-    {/* <Paper
+      {/* <Paper
       component="form"
       sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 500 }}
       >
@@ -130,47 +130,48 @@ export default function RankTable() {
           />
       </Paper> */}
       <TableContainer>
-          <Table aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left" sx={{pl:3.5}} style={{ width: 200 }}>랭킹</TableCell>
-                <TableCell align="left" sx={{pl: 30}}>닉네임</TableCell>
-                <TableCell align="center" style={{ width: 160 }}>점수</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-            {rankRows
-              // .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
-              .map((row, i) => (
-                <TableRow key={i} >
-                  <TableCell align="left" sx={{pl:5}}>{row.ranking}</TableCell>
-                  <TableCell align="center" sx={{display: 'flex', alignItems: 'center', justifyContent:'center'}}>
-                    <ListItem sx={{ pl:22}}>
-                      <ListItemAvatar>
-                        <Avatar src={row.image} sx={{ width: 40, height: 40 }}/>
-                      </ListItemAvatar>
-                      <ListItemText>
-                        {row.nickname}
-                      </ListItemText>
-                    </ListItem>
-                  </TableCell>
-                  <TableCell align="center">{row.score}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableFooter>
+        <Table aria-label="simple table">
+          <TableHead>
             <TableRow>
-                <TablePagination
-                  count={rankRows.length}
-                  page={page}
-                  rowsPerPage={rowsPerPage}
-                  onPageChange={handleChangePage}
-                  rowsPerPageOptions={[]}
-                />
+              <TableCell align="left" sx={{ pl: 3.5 }} style={{ width: 200 }}>랭킹</TableCell>
+              <TableCell align="left" sx={{ pl: 30 }}>닉네임</TableCell>
+              <TableCell align="center" style={{ width: 160 }}>점수</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? rankRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : rankRows
+            ).map((row, i) => (
+              <TableRow key={i} >
+                <TableCell align="left" sx={{ pl: 5 }}>{row.ranking}</TableCell>
+                <TableCell align="center" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ListItem sx={{ pl: 22 }}>
+                    <ListItemAvatar>
+                      <Avatar src={row.image} sx={{ width: 40, height: 40 }} />
+                    </ListItemAvatar>
+                    <ListItemText>
+                      {row.nickname}
+                    </ListItemText>
+                  </ListItem>
+                </TableCell>
+                <TableCell align="center">{row.score}</TableCell>
               </TableRow>
-            </TableFooter>
-          </Table>
-        </TableContainer>
-          </>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TablePagination
+                count={rankRows.length}
+                page={page}
+                rowsPerPage={rowsPerPage}
+                onPageChange={handleChangePage}
+                rowsPerPageOptions={[]}
+              />
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </>
   );
 }

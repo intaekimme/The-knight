@@ -1,7 +1,7 @@
 import SockJS from "sockjs-client";
 import { over } from "stompjs";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchMe, fetchPlayers, fetchPhase, switchIsLoading } from '../../_slice/gameSlice';
+import { setMe, fetchPlayers, fetchPhase, switchIsLoading } from '../../_slice/gameSlice';
 import api from "../../api/api"
 
 import { CircularProgress, Box } from '@mui/material';
@@ -37,7 +37,7 @@ export default function LoadingPhase() {
   //   const payloadData = JSON.parse(payload.body);
   //   dispatch(fetchPlayers(payloadData))
   //   // 내 정보 갱신
-  //   dispatch(fetchMe())
+  //   dispatch(setMe())
   // }
 
   function onGoLoading(payload) {

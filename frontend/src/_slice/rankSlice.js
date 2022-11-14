@@ -14,7 +14,7 @@ const fetchRankAll = createAsyncThunk('fetchRankAll', async () => {
 })
 const searchRank = createAsyncThunk('searchRank', async (keyword) => {
   try {
-    const res = await axios.get(api.getRankList()+`?keyword=${keyword}`, {
+    const res = await axios.get(api.getRankList() + `?keyword=${keyword}`, {
       headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
     });
     console.log("get searched rank", res.data);

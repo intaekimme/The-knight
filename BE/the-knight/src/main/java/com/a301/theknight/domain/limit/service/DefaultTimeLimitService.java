@@ -27,6 +27,10 @@ public class DefaultTimeLimitService extends TimeLimitServiceTemplate {
 
     @Override
     public void runLimitLogic(long gameId, InGame inGame) {
+        changeNextGameStatus(gameId, inGame);
+    }
+
+    private void changeNextGameStatus(long gameId, InGame inGame) {
         GameStatus curStatus = inGame.getGameStatus();
         GameStatus nextStatus = getNextStatus(gameId, inGame, curStatus);
 
@@ -36,8 +40,12 @@ public class DefaultTimeLimitService extends TimeLimitServiceTemplate {
 
     private GameStatus getNextStatus(long gameId, InGame inGame, GameStatus gameStatus) {
         switch (gameStatus) {
-            case PREDECESSOR:
+            case PREDECESSOR: case ATTACK:
                 return ATTACK;
+            case ATTACK_DOUBT:
+                return DEFENSE;
+            case DEFENSE_DOUBT:
+                return EXECUTE;
             case EXECUTE:
                 return getStatusAfterExecute(gameId, inGame);
             case DOUBT_RESULT:
