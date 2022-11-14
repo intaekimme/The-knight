@@ -43,12 +43,12 @@ const roomInit = {
   gameId: -1,
   title: "테스트 제목",
   ownerId: -1,
-  maxMember: 10,
+  maxMember: 4,
   currentMembers: 0,
-  sword: 0,
-  twin: 0,
-  shield: 0,
-  hand: 0,
+  sword: 1,
+  twin: 1,
+  shield: 1,
+  hand: 1,
 }
 const userInit = [{
   id: -1,
@@ -145,6 +145,6 @@ export const roomSlice = createSlice({
   },
 });
 
-export { initRoom, getRoomInfo, getUsersInfo };
+export { initRoom, roomInit, getRoomInfo, getUsersInfo };
 export const { modifyRoomSetting, setState, setMembers, changeTeam, changeReady } = roomSlice.actions;
 export default roomSlice.reducer;
