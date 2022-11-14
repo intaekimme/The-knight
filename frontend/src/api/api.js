@@ -1,7 +1,7 @@
 //backend Local
-// const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'http://localhost:8080';
 //backend 배포
-const BASE_URL = 'https://sword-shield.co.kr';
+// const BASE_URL = 'https://sword-shield.co.kr';
 
 //frontend Local
 const LOGIN_REDIRECT = 'http://localhost:3000/islogin';
@@ -17,6 +17,7 @@ const EXAMPLE = '/example';
 const GOOGLE_LOGIN = '/oauth2/authorization/google';
 
 const GAME = '/games';
+const ERROR = '/error';
 
 // 대기방
 const MODIFY = '/modify';
@@ -73,6 +74,7 @@ const api = {
   subSelectTeam: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + TEAM,
   subReady: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + READY,
   subExit: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXIT,
+  subError: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ERROR,
 
   // 발행
   pubModifyRoom: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + MODIFY,

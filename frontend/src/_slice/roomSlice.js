@@ -117,6 +117,9 @@ export const roomSlice = createSlice({
         }
       }
       state.usersInfo = tempUsersInfo;
+      if(action.payload.canStart){
+        action.payload.navigate(action.payload.url);
+      }
     },
   },
   extraReducers: {
