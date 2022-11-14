@@ -71,7 +71,7 @@ const onSubConvert = (payload) => {
     stompClient.subscribe(api.subAttackFirst(gameId), onSubAttackFirst);
   } else if (nextPhase === "ATTACK") {
     stompClient.subscribe(
-      api.subCurrentAttacker(gameId, myTeam),
+      api.subCurrentAttacker(gameId),
       onSubCurrentAttacker
     );
   } else if (nextPhase === "ATTACK_DOUBT") {

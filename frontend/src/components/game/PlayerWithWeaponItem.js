@@ -1,6 +1,6 @@
 import Player from "./Player";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteWeapon } from "../../_slice/gameSlice";
+import api from "../../api/api"
 import { Grid, Box } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -16,11 +16,25 @@ function PlayerWithWeaponItem({ player, isOpp }) {
     5: "5vmin",
   }
 
-  function deleteLeft() {
-    dispatch(deleteWeapon("left"));
+  // const stompClient = useSelector((state) => state.websocket.stompClient);
+  // const memberId = window.localStorage.getItem("memberId");
+  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const onPubDeleteWeapon = (payload) => {
+    // {
+    //   deleteHand: String
+    //     (LEFT, RIGHT)
+    // }
+    const data = {
+      deleteHand: payload
+    }
+    // stompClient.send(api.pubDeleteWeapon, {}, data);
+    console.log(data)
   }
-  function deleteRight() {
-    dispatch(deleteWeapon("right"));
+
+  function deleteHand(hand) {
+    onPubDeleteWeapon(hand)
   }
 
   return (
@@ -51,7 +65,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
               >
                 {player.weapons[0] && !isSelectComplete && (
                   <CloseIcon
-                    onClick={deleteLeft}
+                    onClick={() => deleteHand("LEFT")}
                     sx={{
                       ...(isOpp && { display: "none" }),
                       position: "absolute",
@@ -119,7 +133,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
               >
                 {player.weapons[1] && !isSelectComplete && (
                   <CloseIcon
-                    onClick={deleteRight}
+                    onClick={() => deleteHand("RIGHT")}
                     sx={{
                       ...(isOpp && { display: "none" }),
                       position: "absolute",

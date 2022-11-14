@@ -25,18 +25,19 @@ export default function PreparePhase() {
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <h1 style={{ marginBottom: ".5rem" }}>
+        <Box sx={{ fontSize: "5vmin", marginBottom: ".5rem" }}>
           진행 순서와 무기를 선택하세요
-        </h1>
-        <h2 style={{marginTop: ".5rem", marginBottom: ".5rem"}}>{timer}</h2>
+        </Box>
+        <Box sx={{ fontSize: "3vmin", marginTop: ".5rem", marginBottom: ".5rem"}}>{timer}</Box>
         <div
       style={{
-        width: "70vw",
-        height: "7vh",
+        width: "100vmin",
+        height: "7vmin",
         backgroundColor: "#d9d9d9",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        fontSize: "2.5vmin",
       }}
     >
       {isLeader ?
