@@ -1,12 +1,10 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.end.GameEndDto;
-import com.a301.theknight.domain.game.dto.end.PlayerWeaponDto;
-import com.a301.theknight.domain.game.dto.end.response.EndResponse;
+import com.a301.theknight.domain.game.dto.end.response.GameEndResponse;
 import com.a301.theknight.domain.game.dto.execute.response.AttackerDto;
 import com.a301.theknight.domain.game.dto.execute.response.DefenderDto;
 import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
-import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
+import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
@@ -23,8 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.a301.theknight.global.error.errorcode.GameErrorCode.GAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
@@ -75,59 +73,29 @@ public class GameExecuteEndService {
 
     //  End
     @Transactional
-    public GameEndDto gameEnd(long gameId) {
+    public GameEndResponse gameEnd(long gameId) {
 
         // GameEnd 비즈니스 로직 수행
-        // 1. player update(result만)
-        // 2. Ranking 점수 갱신
-        // 3. 게임 상태 End로 update
-        // 4. GameEndDto 채워서 리턴
+        // 1. 게임 상태 End로 update
+        // 2. player update(result만)
+        // 3. Ranking 점수 갱신
+        // 4. GameEndResponse 채워서 리턴
 
         InGame inGame = getInGame(gameId);
         Game game = gameRepository.findById(gameId).orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
         game.changeStatus(GameStatus.END);
 
-        List<PlayerWeaponDto> players = new ArrayList<>();
+        long teamALeaderId = inGame.getTeamAInfo().getLeaderId();
+        long teamBLeaderId = inGame.getTeamBInfo().getLeaderId();
+        String winningTeam = getInGamePlayer(gameId, teamALeaderId).isDead() ? "B" : "A";
+        List<PlayerDataDto> players = updatePlayerAndRanking(gameId, winningTeam);
 
-        // 나중에 플레이어 목록을 한 번에 받아오는 메서드를 이용해서 리팩토링?
-        boolean isAWin = updateEndResult(gameId, players, inGame.getTeamAInfo());
-        boolean isBWin = updateEndResult(gameId, players, inGame.getTeamBInfo());
-
-        String losingTeam = isAWin ? "B" : "A";
-        long losingLeaderId = losingTeam.equals("A") ? inGame.getTeamAInfo().getLeaderId() : inGame.getTeamBInfo().getLeaderId();
-        long winningLeaderId = losingTeam.equals("A") ? inGame.getTeamBInfo().getLeaderId() : inGame.getTeamAInfo().getLeaderId();
-
-        EndResponse endResponseA = EndResponse.builder().isWin(isAWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).players(players).build();
-        EndResponse endResponseB = EndResponse.builder().isWin(isBWin).losingTeam(losingTeam).losingLeaderId(losingLeaderId).winningLeaderId(winningLeaderId).players(players).build();
-
-        return GameEndDto.builder().endResponseA(endResponseA).endResponseB(endResponseB).build();
-    }
-
-    private boolean updateEndResult(long gameId, List<PlayerWeaponDto> players, TeamInfoData teamInfoData) {
-        long LeaderId = teamInfoData.getLeaderId();
-        InGamePlayer Leader = getInGamePlayer(gameId, LeaderId);
-        boolean isWin = !Leader.isDead();
-
-        GameOrderDto[] orderList = teamInfoData.getOrderList();
-
-        for (GameOrderDto gameOrderDto : orderList) {
-            long memberId = gameOrderDto.getMemberId();
-            Player player = playerRepository.findByGameIdAndMemberId(gameId, memberId).orElseThrow(() -> new CustomRestException(PLAYER_IS_NOT_EXIST));
-            Ranking ranking = rankingRepository.findByMemberId(memberId).orElseThrow(() -> new CustomRestException(RANKING_IS_NOT_EXIST));
-
-            if (isWin) {
-                player.winGame();
-                ranking.saveWinScore();
-            } else {
-                player.loseGame();
-                ranking.saveLoseScore();
-            }
-
-            InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
-            players.add(PlayerWeaponDto.builder().memberId(memberId).leftWeapon(inGamePlayer.getLeftWeapon().toString()).rightWeapon(inGamePlayer.getRightWeapon().toString()).build());
-        }
-
-        return isWin;
+        return GameEndResponse.builder()
+                .winningTeam(winningTeam)
+                .teamALeaderId(teamALeaderId)
+                .teamBLeaderId(teamBLeaderId)
+                .players(players)
+                .build();
     }
 
     private GameExecuteResponse getGameExecuteResponse(InGame inGame, TurnData turnData, InGamePlayer defender, int nextCount) {
@@ -151,6 +119,28 @@ public class GameExecuteEndService {
                 .attacker(attackerDto)
                 .defender(defenderDto)
                 .build();
+    }
+
+    private List<PlayerDataDto> updatePlayerAndRanking(long gameId, String winningTeam) {
+        List<InGamePlayer> playerList = gameRedisRepository.getInGamePlayerList(gameId);
+
+        for (InGamePlayer inGamePlayer : playerList) {
+            long memberId = inGamePlayer.getMemberId();
+            Player player = playerRepository.findByGameIdAndMemberId(gameId, memberId).orElseThrow(() -> new CustomRestException(PLAYER_IS_NOT_EXIST));
+            Ranking ranking = rankingRepository.findByMemberId(memberId).orElseThrow(() -> new CustomRestException(RANKING_IS_NOT_EXIST));
+
+            if (player.getTeam().name().equals(winningTeam)) {
+                player.winGame();
+                ranking.saveWinScore();
+            } else {
+                player.loseGame();
+                ranking.saveLoseScore();
+            }
+        }
+
+        return playerList.stream()
+                .map(PlayerDataDto::toDto)
+                .collect(Collectors.toList());
     }
 
     private InGame getInGame(long gameId) {
