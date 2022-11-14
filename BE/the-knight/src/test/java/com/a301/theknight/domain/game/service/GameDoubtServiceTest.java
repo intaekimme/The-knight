@@ -57,7 +57,6 @@ class GameDoubtServiceTest {
         for (int i = 0; i < 3; i++) {
             suspects.add(i, InGamePlayer.builder()
                     .memberId((long)(i))
-                    .isDead(false)
                     .team(Team.A)
                     .isLeader(false)
                     .build());
@@ -65,12 +64,11 @@ class GameDoubtServiceTest {
 
         suspected = InGamePlayer.builder()
                 .memberId(4L)
-                .isDead(false)
                 .team(Team.B)
                 .isLeader(false)
-                .leftWeapon(Weapon.SWORD)
-                .rightWeapon(Weapon.TWIN)
                 .build();
+        suspected.randomChoiceWeapon(Weapon.SWORD);
+        suspected.randomChoiceWeapon(Weapon.TWIN);
 
         doubtData = DoubtData.builder()
                 .suspectId(0)

@@ -128,8 +128,7 @@ class GameExecuteEndServiceTest {
                                         .memberId(memberId4).build()})
                         .leaderId(memberId3).build())
                 .maxMemberNum(4)
-                .requestCount(0)
-                .doubtPassCount(0).build();
+                .build();
         testInGame.initTurnData();
 
 //        Player
@@ -146,41 +145,40 @@ class GameExecuteEndServiceTest {
                 .team(testPlayer1.getTeam())
                 .leftCount(0)
                 .rightCount(0)
-                .leftWeapon(Weapon.SWORD)
-                .rightWeapon(Weapon.SHIELD)
-                .order(0)
-                .isDead(false)
                 .isLeader(true).build();
+        testInGamePlayer1.randomChoiceWeapon(Weapon.SWORD);
+        testInGamePlayer1.randomChoiceWeapon(Weapon.SHIELD);
+        testInGamePlayer1.saveOrder(0);
+
         testInGamePlayer2 = InGamePlayer.builder()
                 .memberId(memberId2)
                 .team(testPlayer2.getTeam())
                 .leftCount(0)
                 .rightCount(0)
-                .leftWeapon(Weapon.TWIN)
-                .rightWeapon(Weapon.HAND)
-                .order(1)
-                .isDead(false)
                 .isLeader(false).build();
+        testInGamePlayer2.randomChoiceWeapon(Weapon.TWIN);
+        testInGamePlayer2.randomChoiceWeapon(Weapon.HAND);
+        testInGamePlayer2.saveOrder(1);
+
         testInGamePlayer3 = InGamePlayer.builder()
                 .memberId(memberId3)
                 .team(testPlayer3.getTeam())
                 .leftCount(0)
                 .rightCount(0)
-                .leftWeapon(Weapon.SWORD)
-                .rightWeapon(Weapon.SHIELD)
-                .order(0)
-                .isDead(false)
                 .isLeader(true).build();
+        testInGamePlayer3.randomChoiceWeapon(Weapon.SWORD);
+        testInGamePlayer3.randomChoiceWeapon(Weapon.SHIELD);
+        testInGamePlayer3.saveOrder(0);
+
         testInGamePlayer4 = InGamePlayer.builder()
                 .memberId(memberId4)
                 .team(testPlayer4.getTeam())
                 .leftCount(0)
                 .rightCount(0)
-                .leftWeapon(Weapon.TWIN)
-                .rightWeapon(Weapon.HAND)
-                .order(1)
-                .isDead(false)
                 .isLeader(false).build();
+        testInGamePlayer3.randomChoiceWeapon(Weapon.TWIN);
+        testInGamePlayer3.randomChoiceWeapon(Weapon.HAND);
+        testInGamePlayer3.saveOrder(1);
 
     }
 
