@@ -174,7 +174,7 @@ export default function AttackPhase() {
             alignItems: "center",
           }}
         >
-          아군이 공격을 선택 중입니다
+          <Box sx={{ fontSize: "2.5vmin" }}>아군이 공격을 선택 중입니다</Box>
         </Box>
       );
       // 적팀이 공격자일 때
@@ -190,7 +190,7 @@ export default function AttackPhase() {
             alignItems: "center",
           }}
         >
-          적팀이 공격을 선택 중입니다
+          <Box sx={{ fontSize: "2.5vmin" }}>적팀이 공격을 선택 중입니다</Box>
         </Box>
       );
     }

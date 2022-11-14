@@ -63,9 +63,10 @@ export default function AttackDoubtPhase() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-evenly",
+            position: "relative",
           }}
         >
-          <Box sx={{ textAlign: "center" }}>
+          <Box sx={{ textAlign: "center", fontSize: "2.7vmin" }}>
             {attackInfo.attacker.nickname}이(가) {attackInfo.defender.nickname}
             을(를) {side[attackInfo.hand]} {weaponsKr[attackInfo.weapon]}(으)로
             공격했습니다.
@@ -97,7 +98,15 @@ export default function AttackDoubtPhase() {
               Pass
             </Box>
           </Box>
-          <Box sx={{ textAlign: "center", fontSize: "2vmin" }}>
+          <Box
+            sx={{
+              fontSize: "2vmin",
+              position: "absolute",
+              bottom: "2vmin",
+              left: "50%",
+              transform: "translate(-50%)",
+            }}
+          >
             제한시간 : {timer}
           </Box>
         </Box>
