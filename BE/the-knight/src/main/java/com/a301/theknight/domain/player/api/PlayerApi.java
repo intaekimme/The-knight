@@ -58,10 +58,6 @@ public class PlayerApi {
                       @Valid PlayerReadyRequest playerReadyMessage){
         ReadyDto readyDto = playerService.ready(gameId, memberId, playerReadyMessage);
 
-        if (readyDto.isCanStart()) {
-            messageService.convertCall(gameId);
-            return;
-        }
         messageService.sendData(gameId, "/ready", readyDto);
     }
 

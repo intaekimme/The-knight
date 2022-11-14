@@ -161,7 +161,8 @@ public class PlayerService {
     }
 
     private boolean isAllReady(Game game){
-        boolean canStart = game.getPlayers().stream().filter(Player::isReady).count() == game.getCapacity();
+        boolean canStart = game.getPlayers().stream()
+                .filter(Player::isReady).count() == game.getCapacity();
         if(canStart) {
             game.completeReady();
         }
