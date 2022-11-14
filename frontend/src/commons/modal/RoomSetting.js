@@ -66,7 +66,9 @@ export default function RoomSetting(props) {
 		tempRoomData.twin = itemCount[1];
 		tempRoomData.shield = itemCount[2];
 		tempRoomData.hand = itemCount[3];
-		onPubModifyRoom({stompClient:stompClient, roomInfo:tempRoomData});
+		if(tempRoomData.gameId!=-1){
+			onPubModifyRoom({stompClient:stompClient, roomInfo:tempRoomData});
+		}
 		props.onClose();
 	}
 	const maxMemberChange = (event) => {
