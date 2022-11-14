@@ -3,11 +3,11 @@ package com.a301.theknight.domain.game.service;
 import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
-import com.a301.theknight.domain.game.dto.end.GameEndDto;
-import com.a301.theknight.domain.game.dto.end.PlayerWeaponDto;
+import com.a301.theknight.domain.game.dto.end.response.GameEndResponse;
 import com.a301.theknight.domain.game.dto.execute.response.AttackerDto;
 import com.a301.theknight.domain.game.dto.execute.response.DefenderDto;
 import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
+import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameResult;
@@ -142,6 +142,7 @@ class GameExecuteEndServiceTest {
 //        InGamePlayer
         testInGamePlayer1 = InGamePlayer.builder()
                 .memberId(memberId1)
+                .nickname(testMember1.getNickname())
                 .team(testPlayer1.getTeam())
                 .leftCount(0)
                 .rightCount(0)
@@ -152,6 +153,7 @@ class GameExecuteEndServiceTest {
 
         testInGamePlayer2 = InGamePlayer.builder()
                 .memberId(memberId2)
+                .nickname(testMember2.getNickname())
                 .team(testPlayer2.getTeam())
                 .leftCount(0)
                 .rightCount(0)
@@ -162,6 +164,7 @@ class GameExecuteEndServiceTest {
 
         testInGamePlayer3 = InGamePlayer.builder()
                 .memberId(memberId3)
+                .nickname(testMember3.getNickname())
                 .team(testPlayer3.getTeam())
                 .leftCount(0)
                 .rightCount(0)
@@ -172,13 +175,14 @@ class GameExecuteEndServiceTest {
 
         testInGamePlayer4 = InGamePlayer.builder()
                 .memberId(memberId4)
+                .nickname(testMember4.getNickname())
                 .team(testPlayer4.getTeam())
                 .leftCount(0)
                 .rightCount(0)
                 .isLeader(false).build();
-        testInGamePlayer3.randomChoiceWeapon(Weapon.TWIN);
-        testInGamePlayer3.randomChoiceWeapon(Weapon.HAND);
-        testInGamePlayer3.saveOrder(1);
+        testInGamePlayer4.randomChoiceWeapon(Weapon.TWIN);
+        testInGamePlayer4.randomChoiceWeapon(Weapon.HAND);
+        testInGamePlayer4.saveOrder(1);
 
     }
 
@@ -316,12 +320,12 @@ class GameExecuteEndServiceTest {
 
         // 게임 종료 실행
         // when
-        GameEndDto gameEndDto = gameExecuteEndService.gameEnd(gameId);
+        GameEndResponse gameEndResponse = gameExecuteEndService.gameEnd(gameId);
 
 //        1. Game의 status가 END로 변경되는지 확인
 //        2. ranking 사용자들 점수가 정확한 값인지를 확인
 //        3. Player의 게임 결과가 이긴 팀은 WIN, 진 팀은 LOSE로 바뀌었는지 확인
-//        4. gameEndDto 결과 확인
+//        4. gameEndResponse 결과 확인
         // then
 
 //        1. Game의 status가 END로 변경되는지 확인
@@ -339,27 +343,19 @@ class GameExecuteEndServiceTest {
         assertEquals(GameResult.WIN, playerRepository.findByGameIdAndMemberId(gameId, memberId3).get().getResult());
         assertEquals(GameResult.WIN, playerRepository.findByGameIdAndMemberId(gameId, memberId4).get().getResult());
 
-//        4. gameEndDto 결과 확인
-        assertTrue(gameEndDto.getEndResponseB().getIsWin());
-        assertFalse(gameEndDto.getEndResponseA().getIsWin());
+//        4. gameEndResponse 결과 확인
+        assertEquals("B", gameEndResponse.getWinningTeam());
 
-        assertEquals("A", gameEndDto.getEndResponseA().getLosingTeam());
-        assertEquals("A", gameEndDto.getEndResponseB().getLosingTeam());
+        assertEquals(memberId1, gameEndResponse.getTeamALeaderId());
+        assertEquals(memberId3, gameEndResponse.getTeamBLeaderId());
 
-        assertEquals(memberId1, gameEndDto.getEndResponseA().getLosingLeaderId());
-        assertEquals(memberId1, gameEndDto.getEndResponseB().getLosingLeaderId());
+        List<PlayerDataDto> players = new ArrayList<>();
+        players.add(PlayerDataDto.toDto(testInGamePlayer1));
+        players.add(PlayerDataDto.toDto(testInGamePlayer2));
+        players.add(PlayerDataDto.toDto(testInGamePlayer3));
+        players.add(PlayerDataDto.toDto(testInGamePlayer4));
 
-        assertEquals(memberId3, gameEndDto.getEndResponseA().getWinningLeaderId());
-        assertEquals(memberId3, gameEndDto.getEndResponseB().getWinningLeaderId());
-
-        List<PlayerWeaponDto> players = new ArrayList<>();
-        players.add(PlayerWeaponDto.builder().memberId(memberId1).leftWeapon("SWORD").rightWeapon("SHIELD").build());
-        players.add(PlayerWeaponDto.builder().memberId(memberId2).leftWeapon("TWIN").rightWeapon("HAND").build());
-        players.add(PlayerWeaponDto.builder().memberId(memberId3).leftWeapon("SWORD").rightWeapon("SHIELD").build());
-        players.add(PlayerWeaponDto.builder().memberId(memberId4).leftWeapon("TWIN").rightWeapon("HAND").build());
-
-        assertEquals(players, gameEndDto.getEndResponseA().getPlayers());
-        assertEquals(players, gameEndDto.getEndResponseB().getPlayers());
+        assertEquals(players, gameEndResponse.getPlayers());
 
     }
 
@@ -377,11 +373,17 @@ class GameExecuteEndServiceTest {
     }
 
     private void stubbingInGamePlayer() {
-
         given(gameRedisRepository.getInGamePlayer(gameId, memberId1)).willReturn(Optional.of(testInGamePlayer1));
-        given(gameRedisRepository.getInGamePlayer(gameId, memberId2)).willReturn(Optional.of(testInGamePlayer2));
-        given(gameRedisRepository.getInGamePlayer(gameId, memberId3)).willReturn(Optional.of(testInGamePlayer3));
-        given(gameRedisRepository.getInGamePlayer(gameId, memberId4)).willReturn(Optional.of(testInGamePlayer4));
+//        given(gameRedisRepository.getInGamePlayer(gameId, memberId2)).willReturn(Optional.of(testInGamePlayer2));
+//        given(gameRedisRepository.getInGamePlayer(gameId, memberId3)).willReturn(Optional.of(testInGamePlayer3));
+//        given(gameRedisRepository.getInGamePlayer(gameId, memberId4)).willReturn(Optional.of(testInGamePlayer4));
+
+        List<InGamePlayer> playerList = new ArrayList<>();
+        playerList.add(testInGamePlayer1);
+        playerList.add(testInGamePlayer2);
+        playerList.add(testInGamePlayer3);
+        playerList.add(testInGamePlayer4);
+        given(gameRedisRepository.getInGamePlayerList(gameId)).willReturn(playerList);
     }
 
     private void stubbingGame() {
