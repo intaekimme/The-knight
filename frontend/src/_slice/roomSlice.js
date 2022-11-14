@@ -89,6 +89,7 @@ export const roomSlice = createSlice({
       tempRoomData.hand = action.payload.hand;
       state.roomInfo = tempRoomData;
       console.log(tempRoomData);
+      action.payload.navigate(action.payload.url);
     },
     setState:(state, action) =>{
       state.roomInfo.state = action.payload.state;

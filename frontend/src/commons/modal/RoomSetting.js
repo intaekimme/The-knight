@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { Modal, Box, Button, Grid, Input, InputLabel, MenuItem, FormControl, Select } from "@mui/material";
 import ClearIcon from '@mui/icons-material/Clear';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -7,8 +8,11 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ItemBox from "../ItemBox";
 import { red, blue } from '../../_css/ReactCSSProperties';
 import {onPubModifyRoom} from "../../websocket/RoomPublishes";
+import { modifyRoomSetting } from '../../_slice/roomSlice';
 
 export default function RoomSetting(props) {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const modalStyle = {
 		position: 'absolute',
 		top: '50%',
@@ -59,7 +63,7 @@ export default function RoomSetting(props) {
 	}
 	// 설정변경 확정
 	const onChangeSetting = ()=>{
-		const tempRoomData = {...roomData};
+		const tempRoomData = {navigate:navigate, url:"/makeroom", ...roomData};
 		tempRoomData.title = title;
 		tempRoomData.maxMember = maxMember;
 		tempRoomData.sword = itemCount[0];
@@ -68,6 +72,9 @@ export default function RoomSetting(props) {
 		tempRoomData.hand = itemCount[3];
 		if(tempRoomData.gameId!=-1){
 			onPubModifyRoom({stompClient:stompClient, roomInfo:tempRoomData});
+		}
+		else{
+			dispatch(modifyRoomSetting(tempRoomData));
 		}
 		props.onClose();
 	}
