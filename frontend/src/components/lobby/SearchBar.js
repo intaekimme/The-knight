@@ -8,6 +8,8 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
+import api from "../../api/api";
+
 import { searchRoom } from "../../_slice/tempGameSlice";
 import { modifyRoomSetting, roomInit, initRoom } from "../../_slice/roomSlice";
 
@@ -27,7 +29,6 @@ export default function SearchBar() {
 
   // 방만들기 정보 update
 	const onRoomMake = (title, maxMember, itemCount)=>{
-    const url = `/room/`;
 		const tempRoomData = {...roomData};
 		tempRoomData.title = title;
 		tempRoomData.maxMember = maxMember;
@@ -43,7 +44,7 @@ export default function SearchBar() {
       dispatch(modifyRoomSetting(tempRoomData));
       dispatch(initRoom({roomInfo:tempRoomData})).then((response)=>{
         const gameId = response.payload.gameId;
-        navigate(`${url}${gameId}`);
+        navigate(api.routeConnectWebsocket(gameId));
       });
       onRoomInfoModalClose();
     }

@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, CardActions, CardContent, CardHeader, Grid, Pagination, Typography } from "@mui/material";
+import api from "../../api/api";
 import RoomInfoModal from "../../commons/modal/RoomInfoModal";
 import { gameDesc, gameListAll } from "../../_slice/tempGameSlice";
 import { getRoomInfo } from "../../_slice/roomSlice";
@@ -38,7 +39,7 @@ export default function GameList() {
     dispatch(getRoomInfo(gameId)).then((response)=>{
       if(response.payload.currentMembers<response.payload.maxMember){
         onRoomInfoModalClose();
-        navigate(`/room/${gameId}`);
+        navigate(api.routeConnectWebsocket(gameId));
       }
       else{
         console.log("full Room");

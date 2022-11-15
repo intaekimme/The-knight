@@ -10,7 +10,7 @@ const connectWebsocket = createAsyncThunk('websocket/connectWebsocket', async (p
     const Sock = new SockJS(`${api.websocket()}?token=${props.token}`);
     stompClient = over(Sock);
     stompClient.connect({Authorization: `Bearer ${props.token}`}
-      ,()=>{}
+      ,()=>{props.navigate(props.url);}
       ,(error) => { console.log(error); });
     console.log("connect 성공");
     return {stompClient: stompClient};
@@ -61,6 +61,9 @@ export const websocketSlice = createSlice({
     },
   },
   extraReducers: {
+    [connectWebsocket.pending]: (state, action) => {
+      console.log("connect중");
+    },
     [connectWebsocket.fulfilled]: (state, action) => {
       state.stompClient = action.payload.stompClient;
     },
