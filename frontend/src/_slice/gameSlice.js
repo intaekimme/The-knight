@@ -126,7 +126,7 @@ const countWeaponInit = {
 const isSelectCompleteInit = false;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "DEFENSE_DOUBT";
+const phaseInit = "DOUBT_RESULT";
 const previousPhaseInit = null;
 
 const subscribeObjectInit = {
@@ -188,16 +188,18 @@ const doubtInfoInit =   {
   doubtResponse : {
     suspect : {
       memberId : 0,
+      nickname: "",
       isDead : false,
     },
     suspected : {
       memberId : 0,
+      nickname: "",
       isDead : false,
       weapon: "",
       hand: "",
     },
-    doubtTeam: "",
-    doubtResult: false,
+    doubtTeam: "",  // 의심을 건 사람의 팀
+    doubtResult: false,  // 의심 성공 여부
   },
   doubtStatus : "",
 }
