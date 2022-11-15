@@ -15,8 +15,10 @@ import java.util.concurrent.TimeUnit;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 
 public abstract class TimeLimitServiceTemplate {
+
     private GameRedisRepository redisRepository;
     private RedissonClient redissonClient;
+
 
     public TimeLimitServiceTemplate(GameRedisRepository redisRepository, RedissonClient redissonClient) {
         this.redisRepository = redisRepository;
@@ -29,7 +31,7 @@ public abstract class TimeLimitServiceTemplate {
 
         RLock dataLock = null;
         try {
-            Thread.sleep(preStatus.getLimitSeconds());
+            Thread.sleep(preStatus.getLimitMilliSeconds());
             InGame curInGame = getInGame(gameId);
             if (!preStatus.equals(curInGame.getGameStatus())) {
                 return;
