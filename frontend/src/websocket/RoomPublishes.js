@@ -14,7 +14,8 @@ const onPubModifyRoom = (payload) =>{
   //   shield: int,
   //   hand: int
   // }
-  payload.stompClient.send(`${api.pubModifyRoom(payload.roomInfo.gameId)}`, {}, JSON.stringify(payload.roomInfo));
+  console.log(payload);
+  payload.stompClient.send(`${api.pubModifyRoom(payload.roomData.gameId)}`, {}, JSON.stringify(payload.roomData));
   console.log("방설정변경 pub", payload);
 }
 // 채팅 publish

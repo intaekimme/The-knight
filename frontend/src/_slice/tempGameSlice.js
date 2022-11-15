@@ -77,7 +77,7 @@ import axios from 'axios';
 // ]
 // }
 
-const gameListAll = createAsyncThunk('gameListAll', async (page) => {
+const gameListAll = createAsyncThunk('gameList/gameListAll', async (page) => {
   // return axios({
   //   method: "get",
   //   url: api.getGameList()
@@ -94,7 +94,7 @@ const gameListAll = createAsyncThunk('gameListAll', async (page) => {
     console.log(err);
   }
 })
-const searchRoom = createAsyncThunk('searchRoom', async (keyword) => {
+const searchRoom = createAsyncThunk('gameList/searchRoom', async (keyword) => {
   console.log("검색 키워드", keyword);
   try {
     const res = await axios.get(api.getGameList() + `?keyword=${keyword}`, {
@@ -107,7 +107,7 @@ const searchRoom = createAsyncThunk('searchRoom', async (keyword) => {
   }
 })
 
-const gameDesc = createAsyncThunk('gameDesc', async (gameId) => {
+const gameDesc = createAsyncThunk('gameList/gameDesc', async (gameId) => {
   try {
     const res = await axios.get(api.gameRoomInfo(gameId), {
       headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
@@ -140,7 +140,7 @@ const gameInfoInit = {
 }
 
 export const gameListSlice = createSlice({
-  name: "gameListSlice",
+  name: "gameList",
   initialState: { gameListAll: gameListInit, gameInfo: gameInfoInit },
   reducers: {
     // 수정할때 사용
