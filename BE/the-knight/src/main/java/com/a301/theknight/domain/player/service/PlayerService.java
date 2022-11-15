@@ -172,6 +172,7 @@ public class PlayerService {
     private InGame makeInGame(Game game) {
         InGame initInGame = InGame.builder()
                 .gameStatus(GameStatus.PREPARE)
+                .maxMemberNum(game.getCapacity())
                 .teamAInfo(TeamInfoData.builder().build())
                 .teamBInfo(TeamInfoData.builder().build()).build();
 

@@ -53,6 +53,7 @@ const DOUBT_INFO = '/doubt-info'
 const EXECUTE = '/execute'
 const END = '/end'
 const DOUBT_PASS = '/doubt-pass'
+const SCREEN_DATA = '/screen-data'
 
 const api = {
   exampleFunction: () => BASE_URL + EXAMPLE + `${0}`,
@@ -110,12 +111,12 @@ const api = {
   subDefenseInfo: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DEFENSE_INFO,
   subDoubtInfo: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_INFO,
   subExecute: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXECUTE,
-  subEnd: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase() + END,
+  subEnd: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + END,
   subConvertComplete: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT_COMPLETE,
   subDoubtPass: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_PASS,
   
   pubConvertComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
-  pubPostfix: (gameId, postfix) => WEBSOCKET_PUBLISH + GAME + `/${gameId}${postfix}`,
+  pubScreenData: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SCREEN_DATA,
   pubSelectWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_WEAPON,
   pubDeleteWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DELETE_WEAPON,
   pubSelectComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_COMPLETE,
