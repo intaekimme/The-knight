@@ -21,6 +21,7 @@ public class ExecuteDataService extends GameDataService {
 
     public ExecuteDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
         super(redissonClient);
+        System.out.println("redissonClient = " + redissonClient);
         this.redisRepository = redisRepository;
     }
 
