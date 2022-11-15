@@ -25,10 +25,6 @@ public class AttackDoubtDataService extends GameDataService {
     }
 
     @Override
-    public void makeData(long gameId) {
-    }
-
-    @Override
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
         TurnData turn = getTurnData(inGame);

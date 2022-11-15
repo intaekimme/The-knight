@@ -25,16 +25,11 @@ public class AttackDataService extends GameDataService {
     }
 
     @Override
-    public void makeData(long gameId) {
+    public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
 
         inGame.updateCurrentAttackTeam();
         redisRepository.saveInGame(gameId, inGame);
-    }
-
-    @Override
-    public void makeAndSendData(long gameId, SendMessageService messageService) {
-        InGame inGame = getInGame(gameId);
 
         TeamInfoData teamInfoData = getTeamInfoData(inGame);
         int maxMembers = inGame.getMaxMemberNum() / 2;

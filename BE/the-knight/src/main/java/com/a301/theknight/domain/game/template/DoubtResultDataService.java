@@ -10,7 +10,6 @@ import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import lombok.RequiredArgsConstructor;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +24,6 @@ public class DoubtResultDataService extends GameDataService {
     public DoubtResultDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
         super(redissonClient);
         this.redisRepository = redisRepository;
-    }
-
-    @Override
-    public void makeData(long gameId) {
     }
 
     @Override
