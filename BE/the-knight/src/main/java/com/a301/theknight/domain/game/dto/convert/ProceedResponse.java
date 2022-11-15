@@ -11,6 +11,6 @@ public class ProceedResponse {
     private long limitTime;
 
     public static ProceedResponse toDto(GameStatus gameStatus) {
-        return new ProceedResponse(gameStatus, gameStatus.getLimitSeconds());
+        return new ProceedResponse(gameStatus, gameStatus.getLimitMilliSeconds());
     }
 }
