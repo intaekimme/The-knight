@@ -126,7 +126,7 @@ const countWeaponInit = {
 const isSelectCompleteInit = false;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "ATTACK_DOUBT";
+const phaseInit = "DEFENSE_DOUBT";
 const previousPhaseInit = null;
 
 const isLoadingInit = false;
@@ -162,7 +162,11 @@ const attackInfoInit = {
 }
 
 const defenseInfoInit = {
-  defender: {},
+  defender: {
+    memberId: 0,
+    nickname: "",
+    team: "",
+  },
   weapon: "",
   hand: "",
 }
@@ -310,8 +314,8 @@ export const gameSlice = createSlice({
     fetchExecuteInfo: (state, action) => {
       state.executeInfo = action.payload;
     },
-    addDoubtPass: (state, action) => {
-      state.doubtPassList.push(action.payload);
+    addDoubtPass: (state) => {
+      state.doubtPassList.push(state.me.memberId);
     },
     selectWeaponForAttack: (state, action) => { 
       state.selectAttack.weapon = action.payload.weapon;
