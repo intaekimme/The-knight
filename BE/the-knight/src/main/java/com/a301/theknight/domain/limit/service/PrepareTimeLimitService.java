@@ -17,6 +17,7 @@ import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -72,6 +73,7 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
 
     private void saveOrderData(long gameId, Team team, TeamInfoData teamInfoData) {
         List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
+        List<InGamePlayer> savePlayerList = new ArrayList<>(teamPlayerList.size());
         int playerSize = teamPlayerList.size();
 
         for (int i = 0; i < playerSize; i++) {
@@ -81,7 +83,11 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
                     .memberId(randomPlayer.getMemberId())
                     .nickname(randomPlayer.getNickname())
                     .image(randomPlayer.getImage()).build();
+
+            randomPlayer.saveOrder(i + 1);
+            savePlayerList.add(randomPlayer);
         }
+        redisRepository.saveInGamePlayerAll(gameId, savePlayerList);
     }
 
     private List<Weapon> makeWeaponList(GameWeaponData weaponData) {

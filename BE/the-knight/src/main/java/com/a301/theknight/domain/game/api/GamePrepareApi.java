@@ -30,7 +30,7 @@ public class GamePrepareApi {
 
     @MessageMapping(value = "/games/{gameId}/players")
     public void getGamePlayerData(@DestinationVariable @Min(1) long gameId) {
-        GamePlayersInfoResponse playersInfo = gamePrepareService.getPlayersInfo(gameId);
+        GamePlayersInfoResponse playersInfo = gamePrepareService.getTeamPlayersInfo(gameId);
 
         messageService.sendData(gameId, "/a/players", playersInfo.getPlayersAInfoDto());
         messageService.sendData(gameId, "/b/players", playersInfo.getPlayersBInfoDto());
