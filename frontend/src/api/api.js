@@ -62,6 +62,10 @@ const api = {
   login: () => BASE_URL + GOOGLE_LOGIN,
   loginRedirect: () => LOGIN_REDIRECT,
 
+  // react route dom navigate
+  routeConnectWebsocket: (gameId) => `/connect-websocket/${gameId}`,
+  routeEntryRoomSetting: (gameId) => `/entryRoom/${gameId}`,
+  routeRoom: (gameId) => `/room/${gameId}`,
 
   initRoom: () => BASE_URL + API + GAME,
 
