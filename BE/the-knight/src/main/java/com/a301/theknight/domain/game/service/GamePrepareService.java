@@ -36,8 +36,8 @@ public class GamePrepareService {
 
     @Transactional
     public GamePlayersInfoResponse getPlayersInfo(long gameId) {
-        GamePlayersInfoDto playersAInfo = getTeamPlayersInfo(gameId, Team.A);
-        GamePlayersInfoDto playersBInfo = getTeamPlayersInfo(gameId, Team.B);
+        GamePlayersInfoDto playersAInfo = getPlayersInfo(gameId, Team.A);
+        GamePlayersInfoDto playersBInfo = getPlayersInfo(gameId, Team.B);
 
         return GamePlayersInfoResponse.builder()
                 .playersAInfoDto(playersAInfo)
@@ -128,10 +128,11 @@ public class GamePrepareService {
         return new SelectCompleteDto(inGame.isAllSelected(), team);
     }
 
-    private GamePlayersInfoDto getTeamPlayersInfo(long gameId, Team team) {
-        List<InGamePlayer> playerList = redisRepository.getTeamPlayerList(gameId, team);
+    private GamePlayersInfoDto getPlayersInfo(long gameId, Team team) {
+        List<InGamePlayer> playerList = redisRepository.getInGamePlayerList(gameId);
+
         List<PlayerDataDto> players = playerList.stream()
-                .map(PlayerDataDto::toDto)
+                .map(inGamePlayer -> PlayerDataDto.toDto(inGamePlayer, team))
                 .collect(Collectors.toList());
 
         return GamePlayersInfoDto.builder()

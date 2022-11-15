@@ -88,8 +88,7 @@ public class PrepareDataService extends GameDataService {
 
     private GamePlayersInfoDto getTeamPlayersInfo(List<InGamePlayer> inGamePlayerList, Team team) {
         List<PlayerDataDto> playerDtoList = inGamePlayerList.stream()
-                .filter(inGamePlayer -> team.equals(inGamePlayer.getTeam()))
-                .map(PlayerDataDto::toDto)
+                .map(inGamePlayer -> PlayerDataDto.toDto(inGamePlayer, team))
                 .collect(Collectors.toList());
 
         return GamePlayersInfoDto.builder()
