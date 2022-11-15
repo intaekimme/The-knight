@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
@@ -21,6 +22,7 @@ public class GameDataService {
         this.redissonClient = redissonClient;
     }
 
+    @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         log.info("[Redisson Autowired Check] {}", redissonClient);
         RLock dataLock = redissonClient.getLock(dataLockKeyGen(gameId));
@@ -44,14 +46,14 @@ public class GameDataService {
 
     }
 
-    private void unLock(RLock timeLock) {
-        if (timeLock != null && timeLock.isLocked()) {
-            timeLock.unlock();
+    private void unLock(RLock dataLock) {
+        if (dataLock != null && dataLock.isLocked()) {
+            dataLock.unlock();
         }
     }
 
-    private void tryDataLock(RLock timeLock) throws InterruptedException {
-        if (!timeLock.tryLock(1, 1, TimeUnit.SECONDS)) {
+    private void tryDataLock(RLock dataLock) throws InterruptedException {
+        if (!dataLock.tryLock(1, 1, TimeUnit.SECONDS)) {
             throw new CustomWebSocketException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
         }
     }

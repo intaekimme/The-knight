@@ -23,14 +23,8 @@ import java.util.List;
 public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final LoginMemberWebsocketArgumentResolver loginMemberWebsocketArgumentResolver;
-    private final StompHandler stompHandler;
     private final DomainProperties domainProperties;
-
-    /*
-    변경 가능 사항
-    1. handShake endpoint
-    2. CORS path
-     */
+    private final StompHandler stompHandler;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry){
@@ -39,11 +33,6 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .withSockJS();
     }
 
-    /*
-    변경 가능한 사항
-    1. 구독 prefix
-    2. 발생 prefix
-     */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry){
         registry.setApplicationDestinationPrefixes("/pub");

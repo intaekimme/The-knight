@@ -28,8 +28,6 @@ public class GameScreenDataApi {
         }
 
         GameDataService dataTemplate = dataTemplateFactory.getGameDataTemplate(gameId);
-        log.info("Data Template Instance = {}", this);
-        log.info("Data Template Instance = {}", this);
         dataTemplate.makeAndSendData(gameId, messageService);
 
         messageService.proceedCall(gameId, 500);
