@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { switchIsLoading } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import {
+  setMe,
   setTimer,
   countTimer,
   stopCountTimer,
@@ -58,6 +59,7 @@ export default function GameWebSocket() {
     // }
     const data = JSON.parse(payload.body);
     dispatch(fetchPlayers(data));
+    dispatch(setMe());
   };
 
   // 최초 화면전환 요청
