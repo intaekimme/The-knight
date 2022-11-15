@@ -2,6 +2,7 @@ package com.a301.theknight.domain.game.template;
 
 import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
+import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
@@ -31,16 +32,13 @@ public class DefenseDataService extends GameDataService {
         InGame inGame = getInGame(gameId);
         TeamInfoData teamInfoData = getTeamInfoData(inGame);
 
-        long currentAttackerId = getCurrentAttackerId(teamInfoData);
+        GameOrderDto attacker = teamInfoData.getOrderList()[teamInfoData.getCurrentAttackIndex()];
         MemberTeamResponse response = MemberTeamResponse.builder()
-                .memberId(currentAttackerId)
+                .memberId(attacker.getMemberId())
+                .nickname(attacker.getNickname())
                 .team(inGame.getCurrentAttackTeam().name()).build();
 
         messageService.sendData(gameId, "/attacker", response);
-    }
-
-    private long getCurrentAttackerId(TeamInfoData teamInfoData) {
-        return teamInfoData.getOrderList()[teamInfoData.getCurrentAttackIndex()].getMemberId();
     }
 
     private TeamInfoData getTeamInfoData(InGame inGame) {

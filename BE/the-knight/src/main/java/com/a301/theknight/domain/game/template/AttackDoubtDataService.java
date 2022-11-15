@@ -33,18 +33,18 @@ public class AttackDoubtDataService extends GameDataService {
         InGame inGame = getInGame(gameId);
         TurnData turn = getTurnData(inGame);
 
-        long attackerId = turn.getAttackerId();
-        long defenderId = turn.getDefenderId();
+        InGamePlayer attacker = getInGamePlayer(gameId, turn.getAttackerId());
+        InGamePlayer defender = getInGamePlayer(gameId, turn.getDefenderId());
 
         AttackResponse response = AttackResponse.builder()
                 .attacker(MemberTeamResponse.builder()
-                        .memberId(attackerId)
-                        .team(getInGamePlayer(gameId, attackerId).getTeam().name())
-                        .build())
+                        .memberId(attacker.getMemberId())
+                        .nickname(attacker.getNickname())
+                        .team(attacker.getTeam().name()).build())
                 .defender(MemberTeamResponse.builder()
-                        .memberId(defenderId)
-                        .team(getInGamePlayer(gameId, defenderId).getTeam().name())
-                        .build())
+                        .memberId(defender.getMemberId())
+                        .nickname(defender.getNickname())
+                        .team(defender.getTeam().name()).build())
                 .weapon(turn.getAttackData().getWeapon().name())
                 .hand(turn.getAttackData().getAttackHand().name())
                 .build();
