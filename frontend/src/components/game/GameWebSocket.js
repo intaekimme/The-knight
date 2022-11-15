@@ -64,7 +64,6 @@ export default function GameWebSocket() {
   const onSubConvert = (payload) => {
     // {
     //   gameStatus : String,
-    //   postfix: String,
     // }
     const data = JSON.parse(payload.body);
     const nextPhase = data.gameStatus;
@@ -125,7 +124,7 @@ export default function GameWebSocket() {
     }
 
     // 준비완료 pub
-    stompClient.send(api.pubPostfix(gameId, data.postfix), {}, {});
+    stompClient.send(api.pubScreenData(gameId), {}, {});
   };
 
   // 실제 화면전환
