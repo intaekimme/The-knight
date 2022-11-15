@@ -16,7 +16,7 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ING
 public class GameScreenDataServiceFactory {
     private final GameRedisRepository gameRedisRepository;
 
-    private final PrepareDataService prepareDataTemplate;
+    private final PrepareDataService prepareDataService;
     private final PredecessorDataService predecessorDataService;
     private final AttackDataService attackDataService;
     private final DefenseDataService defenseDataService;
@@ -31,7 +31,7 @@ public class GameScreenDataServiceFactory {
 
         switch (gameStatus) {
             case PREPARE:
-                return prepareDataTemplate;
+                return prepareDataService;
             case PREDECESSOR:
                 return predecessorDataService;
             case ATTACK:
