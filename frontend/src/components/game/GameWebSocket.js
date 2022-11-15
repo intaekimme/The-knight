@@ -400,7 +400,7 @@ export default function GameWebSocket() {
     }))
 
     // 구독 완료 pub
-    stompClient.send(api.pubConvertComplete(gameId), {}, {});
+    stompClient.send(api.pubScreenData(gameId), {}, {});
   }, []);
 
   return <div></div>;
