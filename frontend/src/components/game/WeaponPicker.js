@@ -51,7 +51,7 @@ function WeaponPicker() {
               style={{
                 width: "12vmin",
                 height: "12vmin",
-                ...((isSelectComplete || !countWeapon[weapon])
+                ...((isSelectComplete || !countWeapon[weapon.toLowerCase()])
                   ? { backgroundColor: "#646464" }
                   : { backgroundColor: "#f0f0f0" }),
                 border: "7px solid #7406ff",
@@ -78,7 +78,7 @@ function WeaponPicker() {
                   borderRadius: "10px"
                 }}
               >
-                {countWeapon[weapon]}
+                {countWeapon[weapon.toLowerCase()]}
               </Box>
             </div>
           </Grid>
