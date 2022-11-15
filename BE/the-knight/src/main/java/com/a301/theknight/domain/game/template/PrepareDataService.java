@@ -43,26 +43,29 @@ public class PrepareDataService extends GameDataService {
     @Override
     @Transactional
     public void makeData(long gameId) {
+
+    }
+
+    @Override
+    @Transactional
+    public void sendScreenData(long gameId, SendMessageService messageService) {
         Game game = getGame(gameId);
         if (!game.isCanStart()) {
             throw new CustomWebSocketException(CAN_NOT_PLAYING_GAME);
         }
         List<Player> players = game.getPlayers();
 
-        makeWeaponsData(game);
+        GameWeaponData weaponData = makeWeaponsData(game);
         choiceLeader(players);
         initInGameData(game);
         makeInGamePlayerData(gameId, players);
-    }
+        //======================================================
 
-    @Override
-    @Transactional
-    public void sendScreenData(long gameId, SendMessageService messageService) {
-        GameWeaponData weaponsData = getWeaponsData(gameId, Team.A);
-        messageService.sendData(gameId, "/a/weapons", weaponsData);
-        messageService.sendData(gameId, "/b/weapons", weaponsData);
+//        GameWeaponData weaponsData = getWeaponsData(gameId, Team.A);
+        messageService.sendData(gameId, "/a/weapons", weaponData);
+        messageService.sendData(gameId, "/b/weapons", weaponData);
 
-        Game game = getGame(gameId);
+//        Game game = getGame(gameId);
         GameLeaderDto leadersData = getLeadersData(game);
         messageService.sendData(gameId, "/a/leader", leadersData.getTeamA());
         messageService.sendData(gameId, "/b/leader", leadersData.getTeamB());
@@ -153,12 +156,13 @@ public class PrepareDataService extends GameDataService {
         redisRepository.saveInGamePlayerAll(gameId, inGamePlayers);
     }
 
-    private void makeWeaponsData(Game game) {
+    private GameWeaponData makeWeaponsData(Game game) {
         GameWeaponData gameWeaponDataA = GameWeaponData.toWeaponData(game);
         GameWeaponData gameWeaponDataB = GameWeaponData.toWeaponData(game);
 
         redisRepository.saveGameWeaponData(game.getId(), Team.A, gameWeaponDataA);
         redisRepository.saveGameWeaponData(game.getId(), Team.B, gameWeaponDataB);
+        return gameWeaponDataA;
     }
 
     private GameLeaderDto getLeadersData(Game game) {
