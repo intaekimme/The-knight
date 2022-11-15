@@ -10,6 +10,7 @@ import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import static com.a301.theknight.domain.game.entity.GameStatus.*;
 import static com.a301.theknight.global.error.errorcode.DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class GameConvertUtil {
@@ -34,6 +36,7 @@ public class GameConvertUtil {
         InGame inGame = getInGame(gameId);
         inGame.initRequestCount();
         gameRedisRepository.saveInGame(gameId, inGame);
+        log.info("  Request Counting = {}", inGame.getRequestCount());
 
         GameStatus gameStatus = inGame.getGameStatus();
         return new ConvertResponse(gameStatus.name());
