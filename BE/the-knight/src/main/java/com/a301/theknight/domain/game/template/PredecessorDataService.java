@@ -27,7 +27,7 @@ public class PredecessorDataService extends GameDataService {
     }
 
     @Override
-    public void sendScreenData(long gameId, SendMessageService messageService) {
+    public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
         Team preAttackTeam = inGame.getCurrentAttackTeam();
 

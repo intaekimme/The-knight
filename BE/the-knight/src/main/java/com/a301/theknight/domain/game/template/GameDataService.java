@@ -20,13 +20,12 @@ public abstract class GameDataService {
     }
 
     @Transactional
-    public void makeAndSendData(long gameId, SendMessageService messageService) {
+    public void sendScreenData(long gameId, SendMessageService messageService) {
         RLock dataLock = redissonClient.getLock(dataLockKeyGen(gameId));
         try {
             tryDataLock(dataLock);
 
-            makeData(gameId);
-            sendScreenData(gameId, messageService);
+            makeAndSendData(gameId, messageService);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
@@ -34,9 +33,7 @@ public abstract class GameDataService {
         }
     }
 
-    protected abstract void makeData(long gameId);
-
-    protected abstract void sendScreenData(long gameId, SendMessageService messageService);
+    protected abstract void makeAndSendData(long gameId, SendMessageService messageService);
 
     private void unLock(RLock dataLock) {
         if (dataLock != null && dataLock.isLocked()) {

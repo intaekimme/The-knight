@@ -55,7 +55,7 @@ public class EndDataService extends GameDataService {
 
     @Override
     @Transactional
-    public void sendScreenData(long gameId, SendMessageService messageService) {
+    public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
 
         long teamALeaderId = inGame.getTeamAInfo().getLeaderId();

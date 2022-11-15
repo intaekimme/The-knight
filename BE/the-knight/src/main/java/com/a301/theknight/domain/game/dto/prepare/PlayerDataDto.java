@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.dto.prepare;
 
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
+import com.a301.theknight.domain.player.entity.Player;
 import lombok.Builder;
 import lombok.Data;
 

@@ -28,7 +28,7 @@ public class DefenseDataService extends GameDataService {
     }
 
     @Override
-    public void sendScreenData(long gameId, SendMessageService messageService) {
+    public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
         TeamInfoData teamInfoData = getTeamInfoData(inGame);
 
