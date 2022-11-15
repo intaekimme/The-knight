@@ -19,7 +19,7 @@ public class GameScreenDataApi {
     private final SendMessageService messageService;
 
     @MessageMapping(value = "/games/{gameId}/screen-data")
-    public void prepareGameStart(@Min(1) @DestinationVariable long gameId) {
+    public void makeAndSendScreenData(@Min(1) @DestinationVariable long gameId) {
         boolean isFullCount = gameConvertUtil.requestCounting(gameId);
         if (!isFullCount) {
             return;
