@@ -35,11 +35,21 @@ export default function SearchBar() {
 		tempRoomData.twin = itemCount[1];
 		tempRoomData.shield = itemCount[2];
 		tempRoomData.hand = itemCount[3];
-		dispatch(modifyRoomSetting(tempRoomData));
-    dispatch(initRoom({roomInfo:tempRoomData})).then((response)=>{
-      const gameId = response.payload.gameId;
-      navigate(`${url}${gameId}`);
-    });
+    let sum = 0;
+    for(let i=0;i<itemCount.length;i++){
+      sum += itemCount[i];
+    }
+    if(maxMember === sum){
+      dispatch(modifyRoomSetting(tempRoomData));
+      dispatch(initRoom({roomInfo:tempRoomData})).then((response)=>{
+        const gameId = response.payload.gameId;
+        navigate(`${url}${gameId}`);
+      });
+      onRoomInfoModalClose();
+    }
+    else{
+      alert(`필요 아이템 개수 : ${maxMember} / 현재 아이템 개수 : ${sum}\n아이템 개수가 올바르지 않습니다`);
+    }
 	}
 
   const [keyword, setKeyword] = React.useState();

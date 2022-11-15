@@ -35,7 +35,15 @@ export default function GameList() {
 
   // 방 입장
   const onRoomEnter = (gameId)=>{
-    navigate(`/room/${gameId}`);
+    dispatch(getRoomInfo(gameId)).then((response)=>{
+      if(response.payload.currentMembers<response.payload.maxMember){
+        onRoomInfoModalClose();
+        navigate(`/room/${gameId}`);
+      }
+      else{
+        console.log("full Room");
+      }
+    }).catch((err)=>{console.log(err);});
   }
 
   // gameId props
@@ -45,7 +53,6 @@ export default function GameList() {
     console.log("gameId", gameId);
     setId(gameId);
     //gameId로 게임 상세정보 불러오기
-    // dispatch(gameDesc(gameId));
     dispatch(getRoomInfo(gameId));
   }
   //저장되어있는 게임 상세정보 store에서 불러오기
