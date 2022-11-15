@@ -87,21 +87,57 @@ export default function DefenseDoubtPhase() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-evenly",
+            position: "relative",
           }}
         >
-          <Box sx={{ textAlign: "center" }}>
+          <Box sx={{ textAlign: "center", fontSize: "2.7vmin" }}>
             {defenseInfo.defender.nickname}이(가) {side[defenseInfo.hand]} 방패로 방어했습니다.
           </Box>
           <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "space-evenly" }}>
-            <Box onClick={() => clickDoubt} sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2" }}>의심</Box>
+            <Box
+              onClick={() => clickDoubt}
+              sx={{
+                width: "10vmin",
+                height: "10vmin",
+                backgroundColor: "#f0f0f0",
+                border: "7px solid #4d4d4d",
+                borderRadius: "10px",
+                fontSize: "3.5vmin",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              의심
+            </Box>
             <Box
               onClick={() => clickPass}
-              sx={{ width: "11vmin", height: "11vmin", backgroundColor: "#e2e2e2" }}
+              sx={{
+                width: "10vmin",
+                height: "10vmin",
+                backgroundColor: "#f0f0f0",
+                border: "7px solid #4d4d4d",
+                borderRadius: "10px",
+                fontSize: "3.5vmin",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
               Pass
             </Box>
           </Box>
-          <Box sx={{ textAlign: "center" }}>제한시간: 100</Box>
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: "2vmin",
+              fontSize: "2vmin",
+              left: "50%",
+              transform: "translate(-50%)",
+            }}
+          >
+            제한시간 : {timer}
+          </Box>
         </Box>
       );
     }
