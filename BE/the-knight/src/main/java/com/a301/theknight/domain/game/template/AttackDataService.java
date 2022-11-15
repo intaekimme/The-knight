@@ -27,10 +27,7 @@ public class AttackDataService extends GameDataService {
     @Override
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
-
         inGame.updateCurrentAttackTeam();
-        redisRepository.saveInGame(gameId, inGame);
-
         TeamInfoData teamInfoData = getTeamInfoData(inGame);
         int maxMembers = inGame.getMaxMemberNum() / 2;
 
@@ -53,7 +50,7 @@ public class AttackDataService extends GameDataService {
 
     private int findNextAttacker(long gameId, int maxMembers, TeamInfoData teamInfoData) {
         GameOrderDto[] orderList = teamInfoData.getOrderList();
-        int curIndex = teamInfoData.getCurrentAttackIndex() + 1 % maxMembers;
+        int curIndex = (teamInfoData.getCurrentAttackIndex() + 1) % maxMembers;
 
         for (int i = 0; i < maxMembers; i++) {
             GameOrderDto gameOrderDto = orderList[curIndex];
