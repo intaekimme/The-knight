@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
+
 @Builder
 @Data
 public class PlayerDataDto {
@@ -21,6 +23,18 @@ public class PlayerDataDto {
     private int rightCount;
     private int order;
     private List<Weapon> weapons;
+
+    public static PlayerDataDto toDto(InGamePlayer inGamePlayer) {
+        return PlayerDataDto.builder()
+                .memberId(inGamePlayer.getMemberId())
+                .nickname(inGamePlayer.getNickname())
+                .team(inGamePlayer.getTeam().name())
+                .leftCount(inGamePlayer.getLeftCount())
+                .rightCount(inGamePlayer.getRightCount())
+                .order(inGamePlayer.getOrder())
+                .weapons(new ArrayList<>(asList(inGamePlayer.getLeftWeapon(), inGamePlayer.getRightWeapon())))
+                .build();
+    }
 
     public static PlayerDataDto toDto(InGamePlayer inGamePlayer, Team team) {
         List<Weapon> weapons = new ArrayList<>();
