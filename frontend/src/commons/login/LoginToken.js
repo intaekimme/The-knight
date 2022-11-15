@@ -1,12 +1,9 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
-import { over, Client } from "stompjs";
-import SockJS from "sockjs-client";
 import api from '../../api/api';
 import { login } from "../../_slice/loginSlice";
 import { fetchMemberInfo } from "../../_slice/memberInfoSlice";
-import { connectWebsocket, setStompClient } from '../../_slice/websocketSlice';
 
 export default function LoginToken() {
   const dispatch = useDispatch();
@@ -14,7 +11,6 @@ export default function LoginToken() {
   const loginToken = useSelector((state) => state.login.value.token);
   // store에 저장
   const mounted = async () => {
-    console.log();
     const token = new URLSearchParams(window.location.search).get("token");
     const memberId = new URLSearchParams(window.location.search).get("memberId");
     dispatch(login(token));
@@ -23,7 +19,8 @@ export default function LoginToken() {
     dispatch(fetchMemberInfo());
 
     console.log(token);
-    dispatch(connectWebsocket({token:token})).then((res)=>{alert("로그인 되었습니다"); navigate("/");});
+    // dispatch(connectWebsocket({token:token})).then((res)=>{alert("로그인 되었습니다");});
+    navigate("/");
     // alert("로그인 되었습니다");
     // navigate("/");
   };
