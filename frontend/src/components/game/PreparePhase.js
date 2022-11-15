@@ -57,7 +57,7 @@ export default function PreparePhase() {
         justifyContent: "center",
         alignItems: "center",
       }}
-      onClick={onClick}
+      onClick={() => onClick}
     >
       선택완료
     </div>}

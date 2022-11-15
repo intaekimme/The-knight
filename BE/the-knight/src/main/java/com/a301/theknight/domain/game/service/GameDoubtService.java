@@ -2,7 +2,10 @@ package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.doubt.response.*;
 import com.a301.theknight.domain.game.entity.GameStatus;
-import com.a301.theknight.domain.game.entity.redis.*;
+import com.a301.theknight.domain.game.entity.redis.DoubtData;
+import com.a301.theknight.domain.game.entity.redis.DoubtStatus;
+import com.a301.theknight.domain.game.entity.redis.InGame;
+import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;

@@ -7,5 +7,6 @@ import lombok.Data;
 @Builder
 public class MemberTeamResponse {
     private long memberId;
+    private String nickname;
     private String team;
 }

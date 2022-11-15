@@ -2,11 +2,14 @@ package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
 import com.a301.theknight.domain.common.service.SendMessageService;
-import com.a301.theknight.domain.game.dto.prepare.GamePlayersInfoDto;
+import com.a301.theknight.domain.game.dto.prepare.GamePlayersInfoResponse;
 import com.a301.theknight.domain.game.dto.prepare.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponDeleteRequest;
-import com.a301.theknight.domain.game.dto.prepare.response.*;
+import com.a301.theknight.domain.game.dto.prepare.response.GameOrderResponse;
+import com.a301.theknight.domain.game.dto.prepare.response.GameWeaponResponse;
+import com.a301.theknight.domain.game.dto.prepare.response.SelectCompleteDto;
+import com.a301.theknight.domain.game.dto.prepare.response.SelectResponse;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.service.GamePrepareService;
 import com.a301.theknight.domain.player.entity.Team;
@@ -25,26 +28,12 @@ public class GamePrepareApi {
 
     private final SendMessageService messageService;
 
-    @MessageMapping(value = "/games/{gameId}/prepare")
-    public void prepareGameStart(@Min(1) @DestinationVariable long gameId) {
-        GamePrepareDto gamePrepareDto = gamePrepareService.prepare(gameId);
-
-        messageService.sendData(gameId, "/a/weapons", gamePrepareDto.getGameWeaponData());
-        messageService.sendData(gameId, "/b/weapons", gamePrepareDto.getGameWeaponData());
-
-        messageService.sendData(gameId, "/a/leader", gamePrepareDto.getGameLeaderDto().getTeamA());
-        messageService.sendData(gameId, "/b/leader", gamePrepareDto.getGameLeaderDto().getTeamB());
-        getGamePlayerData(gameId);
-
-        messageService.proceedCall(gameId, 500);
-    }
-
     @MessageMapping(value = "/games/{gameId}/players")
     public void getGamePlayerData(@DestinationVariable @Min(1) long gameId) {
-        GamePlayersInfoDto playersInfo = gamePrepareService.getPlayersInfo(gameId);
+        GamePlayersInfoResponse playersInfo = gamePrepareService.getPlayersInfo(gameId);
 
-        messageService.sendData(gameId, "/a/players", playersInfo.getGamePlayersInfoResponseA());
-        messageService.sendData(gameId, "/b/players", playersInfo.getGamePlayersInfoResponseB());
+        messageService.sendData(gameId, "/a/players", playersInfo.getPlayersAInfoDto());
+        messageService.sendData(gameId, "/b/players", playersInfo.getPlayersBInfoDto());
     }
 
     @MessageMapping(value="/games/{gameId}/weapon-choice")

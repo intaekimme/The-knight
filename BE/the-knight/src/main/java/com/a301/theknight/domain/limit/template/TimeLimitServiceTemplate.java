@@ -24,7 +24,7 @@ public abstract class TimeLimitServiceTemplate {
     public final void executeTimeLimit(long gameId, SendMessageService sendMessageService) {
         GameStatus preStatus = getInGame(gameId).getGameStatus();
 
-        RLock timeLock = null;
+        RLock dataLock = null;
         try {
             Thread.sleep(preStatus.getLimitSeconds());
             InGame curInGame = getInGame(gameId);
@@ -32,19 +32,27 @@ public abstract class TimeLimitServiceTemplate {
                 return;
             }
 
-            timeLock = redissonClient.getLock(timeLockKeyGen(gameId));
-            if (!timeLock.tryLock(1, 1, TimeUnit.SECONDS)) {
-                throw new CustomWebSocketException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
-            }
+            dataLock = redissonClient.getLock(dataLockKeyGen(gameId));
+            tryDataLock(dataLock);
             sendMessageService.forceConvertCall(gameId);
 
             runLimitLogic(gameId, curInGame);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            if (timeLock != null && timeLock.isLocked()) {
-                timeLock.unlock();
-            }
+            unLock(dataLock);
+        }
+    }
+
+    private void unLock(RLock dataLock) {
+        if (dataLock != null && dataLock.isLocked()) {
+            dataLock.unlock();
+        }
+    }
+
+    private void tryDataLock(RLock dataLock) throws InterruptedException {
+        if (!dataLock.tryLock(1, 1, TimeUnit.SECONDS)) {
+            throw new CustomWebSocketException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
         }
     }
 
@@ -55,7 +63,7 @@ public abstract class TimeLimitServiceTemplate {
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 
-    private String timeLockKeyGen(long gameId) {
-        return "time_lock:" + gameId;
+    private String dataLockKeyGen(long gameId) {
+        return "data_lock:" + gameId;
     }
 }

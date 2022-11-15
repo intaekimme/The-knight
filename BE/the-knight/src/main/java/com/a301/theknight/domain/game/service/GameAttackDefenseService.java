@@ -102,7 +102,6 @@ public class GameAttackDefenseService {
                 .weapon(turn.getAttackData().getWeapon().name())
                 .hand(turn.getAttackData().getAttackHand().name())
                 .build();
-
     }
 
     @Transactional
