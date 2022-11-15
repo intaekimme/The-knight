@@ -21,7 +21,6 @@ public abstract class GameDataService {
 
     @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
-        log.info("[Redisson Autowired Check] {}", redissonClient);
         RLock dataLock = redissonClient.getLock(dataLockKeyGen(gameId));
         try {
             tryDataLock(dataLock);
