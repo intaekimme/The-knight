@@ -29,15 +29,7 @@ function OrderPicker() {
   }
 
   function orderList(players) {
-    let arr =
-      players.maxMember / 2 === 5
-        ? [
-            <Grid
-              item
-              xs={1}
-            ></Grid>,
-          ]
-        : [];
+    let arr = [];
     for (let i = 0; i < players.maxMember / 2; i++) {
       arr.push(
         <Grid
@@ -69,7 +61,7 @@ function OrderPicker() {
     return arr;
   }
 
-  return <Grid container>{orderList(players)}</Grid>;
+  return <Grid container>{orderList()}</Grid>;
 }
 
 export default OrderPicker;
