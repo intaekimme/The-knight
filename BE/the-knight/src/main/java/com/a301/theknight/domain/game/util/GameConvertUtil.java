@@ -36,7 +36,6 @@ public class GameConvertUtil {
         InGame inGame = getInGame(gameId);
         inGame.initRequestCount();
         gameRedisRepository.saveInGame(gameId, inGame);
-        log.info("  Request Counting = {}", inGame.getRequestCount());
 
         GameStatus gameStatus = inGame.getGameStatus();
         return new ConvertResponse(gameStatus.name());
@@ -63,6 +62,7 @@ public class GameConvertUtil {
             InGame inGame = getInGame(gameId);
             inGame.addRequestCount();
             gameRedisRepository.saveInGame(gameId, inGame);
+            log.info("  Request Counting = {}", inGame.getRequestCount());
 
             return inGame.isFullCount();
         } catch (InterruptedException e) {
