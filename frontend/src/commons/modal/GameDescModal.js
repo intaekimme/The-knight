@@ -6,6 +6,9 @@ import { useSelector, } from "react-redux";
 import bgImg from "../../_assets/room/enterRoom.png"
 import { borderLeft } from "@mui/system";
 
+// import modalStyle from "../../_css/Modal.module.css"
+import { modalStyle, inModalStyle, titleStyle, infoStyle, itemStyle, roomInfoTitleStyle, buttonStyle } from "../../_css/ModalCSSProperties"
+
 const enterRoom = () => {
 	console.log("enter room");
 }
@@ -19,84 +22,85 @@ export default function GameDescModal(props) {
   //   }
 	// }, []);
 	
-	const gameInfo = useSelector(state => state.tempGame.gameInfo)
-	console.log(gameInfo);
+	const roomInfo = useSelector(state => state.room.roomInfo);
+	console.log(roomInfo);
 	
-	const modalStyle = {
-		position: 'absolute',
-		top: '50%',
-		left: '50%',
-		transform: 'translate(-50%, -50%)',
-		width: '40vw',
-		height: '27vw',
-		// border: '1px solid #000',
-		borderRadius: 2,
-		boxShadow: '2px 2px 10px #000',
-		p: '10px 36px 36px 36px',
-		// bgImg: {bgImg},
-		backgroundImage: `url(${bgImg})`,
-		backgroundSize: 'cover'
-	};
-	// const modalBackStyle = {
-	// 	top: 0,
-  //   right: 0,
-  //   height: "100%",
-	// 	width: "100%",
-	// 	opacity: 0.4
+	// const modalStyle = {
+	// 	position: 'absolute',
+	// 	top: '50%',
+	// 	left: '50%',
+	// 	transform: 'translate(-50%, -50%)',
+	// 	width: '40vw',
+	// 	height: '27vw',
+	// 	// border: '1px solid #000',
+	// 	borderRadius: 2,
+	// 	boxShadow: '2px 2px 10px #000',
+	// 	p: '10px 36px 36px 36px',
+	// 	backgroundImage: `url(${bgImg})`,
+	// 	backgroundSize: 'cover'
+	// };
+
+
+	// // const modalBackStyle = {
+	// // 	top: 0,
+  // //   right: 0,
+  // //   height: "100%",
+	// // 	width: "100%",
+	// // 	opacity: 0.4
+	// // }
+	// const inModalStyle = {
+	// 	// top: '50%',
+	// 	// left: '50%',
+	// 	position: 'relative',
+	// 	pt: 1,
+	// 	pb: 1,
+	// 	width: '40vw',
+	// 	height: '21vw',
+	// 	bgcolor: '#424242',
+	// };
+	// // const cardmediaStyle = {
+	// // 	position: "absolute",
+  // //   top: 0,
+  // //   right: 0,
+  // //   height: "100%",
+	// // 	width: "100%",
+	// // }
+	// const titleStyle = {
+	// 	pr: 2,
+	// 	color: "#DCD7C9",
+	// 	fontWeight: 'bold',
+	// 	textAlign: "right",
+	// 	fontSize: 20
+	// };
+	// const infoStyle = {
+	// 	pl: 5,
+	// 	color: "#DCD7C9",
+	// 	fontSize: 18
+	// };
+	// const itemStyle = {
+	// 	color: "#DCD7C9",
+	// 	fontSize: 18
+	// };
+	// const roomInfoTitleStyle = {
+	// 	color: "#DCD7C9",
+	// 	fontSize: 25,
+	// 	fontWeight: 'bold',
 	// }
-	const inModalStyle = {
-		// top: '50%',
-		// left: '50%',
-		position: 'relative',
-		pt: 1,
-		pb: 1,
-		width: '40vw',
-		height: '21vw',
-		bgcolor: '#424242',
-	};
-	// const cardmediaStyle = {
-	// 	position: "absolute",
-  //   top: 0,
-  //   right: 0,
-  //   height: "100%",
-	// 	width: "100%",
-	// }
-	const titleStyle = {
-		pr: 2,
-		color: "#DCD7C9",
-		fontWeight: 'bold',
-		textAlign: "right",
-		fontSize: 20
-	};
-	const infoStyle = {
-		pl: 5,
-		color: "#DCD7C9",
-		fontSize: 18
-	};
-	const itemStyle = {
-		color: "#DCD7C9",
-		fontSize: 18
-	};
-	const gameInfoTitleStyle = {
-		color: "#DCD7C9",
-		fontSize: 25,
-		fontWeight: 'bold',
-	}
-	const buttonStyle = {
-		width: '90px',
-		height: '40px',
-		fontSize: 18,
-		fontWeight: 'bold',
-		color: '#424242',
-		bgcolor: '#DCD7C9',
-		border: '0px solid #424242',
-		'&:hover':{
-			color: '#fff',
-			bgcolor: '#4F585B',
-			border: '0px solid #DCD7C9',
-		}
+	// const buttonStyle = {
+	// 	width: '90px',
+	// 	height: '40px',
+	// 	fontSize: 18,
+	// 	fontWeight: 'bold',
+	// 	color: '#424242',
+	// 	bgcolor: '#DCD7C9',
+	// 	border: '0px solid #424242',
+	// 	'&:hover':{
+	// 		color: '#fff',
+	// 		bgcolor: '#4F585B',
+	// 		border: '0px solid #DCD7C9',
+	// 	}
 		
-	}
+	// }
 
 	//아이템 목록
 	// const items = ["검", "쌍검", "방패", "맨손"];
@@ -108,7 +112,7 @@ export default function GameDescModal(props) {
 			aria-labelledby="modal-modal-title"
 			aria-describedby="modal-modal-description"
 		>
-			<Card sx={modalStyle}>
+			<Card sx={modalStyle} >
 				{/* <CardMedia
 					sx={cardmediaStyle}
 					id="root"
@@ -119,7 +123,7 @@ export default function GameDescModal(props) {
 				<Box id="modal-modal-title">
 					<Grid container alignItems={'center'}>
 						<Grid item xs={11} sx={{mt:1, mb:1}}>
-							<Typography sx={gameInfoTitleStyle}>게임방 정보</Typography>
+							<Typography sx={roomInfoTitleStyle}>게임방 정보</Typography>
 						</Grid>
 						<Grid item xs={1}>
 							<Button onClick={props.onClose} sx={{ color: "#DCD7C9" }}><ClearIcon /></Button>
@@ -135,12 +139,12 @@ export default function GameDescModal(props) {
 					}}>
 					<Grid container item xs={12}>
 						<Grid item xs={2} sx={titleStyle}>방제목</Grid>
-						<Grid item xs={10} sx={infoStyle}>{gameInfo.title}</Grid>
+						<Grid item xs={10} sx={infoStyle}>{roomInfo.title}</Grid>
 						{/* <Grid item xs={10}>title</Grid> */}
 					</Grid>
 					<Grid container item xs={12}>
 						<Grid item xs={2} sx={titleStyle}>인원</Grid>
-						<Grid item xs={10} sx={infoStyle}>{gameInfo.currentMembers}/{gameInfo.maxMember}</Grid>
+						<Grid item xs={10} sx={infoStyle}>{roomInfo.currentMembers}/{roomInfo.maxMember}</Grid>
 						{/* <Grid item xs={10}>10/10</Grid> */}
 					</Grid>
 					<Grid container columns={24}>
@@ -158,19 +162,19 @@ export default function GameDescModal(props) {
 						}}>
 						<Box textAlign={"center"}>
 							<Paper elevation={0} sx={{ width: 128, height: 128, mb: 1}} />
-							<Typography sx={itemStyle}>{gameInfo.sword}</Typography>
+							<Typography sx={itemStyle}>{roomInfo.sword}</Typography>
 						</Box>
 						<Box textAlign={"center"}>
 							<Paper elevation={0} sx={{ width: 128, height: 128, mb: 1}} />
-							<Typography sx={itemStyle}>{gameInfo.twin}</Typography>
+							<Typography sx={itemStyle}>{roomInfo.twin}</Typography>
 						</Box>
 						<Box textAlign={"center"}>
 							<Paper elevation={0} sx={{ width: 128, height: 128, mb: 1}} />
-							<Typography sx={itemStyle}>{gameInfo.shield}</Typography>
+							<Typography sx={itemStyle}>{roomInfo.shield}</Typography>
 						</Box>
 						<Box textAlign={"center"}>
 							<Paper elevation={0} sx={{ width: 128, height: 128, mb: 1}} />
-							<Typography sx={itemStyle}>{gameInfo.hand}</Typography>
+							<Typography sx={itemStyle}>{roomInfo.hand}</Typography>
 						</Box>
 						</Box>
 				</Card>

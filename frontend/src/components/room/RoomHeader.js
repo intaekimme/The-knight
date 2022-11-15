@@ -6,14 +6,29 @@ import { white, red, blue, black } from "../../_css/ReactCSSProperties";
 import { Grid, Box, Button } from "@mui/material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
-import RoomSetting from "../../commons/modal/RoomSetting";
-import {onPubExit, onPubSelectTeam} from "../../websocket/RoomPublishes";
+import RoomInfoModal from "../../commons/modal/RoomInfoModal";
+import {onPubModifyRoom, onPubExit, onPubSelectTeam} from "../../websocket/RoomPublishes";
 
 export default function RoomHeader(props) {
+
 	// 방설정 모달
 	const [open, setOpen] = React.useState(false);
-	const onRoomSettingOpen = () => setOpen(true);
-	const onRoomSettingClose = () => setOpen(false);
+	const onRoomInfoModalOpen = () => setOpen(true);
+	const onRoomInfoModalClose = () => setOpen(false);
+
+	// websocket client
+	const stompClient = useSelector((state) => state.websocket.stompClient);
+	// 방 설정변경
+	const onRoomDataChange = (title, maxMember, itemCount)=>{
+		const tempRoomData = {...roomData};
+		tempRoomData.title = title;
+		tempRoomData.maxMember = maxMember;
+		tempRoomData.sword = itemCount[0];
+		tempRoomData.twin = itemCount[1];
+		tempRoomData.shield = itemCount[2];
+		tempRoomData.hand = itemCount[3];
+		onPubModifyRoom({stompClient:stompClient, roomData:tempRoomData});
+	}
 	// team A선택
 	const onSelectTeamA = ()=>{
 		onPubSelectTeam({stompClient:props.stompClient, gameId:roomData.gameId, team:'A'});
@@ -40,11 +55,10 @@ export default function RoomHeader(props) {
 		<Grid container sx={{ p: 3 }}>
 			<Grid item xs={7} sx={{fontSize:props.size, display: "flex", alignItems: "center"}}>
 				{props.roomData.ownerId && props.roomData.ownerId.toString()===window.localStorage.getItem("memberId")
-				?	<Button onClick={ onRoomSettingOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button>
+				?	<Button onClick={ onRoomInfoModalOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button>
 				: <div />
 				}
-				{/* <Button onClick={ onRoomSettingOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button> */}
-				<RoomSetting roomData={roomData} open={open} onClose={ onRoomSettingClose } />
+				<RoomInfoModal canEdit={true} roomData={roomData} open={open} onClose={ onRoomInfoModalClose } onConfirm={onRoomDataChange}/>
 				<h2>{` #${roomData.gameId} ${roomData.title} ${props.memberDatas.length}/${roomData.maxMember}`}</h2>
 			</Grid>
 			<Grid item xs={4} sx={{ fontSize: props.size*1.2, display: "flex", justifyContent: "center", alignItems: "center" }}>
