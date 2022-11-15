@@ -25,11 +25,7 @@ public class ExecuteDataService extends GameDataService {
     }
 
     @Override
-    public void makeData(long gameId) {
-    }
-
-    @Override
-    public void sendScreenData(long gameId, SendMessageService messageService) {
+    public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
         TurnData turnData = inGame.getTurnData();
 
