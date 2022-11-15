@@ -23,7 +23,7 @@ public class SendMessageService {
     private final TimeLimitServiceFactory timeLimitServiceFactory;
 
     public void sendData(long gameId, String postfix, Object payload) {
-        log.info(" <<-- [Send Data] /sub/games/{}/{}, value = {}", gameId, postfix, payload.toString());
+        log.info(" <<-- [Send Data] /sub/games/{}{}, value = {}", gameId, postfix, payload.toString());
         template.convertAndSend(makeDestinationUrl(gameId, postfix), payload);
     }
 
