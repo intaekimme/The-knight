@@ -28,11 +28,13 @@ public class SendMessageService {
     }
 
     public void sendChatData(long gameId, String chattingSet, Object payload) {
+        log.info(" <<-- [Send Data] /sub/games/{}/chat-{}, value = {}", gameId, chattingSet, payload.toString());
         template.convertAndSend(makeChatDestinationUrl(gameId, chattingSet), payload);
     }
 
     public void convertCall(long gameId) {
         ConvertResponse response = gameConvertUtil.convertScreen(gameId);
+        log.info(" <<-- [Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
         sendData(gameId, "/convert", response);
     }
 
@@ -47,6 +49,7 @@ public class SendMessageService {
 
     public void forceConvertCall(long gameId) {
         ConvertResponse response = gameConvertUtil.forceConvertScreen(gameId);
+        log.info(" <<-- [Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
         sendData(gameId, "/convert", response);
     }
 
