@@ -63,10 +63,12 @@ public class RedisConfig {
 
     @Bean
     public RedissonClient redissonClient() {
-        RedissonClient redisson = null;
         Config config = new Config();
-        config.useSingleServer().setAddress("redis://" + host + ":" + port);
-        redisson = Redisson.create(config);
-        return redisson;
+        config.useSingleServer()
+                .setAddress("redis://" + host + ":" + port)
+                .setPassword(password);
+        RedissonClient client = Redisson.create(config);
+
+        return client;
     }
 }
