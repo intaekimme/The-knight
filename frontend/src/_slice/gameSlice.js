@@ -132,7 +132,7 @@ const previousPhaseInit = null;
 const subscribeObjectInit = {
   common: [],
   prepare: [],
-  prdecessor: [],
+  predecessor: [],
   attack: [],
   attackDoubt: [],
   defense: [],
