@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectPass, initializePass } from "../../_slice/gameSlice";
-import api from "../../api/api"
+import { addDoubtPass, initializePass } from "../../_slice/gameSlice";
+import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 
@@ -27,10 +27,6 @@ export default function AttackDoubtPhase() {
   // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
   // const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
-  useEffect(() => {
-    dispatch(initializePass());
-  }, []);
-
   const onPubDoubt = () => {
     // {
     //   suspected : {
@@ -41,26 +37,31 @@ export default function AttackDoubtPhase() {
     // }
     const data = {
       suspected: {
-        memberId: attackInfo.attacker.memberId
+        memberId: attackInfo.attacker.memberId,
       },
-      doubtStatus: "ATTACK_DOUBT"
-    }
+      doubtStatus: "ATTACK_DOUBT",
+    };
     // stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
-    console.log(data)
-  }
+    console.log(data);
+  };
 
   const onPubDoubtPass = () => {
     // stompClient.send(api.pubDoubtPass(gameId), {}, {});
     console.log("패스");
-  }
+  };
 
   function clickDoubt() {
-    onPubDoubt()
+    onPubDoubt();
   }
 
   function clickPass() {
-    onPubDoubtPass()
+    onPubDoubtPass();
+    dispatch(addDoubtPass());
   }
+
+  useEffect(() => {
+    dispatch(initializePass());
+  }, []);
 
   function BoxRender() {
     // 공격자가 우리 팀일 때
@@ -77,10 +78,8 @@ export default function AttackDoubtPhase() {
             position: "relative",
           }}
         >
-          <Box sx={{ fontSize: "2.5vmin" }}>
-            적팀이 의심여부를 선택 중입니다
-          </Box>
-          <Box sx={{ position: "absolute", bottom: "2vmin" }}>
+          <Box sx={{ fontSize: "2.5vmin" }}>적팀이 의심여부를 선택 중입니다</Box>
+          <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
             제한시간 : {timer}
           </Box>
         </Box>
@@ -101,8 +100,7 @@ export default function AttackDoubtPhase() {
         >
           <Box sx={{ textAlign: "center", fontSize: "2.7vmin" }}>
             {attackInfo.attacker.nickname}이(가) {attackInfo.defender.nickname}
-            을(를) {side[attackInfo.hand]} {weaponsKr[attackInfo.weapon]}(으)로
-            공격했습니다
+            을(를) {side[attackInfo.hand]} {weaponsKr[attackInfo.weapon]}(으)로 공격했습니다
           </Box>
           <Box
             sx={{
