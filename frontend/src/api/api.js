@@ -110,7 +110,7 @@ const api = {
   subDefenseInfo: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DEFENSE_INFO,
   subDoubtInfo: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_INFO,
   subExecute: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXECUTE,
-  subEnd: (gameId, team) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + `/${team}`.toLowerCase() + END,
+  subEnd: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + END,
   subConvertComplete: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT_COMPLETE,
   subDoubtPass: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_PASS,
   
