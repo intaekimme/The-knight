@@ -10,7 +10,7 @@ export default function ItemBox(props) {
 	}
 
 	// 버튼 비활성화
-	const [buttonDisabled, setButtonDisabled] = React.useState(false);
+	const [buttonDisabled, setButtonDisabled] = React.useState(true);
 	useEffect(()=>{
 		if(props.buttonDisabled){
 			setButtonDisabled(props.buttonDisabled);

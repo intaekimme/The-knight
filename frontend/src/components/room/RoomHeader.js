@@ -27,7 +27,17 @@ export default function RoomHeader(props) {
 		tempRoomData.twin = itemCount[1];
 		tempRoomData.shield = itemCount[2];
 		tempRoomData.hand = itemCount[3];
-		onPubModifyRoom({stompClient:stompClient, roomData:tempRoomData});
+		let sum = 0;
+    for(let i=0;i<itemCount.length;i++){
+      sum += itemCount[i];
+    }
+    if(maxMember === sum){
+			onPubModifyRoom({stompClient:stompClient, roomData:tempRoomData});
+      onRoomInfoModalClose();
+    }
+    else{
+      alert(`필요 아이템 개수 : ${maxMember} / 현재 아이템 개수 : ${sum}\n아이템 개수가 올바르지 않습니다`);
+    }
 	}
 	// team A선택
 	const onSelectTeamA = ()=>{

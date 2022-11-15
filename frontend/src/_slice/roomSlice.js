@@ -2,6 +2,7 @@ import React from "react";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import api from '../api/api';
+import { sanitizeSortModel } from "@mui/x-data-grid/hooks/features/sorting/gridSortingUtils";
 
 const initRoom = createAsyncThunk('room/initRoom', async (props, { rejectWithValue }) => {
   try {
@@ -80,6 +81,9 @@ export const roomSlice = createSlice({
   name: 'room',
   initialState:{roomInfo: roomInit, usersInfo: userInit},
   reducers:{
+    initRoomSetting:(state) =>{
+      state.roomInfo = {...roomInit};
+    },
     modifyRoomSetting:(state, action) =>{
       const tempRoomData = {...state.roomInfo};
       tempRoomData.title = action.payload.title;
@@ -147,5 +151,5 @@ export const roomSlice = createSlice({
 });
 
 export { initRoom, roomInit, getRoomInfo, getUsersInfo };
-export const { modifyRoomSetting, setState, setMembers, changeTeam, changeReady } = roomSlice.actions;
+export const { initRoomSetting, modifyRoomSetting, setState, setMembers, changeTeam, changeReady } = roomSlice.actions;
 export default roomSlice.reducer;
