@@ -43,7 +43,7 @@ public class LoggingAspect {
         if (params.contains("password")) {
             params = changePasswordLog(params);
         }
-        log.info(" [REST API Request] {}, params = {}", joinPoint.getSignature().getName(), params);
+        log.info(" [REST API START] {}, params = {}", joinPoint.getSignature().getName(), params);
         Object result = null;
         try {
             result = joinPoint.proceed();
@@ -54,7 +54,7 @@ public class LoggingAspect {
             if (response != null) {
                 value = objectMapper.writeValueAsString(response.getBody());
             }
-            log.info("<<===== [REST Response] {}", value.length() > 100 ? value.substring(0, 100) : value);
+            log.info("<<===== [REST API END] {}", value.length() > 100 ? value.substring(0, 100) : value);
         }
     }
 
