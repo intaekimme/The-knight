@@ -39,13 +39,6 @@ public class GameExecuteEndService {
     //  End
     @Transactional
     public GameEndResponse gameEnd(long gameId) {
-
-        // GameEnd 비즈니스 로직 수행
-        // 1. 게임 상태 End로 update
-        // 2. player update(result만)
-        // 3. Ranking 점수 갱신
-        // 4. GameEndResponse 채워서 리턴
-
         InGame inGame = getInGame(gameId);
         Game game = gameRepository.findById(gameId).orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
         game.changeStatus(GameStatus.END);
