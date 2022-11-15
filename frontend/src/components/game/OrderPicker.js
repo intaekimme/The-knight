@@ -61,7 +61,7 @@ function OrderPicker() {
     return arr;
   }
 
-  return <Grid container>{orderList()}</Grid>;
+  return <Grid container>{orderList(players)}</Grid>;
 }
 
 export default OrderPicker;
