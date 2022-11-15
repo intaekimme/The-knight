@@ -17,7 +17,7 @@ import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,12 +26,18 @@ import java.util.stream.Collectors;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
-@RequiredArgsConstructor
 @Service
-public class PrepareDataService implements GameDataService {
+public class PrepareDataService extends GameDataService {
 
     private final GameRedisRepository redisRepository;
     private final GameRepository gameRepository;
+
+    public PrepareDataService(RedissonClient redissonClient, GameRedisRepository redisRepository,
+                                  GameRepository gameRepository) {
+        super(redissonClient);
+        this.redisRepository = redisRepository;
+        this.gameRepository = gameRepository;
+    }
 
     @Override
     public void makeData(long gameId) {

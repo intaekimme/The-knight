@@ -15,7 +15,7 @@ import com.a301.theknight.domain.ranking.entity.Ranking;
 import com.a301.theknight.domain.ranking.repository.RankingRepository;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,14 +28,22 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ING
 import static com.a301.theknight.global.error.errorcode.PlayerErrorCode.PLAYER_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.RankingErrorCode.RANKING_IS_NOT_EXIST;
 
-@RequiredArgsConstructor
 @Service
-public class EndDataService implements GameDataService {
+public class EndDataService extends GameDataService {
 
     private final GameRedisRepository redisRepository;
     private final GameRepository gameRepository;
     private final RankingRepository rankingRepository;
     private final PlayerRepository playerRepository;
+
+    public EndDataService(RedissonClient redissonClient, GameRedisRepository redisRepository, GameRepository gameRepository,
+                          RankingRepository rankingRepository, PlayerRepository playerRepository) {
+        super(redissonClient);
+        this.redisRepository = redisRepository;
+        this.gameRepository = gameRepository;
+        this.rankingRepository = rankingRepository;
+        this.playerRepository = playerRepository;
+    }
 
     @Override
     @Transactional

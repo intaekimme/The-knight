@@ -8,17 +8,21 @@ import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TurnData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
 
-@RequiredArgsConstructor
 @Service
-public class AttackDoubtDataService implements GameDataService {
+public class AttackDoubtDataService extends GameDataService {
 
     private final GameRedisRepository redisRepository;
+
+    public AttackDoubtDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
+        super(redissonClient);
+        this.redisRepository = redisRepository;
+    }
 
     @Override
     public void makeData(long gameId) {

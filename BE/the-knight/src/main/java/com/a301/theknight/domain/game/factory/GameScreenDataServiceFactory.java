@@ -13,7 +13,7 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ING
 
 @RequiredArgsConstructor
 @Component
-public class GameDataTemplateFactory {
+public class GameScreenDataServiceFactory {
     private final GameRedisRepository gameRedisRepository;
 
     private final PrepareDataService prepareDataTemplate;

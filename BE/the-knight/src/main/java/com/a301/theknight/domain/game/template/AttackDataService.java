@@ -9,16 +9,20 @@ import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
-@RequiredArgsConstructor
 @Service
-public class AttackDataService implements GameDataService {
+public class AttackDataService extends GameDataService {
 
     private final GameRedisRepository redisRepository;
+
+    public AttackDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
+        super(redissonClient);
+        this.redisRepository = redisRepository;
+    }
 
     @Override
     public void makeData(long gameId) {
