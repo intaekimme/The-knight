@@ -24,10 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class GameWaitingService {
-
-
     private final GameRepository gameRepository;
-
     private final PlayerRepository playerRepository;
 
     @Transactional

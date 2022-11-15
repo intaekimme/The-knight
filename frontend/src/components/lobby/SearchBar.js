@@ -10,7 +10,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import { searchRoom } from "../../_slice/tempGameSlice";
 import { roomInit } from "../../_slice/roomSlice";
 
-// import MakeRoomModal from "./MakeRoomModal"
 import RoomSetting from "../../commons/modal/RoomSetting";
 
 export default function SearchBar() {
@@ -64,7 +63,6 @@ export default function SearchBar() {
       </Grid>
       <Grid item xs={3} sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
         <Button variant="outlined" onClick={onRoomSettingOpen}>방 만들기</Button>
-        {/* <MakeRoomModal open={open} onClose={roomSettingClose}></MakeRoomModal> */}
         <RoomSetting roomData={roomInit} open={open} onClose={ onRoomSettingClose } />
       </Grid>
     </Grid>

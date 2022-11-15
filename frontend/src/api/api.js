@@ -115,7 +115,7 @@ const api = {
   subDoubtPass: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_PASS,
   
   pubConvertComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
-  pubPostfix: (gameId, postfix) => WEBSOCKET_PUBLISH + GAME + `/${gameId}/${postfix}`,
+  pubPostfix: (gameId, postfix) => WEBSOCKET_PUBLISH + GAME + `/${gameId}${postfix}`,
   pubSelectWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_WEAPON,
   pubDeleteWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DELETE_WEAPON,
   pubSelectComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_COMPLETE,

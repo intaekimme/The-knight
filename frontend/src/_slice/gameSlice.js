@@ -126,14 +126,14 @@ const countWeaponInit = {
 const isSelectCompleteInit = false;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "PREPARE";
+const phaseInit = "DEFENSE_DOUBT";
 const previousPhaseInit = null;
 
 const isLoadingInit = false;
 
 const currentAttackerInit = {
-  memberId: 1,
-  team: "A",
+  memberId: 6,
+  team: "B",
 };
 
 const currentDefenderInit = {
@@ -147,14 +147,26 @@ const selectAttackInit = {
 }
 
 const attackInfoInit = {
-  attacker: {},
-  defender: {},
+  attacker: {
+    memberId: 0,
+    nickname: "",
+    team: "",
+  },
+  defender: {
+    memberId: 0,
+    nickname: "",
+    team: ""
+  },
   weapon: "",
   hand: "",
 }
 
 const defenseInfoInit = {
-  defender: {},
+  defender: {
+    memberId: 0,
+    nickname: "",
+    team: "",
+  },
   weapon: "",
   hand: "",
 }
@@ -229,7 +241,7 @@ export const gameSlice = createSlice({
   },
   reducers: {
     setMe: (state) => {
-      const memberId = window.localStorage.getItem("memberId");
+      const memberId = parseInt(window.localStorage.getItem("memberId"));
       const player = state.players.players.find((player) => player.memberId === memberId);
       const playerIndex = state.players.players.findIndex((player) => player.memberId === memberId);
 
@@ -302,8 +314,8 @@ export const gameSlice = createSlice({
     fetchExecuteInfo: (state, action) => {
       state.executeInfo = action.payload;
     },
-    addDoubtPass: (state, action) => {
-      state.doubtPassList.push(action.payload);
+    addDoubtPass: (state) => {
+      state.doubtPassList.push(state.me.memberId);
     },
     selectWeaponForAttack: (state, action) => { 
       state.selectAttack.weapon = action.payload.weapon;

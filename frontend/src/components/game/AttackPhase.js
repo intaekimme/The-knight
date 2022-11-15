@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { selectWeaponForAttack } from "../../_slice/gameSlice";
-import api from "../../api/api"
+import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 
@@ -12,13 +12,13 @@ export default function AttackPhase() {
   const dispatch = useDispatch();
 
   // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = window.localStorage.getItem("memberId");
+  // const memberId = parseInt(window.localStorage.getItem("memberId"));
   // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
   // const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubAttackPass = () => {
     // stompClient.send(api.pubAttackPass(gameId), {}, {})
-  }
+  };
 
   const onSelectWeapon = (weapon, hand) => {
     dispatch(
@@ -45,6 +45,7 @@ export default function AttackPhase() {
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-evenly",
+            position: "relative",
           }}
         >
           <Box sx={{ textAlign: "center", fontSize: "3.5vmin" }}>공격 선택</Box>
@@ -142,7 +143,7 @@ export default function AttackPhase() {
               </Box>
             </Box>
             <Box
-              onClick={onPass}
+              onClick={() => onPass}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
@@ -158,7 +159,18 @@ export default function AttackPhase() {
               PASS
             </Box>
           </Box>
-          <Box sx={{ textAlign: "center", fontSize: "2vmin" }}>제한시간 : {timer}</Box>
+          <Box
+            sx={{
+              textAlign: "center",
+              fontSize: "2vmin",
+              position: "absolute",
+              left: "50%",
+              bottom: "2vmin",
+              transform: "translate(-50%)",
+            }}
+          >
+            제한시간 : {timer}
+          </Box>
         </Box>
       );
       // 우리 팀이 공격자일 때
@@ -168,13 +180,26 @@ export default function AttackPhase() {
           sx={{
             width: "70vmin",
             height: "40vmin",
-            backgroundColor: "grey",
+            backgroundColor: "#d9d9d9",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            position: "relative",
           }}
         >
-          아군이 공격을 선택 중입니다
+          <Box sx={{ fontSize: "2.5vmin" }}>아군이 공격을 선택 중입니다</Box>
+          <Box
+            sx={{
+              textAlign: "center",
+              fontSize: "2vmin",
+              position: "absolute",
+              left: "50%",
+              bottom: "2vmin",
+              transform: "translate(-50%)",
+            }}
+          >
+            제한시간 : {timer}
+          </Box>
         </Box>
       );
       // 적팀이 공격자일 때
@@ -184,13 +209,26 @@ export default function AttackPhase() {
           sx={{
             width: "70vmin",
             height: "40vmin",
-            backgroundColor: "grey",
+            backgroundColor: "#d9d9d9",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            position: "relative",
           }}
         >
-          적팀이 공격을 선택 중입니다
+          <Box sx={{ fontSize: "2.5vmin" }}>적팀이 공격을 선택 중입니다</Box>
+          <Box
+            sx={{
+              textAlign: "center",
+              fontSize: "2vmin",
+              position: "absolute",
+              left: "50%",
+              bottom: "2vmin",
+              transform: "translate(-50%)",
+            }}
+          >
+            제한시간 : {timer}
+          </Box>
         </Box>
       );
     }
