@@ -17,10 +17,10 @@ function PlayerWithWeaponItem({ player, isOpp }) {
     5: "5vmin",
   };
 
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubDeleteWeapon = (payload) => {
     // {
@@ -30,8 +30,8 @@ function PlayerWithWeaponItem({ player, isOpp }) {
     const data = {
       deleteHand: payload,
     };
-    // stompClient.send(api.pubDeleteWeapon, {}, data);
-    console.log(data);
+    console.log(data)
+    stompClient.send(api.pubDeleteWeapon(gameId), {}, JSON.stringify(data));
   };
 
   function deleteHand(hand) {
@@ -72,7 +72,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                   position: "relative",
                 }}
               >
-                {player.weapons[0] && !isSelectComplete && (
+                {(phase === "PREPARE") && player.weapons[0] && !isSelectComplete && (
                   <CloseIcon
                     onClick={() => deleteHand("LEFT")}
                     sx={{
@@ -148,7 +148,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                   position: "relative",
                 }}
               >
-                {player.weapons[1] && !isSelectComplete && (
+                {(phase === "PREPARE") && player.weapons[1] && !isSelectComplete && (
                   <CloseIcon
                     onClick={() => deleteHand("RIGHT")}
                     sx={{
