@@ -1,26 +1,40 @@
+import { useSelector } from "react-redux";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 
 export default function DoubtResultPhase() {
+  const me = useSelector((state) => state.game.me);
+  const doubtInfo = useSelector((state) => state.game.doubtInfo);
+
   function BoxRender() {
     return (
       <Box
-      sx={{
-        width: "70vmin",
-        height: "40vmin",
-        backgroundColor: "grey",
-        display: "flex",
-        flexDirection: "column",
-      }}
-      > 
-        <Box sx={{ textAlign: "center" }}>의심 성공 or 의심 실패</Box>
-        <Box sx={{ display: "flex", alignItems: 'flex-end', justifyContent: "space-evenly" }}></Box>
-        <Box sx={{ textAlign: "center" }}>
-          <p>_님의 의심이 성공했습니다</p>
-          <p>_님이 사망했습니다</p>
+        sx={{
+          width: "70vmin",
+          height: "40vmin",
+          backgroundColor: "#d9d9d9",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          position: "relative",
+        }}
+      >
+        <Box sx={{ position: "absolute", top: "2vmin", fontSize: "3.5vmin" }}>
+          {doubtInfo.doubtResponse.doubtResult ? "의심 성공" : "의심 실패"}
+        </Box>
+        <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>
+          {doubtInfo.doubtResponse.suspect.nickname}님의 의심이
+          {doubtInfo.doubtResponse.doubtResult ? "성공" : "실패"}했습니다
+        </Box>
+        <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>
+          {doubtInfo.doubtResponse.doubtResult
+            ? doubtInfo.doubtResponse.suspect.nickname
+            : doubtInfo.doubtResponse.suspected.nickname}
+          님이 사망했습니다
         </Box>
       </Box>
-    )
+    );
   }
 
   return (
