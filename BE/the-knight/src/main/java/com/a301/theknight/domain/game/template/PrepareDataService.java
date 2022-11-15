@@ -182,7 +182,7 @@ public class PrepareDataService extends GameDataService {
     }
 
     private Game getGame(long gameId) {
-        return gameRepository.findById(gameId)
+        return gameRepository.findByIdFetchJoin(gameId)
                 .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 }
