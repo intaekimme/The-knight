@@ -14,9 +14,9 @@ export default function LoadingPhase() {
         }}
       >
         <CircularProgress />
-        <div>
-          연결 중입니다
-        </div>
+        <Box sx={{ padding: "5vmin", fontSize: "3vmin" }}>
+          게임 연결 중입니다
+        </Box>
       </Box>
     </div>
   )
