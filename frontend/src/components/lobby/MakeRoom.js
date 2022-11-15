@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { initRoom } from '../../_slice/roomSlice';
-import EnterRoom from './EnterRoom';
 // import Swal from 'sweetalert2'
 // import withReactContent from 'sweetalert2-react-content'
 // const MySwal = withReactContent(Swal);

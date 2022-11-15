@@ -21,6 +21,7 @@ const getRoomInfo = createAsyncThunk('room/getRoomInfo', async (gameId, { reject
   try {
     console.log(api.gameRoomInfo(gameId));
     const res = await axios.get(api.gameRoomInfo(gameId), {headers: {Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}});
+    console.log(res.data);
     return res.data;
   } catch (err) {
     console.log(err);
@@ -89,7 +90,6 @@ export const roomSlice = createSlice({
       tempRoomData.hand = action.payload.hand;
       state.roomInfo = tempRoomData;
       console.log(tempRoomData);
-      action.payload.navigate(action.payload.url);
     },
     setState:(state, action) =>{
       state.roomInfo.state = action.payload.state;

@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from "react-redux";
 
 import { Button, Grid } from "@mui/material";
@@ -8,16 +9,38 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { searchRoom } from "../../_slice/tempGameSlice";
-import { roomInit } from "../../_slice/roomSlice";
+import { modifyRoomSetting, roomInit, initRoom } from "../../_slice/roomSlice";
 
-import RoomSetting from "../../commons/modal/RoomSetting";
+import RoomInfoModal from "../../commons/modal/RoomInfoModal";
 
 export default function SearchBar() {
   const dispatch = useDispatch();
+	const navigate = useNavigate();
+
   // 방설정 모달
   const [open, setOpen] = React.useState(false);
-  const onRoomSettingOpen = () => setOpen(true);
-  const onRoomSettingClose = () => setOpen(false);
+  const onRoomInfoModalOpen = () => setOpen(true);
+  const onRoomInfoModalClose = () => setOpen(false);
+  
+  // 방 정보
+	const roomData = useSelector((state) => state.room.roomInfo);
+
+  // 방만들기 정보 update
+	const onRoomMake = (title, maxMember, itemCount)=>{
+    const url = `/room/`;
+		const tempRoomData = {...roomData};
+		tempRoomData.title = title;
+		tempRoomData.maxMember = maxMember;
+		tempRoomData.sword = itemCount[0];
+		tempRoomData.twin = itemCount[1];
+		tempRoomData.shield = itemCount[2];
+		tempRoomData.hand = itemCount[3];
+		dispatch(modifyRoomSetting(tempRoomData));
+    dispatch(initRoom({roomInfo:tempRoomData})).then((response)=>{
+      const gameId = response.payload.gameId;
+      navigate(`${url}${gameId}`);
+    });
+	}
 
   const [keyword, setKeyword] = React.useState();
   const onChangeValue = (e) => {
@@ -28,19 +51,6 @@ export default function SearchBar() {
     //키워드로 검색 dispatch
     dispatch(searchRoom(keyword));
   }
-
-  // const initRoomData = {
-  //   // state : -1,
-  //   gameId: -1,
-  //   title: "테스트 제목",
-  //   ownerId: -1,
-  //   maxMember: 10,
-  //   currentMembers: 0,
-  //   sword: 0,
-  //   twin: 0,
-  //   shield: 0,
-  //   hand: 0,
-  // }
 
   return (
     <Grid container sx={{ pt: 2 }} spacing={3}>
@@ -62,8 +72,8 @@ export default function SearchBar() {
         </Paper>
       </Grid>
       <Grid item xs={3} sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
-        <Button variant="outlined" onClick={onRoomSettingOpen}>방 만들기</Button>
-        <RoomSetting roomData={roomInit} open={open} onClose={ onRoomSettingClose } />
+        <Button variant="outlined" onClick={onRoomInfoModalOpen}>방 만들기</Button>
+        <RoomInfoModal canEdit={true} roomData={roomInit} open={open} onClose={ onRoomInfoModalClose } onConfirm={onRoomMake}/>
       </Grid>
     </Grid>
   )
