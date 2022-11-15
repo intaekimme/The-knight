@@ -26,7 +26,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.CAN_NOT_PLAYING_GAME;
-import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ORDER_NUMBER_IS_INVALID;
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.LEADER_IS_NOT_SELECTED;
 
 @Service
 public class PrepareDataService extends GameDataService {
@@ -48,12 +48,12 @@ public class PrepareDataService extends GameDataService {
         if (!game.isCanStart()) {
             throw new CustomWebSocketException(CAN_NOT_PLAYING_GAME);
         }
-        initInGameData(game);
         List<Player> players = game.getPlayers();
 
         makeAndSendLeader(gameId, messageService, players);
         makeAndSendPlayer(gameId, messageService, players);
         makeAndSendWeapon(gameId, messageService, game);
+        initInGameData(game);
     }
 
     private void makeAndSendWeapon(long gameId, SendMessageService messageService, Game game) {
@@ -65,6 +65,7 @@ public class PrepareDataService extends GameDataService {
     private void makeAndSendPlayer(long gameId, SendMessageService messageService, List<Player> players) {
         List<InGamePlayer> inGamePlayerList = makeInGamePlayerData(gameId, players);
         GamePlayersInfoResponse response = getGamePlayerData(inGamePlayerList);
+
         messageService.sendData(gameId, "/a/players", response.getPlayersAInfoDto());
         messageService.sendData(gameId, "/b/players", response.getPlayersBInfoDto());
     }
@@ -172,18 +173,9 @@ public class PrepareDataService extends GameDataService {
         return gameWeaponDataA;
     }
 
-    private GameLeaderDto getLeadersData(Game game) {
-        Long teamALeaderId = getTeamLeaderId(game, Team.A);
-        Long teamBLeaderId = getTeamLeaderId(game, Team.B);
-
-        return GameLeaderDto.builder()
-                .teamA(new TeamLeaderDto(teamALeaderId == null ? 0 : teamALeaderId))
-                .teamB(new TeamLeaderDto(teamBLeaderId == null ? 0 : teamBLeaderId)).build();
-    }
-
     private Long getTeamLeaderId(Game game, Team team) {
         return game.getTeamLeader(team)
-                .orElseThrow(() -> new CustomWebSocketException(ORDER_NUMBER_IS_INVALID))
+                .orElseThrow(() -> new CustomWebSocketException(LEADER_IS_NOT_SELECTED))
                 .getMember().getId();
     }
 
