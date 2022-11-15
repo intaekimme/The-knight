@@ -3,14 +3,8 @@ import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 
 export default function DoubtResultPhase() {
-  const me = useSelector((state) => state.game.me)
-  const doubtInfo = useSelector((state) => state.game.doubtInfo)
-  let isSuccess = null;
-  if (me.team === doubtInfo.doubtTeam) {
-    isSuccess = doubtInfo.doubtResult;
-  } else {
-    isSuccess = !doubtInfo.doubtResult;
-  }
+  const me = useSelector((state) => state.game.me);
+  const doubtInfo = useSelector((state) => state.game.doubtInfo);
 
   function BoxRender() {
     return (
@@ -26,11 +20,19 @@ export default function DoubtResultPhase() {
           position: "relative",
         }}
       >
-        <Box sx={{ position: "absolute", top: "2vmin" }}>
-          {isSuccess ? "의심 성공" : "의심 실패"}
+        <Box sx={{ position: "absolute", top: "2vmin", fontSize: "3.5vmin" }}>
+          {doubtInfo.doubtResponse.doubtResult ? "의심 성공" : "의심 실패"}
         </Box>
-        <Box>_님의 의심이 성공했습니다</Box>
-        <Box>_님이 사망했습니다</Box>
+        <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>
+          {doubtInfo.doubtResponse.suspect.nickname}님의 의심이
+          {doubtInfo.doubtResponse.doubtResult ? "성공" : "실패"}했습니다
+        </Box>
+        <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>
+          {doubtInfo.doubtResponse.doubtResult
+            ? doubtInfo.doubtResponse.suspect.nickname
+            : doubtInfo.doubtResponse.suspected.nickname}
+          님이 사망했습니다
+        </Box>
       </Box>
     );
   }
