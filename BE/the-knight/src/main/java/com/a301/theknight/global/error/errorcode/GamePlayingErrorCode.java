@@ -26,7 +26,8 @@ public enum GamePlayingErrorCode implements ErrorCode {
     DO_NOT_FIT_REQUEST_BY_GAME_STATUS(HttpStatus.BAD_REQUEST, "Bad request that doesn't fit the game state."),
     PLAYER_IS_NOT_USER_WHO_LOGGED_IN(HttpStatus.BAD_REQUEST, "The current player is not the user who logged in."),
     UNABLE_TO_PASS_ATTACK(HttpStatus.BAD_REQUEST, "Attack pass cannot be made because it is not an attack state."),
-    UNABLE_TO_PASS_DEFENSE(HttpStatus.BAD_REQUEST, "Defense pass cannot be made because it is not an attack state.")
+    UNABLE_TO_PASS_DEFENSE(HttpStatus.BAD_REQUEST, "Defense pass cannot be made because it is not an attack state."),
+    ALL_TEAM_PLAYER_IS_DEAD(HttpStatus.CONFLICT, "All Players is dead."),
     ;
     private final HttpStatus httpStatus;
     private final String message;

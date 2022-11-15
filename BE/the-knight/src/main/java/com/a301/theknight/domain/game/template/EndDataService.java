@@ -1,5 +1,6 @@
-package com.a301.theknight.domain.game.service;
+package com.a301.theknight.domain.game.template;
 
+import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.end.response.GameEndResponse;
 import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
 import com.a301.theknight.domain.game.entity.Game;
@@ -14,7 +15,7 @@ import com.a301.theknight.domain.ranking.entity.Ranking;
 import com.a301.theknight.domain.ranking.repository.RankingRepository;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import lombok.RequiredArgsConstructor;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,37 +28,52 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ING
 import static com.a301.theknight.global.error.errorcode.PlayerErrorCode.PLAYER_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.RankingErrorCode.RANKING_IS_NOT_EXIST;
 
-@RequiredArgsConstructor
 @Service
-public class GameExecuteEndService {
+public class EndDataService extends GameDataService {
 
-    private final GameRedisRepository gameRedisRepository;
+    private final GameRedisRepository redisRepository;
     private final GameRepository gameRepository;
     private final RankingRepository rankingRepository;
     private final PlayerRepository playerRepository;
 
-    //  End
+    public EndDataService(RedissonClient redissonClient, GameRedisRepository redisRepository, GameRepository gameRepository,
+                          RankingRepository rankingRepository, PlayerRepository playerRepository) {
+        super(redissonClient);
+        this.redisRepository = redisRepository;
+        this.gameRepository = gameRepository;
+        this.rankingRepository = rankingRepository;
+        this.playerRepository = playerRepository;
+    }
+
+    @Override
     @Transactional
-    public GameEndResponse gameEnd(long gameId) {
-        InGame inGame = getInGame(gameId);
-        Game game = gameRepository.findById(gameId).orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
+    public void makeData(long gameId) {
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
         game.changeStatus(GameStatus.END);
+    }
+
+    @Override
+    @Transactional
+    public void sendScreenData(long gameId, SendMessageService messageService) {
+        InGame inGame = getInGame(gameId);
 
         long teamALeaderId = inGame.getTeamAInfo().getLeaderId();
         long teamBLeaderId = inGame.getTeamBInfo().getLeaderId();
+
         String winningTeam = getInGamePlayer(gameId, teamALeaderId).isDead() ? "B" : "A";
         List<PlayerDataDto> players = updatePlayerAndRanking(gameId, winningTeam);
 
-        return GameEndResponse.builder()
+        GameEndResponse response = GameEndResponse.builder()
                 .winningTeam(winningTeam)
                 .teamALeaderId(teamALeaderId)
                 .teamBLeaderId(teamBLeaderId)
-                .players(players)
-                .build();
+                .players(players).build();
+        messageService.sendData(gameId, "/end", response);
     }
 
     private List<PlayerDataDto> updatePlayerAndRanking(long gameId, String winningTeam) {
-        List<InGamePlayer> playerList = gameRedisRepository.getInGamePlayerList(gameId);
+        List<InGamePlayer> playerList = redisRepository.getInGamePlayerList(gameId);
 
         for (InGamePlayer inGamePlayer : playerList) {
             long memberId = inGamePlayer.getMemberId();
@@ -80,13 +96,14 @@ public class GameExecuteEndService {
                 .collect(Collectors.toList());
     }
 
-    private InGame getInGame(long gameId) {
-        return gameRedisRepository.getInGame(gameId)
-                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
+
+    private InGamePlayer getInGamePlayer(long gameId, long memberId) {
+        return redisRepository.getInGamePlayer(gameId, memberId)
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
     }
 
-    private InGamePlayer getInGamePlayer(long gameId, Long memberId) {
-        return gameRedisRepository.getInGamePlayer(gameId, memberId)
-                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
+    private InGame getInGame(long gameId) {
+        return redisRepository.getInGame(gameId)
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 }
