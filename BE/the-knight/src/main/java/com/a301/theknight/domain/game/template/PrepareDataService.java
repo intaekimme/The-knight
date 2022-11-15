@@ -49,10 +49,10 @@ public class PrepareDataService extends GameDataService {
         }
         List<Player> players = game.getPlayers();
 
+        makeWeaponsData(game);
         choiceLeader(players);
         initInGameData(game);
         makeInGamePlayerData(gameId, players);
-        makeWeaponsData(game);
     }
 
     @Override

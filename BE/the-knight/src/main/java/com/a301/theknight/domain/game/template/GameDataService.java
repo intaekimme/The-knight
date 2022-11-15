@@ -6,19 +6,16 @@ import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Service
-public class GameDataService {
+public abstract class GameDataService {
 
-    private final RedissonClient redissonClient;
+    private RedissonClient redissonClient;
 
     public GameDataService(RedissonClient redissonClient) {
-        log.info("GameDataService Creator RedissonClient = {}", redissonClient);
         this.redissonClient = redissonClient;
     }
 
@@ -38,13 +35,9 @@ public class GameDataService {
         }
     }
 
-    protected void makeData(long gameId) {
+    protected abstract void makeData(long gameId);
 
-    }
-
-    protected void sendScreenData(long gameId, SendMessageService messageService) {
-
-    }
+    protected abstract void sendScreenData(long gameId, SendMessageService messageService);
 
     private void unLock(RLock dataLock) {
         if (dataLock != null && dataLock.isLocked()) {
