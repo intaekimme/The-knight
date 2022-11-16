@@ -50,11 +50,11 @@ const exitRoomUnsubscribe = createAsyncThunk('websocket/exitRoomUnsubscribe', as
   }
 });
 
-const stompClientInit = over(new SockJS(`${api.websocket()}`));
+// const stompClientInit = over(new SockJS(`${api.websocket()}`));
 // 드래그중인 값
 export const websocketSlice = createSlice({
   name: 'websocket',
-  initialState:{stompClient: stompClientInit},
+  initialState:{stompClient: null},
   reducers:{
     setStompClient: (state, action) =>{
       state.stompClient = action.payload;
@@ -68,9 +68,9 @@ export const websocketSlice = createSlice({
       state.stompClient = action.payload.stompClient;
     },
     [connectWebsocket.rejected]: state => {
-      const tempClient = over(new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`));
-      tempClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, (res)=>{console.log(res, "connect")}, (err)=>{console.log(err)});
-      state.stompClient = tempClient;
+      // const tempClient = over(new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`));
+      // tempClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, (res)=>{console.log(res, "connect")}, (err)=>{console.log(err)});
+      state.stompClient = null;
     },
   },
 });
