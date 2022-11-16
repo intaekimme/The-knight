@@ -56,11 +56,11 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
         if (teamInfoData.isSelected()) {
             return;
         }
-        saveOrderData(gameId, team, teamInfoData);
-        saveWeaponData(gameId, team);
+        List<InGamePlayer> inGamePlayerList = saveWeaponData(gameId, team);
+        saveOrderData(gameId, teamInfoData, inGamePlayerList);
     }
 
-    private void saveWeaponData(long gameId, Team team) {
+    private List<InGamePlayer>  saveWeaponData(long gameId, Team team) {
         Game game = getGame(gameId);
         GameWeaponData weaponData = GameWeaponData.toWeaponData(game);
 
@@ -71,24 +71,22 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
             inGamePlayer.randomChoiceWeapon(randomChoiceInList(weaponList));
             inGamePlayer.randomChoiceWeapon(randomChoiceInList(weaponList));
         });
-
-        redisRepository.saveInGamePlayerAll(gameId, teamPlayerList);
+        return teamPlayerList;
     }
 
-    private void saveOrderData(long gameId, Team team, TeamInfoData teamInfoData) {
-        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
+    private void saveOrderData(long gameId, TeamInfoData teamInfoData, List<InGamePlayer> teamPlayerList) {
         List<InGamePlayer> savePlayerList = new ArrayList<>(teamPlayerList.size());
 
         int playerSize = teamPlayerList.size();
         for (int i = 0; i < playerSize; i++) {
             InGamePlayer randomPlayer = randomChoiceInList(teamPlayerList);
+            randomPlayer.saveOrder(i + 1);
 
             teamInfoData.getOrderList()[i] = GameOrderDto.builder()
                     .memberId(randomPlayer.getMemberId())
                     .nickname(randomPlayer.getNickname())
                     .image(randomPlayer.getImage()).build();
 
-            randomPlayer.saveOrder(i + 1);
             savePlayerList.add(randomPlayer);
         }
         redisRepository.saveInGamePlayerAll(gameId, savePlayerList);

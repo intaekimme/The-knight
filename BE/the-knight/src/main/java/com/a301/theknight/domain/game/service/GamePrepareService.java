@@ -108,25 +108,25 @@ public class GamePrepareService {
     public SelectCompleteDto completeSelect(long gameId, long memberId) {
         InGame inGame = getInGame(gameId);
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
+        Team myTeam = inGamePlayer.getTeam();
 
         checkLeaderRequest(inGame, inGamePlayer);
-        checkOrderSelect(inGame.getTeamInfoData(inGamePlayer.getTeam()));
+        checkOrderSelect(inGame.getTeamInfoData(myTeam));
 
-        GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
+        GameWeaponData weaponsData = getWeaponsData(gameId, myTeam);
         Game game = getGame(gameId);
-        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
+        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, myTeam);
 
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
-        Team team = inGamePlayer.getTeam();
-        inGame.completeSelect(team);
+        inGame.completeSelect(myTeam);
         if (inGame.isAllSelected()) {
             inGame.changeStatus(GameStatus.PREDECESSOR);
         }
         redisRepository.saveInGame(gameId, inGame);
-        redisRepository.deleteGameWeaponData(gameId, team);
+        redisRepository.deleteGameWeaponData(gameId, myTeam);
 
-        return new SelectCompleteDto(inGame.isAllSelected(), team);
+        return new SelectCompleteDto(inGame.isAllSelected(), myTeam);
     }
 
     private GameOrderDto[] getOrderList(InGame inGame, Team team) {
@@ -194,7 +194,7 @@ public class GamePrepareService {
     private void checkLeaderRequest(InGame inGame, InGamePlayer inGamePlayer) {
         TeamInfoData teamInfoData = inGame.getTeamInfoData(inGamePlayer.getTeam());
         if (teamInfoData.getLeaderId() != inGamePlayer.getMemberId()) {
-            throw new CustomWebSocketException(GamePlayingErrorCode.CAN_COMPLETE_BY_LEADER);
+            throw new CustomWebSocketException(CAN_COMPLETE_BY_LEADER);
         }
     }
 
