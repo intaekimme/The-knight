@@ -4,7 +4,8 @@ import { Button, Modal, Box, Grid, TextareaAutosize } from "@mui/material";
 import MessageIcon from '@mui/icons-material/Message';
 import MinimizeIcon from '@mui/icons-material/Minimize';
 import {black, white, blue, red, yellow, lightBlue} from "../../../_css/ReactCSSProperties"; 
-import {chattingPosition, chattingHeader, chattingBody, chattingInput, chattingSendButton} from "../../../_css/ChattingCSSProperties"; 
+import {chattingPosition, chattingHeader, chattingBody, chattingInput, chattingSendButton,
+  chattingBox, chattingAll, chattingA, chattingB, chattingMine, chattingOthers} from "../../../_css/ChattingCSSProperties"; 
 import { onPubChat } from "../../../websocket/RoomPublishes";
 
 // size:int, stompClient, gameId:int
@@ -100,10 +101,10 @@ export default function Chatting(props){
   }
 
   return(
-    <div sx={{position:"absolute", bottom:0, left:0}}>
+    <div sx={{position:"fixed", bottom:0, left:0}}>
       {open
       ? <div sx={{height:100}}/>
-      : <Button onClick={onChattingOpen} sx={{...chattingPosition, color:black}}><MessageIcon sx={{fontSize:100}}/></Button>
+      : <Button onClick={onChattingOpen} sx={{...chattingPosition, color:black, width:120}}><MessageIcon sx={{fontSize:100}}/></Button>
       }
       <Modal
         open={open}
@@ -112,31 +113,65 @@ export default function Chatting(props){
         aria-describedby="modal-modal-description"
         BackdropProps= {{ sx: {background: "none"} }}
       >
-        <Box sx={{...chattingPosition, width:300}}>
+        <Box sx={{...chattingPosition}}>
           <Grid container item xs={12} justifyContent="center" alignItems="flex-end"
           sx={{minHeight:100, textAlign:"center"}}>
             <Grid container item xs={12} sx={{...chattingHeader}}>
               <Grid item xs={10} sx={{fontSize:size/2, paddingLeft:5}}>채팅</Grid>
               <Grid item xs={2}><Button onClick={onChattingClose} sx={{color:red}}><MinimizeIcon sx={{fontSize:size/2}}/></Button></Grid>
             </Grid>
-            <Grid item xs={12} sx={{...chattingBody}}>
+            <Grid container item xs={12} alignItems="flex-end" sx={{...chattingBody}}>
               {/* 채팅로그 */}
-              {chattingLog.map((chat, index)=>(
-                <div>{chat.content}</div>
-              ))}
+              {chattingLog.map((chat, index)=>{
+                {
+                  let currentChatColor = null;
+                  let currentChatSx = {};
+                  let currentChatBox = {};
+                  let currentJustifyContent = null;
+                  switch(chat.chattingSet){
+                    case "ALL":
+                      currentChatColor = black;
+                      currentChatSx = {...currentChatSx, ...chattingAll};
+                      currentChatBox = {...chattingBox, color:white};
+                      break;
+                    case "A":
+                      currentChatColor = red;
+                      currentChatSx = {...currentChatSx, ...chattingA};
+                      currentChatBox = {...chattingBox, background:currentChatColor, color:white};
+                      break;
+                    case "B":
+                      currentChatColor = blue;
+                      currentChatSx = {...currentChatSx, ...chattingB};
+                      currentChatBox = {...chattingBox, background:currentChatColor, color:white};
+                      break;
+                    default:
+                      break;
+                  }
+                  if(chat.memberId.toString()===window.localStorage.getItem("memberId")){
+                    currentChatSx = {...currentChatSx, ...chattingMine};
+                    currentJustifyContent="flex-end";
+                  }
+                  else{
+                    currentChatSx = {...currentChatSx, ...chattingOthers};
+                    currentJustifyContent="flex-start";
+                  }
+                  console.log(currentChatSx);
+                  return <Grid container item xs={12} justifyContent={currentJustifyContent} sx={{...currentChatSx, color:currentChatColor}}>{chat.nickname}<br/><Box sx={{...currentChatBox}}>{chat.content}</Box></Grid>
+                }
+              })}
             </Grid>
             <Grid container item xs={12} sx={{border:"1px solid black"}}>
               <Grid item xs={12} sx={{textAlign:"left", background:"#ADADAD"}}>
-                <Box sx={{fontSize:size/3, border:"1px solid black", color:chattingColor}}>{chattingKind}</Box>
+                <Box sx={{paddingLeft:1, fontSize:size/1.5, border:"1px solid black", color:chattingColor}}>{chattingKind}</Box>
               </Grid>
               <Grid container item xs={12} sx={{...chattingInput, textAlign:"left", paddingTop:1}}>
                 <Grid item xs={9} sx={{position:"relative", top:"7%"}}>
                   <TextareaAutosize aria-label="minimum height" minRows={2} maxRows={3} placeholder="채팅을 입력하세요"
                     onKeyDown={onKeyDown} onChange={onMessageChange}
-                    sx={{fontSize:size/4, width:"100%", height:"100%", padding:1}}/>
+                    sx={{fontSize:size/2, width:"100%", height:"100%"}}/>
                 </Grid>
                 <Grid item xs={3}>
-                  <Button onClick={onMessageSend} sx={{...chattingSendButton, fontSize:size/4}}>보내기</Button>
+                  <Button onClick={onMessageSend} sx={{...chattingSendButton, fontSize:size/3}}>보내기</Button>
                   </Grid>
               </Grid>
             </Grid>
