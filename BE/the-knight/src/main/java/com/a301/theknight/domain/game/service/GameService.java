@@ -34,8 +34,6 @@ public class GameService {
 
     @Transactional(readOnly = true)
     public GameListResponse getGameList(@Nullable String keyword, long memberId, Pageable pageable){
-        getMember(memberId);
-        GameListResponse gameListResponse = new GameListResponse();
         Page<Game> gamePage = gameRepository.findGameList(keyword, pageable);
 
         List<GameListDto> gameListDtos = gamePage.stream()
@@ -46,9 +44,11 @@ public class GameService {
                         .maxMember(game.getCapacity())
                         .currentMembers(game.getPlayers().size()).build())
                 .collect(Collectors.toList());
-        gameListResponse.setGames(gameListDtos);
 
-        return gameListResponse;
+        return GameListResponse.builder()
+                .maxPageNum(gamePage.getTotalPages())
+                .games(gameListDtos)
+                .build();
     }
 
     @Transactional
