@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {enterRoomSubscribe, exitRoomUnsubscribe} from '../../_slice/websocketSlice';
+import {enterRoomSubscribe, exitRoom} from '../../_slice/websocketSlice';
 import api from '../../api/api';
 // import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEntry,
 //   onSubMembers, onSubSelectTeam, onSubReady, onSubExit} from '../../websocket/RoomReceivers';
@@ -153,11 +153,10 @@ export default function EnterRoom(){
     const data = JSON.parse(payload.body);
     console.log("방 퇴장 sub", data);
     const text = `${data.nickname}님이 퇴장하셨습니다.`;
-    if(data.ownerId===data.memberId){
-      onPubExit({stompClient:stompClient, gameId:data.gameId});
-    }
-    else if(data.memberId.toString()===window.localStorage.getItem("memberId")){
-      dispatch(exitRoomUnsubscribe({stompClient:stompClient, gameId:gameId})).then(()=>{
+    if(data.memberId.toString()===window.localStorage.getItem("memberId")){
+      dispatch(exitRoom({stompClient:stompClient, gameId:gameId})).then(()=>{
+        stompClient.disconnect();
+        alert("방을 퇴장하셨습니다.");
         navigate('/lobby');
       }).catch((err)=>{
         console.log(err);
@@ -176,6 +175,7 @@ export default function EnterRoom(){
     console.log("방 삭제 sub", data);
     if(data.exit.toString()==="true"){
       stompClient.disconnect();
+      alert("방이 삭제 되었습니다.");
       navigate('/lobby');
     }
   };
