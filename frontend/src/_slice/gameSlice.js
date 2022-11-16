@@ -130,7 +130,6 @@ const phaseInit = "PREPARE";
 const previousPhaseInit = null;
 
 const subscribeObjectInit = {
-  common: [],
   prepare: [],
   predecessor: [],
   attack: [],
