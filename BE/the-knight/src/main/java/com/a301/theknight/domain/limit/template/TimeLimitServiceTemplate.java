@@ -56,7 +56,7 @@ public abstract class TimeLimitServiceTemplate {
     }
 
     private void tryDataLock(RLock dataLock) throws InterruptedException {
-        if (!dataLock.tryLock(5, 2, TimeUnit.SECONDS)) {
+        if (!dataLock.tryLock(7, 3, TimeUnit.SECONDS)) {
             throw new CustomWebSocketException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
         }
     }
