@@ -10,10 +10,12 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class GameListResponse {
+    private int maxPageNum;
     private List<GameListDto> games;
 
     @Builder
-    public GameListResponse(List<GameListDto> games){
+    public GameListResponse(int maxPageNum, List<GameListDto> games){
+        this.maxPageNum = maxPageNum;
         this.games = games;
     }
 }
