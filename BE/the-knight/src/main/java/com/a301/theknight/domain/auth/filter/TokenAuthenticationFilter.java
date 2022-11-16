@@ -33,7 +33,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (request.getRequestURI().contains("/websocket")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         log.info("=====>> [Request] {} {}", request.getMethod(), request.getRequestURI());
+
 
         String accessToken = getAccessTokenInRequestHeader(request);
         log.info("  Request Access-Token = {}", accessToken);
