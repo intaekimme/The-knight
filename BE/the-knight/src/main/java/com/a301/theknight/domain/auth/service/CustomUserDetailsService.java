@@ -6,6 +6,7 @@ import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -28,6 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .build();
     }
 
+    @Cacheable(value = "memberCacheStore", key = "#{'member_id:' + id}")
     public UserDetails loadMemberById(Long id) throws UsernameNotFoundException {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new CustomRestException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
