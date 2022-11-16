@@ -10,7 +10,9 @@ public class ProceedResponse {
     private GameStatus gameStatus;
     private long limitTime;
 
+    private static final long MILLI = 1000L;
+
     public static ProceedResponse toDto(GameStatus gameStatus) {
-        return new ProceedResponse(gameStatus, gameStatus.getLimitSeconds());
+        return new ProceedResponse(gameStatus, gameStatus.getLimitMilliSeconds() / MILLI);
     }
 }

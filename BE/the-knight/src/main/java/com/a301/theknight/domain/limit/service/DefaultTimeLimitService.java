@@ -1,74 +1,34 @@
 package com.a301.theknight.domain.limit.service;
 
 import com.a301.theknight.domain.game.entity.GameStatus;
-import com.a301.theknight.domain.game.entity.redis.DoubtData;
-import com.a301.theknight.domain.game.entity.redis.DoubtStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
-import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
+import com.a301.theknight.domain.game.util.GameConvertUtil;
 import com.a301.theknight.domain.limit.template.TimeLimitServiceTemplate;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
-import static com.a301.theknight.domain.game.entity.GameStatus.*;
-import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
-import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.WRONG_GAME_STATUS;
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 
 @Service
 public class DefaultTimeLimitService extends TimeLimitServiceTemplate {
 
     private final GameRedisRepository redisRepository;
+    private final GameConvertUtil gameConvertUtil;
 
-    public DefaultTimeLimitService(GameRedisRepository redisRepository, RedissonClient redissonClient) {
+    public DefaultTimeLimitService(GameRedisRepository redisRepository, RedissonClient redissonClient, GameConvertUtil gameConvertUtil) {
         super(redisRepository, redissonClient);
         this.redisRepository = redisRepository;
+        this.gameConvertUtil = gameConvertUtil;
     }
 
     @Override
     public void runLimitLogic(long gameId, InGame inGame) {
-        changeNextGameStatus(gameId, inGame);
-    }
-
-    private void changeNextGameStatus(long gameId, InGame inGame) {
-        GameStatus curStatus = inGame.getGameStatus();
-        GameStatus nextStatus = getNextStatus(gameId, inGame, curStatus);
+        GameStatus nextStatus = gameConvertUtil.getNextStatus(gameId, inGame, inGame.getGameStatus());
 
         inGame.changeStatus(nextStatus);
         redisRepository.saveInGame(gameId, inGame);
     }
 
-    private GameStatus getNextStatus(long gameId, InGame inGame, GameStatus gameStatus) {
-        switch (gameStatus) {
-            case PREDECESSOR: case ATTACK:
-                return ATTACK;
-            case ATTACK_DOUBT:
-                return DEFENSE;
-            case DEFENSE_DOUBT:
-                return EXECUTE;
-            case EXECUTE:
-                return getStatusAfterExecute(gameId, inGame);
-            case DOUBT_RESULT:
-                return getStatusAfterDoubt(inGame.getTurnData().getDoubtData());
-        }
-        throw new CustomWebSocketException(WRONG_GAME_STATUS);
-    }
-
-    private GameStatus getStatusAfterExecute(long gameId, InGame inGame) {
-        long defenderId = inGame.getTurnData().getDefenderId();
-        InGamePlayer defender = redisRepository.getInGamePlayer(gameId, defenderId)
-                .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
-
-        return defender.isDead() && defender.isLeader() ? END : ATTACK;
-    }
-
-    private GameStatus getStatusAfterDoubt(DoubtData doubtData) {
-        if (doubtData.isDeadLeader()) {
-            return END;
-        }
-        if (doubtData.isDoubtResult()) {
-            return ATTACK;
-        }
-        return DoubtStatus.ATTACK.equals(doubtData.getDoubtStatus()) ? DEFENSE : EXECUTE;
-    }
 }

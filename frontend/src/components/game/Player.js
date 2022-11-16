@@ -22,10 +22,10 @@ function Player({ player, isOpp }) {
   const AttackerIsMe = me.memberId === currentAttacker.memberId;
   const isPass = doubtPassList.includes(player.memberId);
 
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.game.me).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
   
   const [isHovering, setIsHovering] = useState(false);
   const size = {
@@ -38,11 +38,11 @@ function Player({ player, isOpp }) {
   const onPubAttack = () => {
     const data = {
       ...selectAttack,
-      defenser: {
+      defender: {
         memberId: player.memberId
       }
     }
-    // stompClient.send(api.pubAttack(gameId), {}, JSON.stringify(data));
+    stompClient.send(api.pubAttack(gameId), {}, JSON.stringify(data));
     console.log(data)
   }
 
@@ -70,7 +70,7 @@ function Player({ player, isOpp }) {
             isHovering && { background: "radial-gradient(red 10%, white 90%)", borderRadius: "50%" }),
             fontSize: size[String(players.maxMember / 2)],
           }}
-        onClick={(isAttackPhase && AttackerIsMe && isOpp && selectAttack.weapon) ? (() => onSelectPlayer) : undefined}
+        onClick={(isAttackPhase && AttackerIsMe && isOpp && selectAttack.weapon) ? (() => onSelectPlayer()) : undefined}
         onMouseOver={() => setIsHovering(true)}
         onMouseOut={() => setIsHovering(false)}
       />

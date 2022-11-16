@@ -14,7 +14,8 @@ const onPubModifyRoom = (payload) =>{
   //   shield: int,
   //   hand: int
   // }
-  payload.stompClient.send(`${api.pubModifyRoom(payload.roomInfo.gameId)}`, {}, JSON.stringify(payload.roomInfo));
+  console.log(payload);
+  payload.stompClient.send(`${api.pubModifyRoom(payload.roomData.gameId)}`, {}, JSON.stringify(payload.roomData));
   console.log("방설정변경 pub", payload);
 }
 // 채팅 publish
@@ -24,7 +25,7 @@ const onPubChat = (payload) => {
   //   chattingSet : String
   //     (All, A, B)
   // }
-  payload.stompClient.send(`${api.pubChat(payload.gameId)}`, {}, JSON.stringify(payload.chat));
+  payload.stompClient.send(`${api.pubChat(payload.gameId)}`, {}, JSON.stringify(payload.message));
   console.log("채팅 pub", payload);
 }
 // 방 입장 publish

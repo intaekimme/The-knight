@@ -28,6 +28,9 @@ public class LoggingAspect {
     @Pointcut("within(com.a301.theknight.domain.game.service..*) && !within(com.a301.theknight.domain.game.service.GameService)")
     public void onWebSocketService() { }
 
+    @Pointcut("within(com.a301.theknight.domain.game.template..*)")
+    public void onDataTemplateService() { }
+
     @Pointcut("within(com.a301.theknight.domain.common.service.SendMessageService)")
     public void onMessageService() { }
 
@@ -40,7 +43,7 @@ public class LoggingAspect {
         if (params.contains("password")) {
             params = changePasswordLog(params);
         }
-        log.info(" [REST API] {}, params = {}", joinPoint.getSignature().getName(), params);
+        log.info(" [REST API START] {}, params = {}", joinPoint.getSignature().getName(), params);
         Object result = null;
         try {
             result = joinPoint.proceed();
@@ -51,20 +54,20 @@ public class LoggingAspect {
             if (response != null) {
                 value = objectMapper.writeValueAsString(response.getBody());
             }
-            log.info("<<===== [REST Response] value = {}", value.length() > 100 ? value.substring(0, 100) : value);
+            log.info("<<===== [REST API END] {}", value.length() > 100 ? value.substring(0, 100) : value);
         }
     }
 
     @Around("onWebSocketApi()")
     public Object loggingWebsocketApi(ProceedingJoinPoint joinPoint) throws Throwable {
         String params = getParams(joinPoint);
-        log.info(" [WebSocket API] {}, params = {}", joinPoint.getSignature().getName(), params);
+        log.info("  [WebSocket API START] {}, {}", joinPoint.getSignature().getName(), params);
         Object result = null;
         try {
             result = joinPoint.proceed();
             return result;
         } finally {
-            log.info(" [End Websocket API] {}", joinPoint.getSignature().getName());
+            log.info("<<===== [Websocket API END] {}", joinPoint.getSignature().getName());
         }
     }
 
@@ -72,11 +75,11 @@ public class LoggingAspect {
     public Object loggingRestService(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         try {
-            log.info(" [REST Service] {}", joinPoint.getSignature().getName());
+            log.info("  [REST Service START] {}", joinPoint.getSignature().getName());
             return joinPoint.proceed();
         } finally {
             long end = System.currentTimeMillis();
-            log.info("  Running Time = {}ms", end - start);
+            log.info("  [REST Service END] {}, {}ms", joinPoint.getSignature().getName(), end - start);
         }
     }
 
@@ -84,22 +87,33 @@ public class LoggingAspect {
     public Object loggingWebsocketService(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
         try {
-            log.info(" [WebSocket Service] {}", joinPoint.getSignature().getName());
+            log.info("  [WebSocket Service] {} START", joinPoint.getSignature().getName());
             return joinPoint.proceed();
         } finally {
             long end = System.currentTimeMillis();
-            log.info("  Running Time = {}ms", end - start);
+            log.info("  [WebSocket Service] {} END {}ms", joinPoint.getSignature().getName(), end - start);
         }
     }
 
-    @Around("onMessageService()")
-    public Object loggingMessageService(ProceedingJoinPoint joinPoint) throws Throwable {
-        Signature signature = joinPoint.getSignature();
-        String params = getParams(joinPoint);
-
-        log.info(" <<- {}, params = {}", signature.getName(), params);
-        return joinPoint.proceed();
+    @Around("onDataTemplateService()")
+    public Object loggingDataTemplateService(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        try {
+            log.info("  [Data Service START] {} ", joinPoint.getSignature().getName());
+            return joinPoint.proceed();
+        } finally {
+            long end = System.currentTimeMillis();
+            log.info("  [Data Service END] {}, {}ms", joinPoint.getSignature().getName(), end - start);
+        }
     }
+
+//    @Around("onMessageService()")
+//    public Object loggingMessageService(ProceedingJoinPoint joinPoint) throws Throwable {
+//        Signature signature = joinPoint.getSignature();
+//        String params = getParams(joinPoint);
+//
+//        return joinPoint.proceed();
+//    }
 
     private String changePasswordLog(String params) {
         int startIndex = params.indexOf("password") + 9;

@@ -114,7 +114,7 @@ const leaderInit = 0;
 
 const attackFirstInit = "";
 
-const orderInit = [null, null, null, null, null];
+const orderInit = [];
 
 const countWeaponInit = {
   sword: 0,
@@ -126,10 +126,22 @@ const countWeaponInit = {
 const isSelectCompleteInit = false;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "DEFENSE_DOUBT";
+const phaseInit = "PREPARE";
 const previousPhaseInit = null;
 
-const isLoadingInit = false;
+const subscribeObjectInit = {
+  prepare: [],
+  predecessor: [],
+  attack: [],
+  attackDoubt: [],
+  defense: [],
+  defenseDoubt: [],
+  doubtResult: [],
+  execute: [],
+  end: [],
+}
+
+const isLoadingInit = true;
 
 const currentAttackerInit = {
   memberId: 6,
@@ -175,16 +187,18 @@ const doubtInfoInit =   {
   doubtResponse : {
     suspect : {
       memberId : 0,
+      nickname: "",
       isDead : false,
     },
     suspected : {
       memberId : 0,
+      nickname: "",
       isDead : false,
       weapon: "",
       hand: "",
     },
-    doubtTeam: "",
-    doubtResult: false,
+    doubtTeam: "",  // 의심을 건 사람의 팀
+    doubtResult: false,  // 의심 성공 여부
   },
   doubtStatus : "",
 }
@@ -194,7 +208,7 @@ const doubtPassListInit = []
 const executeInfoInit = {
   attackTeam: "",
   attacker: {
-    memberId: 0,
+    memberId: 6,
     weapon: "",
     hand: "",
   },
@@ -208,11 +222,20 @@ const executeInfoInit = {
 }
 
 const endInfoInit = {
-  isWin: true,
-  losingteam: "B",
-  losingLeaderId: null,
-  winningLeaderId: null,
-  players: [],
+  winningTeam: "",
+  teamALeaderId: 0,
+  teamBLeaderId: 0,
+  players: [
+    {
+      memberId: 0,
+      nickname: "",
+      team: "",
+      leftCount: 0,
+      rightCount: 0,
+      order: 0,
+      weapons: [null, null]
+    }
+  ],
 };
 
 export const gameSlice = createSlice({
@@ -228,6 +251,7 @@ export const gameSlice = createSlice({
     isSelectComplete: isSelectCompleteInit,
     phase: phaseInit,
     previousPhase: previousPhaseInit,
+    subscribeObject: subscribeObjectInit,
     isLoading: isLoadingInit,
     currentAttacker: currentAttackerInit,
     currentDefender: currentDefenderInit,
@@ -291,7 +315,7 @@ export const gameSlice = createSlice({
       state.attackFirst = action.payload;
     },
     fetchCountWeapon: (state, action) => {
-      state.countweapon = action.payload;
+      state.countWeapon = action.payload;
     },
     selectComplete: (state) => {
       state.isSelectComplete = true;
@@ -321,6 +345,52 @@ export const gameSlice = createSlice({
       state.selectAttack.weapon = action.payload.weapon;
       state.selectAttack.hand = action.payload.hand;
     },
+    addSubscribeObject: (state, action) => { 
+      if (action.payload.phase === "PREPARE") {
+        state.subscribeObject.prepare.push(action.payload.subscribeObject)
+      } else if (action.payload.phase === "PREDECESSOR") {
+        state.subscribeObject.predecessor.push(action.payload.subscribeObject)
+      } else if (action.payload.phase === "ATTACK") {
+        state.subscribeObject.attack.push(action.payload.subscribeObject)
+      } else if (action.payload.phase === "ATTACK_DOUBT") {
+        state.subscribeObject.attackDoubt.push(action.payload.subscribeObject)
+      } else if (action.payload.phase === "DEFENSE") {
+        state.subscribeObject.defense.push(action.payload.subscribeObject)
+      } else if (action.payload.phase === "DEFENSE_DOUBT") {
+        state.subscribeObject.defenseDoubt.push(action.payload.subscribeObject)
+      } else if (action.payload.phase === "DOUBT_RESULT") {
+        state.subscribeObject.doubtResult.push(action.payload.subscribeObject)
+      } else if (action.payload.phase === "END") {
+        state.subscribeObject.end.push(action.payload.subscribeObject)
+      }
+    },
+    cancelSubscribe: (state, action) => {
+      if (action.payload === "PREPARE") {
+        state.subscribeObject.prepare.forEach(subscribeObject => subscribeObject.unsubscribe())
+        state.subscribeObject.prepare = []
+      } else if (action.payload === "PREDECESSOR") {
+        state.subscribeObject.predecessor.forEach(subscribeObject => subscribeObject.unsubscribe())
+        state.subscribeObject.predecessor = []
+      } else if (action.payload === "ATTACK") {
+        state.subscribeObject.attack.forEach(subscribeObject => subscribeObject.unsubscribe())
+        state.subscribeObject.attack = []
+      } else if (action.payload === "ATTACK_DOUBT") {
+        state.subscribeObject.attackDoubt.forEach(subscribeObject => subscribeObject.unsubscribe())
+        state.subscribeObject.attackDoubt = []
+      } else if (action.payload === "DEFENSE") {
+        state.subscribeObject.defense.forEach(subscribeObject => subscribeObject.unsubscribe())
+        state.subscribeObject.defense = []
+      } else if (action.payload === "DEFENSE_DOUBT") {
+        state.subscribeObject.defenseDoubt.forEach(subscribeObject => subscribeObject.unsubscribe())
+        state.subscribeObject.defenseDoubt = []
+      } else if (action.payload === "DOUBT_RESULT") {
+        state.subscribeObject.doubtResult.forEach(subscribeObject => subscribeObject.unsubscribe())
+        state.subscribeObject.doubtResult = []
+      } else if (action.payload === "END") {
+        state.subscribeObject.end.forEach(subscribeObject => subscribeObject.unsubscribe())
+        state.subscribeObject.end = []
+      }
+    }
   },
 });
 export const {
@@ -346,5 +416,7 @@ export const {
   fetchExecuteInfo,
   addDoubtPass,
   selectWeaponForAttack,
+  addSubscribeObject,
+  cancelSubscribe,
 } = gameSlice.actions;
 export default gameSlice.reducer;

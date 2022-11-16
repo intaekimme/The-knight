@@ -11,13 +11,13 @@ export default function AttackPhase() {
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
   const dispatch = useDispatch();
 
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.game.me).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubAttackPass = () => {
-    // stompClient.send(api.pubAttackPass(gameId), {}, {})
+    stompClient.send(api.pubAttackPass(gameId), {}, {})
   };
 
   const onSelectWeapon = (weapon, hand) => {
@@ -143,7 +143,7 @@ export default function AttackPhase() {
               </Box>
             </Box>
             <Box
-              onClick={() => onPass}
+              onClick={() => onPass()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
@@ -241,7 +241,7 @@ export default function AttackPhase() {
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
-        height: "90vh",
+        height: "88vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>

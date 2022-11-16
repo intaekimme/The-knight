@@ -15,13 +15,11 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import MemberPage from "./pages/MemberPage";
 import Game from './pages/Game';
-import MakeRoom from './components/lobby/MakeRoom';
+import ConnectWebsocket from './components/lobby/ConnectWebsocket';
 import EnterRoom from './components/lobby/EnterRoom';
 import Room from "./pages/Room";
 import GoogleLogin from './commons/login/GoogleLogin';
 import LoginToken from './commons/login/LoginToken';
-import Chat from './commons/chatting/Chat';
-import Chatting from './commons/chatting/Chatting';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const theme = createTheme({
@@ -54,11 +52,9 @@ root.render(
               <Route path="islogin" element={<LoginToken />} />
               <Route path="signup" element={<Signup />} />
               <Route path="memberpage" element={<MemberPage />} />
-              <Route path="makeroom" element={<MakeRoom />} />
-              <Route path="/room/:gameId" element={<EnterRoom />} />
-              <Route path="/in-room/:gameId" element={<Room />} />
-              <Route path="chat" element={<Chat />} />
-              <Route path="chatting" element={<Chatting />} />
+              <Route path="connect-websocket/:gameId" element={<ConnectWebsocket/>}/>
+              <Route path="/entryRoom/:gameId" element={<EnterRoom />} />
+              <Route path="/room/:gameId" element={<Room />} />
             </Route>
           </Routes>
         </ThemeProvider>

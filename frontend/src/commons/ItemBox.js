@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from 'react-redux';
 import { Button, Box, Grid } from "@mui/material";
 
 export default function ItemBox(props) {
@@ -10,6 +9,13 @@ export default function ItemBox(props) {
 		}
 	}
 
+	// 버튼 비활성화
+	const [buttonDisabled, setButtonDisabled] = React.useState(true);
+	useEffect(()=>{
+		if(props.buttonDisabled){
+			setButtonDisabled(props.buttonDisabled);
+		}
+	}, [props.buttonDisabled]);
 	// box 크기
 	const [size, setSize] = useState(100);
 	useEffect(()=>{
@@ -17,8 +23,15 @@ export default function ItemBox(props) {
 			setSize(props.size);
 		}
 	}, [props.size]);
+	// text 색상
+	const [textColor, setTextColor] = useState("blue");
+	useEffect(()=>{
+		if(props.textColor){
+			setTextColor(props.textColor);
+		}
+	}, [props.textColor]);
 	return (
-		<Button onClick={(e)=>{onClick(props.params);}}>
+		<Button disabled={buttonDisabled} onClick={(e)=>{onClick(props.params);}} sx={{color:textColor}}>
 			<Box sx={{width:size, height:size}}>
 				{props.text
 					? <Grid container>

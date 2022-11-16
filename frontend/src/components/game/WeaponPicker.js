@@ -8,10 +8,10 @@ function WeaponPicker() {
   const countWeapon = useSelector((state) => state.game.countWeapon);
   const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
   
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.game.me).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubSelectWeapon = (payload) => {
     // {
@@ -21,8 +21,7 @@ function WeaponPicker() {
     const data = {
       weapon: payload
     }
-    console.log(data);
-    // stompClient.send(api.pubSelectWeapon(gameId), {}, JSON.stringify(data)); 
+    stompClient.send(api.pubSelectWeapon(gameId), {}, JSON.stringify(data)); 
   }
 
   const onClick = (weapon) => {
@@ -51,7 +50,7 @@ function WeaponPicker() {
               style={{
                 width: "12vmin",
                 height: "12vmin",
-                ...((isSelectComplete || !countWeapon[weapon])
+                ...((isSelectComplete || !countWeapon[weapon.toLowerCase()])
                   ? { backgroundColor: "#646464" }
                   : { backgroundColor: "#f0f0f0" }),
                 border: "7px solid #7406ff",
@@ -78,7 +77,7 @@ function WeaponPicker() {
                   borderRadius: "10px"
                 }}
               >
-                {countWeapon[weapon]}
+                {countWeapon[weapon.toLowerCase()]}
               </Box>
             </div>
           </Grid>

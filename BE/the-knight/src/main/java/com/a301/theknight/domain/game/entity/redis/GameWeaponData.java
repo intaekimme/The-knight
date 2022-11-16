@@ -2,10 +2,14 @@ package com.a301.theknight.domain.game.entity.redis;
 
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.Weapon;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class GameWeaponData {
     private int sword;

@@ -47,15 +47,11 @@ public class EndDataService extends GameDataService {
 
     @Override
     @Transactional
-    public void makeData(long gameId) {
+    public void makeAndSendData(long gameId, SendMessageService messageService) {
         Game game = gameRepository.findById(gameId)
                 .orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
         game.changeStatus(GameStatus.END);
-    }
 
-    @Override
-    @Transactional
-    public void sendScreenData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
 
         long teamALeaderId = inGame.getTeamAInfo().getLeaderId();

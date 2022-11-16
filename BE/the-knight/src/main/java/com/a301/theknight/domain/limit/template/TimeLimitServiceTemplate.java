@@ -6,27 +6,32 @@ import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import lombok.RequiredArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 
-@RequiredArgsConstructor
-@Component
 public abstract class TimeLimitServiceTemplate {
-    private final GameRedisRepository redisRepository;
-    private final RedissonClient redissonClient;
 
-    public final void executeTimeLimit(long gameId, SendMessageService sendMessageService) {
+    private GameRedisRepository redisRepository;
+    private RedissonClient redissonClient;
+
+
+    public TimeLimitServiceTemplate(GameRedisRepository redisRepository, RedissonClient redissonClient) {
+        this.redisRepository = redisRepository;
+        this.redissonClient = redissonClient;
+    }
+
+    @Transactional
+    public void executeTimeLimit(long gameId, SendMessageService sendMessageService) {
         GameStatus preStatus = getInGame(gameId).getGameStatus();
 
         RLock dataLock = null;
         try {
-            Thread.sleep(preStatus.getLimitSeconds());
+            Thread.sleep(preStatus.getLimitMilliSeconds());
             InGame curInGame = getInGame(gameId);
             if (!preStatus.equals(curInGame.getGameStatus())) {
                 return;
