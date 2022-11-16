@@ -6,8 +6,6 @@ import lombok.Data;
 @Builder
 @Data
 public class PlayerExitResponse {
-    private long gameId;
-    private long ownerId;
     private long memberId;
     private String nickname;
 }
