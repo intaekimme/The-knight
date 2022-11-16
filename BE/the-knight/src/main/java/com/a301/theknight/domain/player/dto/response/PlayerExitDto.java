@@ -6,6 +6,6 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class PlayerExitDto {
-    private boolean leaderExited;
+    private boolean ownerExited;
     private PlayerExitResponse playerExitResponse;
 }
