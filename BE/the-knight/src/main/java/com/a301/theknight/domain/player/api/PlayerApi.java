@@ -41,6 +41,7 @@ public class PlayerApi {
         if (exitDto.isOwnerExited()) {
             GameExitResponse exitResponse = gameWaitingService.delete(gameId, memberId);
             messageService.sendData(gameId, "/delete", exitResponse);
+            return;
         }
         messageService.sendData(gameId, "/exit", exitDto.getPlayerExitResponse());
     }
