@@ -6,7 +6,7 @@ import api from '../../api/api';
 // import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEntry,
 //   onSubMembers, onSubSelectTeam, onSubReady, onSubExit} from '../../websocket/RoomReceivers';
 import { getRoomInfo, modifyRoomSetting, setState, setMembers, changeTeam, changeReady } from '../../_slice/roomSlice';
-import { onPubMembers } from '../../websocket/RoomPublishes';
+import { onPubMembers, onPubExit } from '../../websocket/RoomPublishes';
 
 export default function EnterRoom(){
   const navigate = useNavigate();
@@ -153,7 +153,10 @@ export default function EnterRoom(){
     const data = JSON.parse(payload.body);
     console.log("방 퇴장 sub", data);
     const text = `${data.nickname}님이 퇴장하셨습니다.`;
-    if(data.memberId.toString()===window.localStorage.getItem("memberId")){
+    if(data.ownerId===data.memberId){
+      onPubExit({stompClient:stompClient, gameId:data.gameId});
+    }
+    else if(data.memberId.toString()===window.localStorage.getItem("memberId")){
       dispatch(exitRoomUnsubscribe({stompClient:stompClient, gameId:gameId})).then(()=>{
         navigate('/lobby');
       }).catch((err)=>{
