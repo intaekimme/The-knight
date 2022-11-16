@@ -1,13 +1,15 @@
 package com.a301.theknight.domain.game.entity.redis;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-
+@NoArgsConstructor
 @Data
 public class DefendData {
-    private final Hand defendHand;
-    private final int shieldCount;
+    private Hand defendHand;
+    private int shieldCount;
     private boolean isDefendPass;
 
     @Builder
