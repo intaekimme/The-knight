@@ -7,7 +7,7 @@ import api from '../api/api';
 const connectWebsocket = createAsyncThunk('websocket/connectWebsocket', async (props, { rejectWithValue }) => {
   try {
     let stompClient = null;
-    const Sock = new SockJS(`${api.websocket()}?token=${props.token}`);
+    const Sock = new SockJS(`${api.websocket()}`);
     stompClient = over(Sock);
     stompClient.connect({Authorization: `Bearer ${props.token}`}
       ,()=>{props.navigate(props.url);}
@@ -50,7 +50,7 @@ const exitRoomUnsubscribe = createAsyncThunk('websocket/exitRoomUnsubscribe', as
   }
 });
 
-const stompClientInit = over(new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`));
+const stompClientInit = over(new SockJS(`${api.websocket()}`));
 // 드래그중인 값
 export const websocketSlice = createSlice({
   name: 'websocket',
