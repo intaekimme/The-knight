@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { switchIsLoading } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import {
+  setMe,
   setTimer,
   countTimer,
   stopCountTimer,
@@ -21,6 +22,8 @@ import {
   fetchDoubtInfo,
   fetchExecuteInfo,
   addDoubtPass,
+  addSubscribeObject,
+  cancelSubscribe,
 } from "../../_slice/gameSlice";
 
 export default function GameWebSocket() {
@@ -29,6 +32,7 @@ export default function GameWebSocket() {
   const myId = parseInt(window.localStorage.getItem("memberId"));
   const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === myId).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const currentPhase = useSelector((state) => state.game.phase);
 
   // sub 함수
 
@@ -55,38 +59,74 @@ export default function GameWebSocket() {
     // }
     const data = JSON.parse(payload.body);
     dispatch(fetchPlayers(data));
+    dispatch(setMe());
   };
 
   // 최초 화면전환 요청
   const onSubConvert = (payload) => {
     // {
     //   gameStatus : String,
-    //   postfix: String,
     // }
     const data = JSON.parse(payload.body);
     const nextPhase = data.gameStatus;
-    // 화면전환을 위한 구독 준비
+
+    // 기존 phase 구독 끊기
+    dispatch(cancelSubscribe(currentPhase))
+
+    // 다음 phase에 필요한 구독
     if (nextPhase === "PREPARE") {
     } else if (nextPhase === "PREDECESSOR") {
-      stompClient.subscribe(api.subAttackFirst(gameId), onSubAttackFirst);
+      const subAttackFirst = stompClient.subscribe(api.subAttackFirst(gameId), onSubAttackFirst);
+      dispatch(addSubscribeObject({
+        phase: "PREDECESSOR",
+        subscribeObject: subAttackFirst,
+      }))
     } else if (nextPhase === "ATTACK") {
-      stompClient.subscribe(api.subCurrentAttacker(gameId), onSubCurrentAttacker);
+      const subCurrentAttacker = stompClient.subscribe(api.subCurrentAttacker(gameId), onSubCurrentAttacker);
+      dispatch(addSubscribeObject({
+        phase: "ATTACK",
+        subscribeObject: subCurrentAttacker,
+      }))
     } else if (nextPhase === "ATTACK_DOUBT") {
-      stompClient.subscribe(api.subAttackInfo(gameId), onSubAttackInfo);
-      stompClient.subscribe(api.subDoubtPass(gameId), onSubDoubtPass);
+      const subAttackInfo = stompClient.subscribe(api.subAttackInfo(gameId), onSubAttackInfo);
+      const subDoubtPass = stompClient.subscribe(api.subDoubtPass(gameId), onSubDoubtPass);
+      dispatch(addSubscribeObject({
+        phase: "ATTACK_DOUBT",
+        subscribeObject: subAttackInfo
+      }))
+      dispatch(addSubscribeObject({
+        phase: "ATTACK_DOUBT",
+        subscribeObject: subDoubtPass
+      }))
     } else if (nextPhase === "DEFENSE") {
     } else if (nextPhase === "DEFENSE_DOUBT") {
-      stompClient.subscribe(api.subDefenseInfo(gameId), onSubDefenseInfo);
-      stompClient.subscribe(api.subDoubtPass(gameId), onSubDoubtPass);
+      const subDefenseInfo = stompClient.subscribe(api.subDefenseInfo(gameId), onSubDefenseInfo);
+      const subDoubtPass = stompClient.subscribe(api.subDoubtPass(gameId), onSubDoubtPass);
+      dispatch(addSubscribeObject({
+        phase: "DEFENSE_DOUBT",
+        subscribeObject: subDefenseInfo
+      }))
+      dispatch(addSubscribeObject({
+        phase: "DEFENSE_DOUBT",
+        subscribeObject: subDoubtPass
+      }))
     } else if (nextPhase === "DOUBT_RESULT") {
-      stompClient.subscribe(api.subDoubtInfo(gameId), onSubDoubtInfo);
+      const subDoubtInfo = stompClient.subscribe(api.subDoubtInfo(gameId), onSubDoubtInfo);
+      dispatch(addSubscribeObject({
+        phase: "DOUBT_RESULT",
+        subscribeObject: subDoubtInfo
+      }))
     } else if (nextPhase === "EXECUTE") {
-      stompClient.subscribe(api.subExecute(gameId), onSubExecute);
+      const subExecute = stompClient.subscribe(api.subExecute(gameId), onSubExecute);
+      dispatch(addSubscribeObject({
+        phase: "EXECUTE",
+        subscribeObject: subExecute, 
+      }))
     } else if (nextPhase === "END") {
     }
 
     // 준비완료 pub
-    stompClient.send(api.pubPostfix(gameId, data.postfix), {}, {});
+    stompClient.send(api.pubScreenData(gameId), {}, {});
   };
 
   // 실제 화면전환
@@ -316,19 +356,53 @@ export default function GameWebSocket() {
 
   useEffect(() => {
     // for common
-    stompClient.subscribe(api.subPlayersInfo(gameId, myTeam), onSubPlayersInfo);
-    stompClient.subscribe(api.subConvert(gameId), onSubConvert);
-    stompClient.subscribe(api.subNextPhase(gameId), onSubNextPhase);
-    stompClient.subscribe(api.subEnd(gameId, myTeam), onSubEnd);
+    const subPlayersInfo = stompClient.subscribe(api.subPlayersInfo(gameId, myTeam), onSubPlayersInfo);
+    const subConvert = stompClient.subscribe(api.subConvert(gameId), onSubConvert);
+    const subNextPhase = stompClient.subscribe(api.subNextPhase(gameId), onSubNextPhase);
+    const subEnd = stompClient.subscribe(api.subEnd(gameId), onSubEnd);
 
     // for prepare
-    stompClient.subscribe(api.subLeader(gameId, myTeam), onSubLeader);
-    stompClient.subscribe(api.subCountWeapon(gameId, myTeam), onSubCountWeapon);
-    stompClient.subscribe(api.subOrder(gameId, myTeam), onSubOrder);
-    stompClient.subscribe(api.subSelectComplete(gameId, myTeam), onSubSelectComplete);
+    const subLeader = stompClient.subscribe(api.subLeader(gameId, myTeam), onSubLeader);
+    const subCountWeapon = stompClient.subscribe(api.subCountWeapon(gameId, myTeam), onSubCountWeapon);
+    const subOrder = stompClient.subscribe(api.subOrder(gameId, myTeam), onSubOrder);
+    const subSelectComplete = stompClient.subscribe(api.subSelectComplete(gameId, myTeam), onSubSelectComplete);
+
+    // 객체 저장
+    dispatch(addSubscribeObject({
+      phase: "COMMON",
+      subscribeObject: subPlayersInfo,
+    }))
+    dispatch(addSubscribeObject({
+      phase: "COMMON",
+      subscribeObject: subConvert,
+    }))
+    dispatch(addSubscribeObject({
+      phase: "COMMON",
+      subscribeObject: subNextPhase,
+    }))
+    dispatch(addSubscribeObject({
+      phase: "COMMON",
+      subscribeObject: subEnd,
+    }))
+    dispatch(addSubscribeObject({
+      phase: "PREPARE",
+      subscribeObject: subLeader,
+    }))
+    dispatch(addSubscribeObject({
+      phase: "PREPARE",
+      subscribeObject: subCountWeapon,
+    }))
+    dispatch(addSubscribeObject({
+      phase: "PREPARE",
+      subscribeObject: subOrder,
+    }))
+    dispatch(addSubscribeObject({
+      phase: "PREPARE",
+      subscribeObject: subSelectComplete,
+    }))
 
     // 구독 완료 pub
-    stompClient.send(api.pubConvertComplete(gameId), {}, {});
+    stompClient.send(api.pubScreenData(gameId), {}, {});
   }, []);
 
   return <div></div>;

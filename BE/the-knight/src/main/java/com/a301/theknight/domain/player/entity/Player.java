@@ -36,7 +36,7 @@ public class Player extends BaseTimeEntity {
 
     private boolean isReady;
 
-    private boolean owner;
+    private boolean isOwner;
 
     private boolean isLeader;
 
@@ -84,7 +84,7 @@ public class Player extends BaseTimeEntity {
     }
 
     public void setOwner() {
-        owner = true;
+        isOwner = true;
     }
 
 //    public void updatePlayer(GameResult result, boolean isDead, Weapon leftWeapon, Weapon rightWeapon) {

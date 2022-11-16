@@ -8,10 +8,10 @@ function OrderPicker() {
   const order = useSelector((state) => state.game.order);
   const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
 
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubOrder = (payload) => {
     // {
@@ -20,8 +20,7 @@ function OrderPicker() {
     const data = {
       orderNumber: payload
     }
-  //   stompClient.send(api.pubOrder(gameId, myTeam), {}, JSON.stringify(data));
-    console.log(data)
+    stompClient.send(api.pubOrder(gameId, myTeam), {}, JSON.stringify(data));
   }
 
   function onClick(order) {
@@ -29,15 +28,7 @@ function OrderPicker() {
   }
 
   function orderList(players) {
-    let arr =
-      players.maxMember / 2 === 5
-        ? [
-            <Grid
-              item
-              xs={1}
-            ></Grid>,
-          ]
-        : [];
+    let arr = [];
     for (let i = 0; i < players.maxMember / 2; i++) {
       arr.push(
         <Grid

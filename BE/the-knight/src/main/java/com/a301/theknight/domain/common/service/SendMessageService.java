@@ -7,9 +7,11 @@ import com.a301.theknight.domain.game.util.GameConvertUtil;
 import com.a301.theknight.domain.limit.factory.TimeLimitServiceFactory;
 import com.a301.theknight.domain.limit.template.TimeLimitServiceTemplate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class SendMessageService {
@@ -21,10 +23,12 @@ public class SendMessageService {
     private final TimeLimitServiceFactory timeLimitServiceFactory;
 
     public void sendData(long gameId, String postfix, Object payload) {
+        log.info(" <<-- [Send Data] /sub/games/{}{}, value = {}", gameId, postfix, payload.toString());
         template.convertAndSend(makeDestinationUrl(gameId, postfix), payload);
     }
 
     public void sendChatData(long gameId, String chattingSet, Object payload) {
+        log.info(" <<-- [Send Data] /sub/games/{}/chat-{}, value = {}", gameId, chattingSet, payload.toString());
         template.convertAndSend(makeChatDestinationUrl(gameId, chattingSet), payload);
     }
 
@@ -44,6 +48,7 @@ public class SendMessageService {
 
     public void forceConvertCall(long gameId) {
         ConvertResponse response = gameConvertUtil.forceConvertScreen(gameId);
+        log.info(" <<-- [Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
         sendData(gameId, "/convert", response);
     }
 

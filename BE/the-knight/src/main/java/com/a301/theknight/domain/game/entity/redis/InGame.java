@@ -105,8 +105,8 @@ public class InGame {
     }
 
     public Team updateCurrentAttackTeam(){
-        this.currentAttackTeam = this.currentAttackTeam == Team.A ? Team.B : Team.A;
-        return this.currentAttackTeam;
+        this.currentAttackTeam = Team.A.equals(currentAttackTeam) ? Team.B : Team.A;
+        return currentAttackTeam;
     }
 
 }

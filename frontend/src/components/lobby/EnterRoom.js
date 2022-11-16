@@ -143,7 +143,6 @@ export default function EnterRoom(){
     }
     console.log(payloadData);
     dispatch(changeReady(payloadData));
-    // dispatch(changeReady(data.readyResponseDto));
   };
   // 방 퇴장 리시버
   const onSubExit = (payload) => {
@@ -219,12 +218,11 @@ export default function EnterRoom(){
       id: "error",
     },],
   }
-  const url = `/in-room/${gameId}`;
   const [isSetting, setIsSetting] = React.useState(false);
   React.useEffect(()=>{
     if(isSetting){
       setIsSetting(false);
-      navigate(url);
+      navigate(api.routeRoom(gameId));
     }
   },[isSetting]);
   

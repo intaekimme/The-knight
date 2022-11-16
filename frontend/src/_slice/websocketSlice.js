@@ -7,10 +7,10 @@ import api from '../api/api';
 const connectWebsocket = createAsyncThunk('websocket/connectWebsocket', async (props, { rejectWithValue }) => {
   try {
     let stompClient = null;
-    const Sock = new SockJS(`${api.websocket()}?token=${props.token}`);
+    const Sock = new SockJS(`${api.websocket()}`);
     stompClient = over(Sock);
     stompClient.connect({Authorization: `Bearer ${props.token}`}
-      ,()=>{}
+      ,()=>{props.navigate(props.url);}
       ,(error) => { console.log(error); });
     console.log("connect 성공");
     return {stompClient: stompClient};
@@ -50,24 +50,27 @@ const exitRoomUnsubscribe = createAsyncThunk('websocket/exitRoomUnsubscribe', as
   }
 });
 
-const stompClientInit = over(new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`));
+// const stompClientInit = over(new SockJS(`${api.websocket()}`));
 // 드래그중인 값
 export const websocketSlice = createSlice({
   name: 'websocket',
-  initialState:{stompClient: stompClientInit},
+  initialState:{stompClient: null},
   reducers:{
     setStompClient: (state, action) =>{
       state.stompClient = action.payload;
     },
   },
   extraReducers: {
+    [connectWebsocket.pending]: (state, action) => {
+      console.log("connect중");
+    },
     [connectWebsocket.fulfilled]: (state, action) => {
       state.stompClient = action.payload.stompClient;
     },
     [connectWebsocket.rejected]: state => {
-      const tempClient = over(new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`));
-      tempClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, (res)=>{console.log(res, "connect")}, (err)=>{console.log(err)});
-      state.stompClient = tempClient;
+      // const tempClient = over(new SockJS(`${api.websocket()}?token=${window.localStorage.getItem("loginToken")}`));
+      // tempClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, (res)=>{console.log(res, "connect")}, (err)=>{console.log(err)});
+      state.stompClient = null;
     },
   },
 });

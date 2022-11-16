@@ -1,40 +1,46 @@
+import { useSelector } from "react-redux"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 
 export default function EndPhase() {
+  const me = useSelector((state) => state.game.me)
+  const endInfo = useSelector((state) => state.game.endInfo)
+
   function BoxRender() {
     return (
       <Box
-      sx={{
-        width: "70vmin",
-        height: "40vmin",
-        backgroundColor: "grey",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-      > 
-        <Box>게임 승리 or 게임 패배</Box>
-        <Box sx={{ display: "flex", alignItems: 'flex-end', justifyContent: "space-evenly" }}></Box>
-        <Box sx={{ textAlign: "center" }}>
-          <p>_팀의 리더가 사망했습니다</p>
-          <p>10 포인트 하락</p>
-        </Box>
-        <Box 
+        sx={{
+          width: "70vmin",
+          height: "40vmin",
+          backgroundColor: "#d9d9d9",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          position: "relative",
+        }}
+      >
+        <Box sx={{ position: "absolute", top: "4vmin", fontSize: "3.5vmin" }}>{me.team === endInfo.winningTeam?"게임 승리":"게임 패배"}</Box>
+        <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>{endInfo.winningTeam === "A"? "B": "A"}팀의 리더가 사망했습니다</Box>
+        <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>{me.team === endInfo.winningTeam?"10 포인트 상승":"10 포인트 하락"}</Box>
+        <Box
           sx={{
             width: "25vmin",
-            height: "8vmin",
+            height: "6vmin",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             color: "white",
+            fontSize: "2vmin",
             backgroundColor: "#878886",
+            position: "absolute",
+            bottom: "2vmin"
           }}
         >
           나가기
         </Box>
       </Box>
-    )
+    );
   }
 
   return (
@@ -44,7 +50,7 @@ export default function EndPhase() {
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
-        height: "90vh",
+        height: "88vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>
