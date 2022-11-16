@@ -10,7 +10,7 @@ export default function DefensePhase() {
   const currentDefender = useSelector((state) => state.game.currentDefender);
   // const stompClient = useSelector((state) => state.websocket.stompClient);
   // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  // const myTeam = useSelector((state) => state.game.me).team;
   // const gameId = useSelector((state) => state.room.roomInfo).gameId;
   const weaponsKr = {
     SWORD: "검",
