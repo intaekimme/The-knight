@@ -1,5 +1,7 @@
 package com.a301.theknight.global.redis.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,18 +18,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 @EnableCaching
+@RequiredArgsConstructor
 @Configuration
 public class RedisCacheConfig {
 
-    @Bean(name = "cacheManager")
+    private final ObjectMapper objectMapper;
+
+    @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
 
         RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig()
                 .disableCachingNullValues()
-                .entryTtl(Duration.ofMinutes(10L))
+                .entryTtl(Duration.ofMinutes(1L))
                 .computePrefixWith(CacheKeyPrefix.simple())
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))  //redis 캐시 키 값 저장방식 - StringRedisSerializer
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));// redis 캐시 정보값 저장방식 - GenericJackson2JsonRedisSerializer - json 문자열
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper)));// redis 캐시 정보값 저장방식 - GenericJackson2JsonRedisSerializer - json 문자열
 
         Map<String, RedisCacheConfiguration> redisCacheConfigurationMap = new HashMap<>();
         redisCacheConfigurationMap

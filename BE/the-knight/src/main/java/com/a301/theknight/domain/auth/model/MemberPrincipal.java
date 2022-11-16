@@ -1,6 +1,12 @@
 package com.a301.theknight.domain.auth.model;
 
+import com.a301.theknight.global.redis.config.MemberPrincipalSerializer;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,11 +15,24 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
-@Builder
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonDeserialize(using = MemberPrincipalSerializer.class)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class MemberPrincipal implements UserDetails {
+
+    private static final long serialVersionUID = 1L;
 
     private Long memberId;
     private String email;
+
+    @Builder
+    public MemberPrincipal(Long memberId, String email) {
+        this.memberId = memberId;
+        this.email = email;
+    }
 
     public Long getMemberId() {
         if (memberId == null) {
@@ -61,4 +80,7 @@ public class MemberPrincipal implements UserDetails {
         return true;
     }
 
+    public void setAuthenticated(boolean authenticated) {
+
+    }
 }
