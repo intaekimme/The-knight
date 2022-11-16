@@ -22,7 +22,7 @@ export default function Chat(){
     // config/WebsocketConfig.java registerStompEndpoints 를 pub로 설정했기 때문에 마지막에 ws 있어야함
     // let Sock = new SockJS("https://j7a301.p.ssafy.io/pub");
     console.log(window.localStorage.getItem("loginToken"));
-    let Sock = new SockJS(`${api.baseURL()}/websocket?token=${window.localStorage.getItem("loginToken")}`);
+    let Sock = new SockJS(`${api.baseURL()}/websocket`);
     stompClient = over(Sock);
     stompClient.connect({Authorization: `Bearer ${window.localStorage.getItem("loginToken")}`}, onConnected, onError);
     console.log(stompClient);
