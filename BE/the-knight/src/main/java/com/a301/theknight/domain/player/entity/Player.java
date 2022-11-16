@@ -34,10 +34,13 @@ public class Player extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private GameResult result;
 
+    @Column(name = "is_ready")
     private boolean isReady;
 
+    @Column(name = "is_owner")
     private boolean isOwner;
 
+    @Column(name = "is_leader")
     private boolean isLeader;
 
     @Builder
