@@ -78,7 +78,7 @@ public class PlayerService {
 
         PlayerExitDto exitDto = new PlayerExitDto(exitPlayer.isOwner(), PlayerExitResponse.builder()
                 .gameId(gameId)
-                .ownerId(findGame.getOwner().getId())
+                .ownerId(findGame.getOwner().getMember().getId())
                 .memberId(exitPlayer.getMember().getId())
                 .nickname(exitPlayer.getMember().getNickname()).build());
         playerRepository.delete(exitPlayer);
