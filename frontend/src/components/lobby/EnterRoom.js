@@ -1,11 +1,12 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {enterRoomSubscribe, exitRoom} from '../../_slice/websocketSlice';
 import api from '../../api/api';
+import {enterRoomSubscribe, exitRoom} from '../../_slice/websocketSlice';
+import {addChatting} from '../../_slice/chattingSlice';
+import { getRoomInfo, modifyRoomSetting, setState, setMembers, changeTeam, changeReady } from '../../_slice/roomSlice';
 // import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEntry,
 //   onSubMembers, onSubSelectTeam, onSubReady, onSubExit} from '../../websocket/RoomReceivers';
-import { getRoomInfo, modifyRoomSetting, setState, setMembers, changeTeam, changeReady } from '../../_slice/roomSlice';
 import { onPubMembers, onPubExit } from '../../websocket/RoomPublishes';
 
 export default function EnterRoom(){
@@ -50,14 +51,8 @@ export default function EnterRoom(){
     const data = JSON.parse(payload.body);
     console.log("전채 채팅 sub", data);
     const text = `${data.nickname} : ${data.content}`;
-    // 내 채팅일 때 오른쪽에 표시
-    if (data.memberId === window.localStorage.getItem("memberId")) {
-      console.log(text);
-    }
-    // 내 채팅이 아닐 때 왼쪽에 표시
-    else {
-      console.log(text);
-    }
+    console.log(text);
+    dispatch(addChatting(data));
   };
   // 팀 채팅 리시버
   const onSubChatTeam = (payload) => {
@@ -71,14 +66,8 @@ export default function EnterRoom(){
     const data = JSON.parse(payload.body);
     console.log("팀 채팅 sub", data);
     const text = `${data.nickname} : ${data.content}`;
-    // 내 채팅일 때 오른쪽에 표시
-    if (data.memberId === window.localStorage.getItem("memberId")) {
-      console.log(text);
-    }
-    // 내 채팅이 아닐 때 왼쪽에 표시
-    else {
-      console.log(text);
-    }
+    console.log(text);
+    dispatch(addChatting(data));
   };
   // 방 입장 리시버
   const onSubEntry = (payload) => {

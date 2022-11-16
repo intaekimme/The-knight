@@ -3,6 +3,7 @@ import windowReducer from "../_slice/windowSlice";
 import loginReducer from "../_slice/loginSlice";
 
 import websocketReducer from "../_slice/websocketSlice";
+import chattingReducer from "../_slice/chattingSlice";
 import memberInfoReducer from "../_slice/memberInfoSlice";
 import tempGameListReducer from "../_slice/tempGameSlice"
 import gameReducer from "../_slice/gameSlice";
@@ -14,6 +15,7 @@ const store = configureStore({
     windowData: windowReducer,
     login: loginReducer,
     websocket: websocketReducer,
+    chatting: chattingReducer,
     room: roomReducer,
     memberInfo: memberInfoReducer,
     game: gameReducer,
