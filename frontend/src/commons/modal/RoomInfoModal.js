@@ -91,6 +91,7 @@ export default function RoomSetting(props) {
 			// onClose={props.onClose}
 			aria-labelledby="modal-modal-title"
 			aria-describedby="modal-modal-description"
+			sx={{ background: 'rgba(0, 0, 0, 0.7)' }}
 		>
 			<Box sx={{ ...modalStyle, backgroundImage: `url(${modalBackground})`, backgroundSize: 'cover' }}>
 				<Box id="modal-modal-title">

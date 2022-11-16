@@ -24,7 +24,7 @@ const modalStyle = {
   boxShadow: '2px 2px 10px #000',
   p: '10px 36px 36px 36px',
   backgroundImage: `url(${modalBackground})`,
-  backgroundSize: 'cover'
+  backgroundSize: 'cover',
 };
 const inModalStyle = {
   position: 'relative',
