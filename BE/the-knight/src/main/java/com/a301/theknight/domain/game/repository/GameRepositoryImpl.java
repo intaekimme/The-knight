@@ -1,6 +1,7 @@
 package com.a301.theknight.domain.game.repository;
 
 import com.a301.theknight.domain.game.entity.Game;
+import com.a301.theknight.domain.game.entity.GameStatus;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringExpression;
@@ -27,7 +28,8 @@ public class GameRepositoryImpl implements GameCustomRepository {
     @Override
     public Page<Game> findGameList(String keyword, Pageable pageable) {
         JPAQuery<Game> query = queryFactory.selectFrom(game)
-                .where(keywordLike(keyword))
+                .where(keywordLike(keyword), notInEndStatus())
+                .orderBy(game.status.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
@@ -36,9 +38,13 @@ public class GameRepositoryImpl implements GameCustomRepository {
         JPAQuery<Long> countQuery = queryFactory
                 .select(game.count())
                 .from(game)
-                .where(keywordLike(keyword));
+                .where(keywordLike(keyword), notInEndStatus());
 
         return PageableExecutionUtils.getPage(contents, pageable, countQuery::fetchOne);
+    }
+
+    private BooleanExpression notInEndStatus() {
+        return game.status.notIn(GameStatus.END);
     }
 
     private BooleanExpression keywordLike(String keyword) {
