@@ -54,8 +54,8 @@ public class SendMessageService {
 
     public void proceedCall(long gameId, long delayMillis) {
         try {
-            GameStatus gameStatus = gameConvertUtil.getGameStatus(gameId);
             Thread.sleep(delayMillis);
+            GameStatus gameStatus = gameConvertUtil.getGameStatus(gameId);
 
             sendData(gameId, "/proceed", ProceedResponse.toDto(gameStatus));
             TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameStatus);

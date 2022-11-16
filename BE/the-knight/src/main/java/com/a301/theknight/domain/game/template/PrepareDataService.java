@@ -130,7 +130,7 @@ public class PrepareDataService extends GameDataService {
         TeamInfoData teamBInfo = makeTeamInfoData(game, getTeamLeaderId(game, Team.B));
 
         redisRepository.saveInGame(game.getId(), InGame.builder()
-                .gameStatus(GameStatus.PREPARE)
+                .gameStatus(GameStatus.PREDECESSOR)
                 .currentAttackTeam(firstAttackTeam)
                 .maxMemberNum(game.getCapacity())
                 .teamAInfo(teamAInfo)
