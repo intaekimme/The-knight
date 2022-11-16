@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.a301.theknight.domain.game.entity.GameStatus.*;
+
 @Component
 public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
 
@@ -46,6 +48,7 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
         TeamInfoData teamBInfoData = inGame.getTeamInfoData(Team.B);
         saveSelectData(gameId, Team.B, teamBInfoData);
 
+        inGame.changeStatus(PREDECESSOR);
         redisRepository.saveInGame(gameId, inGame);
     }
 

@@ -37,19 +37,19 @@ public class GameConvertUtil {
     @Transactional
     public ConvertResponse convertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
-        GameStatus gameStatus = inGame.getGameStatus();
-
         initCountValue(gameId, inGame);
+
+        GameStatus gameStatus = inGame.getGameStatus();
         return new ConvertResponse(gameStatus.name());
     }
 
     @Transactional
     public ConvertResponse forceConvertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
+        initCountValue(gameId, inGame);
+
         GameStatus curStatus = inGame.getGameStatus();
         GameStatus nextStatus = getNextStatus(gameId, inGame, curStatus);
-
-        initCountValue(gameId, inGame, nextStatus);
         return new ConvertResponse(nextStatus.name());
     }
 
@@ -78,21 +78,6 @@ public class GameConvertUtil {
             tryAcquireCountLock(countLock);
 
             inGame.initRequestCount();
-            gameRedisRepository.saveInGame(gameId, inGame);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            unLock(countLock);
-        }
-    }
-
-    private void initCountValue(long gameId, InGame inGame, GameStatus nextStatus) {
-        RLock countLock = redissonClient.getLock(generateCountKey(gameId));
-        try {
-            tryAcquireCountLock(countLock);
-
-            inGame.initRequestCount();
-            inGame.changeStatus(nextStatus);
             gameRedisRepository.saveInGame(gameId, inGame);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
