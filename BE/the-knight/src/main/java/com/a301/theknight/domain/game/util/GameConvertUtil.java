@@ -34,7 +34,6 @@ public class GameConvertUtil {
     private final GameRedisRepository gameRedisRepository;
     private final RedissonClient redissonClient;
 
-    @Transactional
     public ConvertResponse convertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
         initCountValue(gameId, inGame);
@@ -43,7 +42,6 @@ public class GameConvertUtil {
         return new ConvertResponse(gameStatus.name());
     }
 
-    @Transactional
     public ConvertResponse forceConvertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
         initCountValue(gameId, inGame);
