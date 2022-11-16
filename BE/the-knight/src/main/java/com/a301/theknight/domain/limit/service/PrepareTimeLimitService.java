@@ -16,6 +16,7 @@ import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,6 +35,7 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
     }
 
     @Override
+    @Transactional
     public void runLimitLogic(long gameId, InGame inGame) {
         if (inGame.isAllSelected()) {
             return;
@@ -44,7 +46,6 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
         TeamInfoData teamBInfoData = inGame.getTeamInfoData(Team.B);
         saveSelectData(gameId, Team.B, teamBInfoData);
 
-        inGame.changeStatus(GameStatus.PREDECESSOR);
         redisRepository.saveInGame(gameId, inGame);
     }
 
@@ -74,8 +75,8 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
     private void saveOrderData(long gameId, Team team, TeamInfoData teamInfoData) {
         List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
         List<InGamePlayer> savePlayerList = new ArrayList<>(teamPlayerList.size());
-        int playerSize = teamPlayerList.size();
 
+        int playerSize = teamPlayerList.size();
         for (int i = 0; i < playerSize; i++) {
             InGamePlayer randomPlayer = randomChoiceInList(teamPlayerList);
 

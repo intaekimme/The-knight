@@ -37,22 +37,19 @@ public class GameConvertUtil {
     @Transactional
     public ConvertResponse convertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
-        inGame.initRequestCount();
-        gameRedisRepository.saveInGame(gameId, inGame);
-
         GameStatus gameStatus = inGame.getGameStatus();
+
+        initCountValue(gameId, inGame);
         return new ConvertResponse(gameStatus.name());
     }
 
     @Transactional
     public ConvertResponse forceConvertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
-        inGame.initRequestCount();
-        gameRedisRepository.saveInGame(gameId, inGame);
-
         GameStatus curStatus = inGame.getGameStatus();
         GameStatus nextStatus = getNextStatus(gameId, inGame, curStatus);
 
+        initCountValue(gameId, inGame, nextStatus);
         return new ConvertResponse(nextStatus.name());
     }
 
@@ -65,9 +62,38 @@ public class GameConvertUtil {
             InGame inGame = getInGame(gameId);
             inGame.addRequestCount();
             gameRedisRepository.saveInGame(gameId, inGame);
-            log.info("  Request Counting = {}", inGame.getRequestCount());
+            log.info("  [{} Counting= {}]", inGame.getGameStatus().name(), inGame.getRequestCount());
 
             return inGame.isFullCount();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            unLock(countLock);
+        }
+    }
+
+    private void initCountValue(long gameId, InGame inGame) {
+        RLock countLock = redissonClient.getLock(generateCountKey(gameId));
+        try {
+            tryAcquireCountLock(countLock);
+
+            inGame.initRequestCount();
+            gameRedisRepository.saveInGame(gameId, inGame);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            unLock(countLock);
+        }
+    }
+
+    private void initCountValue(long gameId, InGame inGame, GameStatus nextStatus) {
+        RLock countLock = redissonClient.getLock(generateCountKey(gameId));
+        try {
+            tryAcquireCountLock(countLock);
+
+            inGame.initRequestCount();
+            inGame.changeStatus(nextStatus);
+            gameRedisRepository.saveInGame(gameId, inGame);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {

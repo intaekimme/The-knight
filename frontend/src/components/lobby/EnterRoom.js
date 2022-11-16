@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {enterRoomSubscribe, exitRoomUnsubscribe} from '../../_slice/websocketSlice';
+import {enterRoomSubscribe, exitRoom} from '../../_slice/websocketSlice';
 import api from '../../api/api';
 // import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEntry,
 //   onSubMembers, onSubSelectTeam, onSubReady, onSubExit} from '../../websocket/RoomReceivers';
 import { getRoomInfo, modifyRoomSetting, setState, setMembers, changeTeam, changeReady } from '../../_slice/roomSlice';
-import { onPubMembers } from '../../websocket/RoomPublishes';
+import { onPubMembers, onPubExit } from '../../websocket/RoomPublishes';
 
 export default function EnterRoom(){
   const navigate = useNavigate();
@@ -154,7 +154,9 @@ export default function EnterRoom(){
     console.log("방 퇴장 sub", data);
     const text = `${data.nickname}님이 퇴장하셨습니다.`;
     if(data.memberId.toString()===window.localStorage.getItem("memberId")){
-      dispatch(exitRoomUnsubscribe({stompClient:stompClient, gameId:gameId})).then(()=>{
+      dispatch(exitRoom({stompClient:stompClient, gameId:gameId})).then(()=>{
+        stompClient.disconnect();
+        alert("방을 퇴장하셨습니다.");
         navigate('/lobby');
       }).catch((err)=>{
         console.log(err);
@@ -165,6 +167,16 @@ export default function EnterRoom(){
       // 전체채팅으로 뿌려주기
       console.log(text);
       // 전체 멤버 publish
+    }
+  };
+  // 방 삭제 리시버
+  const onSubDelete = (payload) => {
+    const data = JSON.parse(payload.body);
+    console.log("방 삭제 sub", data);
+    if(data.exit.toString()==="true"){
+      stompClient.disconnect();
+      alert("방이 삭제 되었습니다.");
+      navigate('/lobby');
     }
   };
   // error 리시버
@@ -212,6 +224,10 @@ export default function EnterRoom(){
       api: api.subExit(gameId),
       receiver : onSubExit,
       id: "exit",
+    },{
+      api: api.subDelete(gameId),
+      receiver : onSubDelete,
+      id: "delete",
     },{
       api: api.subError(gameId),
       receiver : onSubError,
