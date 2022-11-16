@@ -38,7 +38,7 @@ public class PlayerApi {
     public void exit(@Min(1) @DestinationVariable long gameId,
                      @LoginMemberId long memberId){
         PlayerExitDto exitDto = playerService.exit(gameId, memberId);
-        if (exitDto.isLeaderExited()) {
+        if (exitDto.isOwnerExited()) {
             GameExitResponse exitResponse = gameWaitingService.delete(gameId, memberId);
             messageService.sendData(gameId, "/delete", exitResponse);
             return;

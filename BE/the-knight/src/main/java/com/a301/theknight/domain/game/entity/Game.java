@@ -92,7 +92,7 @@ public class Game extends BaseTimeEntity {
 
     public Player getOwner() {
         return players.stream()
-                .filter(player -> player.isOwner())
+                .filter(Player::isOwner)
                 .findFirst().get();
     }
 }
