@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.CAN_NOT_PLAYING_GAME;
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.LEADER_IS_NOT_SELECTED;
 
 @Service
 public class PrepareDataService extends GameDataService {
@@ -42,39 +43,42 @@ public class PrepareDataService extends GameDataService {
 
     @Override
     @Transactional
-    public void makeData(long gameId) {
+    public void makeAndSendData(long gameId, SendMessageService messageService) {
         Game game = getGame(gameId);
         if (!game.isCanStart()) {
             throw new CustomWebSocketException(CAN_NOT_PLAYING_GAME);
         }
         List<Player> players = game.getPlayers();
 
-        choiceLeader(players);
+        makeAndSendLeader(gameId, messageService, players);
+        makeAndSendPlayer(gameId, messageService, players);
+        makeAndSendWeapon(gameId, messageService, game);
         initInGameData(game);
-        makeInGamePlayerData(gameId, players);
-        makeWeaponsData(game);
     }
 
-    @Override
-    @Transactional
-    public void sendScreenData(long gameId, SendMessageService messageService) {
-        GameWeaponData weaponsData = getWeaponsData(gameId, Team.A);
-        messageService.sendData(gameId, "/a/weapons", weaponsData);
-        messageService.sendData(gameId, "/b/weapons", weaponsData);
+    private void makeAndSendWeapon(long gameId, SendMessageService messageService, Game game) {
+        GameWeaponData weaponData = makeWeaponsData(game);
+        messageService.sendData(gameId, "/a/weapons", weaponData);
+        messageService.sendData(gameId, "/b/weapons", weaponData);
+    }
 
-        Game game = getGame(gameId);
-        GameLeaderDto leadersData = getLeadersData(game);
-        messageService.sendData(gameId, "/a/leader", leadersData.getTeamA());
-        messageService.sendData(gameId, "/b/leader", leadersData.getTeamB());
+    private void makeAndSendPlayer(long gameId, SendMessageService messageService, List<Player> players) {
+        List<InGamePlayer> inGamePlayerList = makeInGamePlayerData(gameId, players);
+        GamePlayersInfoResponse response = getGamePlayerData(inGamePlayerList);
 
-        GamePlayersInfoResponse response = getGamePlayerData(gameId);
         messageService.sendData(gameId, "/a/players", response.getPlayersAInfoDto());
         messageService.sendData(gameId, "/b/players", response.getPlayersBInfoDto());
     }
 
-    private GamePlayersInfoResponse getGamePlayerData(long gameId) {
-        GamePlayersInfoDto playersAInfo = getTeamPlayersInfo(gameId, Team.A);
-        GamePlayersInfoDto playersBInfo = getTeamPlayersInfo(gameId, Team.B);
+    private void makeAndSendLeader(long gameId, SendMessageService messageService, List<Player> players) {
+        GameLeaderDto gameLeaderDto = choiceLeader(players);
+        messageService.sendData(gameId, "/a/leader", gameLeaderDto.getTeamA());
+        messageService.sendData(gameId, "/b/leader", gameLeaderDto.getTeamB());
+    }
+
+    private GamePlayersInfoResponse getGamePlayerData(List<InGamePlayer> inGamePlayerList) {
+        GamePlayersInfoDto playersAInfo = getTeamPlayersInfo(inGamePlayerList, Team.A);
+        GamePlayersInfoDto playersBInfo = getTeamPlayersInfo(inGamePlayerList, Team.B);
 
         return GamePlayersInfoResponse.builder()
                 .playersAInfoDto(playersAInfo)
@@ -82,18 +86,20 @@ public class PrepareDataService extends GameDataService {
                 .build();
     }
 
-    private GamePlayersInfoDto getTeamPlayersInfo(long gameId, Team team) {
-        List<InGamePlayer> playerList = redisRepository.getTeamPlayerList(gameId, team);
-        List<PlayerDataDto> players = playerList.stream()
-                .map(PlayerDataDto::toDto)
+    private GamePlayersInfoDto getTeamPlayersInfo(List<InGamePlayer> inGamePlayerList, Team team) {
+        List<PlayerDataDto> playerDtoList = inGamePlayerList.stream()
+                .map(inGamePlayer -> PlayerDataDto.toDto(inGamePlayer, team))
+                .sorted((o1, o2) -> o1.getOrder() == o2.getOrder()
+                        ? (int) (o1.getMemberId() - o2.getMemberId())
+                        : o1.getOrder() - o2.getOrder())
                 .collect(Collectors.toList());
 
         return GamePlayersInfoDto.builder()
-                .maxMember(players.size())
-                .players(players).build();
+                .maxMember(playerDtoList.size())
+                .players(playerDtoList).build();
     }
 
-    private void choiceLeader(List<Player> players) {
+    private GameLeaderDto choiceLeader(List<Player> players) {
         List<Player> teamA = getTeamPlayerList(players, Team.A);
         List<Player> teamB = getTeamPlayerList(players, Team.B);
 
@@ -105,6 +111,11 @@ public class PrepareDataService extends GameDataService {
         Player teamBLeader = teamB.get(teamBLeaderIndex);
         teamALeader.becomeLeader();
         teamBLeader.becomeLeader();
+
+        return GameLeaderDto.builder()
+                .teamA(new TeamLeaderDto(teamALeader.getMember().getId()))
+                .teamB(new TeamLeaderDto(teamBLeader.getMember().getId()))
+                .build();
     }
 
     private List<Player> getTeamPlayerList(List<Player> players, Team team) {
@@ -140,7 +151,7 @@ public class PrepareDataService extends GameDataService {
                 .leaderId(leaderId == null ? 0 : leaderId).build();
     }
 
-    private void makeInGamePlayerData(long gameId, List<Player> players) {
+    private List<InGamePlayer> makeInGamePlayerData(long gameId, List<Player> players) {
         List<InGamePlayer> inGamePlayers = players.stream()
                 .map(player -> InGamePlayer.builder()
                         .memberId(player.getMember().getId())
@@ -151,38 +162,27 @@ public class PrepareDataService extends GameDataService {
                         .leftCount(3)
                         .rightCount(3).build()).collect(Collectors.toList());
         redisRepository.saveInGamePlayerAll(gameId, inGamePlayers);
+
+        return inGamePlayers;
     }
 
-    private void makeWeaponsData(Game game) {
+    private GameWeaponData makeWeaponsData(Game game) {
         GameWeaponData gameWeaponDataA = GameWeaponData.toWeaponData(game);
         GameWeaponData gameWeaponDataB = GameWeaponData.toWeaponData(game);
 
         redisRepository.saveGameWeaponData(game.getId(), Team.A, gameWeaponDataA);
         redisRepository.saveGameWeaponData(game.getId(), Team.B, gameWeaponDataB);
-    }
-
-    private GameLeaderDto getLeadersData(Game game) {
-        Long teamALeaderId = getTeamLeaderId(game, Team.A);
-        Long teamBLeaderId = getTeamLeaderId(game, Team.B);
-
-        return GameLeaderDto.builder()
-                .teamA(new TeamLeaderDto(teamALeaderId == null ? 0 : teamALeaderId))
-                .teamB(new TeamLeaderDto(teamBLeaderId == null ? 0 : teamBLeaderId)).build();
+        return gameWeaponDataA;
     }
 
     private Long getTeamLeaderId(Game game, Team team) {
         return game.getTeamLeader(team)
-                .orElseThrow(() -> new CustomWebSocketException(ORDER_NUMBER_IS_INVALID))
+                .orElseThrow(() -> new CustomWebSocketException(LEADER_IS_NOT_SELECTED))
                 .getMember().getId();
     }
 
-    private GameWeaponData getWeaponsData(long gameId, Team team) {
-        return redisRepository.getGameWeaponData(gameId, team)
-                .orElseThrow(() -> new CustomWebSocketException(WEAPON_DATA_IS_NOT_EXIST));
-    }
-
     private Game getGame(long gameId) {
-        return gameRepository.findById(gameId)
+        return gameRepository.findByIdFetchJoin(gameId)
                 .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 }

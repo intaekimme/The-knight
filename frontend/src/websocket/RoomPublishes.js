@@ -25,7 +25,7 @@ const onPubChat = (payload) => {
   //   chattingSet : String
   //     (All, A, B)
   // }
-  payload.stompClient.send(`${api.pubChat(payload.gameId)}`, {}, JSON.stringify(payload.chat));
+  payload.stompClient.send(`${api.pubChat(payload.gameId)}`, {}, JSON.stringify(payload.message));
   console.log("채팅 pub", payload);
 }
 // 방 입장 publish

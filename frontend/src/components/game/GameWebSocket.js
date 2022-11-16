@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { switchIsLoading } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import {
+  setMe,
   setTimer,
   countTimer,
   stopCountTimer,
@@ -58,6 +59,7 @@ export default function GameWebSocket() {
     // }
     const data = JSON.parse(payload.body);
     dispatch(fetchPlayers(data));
+    dispatch(setMe());
   };
 
   // 최초 화면전환 요청
@@ -354,10 +356,10 @@ export default function GameWebSocket() {
 
   useEffect(() => {
     // for common
-    const subPlayersInfo = stompClient.subscribe(api.subPlayersInfo(gameId, myTeam), onSubPlayersInfo);
-    const subConvert = stompClient.subscribe(api.subConvert(gameId), onSubConvert);
-    const subNextPhase = stompClient.subscribe(api.subNextPhase(gameId), onSubNextPhase);
-    const subEnd = stompClient.subscribe(api.subEnd(gameId), onSubEnd);
+    stompClient.subscribe(api.subPlayersInfo(gameId, myTeam), onSubPlayersInfo);
+    stompClient.subscribe(api.subConvert(gameId), onSubConvert);
+    stompClient.subscribe(api.subNextPhase(gameId), onSubNextPhase);
+    stompClient.subscribe(api.subEnd(gameId), onSubEnd);
 
     // for prepare
     const subLeader = stompClient.subscribe(api.subLeader(gameId, myTeam), onSubLeader);
@@ -366,22 +368,6 @@ export default function GameWebSocket() {
     const subSelectComplete = stompClient.subscribe(api.subSelectComplete(gameId, myTeam), onSubSelectComplete);
 
     // 객체 저장
-    dispatch(addSubscribeObject({
-      phase: "COMMON",
-      subscribeObject: subPlayersInfo,
-    }))
-    dispatch(addSubscribeObject({
-      phase: "COMMON",
-      subscribeObject: subConvert,
-    }))
-    dispatch(addSubscribeObject({
-      phase: "COMMON",
-      subscribeObject: subNextPhase,
-    }))
-    dispatch(addSubscribeObject({
-      phase: "COMMON",
-      subscribeObject: subEnd,
-    }))
     dispatch(addSubscribeObject({
       phase: "PREPARE",
       subscribeObject: subLeader,

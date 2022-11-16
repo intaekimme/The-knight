@@ -5,8 +5,13 @@ import { Grid, Box } from "@mui/material";
 import RoomUser from "./RoomUser";
 import RoomHeader from "./RoomHeader";
 
-export default function RoomDisplay() {
-	const size = 35;
+export default function RoomDisplay(props) {
+	const [size, setSize] = React.useState(props.size);
+	React.useEffect(()=>{
+		if(props.size){
+			setSize(props.size);
+		}
+	}, [props.size]);
 
 	// 방 정보
 	const roomData = useSelector((state) => state.room.roomInfo);

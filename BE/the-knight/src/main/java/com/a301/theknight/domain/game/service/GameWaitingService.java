@@ -81,8 +81,11 @@ public class GameWaitingService {
     @Transactional
     public GameExitResponse delete(long gameId, long memberId){
         Game findGame = getGame(gameId);
-        if (!isOwner(findGame, memberId)) {
-            throw new CustomWebSocketException(GameWaitingErrorCode.NO_PERMISSION_TO_DELETE_GAME_ROOM);
+
+        if(isOwnerPresent(findGame)){
+            if (!isOwner(findGame, memberId)) {
+                throw new CustomWebSocketException(GameWaitingErrorCode.NO_PERMISSION_TO_DELETE_GAME_ROOM);
+            }
         }
 
         playerRepository.deleteAll(findGame.getPlayers());
@@ -100,9 +103,11 @@ public class GameWaitingService {
     }
 
     private boolean isOwner(Game game, long memberId){
-        Player owner = game.getPlayers().stream().filter(Player::isOwner)
-                .findFirst()
-                .orElseThrow(() -> new CustomWebSocketException(PlayerErrorCode.OWNER_IS_NOT_EXIST));
-        return owner.getMember().getId().equals(memberId);
+        return game.getPlayers().stream().filter(Player::isOwner)
+                .findFirst().stream().anyMatch(owner -> owner.getMember().getId().equals(memberId));
+    }
+
+    private boolean isOwnerPresent(Game game){
+        return game.getPlayers().stream().anyMatch(Player::isOwner);
     }
 }

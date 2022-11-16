@@ -5,12 +5,14 @@ import com.a301.theknight.domain.game.factory.GameScreenDataServiceFactory;
 import com.a301.theknight.domain.game.template.GameDataService;
 import com.a301.theknight.domain.game.util.GameConvertUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
 import javax.validation.constraints.Min;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class GameScreenDataApi {
@@ -26,7 +28,7 @@ public class GameScreenDataApi {
         }
 
         GameDataService dataTemplate = dataTemplateFactory.getGameDataTemplate(gameId);
-        dataTemplate.makeAndSendData(gameId, messageService);
+        dataTemplate.sendScreenData(gameId, messageService);
 
         messageService.proceedCall(gameId, 500);
     }

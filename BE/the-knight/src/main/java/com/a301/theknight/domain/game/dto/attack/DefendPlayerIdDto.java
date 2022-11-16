@@ -1,15 +1,13 @@
 package com.a301.theknight.domain.game.dto.attack;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.Positive;
 
+@AllArgsConstructor
 @Data
-public class DefendPlayerDto {
+public class DefendPlayerIdDto {
     @Positive(message = "Id can only be positive.")
     private long memberId;
-
-    public DefendPlayerDto(long memberId){
-        this.memberId = memberId;
-    }
 }

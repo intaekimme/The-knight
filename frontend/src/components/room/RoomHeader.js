@@ -1,11 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
-
-import { white, red, blue, black } from "../../_css/ReactCSSProperties";
-
 import { Grid, Box, Button } from "@mui/material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+
+import api from "../../api/api";
+import { white, red, blue, black } from "../../_css/ReactCSSProperties";
 import RoomInfoModal from "../../commons/modal/RoomInfoModal";
 import {onPubModifyRoom, onPubExit, onPubSelectTeam} from "../../websocket/RoomPublishes";
 
@@ -27,15 +27,71 @@ export default function RoomHeader(props) {
 		tempRoomData.twin = itemCount[1];
 		tempRoomData.shield = itemCount[2];
 		tempRoomData.hand = itemCount[3];
-		onPubModifyRoom({stompClient:stompClient, roomData:tempRoomData});
+		let sum = 0;
+    for(let i=0;i<itemCount.length;i++){
+      sum += itemCount[i];
+    }
+    if(maxMember === sum){
+			onPubModifyRoom({stompClient:stompClient, roomData:tempRoomData});
+      onRoomInfoModalClose();
+    }
+    else{
+      alert(`필요 아이템 개수 : ${maxMember} / 현재 아이템 개수 : ${sum}\n아이템 개수가 올바르지 않습니다`);
+    }
 	}
 	// team A선택
 	const onSelectTeamA = ()=>{
 		onPubSelectTeam({stompClient:props.stompClient, gameId:roomData.gameId, team:'A'});
+		stompClient.unsubscribe("chatTeam");
+		stompClient.subscribe(api.subChatTeam(props.roomData.gameId, 'a')
+			, (payload) => {
+				// {
+				//   memberId : long,
+				//   nickname : String,
+				//   content : String,
+				//   chattingSet : String
+				//    (ALL, A, B)
+				// }
+				const data = JSON.parse(payload.body);
+				console.log("팀 채팅 sub", data);
+				const text = `${data.nickname} : ${data.content}`;
+				// 내 채팅일 때 오른쪽에 표시
+				if (data.memberId === window.localStorage.getItem("memberId")) {
+					console.log(text);
+				}
+				// 내 채팅이 아닐 때 왼쪽에 표시
+				else {
+					console.log(text);
+				}
+			}
+			, {id: "chatTeam"});
 	}
-	// team A선택
+	// team B선택
 	const onSelectTeamB = ()=>{
 		onPubSelectTeam({stompClient:props.stompClient, gameId:roomData.gameId, team:'B'});
+		stompClient.unsubscribe("chatTeam");
+		stompClient.subscribe(api.subChatTeam(props.roomData.gameId, 'b')
+			, (payload) => {
+				// {
+				//   memberId : long,
+				//   nickname : String,
+				//   content : String,
+				//   chattingSet : String
+				//    (ALL, A, B)
+				// }
+				const data = JSON.parse(payload.body);
+				console.log("팀 채팅 sub", data);
+				const text = `${data.nickname} : ${data.content}`;
+				// 내 채팅일 때 오른쪽에 표시
+				if (data.memberId === window.localStorage.getItem("memberId")) {
+					console.log(text);
+				}
+				// 내 채팅이 아닐 때 왼쪽에 표시
+				else {
+					console.log(text);
+				}
+			}
+			, {id: "chatTeam"});
 	}
 	// 나가기
 	const onExit = () => {

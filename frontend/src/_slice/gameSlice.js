@@ -114,7 +114,7 @@ const leaderInit = 0;
 
 const attackFirstInit = "";
 
-const orderInit = [null, null, null, null, null];
+const orderInit = [];
 
 const countWeaponInit = {
   sword: 0,
@@ -126,13 +126,12 @@ const countWeaponInit = {
 const isSelectCompleteInit = false;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "DOUBT_RESULT";
+const phaseInit = "PREPARE";
 const previousPhaseInit = null;
 
 const subscribeObjectInit = {
-  common: [],
   prepare: [],
-  prdecessor: [],
+  predecessor: [],
   attack: [],
   attackDoubt: [],
   defense: [],
@@ -142,7 +141,7 @@ const subscribeObjectInit = {
   end: [],
 }
 
-const isLoadingInit = false;
+const isLoadingInit = true;
 
 const currentAttackerInit = {
   memberId: 6,
@@ -209,7 +208,7 @@ const doubtPassListInit = []
 const executeInfoInit = {
   attackTeam: "",
   attacker: {
-    memberId: 0,
+    memberId: 6,
     weapon: "",
     hand: "",
   },
@@ -316,7 +315,7 @@ export const gameSlice = createSlice({
       state.attackFirst = action.payload;
     },
     fetchCountWeapon: (state, action) => {
-      state.countweapon = action.payload;
+      state.countWeapon = action.payload;
     },
     selectComplete: (state) => {
       state.isSelectComplete = true;
@@ -363,8 +362,6 @@ export const gameSlice = createSlice({
         state.subscribeObject.doubtResult.push(action.payload.subscribeObject)
       } else if (action.payload.phase === "END") {
         state.subscribeObject.end.push(action.payload.subscribeObject)
-      } else if (action.payload.phase === "COMMON") {
-        state.subscribeObject.common.push(action.payload.subscribeObject)
       }
     },
     cancelSubscribe: (state, action) => {
@@ -392,9 +389,6 @@ export const gameSlice = createSlice({
       } else if (action.payload === "END") {
         state.subscribeObject.end.forEach(subscribeObject => subscribeObject.unsubscribe())
         state.subscribeObject.end = []
-      } else if (action.payload === "COMMON") {
-        state.subscribeObject.common.forEach(subscribeObject => subscribeObject.unsubscribe())
-        state.subscribeObject.common = []
       }
     }
   },

@@ -76,7 +76,7 @@ public class PlayerService {
         Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
 
-        PlayerExitDto exitDto = new PlayerExitDto(exitPlayer.isLeader(), PlayerExitResponse.builder()
+        PlayerExitDto exitDto = new PlayerExitDto(exitPlayer.isOwner(), PlayerExitResponse.builder()
                 .memberId(exitPlayer.getMember().getId())
                 .nickname(exitPlayer.getMember().getNickname()).build());
         playerRepository.delete(exitPlayer);
@@ -172,6 +172,7 @@ public class PlayerService {
     private InGame makeInGame(Game game) {
         InGame initInGame = InGame.builder()
                 .gameStatus(GameStatus.PREPARE)
+                .maxMemberNum(game.getCapacity())
                 .teamAInfo(TeamInfoData.builder().build())
                 .teamBInfo(TeamInfoData.builder().build()).build();
 

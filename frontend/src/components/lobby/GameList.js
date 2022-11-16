@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, CardActions, CardContent, CardHeader, Grid, Pagination, Typography } from "@mui/material";
+import api from "../../api/api";
 import RoomInfoModal from "../../commons/modal/RoomInfoModal";
 import { gameDesc, gameListAll } from "../../_slice/tempGameSlice";
 import { getRoomInfo } from "../../_slice/roomSlice";
@@ -35,7 +36,15 @@ export default function GameList() {
 
   // 방 입장
   const onRoomEnter = (gameId) => {
-    navigate(`/room/${gameId}`);
+    dispatch(getRoomInfo(gameId)).then((response) => {
+      if (response.payload.currentMembers < response.payload.maxMember) {
+        onRoomInfoModalClose();
+        navigate(api.routeConnectWebsocket(gameId));
+      }
+      else {
+        console.log("full Room");
+      }
+    }).catch((err) => { console.log(err); });
   }
 
   // gameId props
@@ -45,7 +54,6 @@ export default function GameList() {
     console.log("gameId", gameId);
     setId(gameId);
     //gameId로 게임 상세정보 불러오기
-    // dispatch(gameDesc(gameId));
     dispatch(getRoomInfo(gameId));
   }
   //저장되어있는 게임 상세정보 store에서 불러오기

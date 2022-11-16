@@ -34,10 +34,13 @@ public class Player extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private GameResult result;
 
+    @Column(name = "is_ready")
     private boolean isReady;
 
-    private boolean owner;
+    @Column(name = "is_owner")
+    private boolean isOwner;
 
+    @Column(name = "is_leader")
     private boolean isLeader;
 
     @Builder
@@ -84,7 +87,7 @@ public class Player extends BaseTimeEntity {
     }
 
     public void setOwner() {
-        owner = true;
+        isOwner = true;
     }
 
 //    public void updatePlayer(GameResult result, boolean isDead, Weapon leftWeapon, Weapon rightWeapon) {

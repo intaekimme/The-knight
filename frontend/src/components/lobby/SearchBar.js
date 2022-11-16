@@ -8,6 +8,8 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 
+import api from "../../api/api";
+
 import { searchRoom } from "../../_slice/tempGameSlice";
 import { modifyRoomSetting, roomInit, initRoom } from "../../_slice/roomSlice";
 
@@ -27,7 +29,6 @@ export default function SearchBar() {
 
   // 방만들기 정보 update
   const onRoomMake = (title, maxMember, itemCount) => {
-    const url = `/room/`;
     const tempRoomData = { ...roomData };
     tempRoomData.title = title;
     tempRoomData.maxMember = maxMember;
@@ -35,11 +36,21 @@ export default function SearchBar() {
     tempRoomData.twin = itemCount[1];
     tempRoomData.shield = itemCount[2];
     tempRoomData.hand = itemCount[3];
-    dispatch(modifyRoomSetting(tempRoomData));
-    dispatch(initRoom({ roomInfo: tempRoomData })).then((response) => {
-      const gameId = response.payload.gameId;
-      navigate(`${url}${gameId}`);
-    });
+    let sum = 0;
+    for (let i = 0; i < itemCount.length; i++) {
+      sum += itemCount[i];
+    }
+    if (maxMember === sum) {
+      dispatch(modifyRoomSetting(tempRoomData));
+      dispatch(initRoom({ roomInfo: tempRoomData })).then((response) => {
+        const gameId = response.payload.gameId;
+        navigate(api.routeConnectWebsocket(gameId));
+      });
+      onRoomInfoModalClose();
+    }
+    else {
+      alert(`필요 아이템 개수 : ${maxMember} / 현재 아이템 개수 : ${sum}\n아이템 개수가 올바르지 않습니다`);
+    }
   }
 
   const [keyword, setKeyword] = React.useState();

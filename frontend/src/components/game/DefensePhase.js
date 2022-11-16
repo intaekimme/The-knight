@@ -10,7 +10,7 @@ export default function DefensePhase() {
   const currentDefender = useSelector((state) => state.game.currentDefender);
   // const stompClient = useSelector((state) => state.websocket.stompClient);
   // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  // const myTeam = useSelector((state) => state.game.me).team;
   // const gameId = useSelector((state) => state.room.roomInfo).gameId;
   const weaponsKr = {
     SWORD: "검",
@@ -222,7 +222,7 @@ export default function DefensePhase() {
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
-        height: "90vh",
+        height: "88vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>

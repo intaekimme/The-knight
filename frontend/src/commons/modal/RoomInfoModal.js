@@ -24,12 +24,16 @@ export default function RoomSetting(props) {
 	// item count
 	const [itemCount, setItemCount] = React.useState([props.roomData.sword, props.roomData.twin, props.roomData.shield, props.roomData.hand]);
 
+	// roomData update
 	React.useEffect(() => {
+		console.log(props.roomData);
 		if (props.roomData) {
-			console.log(props.roomData);
 			setRoomData(props.roomData);
+			setItemCount([props.roomData.sword, props.roomData.twin, props.roomData.shield, props.roomData.hand]);
 		}
 	}, [props.roomData]);
+
+	// 편집가능여부 판단
 	React.useEffect(() => {
 		if (props.canEdit) {
 			setCanEdit(props.canEdit);
@@ -47,11 +51,29 @@ export default function RoomSetting(props) {
 	// 확인 버튼
 	const onConfirm = () => {
 		props.onConfirm(title, maxMember, itemCount);
-		props.onClose();
 	}
 
+	// 인원변경 시 아이템개수 초기화
 	const maxMemberChange = (event) => {
-		setMaxMember(event.target.value);
+		const maxMemberChange = event.target.value;
+		setMaxMember(maxMemberChange);
+		switch (maxMemberChange) {
+			case 4:
+				setItemCount([1, 1, 1, 1]);
+				break;
+			case 6:
+				setItemCount([2, 1, 2, 1]);
+				break;
+			case 8:
+				setItemCount([2, 2, 2, 2]);
+				break;
+			case 10:
+				setItemCount([3, 2, 3, 2]);
+				break;
+			default:
+				alert('인원 수 오류');
+				break;
+		}
 	};
 
 	//아이템 목록

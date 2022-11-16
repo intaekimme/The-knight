@@ -16,9 +16,13 @@ import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.a301.theknight.domain.game.entity.GameStatus.*;
 
 @Component
 public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
@@ -33,6 +37,7 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
     }
 
     @Override
+    @Transactional
     public void runLimitLogic(long gameId, InGame inGame) {
         if (inGame.isAllSelected()) {
             return;
@@ -43,7 +48,7 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
         TeamInfoData teamBInfoData = inGame.getTeamInfoData(Team.B);
         saveSelectData(gameId, Team.B, teamBInfoData);
 
-        inGame.changeStatus(GameStatus.PREDECESSOR);
+        inGame.changeStatus(PREDECESSOR);
         redisRepository.saveInGame(gameId, inGame);
     }
 
@@ -72,8 +77,9 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
 
     private void saveOrderData(long gameId, Team team, TeamInfoData teamInfoData) {
         List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
-        int playerSize = teamPlayerList.size();
+        List<InGamePlayer> savePlayerList = new ArrayList<>(teamPlayerList.size());
 
+        int playerSize = teamPlayerList.size();
         for (int i = 0; i < playerSize; i++) {
             InGamePlayer randomPlayer = randomChoiceInList(teamPlayerList);
 
@@ -81,7 +87,11 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
                     .memberId(randomPlayer.getMemberId())
                     .nickname(randomPlayer.getNickname())
                     .image(randomPlayer.getImage()).build();
+
+            randomPlayer.saveOrder(i + 1);
+            savePlayerList.add(randomPlayer);
         }
+        redisRepository.saveInGamePlayerAll(gameId, savePlayerList);
     }
 
     private List<Weapon> makeWeaponList(GameWeaponData weaponData) {

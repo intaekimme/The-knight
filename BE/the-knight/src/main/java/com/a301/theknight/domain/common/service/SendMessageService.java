@@ -23,11 +23,12 @@ public class SendMessageService {
     private final TimeLimitServiceFactory timeLimitServiceFactory;
 
     public void sendData(long gameId, String postfix, Object payload) {
-        log.info(" <<-- [Send Data] /sub/games/{}/{}, value = {}", gameId, postfix, payload.toString());
+        log.info(" <<-- [Send Data] /sub/games/{}{}, value = {}", gameId, postfix, payload.toString());
         template.convertAndSend(makeDestinationUrl(gameId, postfix), payload);
     }
 
     public void sendChatData(long gameId, String chattingSet, Object payload) {
+        log.info(" <<-- [Send Data] /sub/games/{}/chat-{}, value = {}", gameId, chattingSet, payload.toString());
         template.convertAndSend(makeChatDestinationUrl(gameId, chattingSet), payload);
     }
 
@@ -47,13 +48,14 @@ public class SendMessageService {
 
     public void forceConvertCall(long gameId) {
         ConvertResponse response = gameConvertUtil.forceConvertScreen(gameId);
+        log.info(" <<-- [Force Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
         sendData(gameId, "/convert", response);
     }
 
     public void proceedCall(long gameId, long delayMillis) {
         try {
-            GameStatus gameStatus = gameConvertUtil.getGameStatus(gameId);
             Thread.sleep(delayMillis);
+            GameStatus gameStatus = gameConvertUtil.getGameStatus(gameId);
 
             sendData(gameId, "/proceed", ProceedResponse.toDto(gameStatus));
             TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameStatus);

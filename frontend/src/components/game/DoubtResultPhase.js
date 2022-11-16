@@ -20,7 +20,7 @@ export default function DoubtResultPhase() {
           position: "relative",
         }}
       >
-        <Box sx={{ position: "absolute", top: "2vmin", fontSize: "3.5vmin" }}>
+        <Box sx={{ position: "absolute", top: "4vmin", fontSize: "3.5vmin" }}>
           {doubtInfo.doubtResponse.doubtResult ? "의심 성공" : "의심 실패"}
         </Box>
         <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>
@@ -44,7 +44,7 @@ export default function DoubtResultPhase() {
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
-        height: "90vh",
+        height: "88vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>
