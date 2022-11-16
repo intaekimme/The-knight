@@ -170,6 +170,15 @@ export default function EnterRoom(){
       // 전체 멤버 publish
     }
   };
+  // 방 삭제 리시버
+  const onSubDelete = (payload) => {
+    const data = JSON.parse(payload.body);
+    console.log("방 삭제 sub", data);
+    if(data.exit.toString()==="true"){
+      stompClient.disconnect();
+      navigate('/lobby');
+    }
+  };
   // error 리시버
   const onSubError = (payload) => {
     console.log("error sub", payload);
@@ -215,6 +224,10 @@ export default function EnterRoom(){
       api: api.subExit(gameId),
       receiver : onSubExit,
       id: "exit",
+    },{
+      api: api.subDelete(gameId),
+      receiver : onSubDelete,
+      id: "delete",
     },{
       api: api.subError(gameId),
       receiver : onSubError,
