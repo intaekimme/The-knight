@@ -36,9 +36,7 @@ public class GameConvertUtil {
 
     @Transactional
     public ConvertResponse convertScreen(long gameId) {
-        InGame inGame = getInGame(gameId);
-        inGame.initRequestCount();
-        gameRedisRepository.saveInGame(gameId, inGame);
+        InGame inGame = initCountValue(gameId);
 
         GameStatus gameStatus = inGame.getGameStatus();
         return new ConvertResponse(gameStatus.name());
@@ -46,9 +44,7 @@ public class GameConvertUtil {
 
     @Transactional
     public ConvertResponse forceConvertScreen(long gameId) {
-        InGame inGame = getInGame(gameId);
-        inGame.initRequestCount();
-        gameRedisRepository.saveInGame(gameId, inGame);
+        InGame inGame = initCountValue(gameId);
 
         GameStatus curStatus = inGame.getGameStatus();
         GameStatus nextStatus = getNextStatus(gameId, inGame, curStatus);
@@ -65,9 +61,25 @@ public class GameConvertUtil {
             InGame inGame = getInGame(gameId);
             inGame.addRequestCount();
             gameRedisRepository.saveInGame(gameId, inGame);
-            log.info("  Request Counting = {}", inGame.getRequestCount());
+            log.info("  [{} Counting= {}]", inGame.getGameStatus().name(), inGame.getRequestCount());
 
             return inGame.isFullCount();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            unLock(countLock);
+        }
+    }
+
+    private InGame initCountValue(long gameId) {
+        RLock countLock = redissonClient.getLock(generateCountKey(gameId));
+        try {
+            tryAcquireCountLock(countLock);
+
+            InGame inGame = getInGame(gameId);
+            inGame.initRequestCount();
+            gameRedisRepository.saveInGame(gameId, inGame);
+            return inGame;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
