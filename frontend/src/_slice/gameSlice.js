@@ -114,7 +114,7 @@ const leaderInit = 0;
 
 const attackFirstInit = "";
 
-const orderInit = [null, null, null, null, null];
+const orderInit = [];
 
 const countWeaponInit = {
   sword: 0,
