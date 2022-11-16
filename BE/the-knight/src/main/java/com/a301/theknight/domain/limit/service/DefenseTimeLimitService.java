@@ -26,7 +26,6 @@ public class DefenseTimeLimitService extends TimeLimitServiceTemplate {
         DefendData defendData = turnData.getDefendData();
         defendData.defendPass();
 
-        inGame.changeStatus(EXECUTE);
         redisRepository.saveInGame(gameId, inGame);
     }
 }

@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
+import com.a301.theknight.domain.game.dto.attack.DefendPlayerIdDto;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.attack.response.AttackResponse;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
@@ -141,7 +141,7 @@ class GameAttackDefenseServiceTest {
     void attack() {
         //  given
         GameAttackRequest attackRequest = new GameAttackRequest();
-        attackRequest.setDefender(new DefendPlayerDto(2L));
+        attackRequest.setDefender(new DefendPlayerIdDto(2L));
         attackRequest.setWeapon(Weapon.TWIN);
         attackRequest.setHand(Hand.LEFT);
         given(gameRedisRepository.getInGamePlayer(1L, 1L)).willReturn(Optional.of(attacker));
@@ -163,7 +163,7 @@ class GameAttackDefenseServiceTest {
     void lyingAttack() {
         // given
         GameAttackRequest attackRequest = new GameAttackRequest();
-        attackRequest.setDefender(new DefendPlayerDto(2L));
+        attackRequest.setDefender(new DefendPlayerIdDto(2L));
         attackRequest.setWeapon(Weapon.TWIN);
         attackRequest.setHand(Hand.RIGHT);
         given(gameRedisRepository.getInGamePlayer(1L, 1L)).willReturn(Optional.of(attacker));

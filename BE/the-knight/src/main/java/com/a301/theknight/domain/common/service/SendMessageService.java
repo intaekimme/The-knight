@@ -48,7 +48,7 @@ public class SendMessageService {
 
     public void forceConvertCall(long gameId) {
         ConvertResponse response = gameConvertUtil.forceConvertScreen(gameId);
-        log.info(" <<-- [Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
+        log.info(" <<-- [Force Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
         sendData(gameId, "/convert", response);
     }
 
