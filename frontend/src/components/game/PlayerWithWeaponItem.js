@@ -7,8 +7,10 @@ import CloseIcon from "@mui/icons-material/Close";
 function PlayerWithWeaponItem({ player, isOpp }) {
   const phase = useSelector((state) => state.game.phase);
   const players = useSelector((state) => state.game.players);
+  const me = useSelector((state) => state.game.me);
   const attackInfo = useSelector((state) => state.game.attackInfo);
   const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
+  const isMe = player.memberId === me.memberId;
 
   const size = {
     2: "7vmin",
@@ -19,7 +21,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
-  const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
+  const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubDeleteWeapon = (payload) => {
@@ -72,7 +74,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                   position: "relative",
                 }}
               >
-                {(phase === "PREPARE") && player.weapons[0] && !isSelectComplete && (
+                {(phase === "PREPARE") && player.weapons[0] && !isSelectComplete && isMe && (
                   <CloseIcon
                     onClick={() => deleteHand("LEFT")}
                     sx={{
@@ -148,7 +150,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                   position: "relative",
                 }}
               >
-                {(phase === "PREPARE") && player.weapons[1] && !isSelectComplete && (
+                {(phase === "PREPARE") && player.weapons[1] && !isSelectComplete && isMe && (
                   <CloseIcon
                     onClick={() => deleteHand("RIGHT")}
                     sx={{

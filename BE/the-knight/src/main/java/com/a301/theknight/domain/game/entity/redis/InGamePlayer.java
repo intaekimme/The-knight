@@ -2,10 +2,7 @@ package com.a301.theknight.domain.game.entity.redis;
 
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.player.entity.Team;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

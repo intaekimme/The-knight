@@ -48,14 +48,14 @@ public class SendMessageService {
 
     public void forceConvertCall(long gameId) {
         ConvertResponse response = gameConvertUtil.forceConvertScreen(gameId);
-        log.info(" <<-- [Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
+        log.info(" <<-- [Force Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
         sendData(gameId, "/convert", response);
     }
 
     public void proceedCall(long gameId, long delayMillis) {
         try {
-            GameStatus gameStatus = gameConvertUtil.getGameStatus(gameId);
             Thread.sleep(delayMillis);
+            GameStatus gameStatus = gameConvertUtil.getGameStatus(gameId);
 
             sendData(gameId, "/proceed", ProceedResponse.toDto(gameStatus));
             TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameStatus);

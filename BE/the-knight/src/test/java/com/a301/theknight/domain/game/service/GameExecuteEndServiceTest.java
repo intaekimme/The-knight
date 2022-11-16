@@ -1,12 +1,9 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.attack.DefendPlayerDto;
+import com.a301.theknight.domain.game.dto.attack.DefendPlayerIdDto;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.end.response.GameEndResponse;
-import com.a301.theknight.domain.game.dto.execute.response.AttackerDto;
-import com.a301.theknight.domain.game.dto.execute.response.DefenderDto;
-import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
 import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.Game;
@@ -195,7 +192,7 @@ class GameExecuteEndServiceTest {
 
         GameAttackRequest gameAttackRequest = new GameAttackRequest();
 //        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
-        gameAttackRequest.setDefender(new DefendPlayerDto(memberId4));
+        gameAttackRequest.setDefender(new DefendPlayerIdDto(memberId4));
         gameAttackRequest.setWeapon(Weapon.TWIN);
         gameAttackRequest.setHand(Hand.LEFT);
 
@@ -226,7 +223,7 @@ class GameExecuteEndServiceTest {
 
         GameAttackRequest gameAttackRequest = new GameAttackRequest();
 //        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
-        gameAttackRequest.setDefender(new DefendPlayerDto(memberId4));
+        gameAttackRequest.setDefender(new DefendPlayerIdDto(memberId4));
         gameAttackRequest.setWeapon(Weapon.TWIN);
         gameAttackRequest.setHand(Hand.LEFT);
 
@@ -255,7 +252,7 @@ class GameExecuteEndServiceTest {
 
         GameAttackRequest gameAttackRequest = new GameAttackRequest();
 //        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
-        gameAttackRequest.setDefender(new DefendPlayerDto(memberId3));
+        gameAttackRequest.setDefender(new DefendPlayerIdDto(memberId3));
         gameAttackRequest.setWeapon(Weapon.TWIN);
         gameAttackRequest.setHand(Hand.LEFT);
 
@@ -286,7 +283,7 @@ class GameExecuteEndServiceTest {
 
         GameAttackRequest gameAttackRequest = new GameAttackRequest();
 //        gameAttackRequest.setAttacker(new AttackPlayerDto(memberId1));
-        gameAttackRequest.setDefender(new DefendPlayerDto(memberId4));
+        gameAttackRequest.setDefender(new DefendPlayerIdDto(memberId4));
         gameAttackRequest.setWeapon(Weapon.SWORD);
         gameAttackRequest.setHand(Hand.LEFT);
 
