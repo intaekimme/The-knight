@@ -1,5 +1,5 @@
 import React from "react";
-import { black, red, blue, yellow } from "../../_css/ReactCSSProperties";
+import { black, red, blue, yellow, white } from "../../_css/ReactCSSProperties";
 import { Grid, Box } from "@mui/material";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 
@@ -64,11 +64,13 @@ export default function UserBox(props) {
         alignItems: "center",
         width: width,
         height: height,
+        p: 2,
 				border: `7px solid ${teamColor}`,
-				borderRadius: "10px"
+				borderRadius: "10px",
+        background: teamColor,
       }}
     >
-      <div sx={{ fontSize: size / 7 }}>{user.nickname}</div>
+      <div style={{ fontSize: size / 6, color: white }}>{user.nickname}</div>
       <div>
         {user.empty && user.empty === true ? (
           <QuestionMarkIcon sx={{ pt:1, fontSize: size }} />

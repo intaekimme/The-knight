@@ -27,6 +27,7 @@ const MEMBERS = '/members';
 const TEAM = '/team';
 const READY = '/ready';
 const EXIT = '/exit';
+const DELETE = '/delete';
 
 // 인게임
 const PLAYERS_INFO = '/players';
@@ -79,6 +80,7 @@ const api = {
   subSelectTeam: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + TEAM,
   subReady: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + READY,
   subExit: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXIT,
+  subDelete: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DELETE,
   subError: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ERROR,
 
   // 발행
