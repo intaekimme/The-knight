@@ -1,16 +1,12 @@
 package com.a301.theknight.domain.game.util;
 
 import com.a301.theknight.domain.game.dto.convert.ConvertResponse;
-import com.a301.theknight.domain.game.dto.convert.PostfixDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.DoubtData;
 import com.a301.theknight.domain.game.entity.redis.DoubtStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
-import com.a301.theknight.global.error.errorcode.DomainErrorCode;
-import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
-import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +15,6 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
@@ -36,7 +30,6 @@ public class GameConvertUtil {
 
     public ConvertResponse convertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
-        initCountValue(gameId, inGame);
 
         GameStatus gameStatus = inGame.getGameStatus();
         return new ConvertResponse(gameStatus.name());
@@ -44,9 +37,8 @@ public class GameConvertUtil {
 
     public ConvertResponse forceConvertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
-        initCountValue(gameId, inGame);
+        GameStatus curStatus = getGameStatus(gameId);
 
-        GameStatus curStatus = inGame.getGameStatus();
         GameStatus nextStatus = getNextStatus(gameId, inGame, curStatus);
         return new ConvertResponse(nextStatus.name());
     }
@@ -59,24 +51,14 @@ public class GameConvertUtil {
 
             InGame inGame = getInGame(gameId);
             inGame.addRequestCount();
-            gameRedisRepository.saveInGame(gameId, inGame);
             log.info("  [{} Counting= {}]", inGame.getGameStatus().name(), inGame.getRequestCount());
 
-            return inGame.isFullCount();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            unLock(countLock);
-        }
-    }
-
-    private void initCountValue(long gameId, InGame inGame) {
-        RLock countLock = redissonClient.getLock(generateCountKey(gameId));
-        try {
-            tryAcquireCountLock(countLock);
-
-            inGame.initRequestCount();
+            boolean isFullCount = inGame.isFullCount();
+            if (isFullCount) {
+                inGame.initRequestCount();
+            }
             gameRedisRepository.saveInGame(gameId, inGame);
+            return isFullCount;
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
