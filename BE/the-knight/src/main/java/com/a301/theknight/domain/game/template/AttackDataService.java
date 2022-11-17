@@ -38,9 +38,9 @@ public class AttackDataService extends GameDataService {
 
     private void sendAttackerData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
-        inGame.updateCurrentAttackTeam();
-        TeamInfoData teamInfoData = getTeamInfoData(inGame);
         int maxMembers = inGame.getMaxMemberNum() / 2;
+        Team attackTeam = inGame.updateCurrentAttackTeam();
+        TeamInfoData teamInfoData = inGame.getTeamInfoData(attackTeam);
 
         int nextAttackerIndex = findNextAttacker(gameId, maxMembers, teamInfoData);
         teamInfoData.updateCurrentAttackIndex(nextAttackerIndex);
@@ -81,16 +81,11 @@ public class AttackDataService extends GameDataService {
                 .players(players).build();
     }
 
-    private TeamInfoData getTeamInfoData(InGame inGame) {
-        return Team.A.equals(inGame.getCurrentAttackTeam()) ?
-                inGame.getTeamAInfo() : inGame.getTeamBInfo();
-    }
-
     private int findNextAttacker(long gameId, int maxMembers, TeamInfoData teamInfoData) {
         GameOrderDto[] orderList = teamInfoData.getOrderList();
         int curIndex = (teamInfoData.getCurrentAttackIndex() + 1) % maxMembers;
 
-        for (int i = 0; i < maxMembers; i++) {
+        for (int i = 0; i <= maxMembers; i++) {
             GameOrderDto gameOrderDto = orderList[curIndex];
             InGamePlayer inGamePlayer = getInGamePlayer(gameId, gameOrderDto.getMemberId());
             if (!inGamePlayer.isDead()) {

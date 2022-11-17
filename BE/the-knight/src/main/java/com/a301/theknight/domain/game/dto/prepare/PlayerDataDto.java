@@ -50,6 +50,7 @@ public class PlayerDataDto {
                 .leftCount(inGamePlayer.getLeftCount())
                 .rightCount(inGamePlayer.getRightCount())
                 .order(inGamePlayer.getOrder())
+                .isDead(inGamePlayer.isDead())
                 .weapons(weapons)
                 .build();
     }
