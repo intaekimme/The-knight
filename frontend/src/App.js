@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { resize } from "./_slice/windowSlice";
 import NavBar from './components/header/NavBar';
 import './App.css';
+import { Grid } from '@mui/material';
 
 function App() {
   const windowData = useSelector((state) => state.windowData.value);
@@ -14,10 +15,10 @@ function App() {
     });
   }, [window.innerWidth, window.innerHeight]);
   return (
-    <>
+    <Grid sx={{minWidth:1024}}>
       <NavBar />
       <Outlet />
-    </>
+    </Grid>
   )
 }
 

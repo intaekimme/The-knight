@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+import styled from "../_css/Game.module.css";
 import LoginCheck from "../commons/login/LoginCheck";
 import LoadingPhase from "../components/game/LoadingPhase";
 import PreparePhase from "../components/game/PreparePhase";
@@ -34,7 +35,7 @@ export default function Game() {
   const phase = useSelector(state => state.game.phase)
   
   return (
-    <div>
+    <div className={styled.imgGame}>
       <GameWebSocket></GameWebSocket>
       {isLoading && <LoadingPhase></LoadingPhase>}
       {!isLoading && phase === "PREPARE" && <PreparePhase></PreparePhase>}
