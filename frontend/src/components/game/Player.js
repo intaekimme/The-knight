@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { setDOM } from "../../_slice/gameSlice";
 import api from "../../api/api"
 import PersonIcon from "@mui/icons-material/Person";
 import Box from "@mui/material/Box";
@@ -28,6 +29,14 @@ function Player({ player, isOpp }) {
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
   
   const [isHovering, setIsHovering] = useState(false);
+  const person = useRef();
+  
+  useEffect(() => {
+    dispatch(setDOM({
+      memberIdString: player.memberId.toString(),
+      dom: person.current.getBoundingClientRect()
+    }));
+  }, [])
   const size = {
     2: "14vmin",
     3: "13vmin",
@@ -60,6 +69,7 @@ function Player({ player, isOpp }) {
     }}
     >
       <PersonIcon
+        ref={person}
         sx={{
           ...(isMe && { color: "green" }),
           ...(isAttacker && { background: "radial-gradient(yellow 10%, white 90%)", borderRadius: "50%" }),

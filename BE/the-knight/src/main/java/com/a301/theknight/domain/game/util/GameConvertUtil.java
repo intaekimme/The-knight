@@ -35,11 +35,15 @@ public class GameConvertUtil {
         return new ConvertResponse(gameStatus.name());
     }
 
+    @Transactional
     public ConvertResponse forceConvertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
         GameStatus curStatus = getGameStatus(gameId);
 
         GameStatus nextStatus = getNextStatus(gameId, inGame, curStatus);
+        inGame.changeStatus(nextStatus);
+        gameRedisRepository.saveInGame(gameId, inGame);
+
         return new ConvertResponse(nextStatus.name());
     }
 
@@ -112,7 +116,7 @@ public class GameConvertUtil {
     }
 
     private void tryAcquireCountLock(RLock countLock) throws InterruptedException {
-        if (!countLock.tryLock(5, 1, TimeUnit.SECONDS)) {
+        if (!countLock.tryLock(7, 2, TimeUnit.SECONDS)) {
             throw new CustomWebSocketException(FAIL_TO_ACQUIRE_REDISSON_LOCK);
         }
     }

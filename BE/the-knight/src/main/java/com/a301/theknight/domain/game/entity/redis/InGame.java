@@ -1,9 +1,11 @@
 package com.a301.theknight.domain.game.entity.redis;
 
-import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Team;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -29,24 +31,6 @@ public class InGame {
 
     public void initTurnData() {
         turnData = new TurnData();
-    }
-
-    public void choiceOrder(InGamePlayer inGamePlayer, int orderNumber, TeamInfoData teamInfoData) {
-        GameOrderDto playerOrderInfo = null;
-        int preOrderNumber = inGamePlayer.getOrder();
-        if (preOrderNumber != 0) {
-            playerOrderInfo = teamInfoData.getOrderList()[preOrderNumber - 1];
-            teamInfoData.getOrderList()[preOrderNumber - 1] = null;
-        }
-        inGamePlayer.saveOrder(orderNumber);
-
-        if (playerOrderInfo == null) {
-            playerOrderInfo = GameOrderDto.builder()
-                    .memberId(inGamePlayer.getMemberId())
-                    .nickname(inGamePlayer.getNickname())
-                    .image(inGamePlayer.getImage()).build();
-        }
-        teamInfoData.getOrderList()[orderNumber - 1] = playerOrderInfo;
     }
 
     public void addRequestCount() {

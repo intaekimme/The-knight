@@ -248,7 +248,7 @@ const fetchMemberHistory = createAsyncThunk('fetchMemberHistory', async () => {
     const res = await axios.get(api.getMemberHistory(), {
       headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` }
     });
-    console.log("member history", res.data);
+    console.log("member history", res.data.games);
     return res.data;
   } catch (err) {
     console.log(err);
@@ -259,7 +259,7 @@ const fetchMemberHistory = createAsyncThunk('fetchMemberHistory', async () => {
 const patchMemberInfo = createAsyncThunk('patchMemberInfo', async (newInfo) => {
   console.log("patch data", newInfo);
   try {
-    await axios.patch(api.updateMemberInfo(), {nickname: newInfo.newNickname, image: newInfo.newUrl}, {
+    await axios.patch(api.updateMemberInfo(), { nickname: newInfo.newNickname, image: newInfo.newUrl }, {
       headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` },
     },
     );
@@ -276,7 +276,7 @@ const deleteMemberInfo = createAsyncThunk('deleteMemberInfo', async () => {
       headers: { Authorization: `Bearer ${window.localStorage.getItem("loginToken")}` },
     });
     console.log("delete member success");
-  }catch (err) {
+  } catch (err) {
     return err;
   }
 })
@@ -303,13 +303,13 @@ const memberHistoryInit = [
       image: "",
       nickname: ""
     },
-  ],
-  opposite: [{
-    image: "",
-    nickname: ""
+    ],
+    opposite: [{
+      image: "",
+      nickname: ""
+    }
+    ],
   }
-],
-}
 ]
 
 export const memberInfoSlice = createSlice({

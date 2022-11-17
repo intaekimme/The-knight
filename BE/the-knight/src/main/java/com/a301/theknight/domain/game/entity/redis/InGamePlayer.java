@@ -16,18 +16,18 @@ public class InGamePlayer {
     private Weapon leftWeapon;
     private Weapon rightWeapon;
     private int order;
-    private boolean isDead;
-    private boolean isLeader;
+    private boolean dead;
+    private boolean leader;
 
     @Builder
-    public InGamePlayer(Long memberId, String nickname, String image, Team team, int leftCount, int rightCount, boolean isLeader) {
+    public InGamePlayer(Long memberId, String nickname, String image, Team team, int leftCount, int rightCount, boolean leader) {
         this.memberId = memberId;
         this.nickname = nickname;
         this.image = image;
         this.team = team;
         this.leftCount = leftCount;
         this.rightCount = rightCount;
-        this.isLeader = isLeader;
+        this.leader = leader;
     }
 
     public void setNickname(String nickname) {
@@ -75,7 +75,7 @@ public class InGamePlayer {
     }
 
     public void death() {
-        isDead = true;
+        dead = true;
     }
 
     public void changeCount(int resultCount, Hand defendHand) {

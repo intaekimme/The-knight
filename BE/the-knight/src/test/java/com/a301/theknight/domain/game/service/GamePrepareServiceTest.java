@@ -5,7 +5,6 @@ import com.a301.theknight.domain.game.dto.prepare.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderResponse;
-import com.a301.theknight.domain.game.dto.prepare.response.GamePrepareDto;
 import com.a301.theknight.domain.game.dto.prepare.response.GameWeaponResponse;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
@@ -69,7 +68,7 @@ class GamePrepareServiceTest {
                 .leftCount(1)
                 .rightCount(2)
                 .team(Team.B)
-                .isLeader(false).build();
+                .leader(false).build();
         testPlayer.randomChoiceWeapon(Weapon.SWORD);
         testPlayer.randomChoiceWeapon(Weapon.HAND);
         testPlayer.saveOrder(3);
@@ -274,12 +273,12 @@ class GamePrepareServiceTest {
 
         request.setOrderNumber((CAPACITY / 2) + 1);
         CustomWebSocketException exception = assertThrows(CustomWebSocketException.class, () ->
-                gamePrepareService.choiceOrder(testGameId, testMemberAId, Team.A, request));
+                gamePrepareService.saveOrder(testGameId, testMemberAId, Team.A, request));
         assertThat(exception.getErrorCode()).isEqualTo(ORDER_NUMBER_IS_INVALID);
 
         request.setOrderNumber(-1);
         CustomWebSocketException exception2 = assertThrows(CustomWebSocketException.class, () ->
-                gamePrepareService.choiceOrder(testGameId, testMemberAId, Team.A, request));
+                gamePrepareService.saveOrder(testGameId, testMemberAId, Team.A, request));
         assertThat(exception2.getErrorCode()).isEqualTo(ORDER_NUMBER_IS_INVALID);
     }
 
@@ -301,7 +300,7 @@ class GamePrepareServiceTest {
         //when
         //then
         CustomWebSocketException exception = assertThrows(CustomWebSocketException.class, () ->
-                gamePrepareService.choiceOrder(testGameId, testMemberAId, Team.B, request));
+                gamePrepareService.saveOrder(testGameId, testMemberAId, Team.B, request));
         assertThat(exception.getErrorCode()).isEqualTo(NOT_MATCH_REQUEST_TEAM);
     }
 
@@ -320,10 +319,10 @@ class GamePrepareServiceTest {
         given(gameRedisRepository.getInGamePlayer(testGameId, testMemberBId))
                 .willReturn(Optional.of(inGamePlayer2));
         //when
-        gamePrepareService.choiceOrder(testGameId, testMemberAId, Team.A, request);
+        gamePrepareService.saveOrder(testGameId, testMemberAId, Team.A, request);
         //then
         CustomWebSocketException exception = assertThrows(CustomWebSocketException.class, () ->
-                gamePrepareService.choiceOrder(testGameId, testMemberBId, Team.A, request));
+                gamePrepareService.saveOrder(testGameId, testMemberBId, Team.A, request));
         assertThat(exception.getErrorCode()).isEqualTo(ALREADY_SELECTED_ORDER_NUMBER);
     }
 
@@ -338,9 +337,9 @@ class GamePrepareServiceTest {
         //when
         GameOrderRequest request = new GameOrderRequest();
         request.setOrderNumber(1);
-        gamePrepareService.choiceOrder(testGameId, testMemberAId, Team.A, request);
+        gamePrepareService.saveOrder(testGameId, testMemberAId, Team.A, request);
         request.setOrderNumber(2);
-        gamePrepareService.choiceOrder(testGameId, testMemberAId, Team.A, request);
+        gamePrepareService.saveOrder(testGameId, testMemberAId, Team.A, request);
         //then
         assertThat(testInGame.getTeamAInfo().getOrderList()[0]).isNull();
         assertThat(testInGame.getTeamAInfo().getOrderList()[1]).isNotNull();
@@ -360,7 +359,7 @@ class GamePrepareServiceTest {
         GameOrderRequest request = new GameOrderRequest();
         request.setOrderNumber(1);
 
-        GameOrderResponse response = gamePrepareService.choiceOrder(testGameId, testMemberAId, Team.A, request);
+        GameOrderResponse response = gamePrepareService.saveOrder(testGameId, testMemberAId, Team.A, request);
         GameOrderDto[] orderList = response.getOrderList();
         //then
         assertThat(orderList.length).isEqualTo(testGame.getCapacity() / 2);
@@ -392,7 +391,7 @@ class GamePrepareServiceTest {
     void wrongOrder(@Mock Member member1, @Mock Member member2) throws Exception {
         //given
         InGamePlayer inGamePlayer = InGamePlayer.builder()
-                .memberId(testMemberAId).team(Team.A).isLeader(true).build();
+                .memberId(testMemberAId).team(Team.A).leader(true).build();
         given(gameRedisRepository.getInGamePlayer(testGameId, testMemberAId))
                 .willReturn(Optional.of(inGamePlayer));
 
@@ -416,7 +415,7 @@ class GamePrepareServiceTest {
     void notAllSelectWeapon(@Mock Member member1, @Mock Member member2) throws Exception {
         //given
         InGamePlayer inGamePlayer = InGamePlayer.builder()
-                .memberId(testMemberAId).team(Team.A).isLeader(true).build();
+                .memberId(testMemberAId).team(Team.A).leader(true).build();
         given(gameRedisRepository.getInGamePlayer(testGameId, testMemberAId))
                 .willReturn(Optional.of(inGamePlayer));
         addPlayer(member1, member2);
@@ -436,7 +435,7 @@ class GamePrepareServiceTest {
     void notValidWeaponCount(@Mock Member member1, @Mock Member member2) throws Exception {
         //given
         InGamePlayer inGamePlayer = InGamePlayer.builder()
-                .memberId(testMemberAId).team(Team.A).isLeader(true).build();
+                .memberId(testMemberAId).team(Team.A).leader(true).build();
         given(gameRedisRepository.getInGamePlayer(testGameId, testMemberAId))
                 .willReturn(Optional.of(inGamePlayer));
 
@@ -469,7 +468,7 @@ class GamePrepareServiceTest {
     void completeSelectTest(@Mock Member member1, @Mock Member member2) throws Exception {
         //given
         InGamePlayer inGamePlayer = InGamePlayer.builder()
-                .memberId(testMemberAId).team(Team.A).isLeader(true).build();
+                .memberId(testMemberAId).team(Team.A).leader(true).build();
         given(gameRedisRepository.getInGamePlayer(testGameId, testMemberAId))
                 .willReturn(Optional.of(inGamePlayer));
 

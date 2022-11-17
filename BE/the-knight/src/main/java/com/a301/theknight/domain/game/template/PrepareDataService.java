@@ -135,7 +135,16 @@ public class PrepareDataService extends GameDataService {
                 .maxMemberNum(game.getCapacity())
                 .teamAInfo(teamAInfo)
                 .teamBInfo(teamBInfo)
-                .turnData(new TurnData()).build());
+                .turnData(makeTurnData()).build());
+    }
+
+    private TurnData makeTurnData() {
+        TurnData turnData = new TurnData();
+        turnData.setAttackData(AttackData.builder().build());
+        turnData.setDefendData(DefendData.builder().build());
+        turnData.setDoubtData(DoubtData.builder().build());
+
+        return turnData;
     }
 
     private Team getRandomFirstAttackTeam() {
@@ -158,7 +167,7 @@ public class PrepareDataService extends GameDataService {
                         .nickname(player.getMember().getNickname())
                         .image(player.getMember().getImage())
                         .team(player.getTeam())
-                        .isLeader(player.isLeader())
+                        .leader(player.isLeader())
                         .leftCount(3)
                         .rightCount(3).build()).collect(Collectors.toList());
         redisRepository.saveInGamePlayerAll(gameId, inGamePlayers);

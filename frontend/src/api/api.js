@@ -120,7 +120,7 @@ const api = {
   subEnd: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + END,
   subConvertComplete: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT_COMPLETE,
   subDoubtPass: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_PASS,
-  
+
   pubConvertComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
   pubScreenData: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SCREEN_DATA,
   pubSelectWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_WEAPON,

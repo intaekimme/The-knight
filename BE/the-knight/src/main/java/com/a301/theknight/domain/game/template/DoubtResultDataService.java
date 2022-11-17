@@ -33,9 +33,6 @@ public class DoubtResultDataService extends GameDataService {
 
         DoubtResponse doubtResponse = makeDoubtResponse(gameId, doubtData);
 
-        inGame.clearDoubtData();
-        redisRepository.saveInGame(gameId, inGame);
-
         DoubtResponseDto response = new DoubtResponseDto(doubtResponse, inGame.getGameStatus());
         messageService.sendData(gameId, "/doubt-info", response);
     }

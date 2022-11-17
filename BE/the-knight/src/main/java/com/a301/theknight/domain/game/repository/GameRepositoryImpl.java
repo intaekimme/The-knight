@@ -29,7 +29,7 @@ public class GameRepositoryImpl implements GameCustomRepository {
     public Page<Game> findGameList(String keyword, Pageable pageable) {
         JPAQuery<Game> query = queryFactory.selectFrom(game)
                 .where(keywordLike(keyword), notInEndStatus())
-                .orderBy(game.status.desc())
+                .orderBy(game.status.desc(), game.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 

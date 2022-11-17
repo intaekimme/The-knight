@@ -18,24 +18,17 @@ public class TurnData {
     private DoubtData doubtData;
 
     public void recordAttackTurn(InGamePlayer attacker, InGamePlayer defender, GameAttackRequest gameAttackRequest){
-        this.attackerId = attacker.getMemberId();
-        this.attackData = AttackData.builder()
-                .weapon(gameAttackRequest.getWeapon())
-                .hand(gameAttackRequest.getHand())
-                .build();
-        this.defenderId = defender.getMemberId();
+        attackerId = attacker.getMemberId();
+        attackData.setWeapon(gameAttackRequest.getWeapon());
+        attackData.setAttackHand(gameAttackRequest.getHand());
+        defenderId = defender.getMemberId();
     }
 
     public void recordDefenseTurn(InGamePlayer defender, GameDefenseRequest gameDefenseRequest){
-        this.defenderId = defender.getMemberId();
-        this.defendData = DefendData.builder()
-                .hand(gameDefenseRequest.getHand())
-                .shieldCount(
-                        gameDefenseRequest.getHand().name().equals("LEFT") ?
-                                defender.getLeftCount() :
-                                defender.getRightCount()
-                )
-                .build();
+        defenderId = defender.getMemberId();
+        defendData.setDefendHand(gameDefenseRequest.getHand());
+        defendData.setShieldCount(Hand.LEFT.equals(gameDefenseRequest.getHand()) ?
+                defender.getLeftCount() : defender.getRightCount());
     }
 
     public void checkLyingAttack(InGamePlayer attacker){
