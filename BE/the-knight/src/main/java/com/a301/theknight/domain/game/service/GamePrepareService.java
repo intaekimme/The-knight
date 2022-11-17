@@ -13,7 +13,6 @@ import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
-import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
@@ -134,9 +133,9 @@ public class GamePrepareService {
     }
 
     private void choiceOrder(InGamePlayer inGamePlayer, int orderNumber, GameOrderDto[] orderList) {
+        int preOrderNumber = inGamePlayer.getOrder();
         inGamePlayer.saveOrder(orderNumber);
 
-        int preOrderNumber = inGamePlayer.getOrder();
         if (preOrderNumber != 0) {
             orderList[orderNumber - 1] = orderList[preOrderNumber - 1];
             orderList[preOrderNumber - 1] = null;
@@ -154,8 +153,7 @@ public class GamePrepareService {
 
         List<PlayerDataDto> players = playerList.stream()
                 .map(inGamePlayer -> PlayerDataDto.toDto(inGamePlayer, team))
-                .sorted((o1, o2) -> o1.getOrder() == o2.getOrder()
-                        ? (int) (o1.getMemberId() - o2.getMemberId()) : o1.getOrder() - o2.getOrder())
+                .sorted((o1, o2) -> (int) (o1.getMemberId() - o2.getMemberId()))
                 .collect(Collectors.toList());
 
         return GamePlayersInfoDto.builder()

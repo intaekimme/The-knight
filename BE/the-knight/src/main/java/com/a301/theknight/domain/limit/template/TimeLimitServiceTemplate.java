@@ -8,7 +8,6 @@ import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +24,6 @@ public abstract class TimeLimitServiceTemplate {
         this.redissonClient = redissonClient;
     }
 
-    @Transactional
     public void executeTimeLimit(long gameId, SendMessageService sendMessageService) {
         GameStatus preStatus = getInGame(gameId).getGameStatus();
 
