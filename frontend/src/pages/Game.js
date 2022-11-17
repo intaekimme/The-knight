@@ -14,8 +14,13 @@ import DoubtResultPhase from "../components/game/DoubtResultPhase";
 import ExecutePhase from "../components/game/ExecutePhase";
 import EndPhase from "../components/game/EndPhase";
 import GameWebSocket from "../components/game/GameWebSocket";
+import Chatting from "../commons/modal/chatting/Chatting";
 
 export default function Game() {
+	const stompClient = useSelector((state) => state.websocket.stompClient);
+	const gameId = useSelector((state) => state.room.roomInfo.gameId);
+	const size = 35;
+
   // 비 로그인 시 로그인 화면으로
   const isLogin = LoginCheck();
   const navigate = useNavigate();
@@ -41,6 +46,7 @@ export default function Game() {
       {!isLoading && phase === "DOUBT_RESULT" && <DoubtResultPhase></DoubtResultPhase>}
       {!isLoading && phase === "EXECUTE" && <ExecutePhase></ExecutePhase>}
       {!isLoading && phase === "END" && <EndPhase></EndPhase>}
+			<Chatting size={size} stompClient={stompClient} gameId={gameId}/>
     </div>
   );
 }
