@@ -42,8 +42,8 @@ const Navigation = styled.div`
     margin-right: 25px;
     text-decoration: none;
     font-weight: 700;
-    font-size: 18px;
-    color: black;
+    font-size: 20px;
+    color: #424242 !important;
   }
   > button {
     height: 65px;
