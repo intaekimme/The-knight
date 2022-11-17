@@ -1,6 +1,12 @@
 import React from "react";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+const isLoadingInit = false;
+
+// PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
+const phaseInit = "PREPARE";
+const previousPhaseInit = true;
+
 const meInit = {
   memberId: 1,
   nickname: "John",
@@ -125,9 +131,6 @@ const countWeaponInit = {
 
 const isSelectCompleteInit = false;
 
-// PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "PREPARE";
-const previousPhaseInit = null;
 
 const subscribeObjectInit = {
   prepare: [],
@@ -141,7 +144,6 @@ const subscribeObjectInit = {
   end: [],
 }
 
-const isLoadingInit = true;
 
 const currentAttackerInit = {
   memberId: 6,
@@ -213,7 +215,7 @@ const executeInfoInit = {
     hand: "",
   },
   defender : {
-    memberId: 0,
+    memberId: 1,
     hand: "",
     isDead: false,
     restCount: 0,
@@ -237,6 +239,8 @@ const endInfoInit = {
     }
   ],
 };
+
+const playersDOMInit = {}
 
 export const gameSlice = createSlice({
   name: "gameSlice",
@@ -262,6 +266,7 @@ export const gameSlice = createSlice({
     doubtPassList: doubtPassListInit,
     executeInfo: executeInfoInit,
     endInfo: endInfoInit,
+    playersDOM: playersDOMInit,
   },
   reducers: {
     setMe: (state) => {
@@ -390,7 +395,10 @@ export const gameSlice = createSlice({
         state.subscribeObject.end.forEach(subscribeObject => subscribeObject.unsubscribe())
         state.subscribeObject.end = []
       }
-    }
+    },
+    setDOM: (state, action) => {
+      state.playersDOM[action.payload.memberIdString] = action.payload.dom
+    },
   },
 });
 export const {
@@ -418,5 +426,6 @@ export const {
   selectWeaponForAttack,
   addSubscribeObject,
   cancelSubscribe,
+  setDOM,
 } = gameSlice.actions;
 export default gameSlice.reducer;
