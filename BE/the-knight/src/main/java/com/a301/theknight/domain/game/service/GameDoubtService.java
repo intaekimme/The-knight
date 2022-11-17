@@ -12,6 +12,7 @@ import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class GameDoubtService {
@@ -41,12 +43,7 @@ public class GameDoubtService {
         InGamePlayer deadPlayer = killByDoubt(suspect, suspected, isLying);
         gameRedisRepository.saveInGamePlayer(gameId, deadPlayer.getMemberId(), deadPlayer);
 
-        inGame.setDoubtData(DoubtData.builder()
-                        .suspectId(suspectId)
-                        .suspectedId(suspectedId)
-                        .doubtResult(deadPlayer.equals(suspected))
-                        .doubtStatus(ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DoubtStatus.ATTACK : DoubtStatus.DEFENSE)
-                        .deadLeader(deadPlayer.isLeader()).build());
+        saveDoubtData(suspectId, suspectedId, inGame, suspected, deadPlayer);
         inGame.changeStatus(DOUBT_RESULT);
         gameRedisRepository.saveInGame(gameId, inGame);
     }
@@ -107,6 +104,18 @@ public class GameDoubtService {
         }
     }
 
+    private void saveDoubtData(long suspectId, long suspectedId, InGame inGame, InGamePlayer suspected, InGamePlayer deadPlayer) {
+        inGame.setDoubtData(DoubtData.builder()
+                .suspectId(suspectId)
+                .suspectedId(suspectedId)
+                .doubtResult(deadPlayer.equals(suspected))
+                .doubtHand(ATTACK_DOUBT.equals(inGame.getGameStatus()) ?
+                        inGame.getTurnData().getAttackData().getAttackHand() :
+                        inGame.getTurnData().getDefendData().getDefendHand())
+                .doubtStatus(ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DoubtStatus.ATTACK : DoubtStatus.DEFENSE)
+                .deadLeader(deadPlayer.isLeader()).build());
+    }
+
     // TODO
     public boolean notDoubtStatus(GameStatus gameStatus) {
         return !(ATTACK_DOUBT.equals(gameStatus) || DEFENSE_DOUBT.equals(gameStatus));
@@ -153,6 +162,7 @@ public class GameDoubtService {
     // TODO
     public void checkDoubtStatus(InGame inGame, GameStatus doubtStatus) {
         if (!doubtStatus.equals(inGame.getGameStatus())) {
+            log.info("Not Equal Status : Reuqest = {}, inGame = {}", doubtStatus.name(), inGame.getGameStatus().name());
             throw new CustomWebSocketException(DO_NOT_FIT_REQUEST_BY_GAME_STATUS);
         }
     }
