@@ -15,7 +15,7 @@ function App() {
     });
   }, [window.innerWidth, window.innerHeight]);
   return (
-    <Grid sx={{minWidth:1000}}>
+    <Grid sx={{minWidth:1024}}>
       <NavBar />
       <Outlet />
     </Grid>
