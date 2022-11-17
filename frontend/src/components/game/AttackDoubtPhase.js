@@ -22,10 +22,10 @@ export default function AttackDoubtPhase() {
     RIGHT: "오른쪽",
   };
 
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.game.me).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.game.me).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubDoubt = () => {
     // {
@@ -41,12 +41,12 @@ export default function AttackDoubtPhase() {
       },
       doubtStatus: "ATTACK_DOUBT",
     };
-    // stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
+    stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
     console.log(data);
   };
 
   const onPubDoubtPass = () => {
-    // stompClient.send(api.pubDoubtPass(gameId), {}, {});
+    stompClient.send(api.pubDoubtPass(gameId), {}, {});
     console.log("패스");
   };
 
