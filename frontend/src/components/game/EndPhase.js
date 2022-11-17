@@ -1,10 +1,22 @@
 import { useSelector } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 
 export default function EndPhase() {
   const me = useSelector((state) => state.game.me)
   const endInfo = useSelector((state) => state.game.endInfo)
+  const navigate = useNavigate();
+  
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const onClick = () => {
+    stompClient.send(api.pubEnd(gameId), {}, {})
+    stompClient.disconnect();
+    navigate('/lobby');
+  }
 
   function BoxRender() {
     return (
@@ -24,6 +36,7 @@ export default function EndPhase() {
         <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>{endInfo.winningTeam === "A"? "B": "A"}팀의 리더가 사망했습니다</Box>
         <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>{me.team === endInfo.winningTeam?"10 포인트 상승":"10 포인트 하락"}</Box>
         <Box
+          onClick = {() => onClick()}
           sx={{
             width: "25vmin",
             height: "6vmin",
