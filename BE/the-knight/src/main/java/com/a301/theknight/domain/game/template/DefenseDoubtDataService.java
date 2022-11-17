@@ -21,7 +21,7 @@ public class DefenseDoubtDataService extends GameDataService {
     private final GameRedisRepository redisRepository;
 
     public DefenseDoubtDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
     }
 

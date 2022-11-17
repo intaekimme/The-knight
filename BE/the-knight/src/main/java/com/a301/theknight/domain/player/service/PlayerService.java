@@ -23,6 +23,7 @@ import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
 import com.a301.theknight.global.error.errorcode.PlayerErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,10 +45,10 @@ public class PlayerService {
     public PlayerEntryResponse entry(long gameId, long memberId){
         Game entryGame = getGame(gameId);
         if(!isWaiting(entryGame)){
-            throw new CustomRestException(GAME_IS_NOT_READY_STATUS);
+            throw new CustomWebSocketException(GAME_IS_NOT_READY_STATUS);
         }
         if(!isEnterPossible(entryGame)){
-            throw new CustomRestException(CAN_NOT_ACCOMMODATE);
+            throw new CustomWebSocketException(CAN_NOT_ACCOMMODATE);
         }
 
         Member entryMember = getMember(memberId);
@@ -70,7 +71,7 @@ public class PlayerService {
         Game findGame = getGame(gameId);
 
         if(!isWaiting(findGame)){
-            throw new CustomRestException(GAME_IS_NOT_READY_STATUS);
+            throw new CustomWebSocketException(GAME_IS_NOT_READY_STATUS);
         }
         Member findMember = getMember(memberId);
         Player exitPlayer = getPlayer(findGame, findMember);
@@ -108,10 +109,10 @@ public class PlayerService {
 
         if(isOwner(findGame, readyPlayer)){
             if (!isEqualPlayerNum(findGame)) {
-                throw new CustomRestException(NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
+                throw new CustomWebSocketException(NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
             }
             if (!isAllReady(findGame)) {
-                throw new CustomRestException(NOT_All_USERS_ARE_READY);
+                throw new CustomWebSocketException(NOT_All_USERS_ARE_READY);
             }
             findGame.changeStatus(GameStatus.PLAYING);
             redisRepository.saveInGame(findGame.getId(), makeInGame(findGame));

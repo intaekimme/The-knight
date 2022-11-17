@@ -47,11 +47,14 @@ public class GameConvertUtil {
         return new ConvertResponse(nextStatus.name());
     }
 
-    @Transactional
+//    @Transactional
     public boolean requestCounting(long gameId) {
         RLock countLock = redissonClient.getLock(generateCountKey(gameId));
         try {
-            tryAcquireCountLock(countLock);
+            boolean available = countLock.tryLock(15, 30, TimeUnit.SECONDS);
+            if (!available) {
+                throw new CustomWebSocketException(FAIL_TO_ACQUIRE_REDISSON_LOCK);
+            }
 
             InGame inGame = getInGame(gameId);
             inGame.addRequestCount();
@@ -113,12 +116,6 @@ public class GameConvertUtil {
     private InGame getInGame(long gameId) {
         return gameRedisRepository.getInGame(gameId)
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
-    }
-
-    private void tryAcquireCountLock(RLock countLock) throws InterruptedException {
-        if (!countLock.tryLock(7, 2, TimeUnit.SECONDS)) {
-            throw new CustomWebSocketException(FAIL_TO_ACQUIRE_REDISSON_LOCK);
-        }
     }
 
     private void unLock(RLock countLock) {

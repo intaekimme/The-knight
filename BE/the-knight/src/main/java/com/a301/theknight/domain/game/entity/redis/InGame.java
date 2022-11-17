@@ -2,13 +2,14 @@ package com.a301.theknight.domain.game.entity.redis;
 
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Team;
-import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 public class InGame {
     private GameStatus gameStatus;
     private Team currentAttackTeam;
@@ -86,7 +87,7 @@ public class InGame {
     }
 
     public Team updateCurrentAttackTeam(){
-        this.currentAttackTeam = Team.A.equals(currentAttackTeam) ? Team.B : Team.A;
+        currentAttackTeam = Team.A.equals(currentAttackTeam) ? Team.B : Team.A;
         return currentAttackTeam;
     }
 

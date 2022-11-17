@@ -19,7 +19,7 @@ public class DefenseDataService extends GameDataService {
     private final GameRedisRepository redisRepository;
 
     public DefenseDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
     }
 

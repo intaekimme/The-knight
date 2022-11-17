@@ -85,4 +85,9 @@ public class InGamePlayer {
             rightCount = resultCount;
         }
     }
+
+    public void clearWeapon() {
+        leftWeapon = null;
+        rightWeapon = null;
+    }
 }

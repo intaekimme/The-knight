@@ -2,6 +2,8 @@ package com.a301.theknight.domain.auth.service;
 
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
+import com.a301.theknight.domain.ranking.entity.Ranking;
+import com.a301.theknight.domain.ranking.repository.RankingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final MemberRepository memberRepository;
+    private final RankingRepository rankingRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -34,14 +37,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Member findMember = memberRepository.findByEmail(email)
                 .orElseGet(() -> {
                     log.info("  Execute join new member");
-                    return memberRepository.save(Member.builder()
+                    Member member = memberRepository.save(Member.builder()
                             .email(email)
                             .nickname(nickname)
                             .password(passwordEncoder.encode(email))
                             .role("ROLE_USER")
                             .image(image)
-                            .build()
-                    );
+                            .build());
+                    rankingRepository.save(Ranking.builder().member(member).build());
+                    return member;
                 });
 
         return oAuth2User;
