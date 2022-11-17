@@ -26,7 +26,8 @@ const playersInit = {
       memberId: 1,
       nickname: "John",
       leftCount: 1,
-      rightCount: 2,
+      rightCount: 3,
+      isDead: false,
       team: "A",
       order: 0,
       weapons: [null, null],
@@ -36,6 +37,7 @@ const playersInit = {
       nickname: "Smith",
       leftCount: 0,
       rightCount: 0,
+      isDead: true,
       team: "A",
       order: 0,
       weapons: [null, null],
@@ -45,6 +47,7 @@ const playersInit = {
       nickname: "Sara",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "A",
       order: 0,
       weapons: [null, null],
@@ -72,6 +75,7 @@ const playersInit = {
       nickname: "Ria",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "B",
       order: 0,
       weapons: [null, null],
@@ -81,6 +85,7 @@ const playersInit = {
       nickname: "FTX",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "B",
       order: 0,
       weapons: [null, null],
@@ -90,6 +95,7 @@ const playersInit = {
       nickname: "Sam",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "B",
       order: 0,
       weapons: [null, null],
@@ -119,7 +125,7 @@ const leaderInit = 0;
 
 const attackFirstInit = "";
 
-const orderInit = [];
+const orderInit = [null];
 
 const countWeaponInit = {
   sword: 0,
@@ -304,8 +310,11 @@ export const gameSlice = createSlice({
     fetchPhase: (state, action) => {
       state.phase = action.payload;
     },
-    offIsLoading: (state) => {
+    switchOffIsLoading: (state) => {
       state.isLoading = false;
+    },
+    switchOnIsLoading: (state) => { 
+      state.isLoading = true;
     },
     initializePass: (state) => {
       state.doubtPassList = [];
@@ -409,7 +418,8 @@ export const {
   fetchPlayers,
   fetchOrder,
   fetchPhase,
-  offIsLoading,
+  switchOffIsLoading,
+  switchOnIsLoading,
   initializePass,
   setEndInfo,
   setLeader,
