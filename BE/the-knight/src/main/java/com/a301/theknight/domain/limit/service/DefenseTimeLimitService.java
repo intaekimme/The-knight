@@ -1,16 +1,12 @@
 package com.a301.theknight.domain.limit.service;
 
-import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.DefendData;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.TurnData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
-import com.a301.theknight.domain.game.util.GameConvertUtil;
 import com.a301.theknight.domain.limit.template.TimeLimitServiceTemplate;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
-
-import static com.a301.theknight.domain.game.entity.GameStatus.EXECUTE;
 
 @Service
 public class DefenseTimeLimitService extends TimeLimitServiceTemplate {
@@ -28,7 +24,6 @@ public class DefenseTimeLimitService extends TimeLimitServiceTemplate {
         DefendData defendData = turnData.getDefendData();
         defendData.defendPass();
 
-        inGame.changeStatus(EXECUTE);
         redisRepository.saveInGame(gameId, inGame);
     }
 }
