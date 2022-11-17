@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addDoubtPass, initializePass } from "../../_slice/gameSlice";
+import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 
@@ -14,10 +15,10 @@ export default function DefenseDoubtPhase() {
     RIGHT: "오른쪽",
   };
 
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.game.me).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.game.me).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubDoubt = () => {
     // {
@@ -33,12 +34,12 @@ export default function DefenseDoubtPhase() {
       },
       doubtStatus: "DEFENSE_DOUBT",
     };
-    // stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
+    stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
     console.log(data);
   };
 
   const onPubDoubtPass = () => {
-    // stompClient.send(api.pubDoubtPass(gameId), {}, {});
+    stompClient.send(api.pubDoubtPass(gameId), {}, {});
     console.log("패스");
   };
 
@@ -95,7 +96,7 @@ export default function DefenseDoubtPhase() {
           </Box>
           <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "space-evenly" }}>
             <Box
-              onClick={() => clickDoubt}
+              onClick={() => clickDoubt()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
@@ -111,7 +112,7 @@ export default function DefenseDoubtPhase() {
               의심
             </Box>
             <Box
-              onClick={() => clickPass}
+              onClick={() => clickPass()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",

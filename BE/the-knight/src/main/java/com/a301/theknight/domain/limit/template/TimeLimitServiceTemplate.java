@@ -39,7 +39,7 @@ public abstract class TimeLimitServiceTemplate {
             tryDataLock(dataLock);
 
             sendMessageService.forceConvertCall(gameId);
-            runLimitLogic(gameId, curInGame);
+            runLimitLogic(gameId);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
@@ -54,12 +54,12 @@ public abstract class TimeLimitServiceTemplate {
     }
 
     private void tryDataLock(RLock dataLock) throws InterruptedException {
-        if (!dataLock.tryLock(7, 3, TimeUnit.SECONDS)) {
+        if (!dataLock.tryLock(5, 20, TimeUnit.SECONDS)) {
             throw new CustomWebSocketException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
         }
     }
 
-    public abstract void runLimitLogic(long gameId, InGame inGame);
+    public abstract void runLimitLogic(long gameId);
 
     private InGame getInGame(long gameId) {
         return redisRepository.getInGame(gameId)
