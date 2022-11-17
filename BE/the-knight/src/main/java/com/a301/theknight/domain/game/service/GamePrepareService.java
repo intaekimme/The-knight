@@ -89,17 +89,17 @@ public class GamePrepareService {
 
         GameOrderDto[] orderList = getOrderList(inGame, team);
         int orderNumber = orderRequest.getOrderNumber();
-        if (alreadySelectedOrderNumber(orderNumber, orderList)) {
-            if (inGamePlayer.getOrder() == orderNumber) {
-                return null;
-            }
-            throw new CustomWebSocketException(ALREADY_SELECTED_ORDER_NUMBER);
+
+        checkAlreadySelectedNumber(orderNumber, inGamePlayer.getOrder(), orderList);
+
+        if (inGamePlayer.getOrder() == orderNumber) {
+            cancelOrder(inGamePlayer, orderList);
+        } else {
+            choiceOrder(inGamePlayer, orderNumber, orderList);
         }
 
-        choiceOrder(inGamePlayer, orderNumber, orderList);
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
-
         return new GameOrderResponse(orderList);
     }
 
@@ -126,6 +126,12 @@ public class GamePrepareService {
         redisRepository.deleteGameWeaponData(gameId, myTeam);
 
         return new SelectCompleteDto(inGame.isAllSelected(), myTeam);
+    }
+
+    private void cancelOrder(InGamePlayer inGamePlayer, GameOrderDto[] orderList) {
+        int deleteOrder = inGamePlayer.getOrder();
+        orderList[deleteOrder] = null;
+        inGamePlayer.saveOrder(0);
     }
 
     private GameOrderDto[] getOrderList(InGame inGame, Team team) {
@@ -206,8 +212,10 @@ public class GamePrepareService {
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 
-    private boolean alreadySelectedOrderNumber(int orderNumber, GameOrderDto[] orderList) {
-        return orderList[orderNumber - 1] != null;
+    private void checkAlreadySelectedNumber(int orderNumber, int playerOrder, GameOrderDto[] orderList) {
+        if (playerOrder != orderNumber && orderList[orderNumber - 1] != null) {
+            throw new CustomWebSocketException(ALREADY_SELECTED_ORDER_NUMBER);
+        }
     }
 
     private InGamePlayer getInGamePlayer(long gameId, Long memberId) {
