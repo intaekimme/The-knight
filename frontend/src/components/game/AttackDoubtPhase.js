@@ -110,7 +110,7 @@ export default function AttackDoubtPhase() {
             }}
           >
             <Box
-              onClick={() => clickDoubt}
+              onClick={() => clickDoubt()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
@@ -126,7 +126,7 @@ export default function AttackDoubtPhase() {
               의심
             </Box>
             <Box
-              onClick={() => clickPass}
+              onClick={() => clickPass()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
