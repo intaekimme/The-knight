@@ -130,7 +130,7 @@ export default function Chatting(props){
     <div sx={{position:"fixed", bottom:0, left:0}}>
       {open
       ? <div sx={{height:100}}/>
-      : <Button onClick={onChattingOpen} sx={{...chattingPosition, color:black, width:120}}><ChatBubbleIcon sx={{fontSize:100}}/></Button>
+      : <Button onClick={onChattingOpen} sx={{...chattingPosition, color:black, width:120}}><ChatBubbleIcon sx={{fontSize:100, color:white}}/></Button>
       }
       <Modal
         open={open}
