@@ -42,12 +42,10 @@ export default function AttackDoubtPhase() {
       doubtStatus: "ATTACK_DOUBT",
     };
     stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
-    console.log(data);
   };
 
   const onPubDoubtPass = () => {
     stompClient.send(api.pubDoubtPass(gameId), {}, {});
-    console.log("패스");
   };
 
   function clickDoubt() {
