@@ -14,7 +14,7 @@ public class DefaultTimeLimitService extends TimeLimitServiceTemplate {
     }
 
     @Override
-    public void runLimitLogic(long gameId, InGame inGame) {
+    public void runLimitLogic(long gameId) {
     }
 
 }

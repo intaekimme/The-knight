@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
+
 @Component
 public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
 
@@ -35,25 +37,24 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
 
     @Override
     @Transactional
-    public void runLimitLogic(long gameId, InGame inGame) {
+    public void runLimitLogic(long gameId) {
+        InGame inGame = getInGame(gameId);
         if (inGame.isAllSelected()) {
             return;
         }
-
-        TeamInfoData teamAInfoData = inGame.getTeamInfoData(Team.A);
-        saveSelectData(gameId, Team.A, teamAInfoData);
-        TeamInfoData teamBInfoData = inGame.getTeamInfoData(Team.B);
-        saveSelectData(gameId, Team.B, teamBInfoData);
+        saveSelectData(gameId, inGame, Team.A);
+        saveSelectData(gameId, inGame, Team.B);
 
         redisRepository.saveInGame(gameId, inGame);
     }
 
-    private void saveSelectData(long gameId, Team team, TeamInfoData teamInfoData) {
+    private void saveSelectData(long gameId, InGame inGame, Team team) {
+        TeamInfoData teamInfoData = inGame.getTeamInfoData(team);
         if (teamInfoData.isSelected()) {
             return;
         }
         List<InGamePlayer> inGamePlayerList = saveWeaponData(gameId, team);
-        saveOrderData(gameId, teamInfoData, inGamePlayerList);
+        saveOrderData(gameId, teamInfoData.getOrderList(), inGamePlayerList);
     }
 
     private List<InGamePlayer>  saveWeaponData(long gameId, Team team) {
@@ -70,15 +71,15 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
         return teamPlayerList;
     }
 
-    private void saveOrderData(long gameId, TeamInfoData teamInfoData, List<InGamePlayer> teamPlayerList) {
-        List<InGamePlayer> savePlayerList = new ArrayList<>(teamPlayerList.size());
-
+    private void saveOrderData(long gameId, GameOrderDto[] orderList, List<InGamePlayer> teamPlayerList) {
         int playerSize = teamPlayerList.size();
+        List<InGamePlayer> savePlayerList = new ArrayList<>(playerSize);
+
         for (int i = 0; i < playerSize; i++) {
             InGamePlayer randomPlayer = randomChoiceInList(teamPlayerList);
             randomPlayer.saveOrder(i + 1);
 
-            teamInfoData.getOrderList()[i] = GameOrderDto.builder()
+            orderList[i] = GameOrderDto.builder()
                     .memberId(randomPlayer.getMemberId())
                     .nickname(randomPlayer.getNickname())
                     .image(randomPlayer.getImage()).build();
@@ -115,5 +116,10 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
         }
         int randomIndex = (int) (Math.random() * (size - 1));
         return list.remove(randomIndex);
+    }
+
+    private InGame getInGame(long gameId) {
+        return redisRepository.getInGame(gameId)
+                .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 }

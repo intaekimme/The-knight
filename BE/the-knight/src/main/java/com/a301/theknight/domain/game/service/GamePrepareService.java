@@ -76,26 +76,26 @@ public class GamePrepareService {
     }
 
     @Transactional
-    public GameOrderResponse choiceOrder(long gameId, long memberId, Team team, GameOrderRequest orderRequest) {
+    public GameOrderResponse saveOrder(long gameId, long memberId, Team team, GameOrderRequest orderRequest) {
         InGame inGame = getInGame(gameId);
         if (!orderRequest.validate(inGame.getMaxMemberNum() / 2)) {
             throw new CustomWebSocketException(ORDER_NUMBER_IS_INVALID);
         }
-
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
         if (!team.equals(inGamePlayer.getTeam())) {
             throw new CustomWebSocketException(NOT_MATCH_REQUEST_TEAM);
         }
 
         GameOrderDto[] orderList = getOrderList(inGame, team);
-        int orderNumber = orderRequest.getOrderNumber();
+        int playerOrder = inGamePlayer.getOrder();
+        int requestOrder = orderRequest.getOrderNumber();
 
-        checkAlreadySelectedNumber(orderNumber, inGamePlayer.getOrder(), orderList);
+        checkAlreadySelectedNumber(requestOrder, playerOrder, orderList);
 
-        if (inGamePlayer.getOrder() == orderNumber) {
+        if (playerOrder == requestOrder) {
             cancelOrder(inGamePlayer, orderList);
         } else {
-            choiceOrder(inGamePlayer, orderNumber, orderList);
+            saveOrder(inGamePlayer, requestOrder, orderList);
         }
 
         redisRepository.saveInGame(gameId, inGame);
@@ -130,7 +130,7 @@ public class GamePrepareService {
 
     private void cancelOrder(InGamePlayer inGamePlayer, GameOrderDto[] orderList) {
         int deleteOrder = inGamePlayer.getOrder();
-        orderList[deleteOrder] = null;
+        orderList[deleteOrder - 1] = null;
         inGamePlayer.saveOrder(0);
     }
 
@@ -138,7 +138,7 @@ public class GamePrepareService {
         return inGame.getTeamInfoData(team).getOrderList();
     }
 
-    private void choiceOrder(InGamePlayer inGamePlayer, int orderNumber, GameOrderDto[] orderList) {
+    private void saveOrder(InGamePlayer inGamePlayer, int orderNumber, GameOrderDto[] orderList) {
         int preOrderNumber = inGamePlayer.getOrder();
         inGamePlayer.saveOrder(orderNumber);
 
@@ -212,8 +212,8 @@ public class GamePrepareService {
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 
-    private void checkAlreadySelectedNumber(int orderNumber, int playerOrder, GameOrderDto[] orderList) {
-        if (playerOrder != orderNumber && orderList[orderNumber - 1] != null) {
+    private void checkAlreadySelectedNumber(int requestOrder, int playerOrder, GameOrderDto[] orderList) {
+        if (playerOrder != requestOrder && orderList[requestOrder - 1] != null) {
             throw new CustomWebSocketException(ALREADY_SELECTED_ORDER_NUMBER);
         }
     }
