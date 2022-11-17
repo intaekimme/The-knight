@@ -9,6 +9,7 @@ import UpdateMemInfo from '../components/memberPage/UpdateMemInfo';
 import "../_css/Mypage.module.css"
 import { Container } from "@mui/system";
 import { Grid } from "@mui/material";
+import styled from "../_css/Mypage.module.css";
 
 export default function MemberPage() {
   // const isLogin = LoginCheck();
@@ -28,7 +29,7 @@ export default function MemberPage() {
     )
   }
   return (
-    <div className="imgMypage">
+    <div className={styled.imgMypage}>
       <Container fixed>
         {!clickUpdate
           ?
