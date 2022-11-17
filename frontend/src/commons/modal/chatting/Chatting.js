@@ -64,7 +64,6 @@ export default function Chatting(props){
   
   // 스크롤이 맨 아래에 있을 경우 자동 스크롤 down
   React.useEffect(()=>{
-    console.log(chatScrollTop, chatScrollHeight);
     const chattingBodyElement = document.getElementById("chattingBody");
     if(chattingBodyElement && (chatScrollHeight - chatScrollTop) < (chattingModalHeight+10)){
       chattingBodyElement.scrollTop = chattingBodyElement.scrollHeight;
