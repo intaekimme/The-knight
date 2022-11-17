@@ -120,7 +120,6 @@ const api = {
   subEnd: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + END,
   subConvertComplete: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT_COMPLETE,
   subDoubtPass: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_PASS,
-  subError: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ERROR,
 
   pubConvertComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
   pubScreenData: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SCREEN_DATA,
@@ -134,6 +133,7 @@ const api = {
   pubDoubt: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DOUBT,
   pubOrder: (gameId, team) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + `/${team}`.toLowerCase() + ORDER,
   pubDoubtPass: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DOUBT_PASS,
+  pubEnd: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + END,
 
   //rank 관련
   getRankList: () => BASE_URL + API + '/ranking',
