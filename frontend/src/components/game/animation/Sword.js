@@ -98,6 +98,7 @@ export default function Sword(props) {
     >
       <img
         src={swordImg}
+        alt="sword"
         style={{ width: "6vmin", height: "18vmin" }}
       />
     </animated.div>
