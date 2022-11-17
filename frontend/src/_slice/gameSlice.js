@@ -1,11 +1,10 @@
 import React from "react";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const isLoadingInit = false;
+const isLoadingInit = true;
 
 // PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
 const phaseInit = "PREPARE";
-const previousPhaseInit = true;
 
 const meInit = {
   memberId: 1,
@@ -26,8 +25,9 @@ const playersInit = {
     {
       memberId: 1,
       nickname: "John",
-      leftCount: 0,
-      rightCount: 0,
+      leftCount: 1,
+      rightCount: 3,
+      isDead: false,
       team: "A",
       order: 0,
       weapons: [null, null],
@@ -37,6 +37,7 @@ const playersInit = {
       nickname: "Smith",
       leftCount: 0,
       rightCount: 0,
+      isDead: true,
       team: "A",
       order: 0,
       weapons: [null, null],
@@ -46,6 +47,7 @@ const playersInit = {
       nickname: "Sara",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "A",
       order: 0,
       weapons: [null, null],
@@ -73,6 +75,7 @@ const playersInit = {
       nickname: "Ria",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "B",
       order: 0,
       weapons: [null, null],
@@ -82,6 +85,7 @@ const playersInit = {
       nickname: "FTX",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "B",
       order: 0,
       weapons: [null, null],
@@ -91,6 +95,7 @@ const playersInit = {
       nickname: "Sam",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "B",
       order: 0,
       weapons: [null, null],
@@ -120,7 +125,7 @@ const leaderInit = 0;
 
 const attackFirstInit = "";
 
-const orderInit = [];
+const orderInit = [null];
 
 const countWeaponInit = {
   sword: 0,
@@ -254,7 +259,6 @@ export const gameSlice = createSlice({
     countWeapon: countWeaponInit,
     isSelectComplete: isSelectCompleteInit,
     phase: phaseInit,
-    previousPhase: previousPhaseInit,
     subscribeObject: subscribeObjectInit,
     isLoading: isLoadingInit,
     currentAttacker: currentAttackerInit,
@@ -285,8 +289,11 @@ export const gameSlice = createSlice({
       state.timer.timer = action.payload;
     },
     countTimer: (state, action) => {
-      state.timer.timer = state.timer.timer - 1;
-      state.timer.intervalObject = action.payload;
+      const later = state.timer.timer - 1;
+      state.timer = {
+        timer: later,
+        intervalObject: action.payload,
+      }
     },
     stopCountTimer: (state) => {
       if (state.timer.timer <= 0) {
@@ -301,11 +308,13 @@ export const gameSlice = createSlice({
       state.order = action.payload;
     },
     fetchPhase: (state, action) => {
-      state.previousPhase = state.phase;
       state.phase = action.payload;
     },
-    switchIsLoading: (state) => {
-      state.isLoading = !state.isLoading;
+    switchOffIsLoading: (state) => {
+      state.isLoading = false;
+    },
+    switchOnIsLoading: (state) => { 
+      state.isLoading = true;
     },
     initializePass: (state) => {
       state.doubtPassList = [];
@@ -409,7 +418,8 @@ export const {
   fetchPlayers,
   fetchOrder,
   fetchPhase,
-  switchIsLoading,
+  switchOffIsLoading,
+  switchOnIsLoading,
   initializePass,
   setEndInfo,
   setLeader,

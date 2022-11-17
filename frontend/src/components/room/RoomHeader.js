@@ -6,6 +6,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 
 import api from "../../api/api";
 import { white, red, blue, black } from "../../_css/ReactCSSProperties";
+import { leftInfoGrid, settingIcon, rightInfoGrid, selectTeamBox, selectTeamButton, exitGrid, exitIcon } from "../../_css/RoomHeaderCSSProperties";
 import {initChatting, addChatting} from '../../_slice/chattingSlice';
 import RoomInfoModal from "../../commons/modal/RoomInfoModal";
 import {onPubModifyRoom, onPubExit, onPubSelectTeam} from "../../websocket/RoomPublishes";
@@ -101,25 +102,25 @@ export default function RoomHeader(props) {
 	
 	return (
 		<Grid container sx={{ p: 3 }}>
-			<Grid item xs={7} sx={{fontSize:props.size, display: "flex", alignItems: "center"}}>
+			<Grid item xs={7} sx={{...leftInfoGrid(props.size)}}>
 				{props.roomData.ownerId && props.roomData.ownerId.toString()===window.localStorage.getItem("memberId")
-				?	<Button onClick={ onRoomInfoModalOpen }><SettingsIcon sx={{ color:"gray", fontSize: props.size*2 }} /></Button>
+				?	<Button onClick={ onRoomInfoModalOpen }><SettingsIcon sx={{...settingIcon(props.size)}} /></Button>
 				: <div />
 				}
 				<RoomInfoModal canEdit={true} roomData={roomData} open={open} onClose={ onRoomInfoModalClose } onConfirm={onRoomDataChange}/>
-				<h2>{` #${roomData.gameId} ${roomData.title} ${props.memberDatas.length}/${roomData.maxMember}`}</h2>
+				<h2 style={{marginLeft:30}}>{` #${roomData.gameId} ${roomData.title} ${props.memberDatas.length}/${roomData.maxMember}`}</h2>
 			</Grid>
-			<Grid item xs={4} sx={{ fontSize: props.size*1.2, display: "flex", justifyContent: "center", alignItems: "center" }}>
-				<Box sx={{width:props.size*10, height: props.size*4, border: "7px solid #4d4d4d", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center"}}>
+			<Grid item xs={4} sx={{...rightInfoGrid(props.size)}}>
+				<Box sx={{...selectTeamBox(props.size)}}>
 					Team&nbsp;
-					<Button sx={{ margin:0.5, color:white, fontSize: props.size, minWidth: props.size*2, width: props.size*2, height: props.size*2, background:red, border: `1px solid ${red}`, borderRadius: "50%" }}
+					<Button sx={{ ...selectTeamButton(props.size), background:red, border: `1px solid ${red}`}}
 						onClick={ onSelectTeamA }>A</Button>
-					<Button sx={{ margin:0.5, color:white, fontSize: props.size, minWidth: props.size*2, width: props.size*2, height: props.size*2, background:blue, border: `1px solid ${blue}`, borderRadius: "50%" }}
+					<Button sx={{ ...selectTeamButton(props.size), background:blue, border: `1px solid ${blue}`}}
 						onClick={ onSelectTeamB }>B</Button>
 				</Box>
 			</Grid>
-			<Grid item xs={1} sx={{display: "flex", justifyContent: "center", alignItems: "center"}}>
-				<Button onClick={onExit}><LogoutIcon sx={{ color:"red", fontSize: props.size*2 }} /></Button>
+			<Grid item xs={1} sx={{...exitGrid(props.size)}}>
+				<Button onClick={onExit}><LogoutIcon sx={{...exitIcon(props.size)}} /></Button>
 			</Grid>
 		</Grid>
 	);

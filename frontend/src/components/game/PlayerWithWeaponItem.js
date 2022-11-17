@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import api from "../../api/api";
 import { Grid, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import scarImg from "../../_assets/game/scar.png";
 
 function PlayerWithWeaponItem({ player, isOpp }) {
   const phase = useSelector((state) => state.game.phase);
@@ -38,6 +39,20 @@ function PlayerWithWeaponItem({ player, isOpp }) {
 
   function deleteHand(hand) {
     onPubDeleteWeapon(hand);
+  }
+
+  const renderScar = (hand) => {
+    const arr = [];
+    if (hand === "LEFT") {
+      for (let i = 0; i < player.leftCount; i++) {
+        arr.push(<img src={scarImg} style={{ width: "5vmin", height: "2vmin"}} alt="?" key={ `left${i}` } />)
+      }
+    } else if (hand === "RIGHT") {
+      for (let i = 0; i < player.rightCount; i++) {
+        arr.push(<img src={scarImg} style={{ width: "5vmin", height: "2vmin"}} alt="?" key={ `right${i}` }/>)
+      }
+    }
+    return arr;
   }
 
   return (
@@ -93,6 +108,9 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                 <span style={isOpp && { display: "none" }}>
                   {player.weapons[0]}
                 </span>
+                <Box sx={{ position: "absolute", zIndex: 1, display: "flex", flexDirection: "column", left: "50%", top: "8%", transform: "translate(-50%)"}}>
+                  {renderScar("LEFT")}
+                </Box>
               </div>
               <Box sx={{ fontSize: "2vmin" }}>L</Box>
             </Box>
@@ -169,6 +187,9 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                 <span style={isOpp && { display: "none" }}>
                   {player.weapons[1]}
                 </span>
+                <Box sx={{ position: "absolute", zIndex: 1, display: "flex", flexDirection: "column", left: "50%", top: "8%", transform: "translate(-50%)"}}>
+                  {renderScar("RIGHT")}
+                </Box>
               </div>
               <Box sx={{ fontSize: "2vmin" }}>R</Box>
             </Box>

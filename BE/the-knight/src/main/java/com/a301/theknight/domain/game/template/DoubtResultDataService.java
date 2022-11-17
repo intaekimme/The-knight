@@ -22,7 +22,7 @@ public class DoubtResultDataService extends GameDataService {
     private final GameRedisRepository redisRepository;
 
     public DoubtResultDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
     }
 

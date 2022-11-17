@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { switchIsLoading } from "../../_slice/gameSlice";
+import { switchOffIsLoading } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import {
   setMe,
@@ -136,11 +136,12 @@ export default function GameWebSocket() {
     //   limitTime: long,
     // }
     const data = JSON.parse(payload.body);
+
     dispatch(fetchPhase(data.gameStatus));
     dispatch(setTimer(data.limitTime));
 
     if (data.gameStatus === "PREPARE") {
-      dispatch(switchIsLoading())
+      dispatch(switchOffIsLoading())
     }
 
     const intervalObject = setInterval(() => {
@@ -354,12 +355,18 @@ export default function GameWebSocket() {
     dispatch(fetchExecuteInfo(data));
   };
 
+  const onSubError = (payload) => { 
+    const data = JSON.parse(payload.body)
+    console.log(data)
+  }
+
   useEffect(() => {
     // for common
     stompClient.subscribe(api.subPlayersInfo(gameId, myTeam), onSubPlayersInfo);
     stompClient.subscribe(api.subConvert(gameId), onSubConvert);
     stompClient.subscribe(api.subNextPhase(gameId), onSubNextPhase);
     stompClient.subscribe(api.subEnd(gameId), onSubEnd);
+    stompClient.subscribe(api.subError(gameId), onSubError);
 
     // for prepare
     const subLeader = stompClient.subscribe(api.subLeader(gameId, myTeam), onSubLeader);

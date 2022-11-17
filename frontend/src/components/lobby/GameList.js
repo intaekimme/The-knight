@@ -1,11 +1,14 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Card, CardActions, CardContent, CardHeader, Grid, Pagination, Typography } from "@mui/material";
 import api from "../../api/api";
 import RoomInfoModal from "../../commons/modal/RoomInfoModal";
 import { gameDesc, gameListAll } from "../../_slice/tempGameSlice";
 import { getRoomInfo } from "../../_slice/roomSlice";
+
+import { Button, Card, CardActions, CardContent, CardHeader, Grid, Pagination, PaginationItem, Typography } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 export default function GameList() {
   const dispatch = useDispatch();
@@ -183,13 +186,20 @@ export default function GameList() {
         <RoomInfoModal canEdit={false} roomData={roomData} open={open} onClose={onRoomInfoModalClose} onConfirm={() => { onRoomEnter(clickGameId); }} />
       </Grid>
       <Pagination
-        sx={{ pt: 2, pb: 2, display: 'flex', justifyContent: 'center' }}
+        sx={{ pt: 7, pb: 2, display: 'flex', justifyContent: 'center'}}
+        shape="rounded"
         page={page}
         count={gameList.maxPageNum}
         rowsperpage={rowsPerPage}
         onChange={handleChangePage}
-      >
-      </Pagination>
+        renderItem={(item) => (
+          <PaginationItem
+            sx={{ fontSize: 16, color: '#fff' }}
+            slots={{ previous: ArrowBackIcon, next: ArrowForwardIcon }}
+            {...item}
+          />
+        )}
+      />
     </div>
   )
 }

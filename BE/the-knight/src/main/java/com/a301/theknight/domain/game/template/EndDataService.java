@@ -38,7 +38,7 @@ public class EndDataService extends GameDataService {
 
     public EndDataService(RedissonClient redissonClient, GameRedisRepository redisRepository, GameRepository gameRepository,
                           RankingRepository rankingRepository, PlayerRepository playerRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
         this.gameRepository = gameRepository;
         this.rankingRepository = rankingRepository;

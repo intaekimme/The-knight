@@ -65,6 +65,7 @@ public class PrepareTimeLimitService extends TimeLimitServiceTemplate {
         List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, team);
 
         teamPlayerList.forEach(inGamePlayer -> {
+            inGamePlayer.clearWeapon();
             inGamePlayer.randomChoiceWeapon(randomChoiceInList(weaponList));
             inGamePlayer.randomChoiceWeapon(randomChoiceInList(weaponList));
         });

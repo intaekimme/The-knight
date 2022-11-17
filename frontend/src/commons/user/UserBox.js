@@ -44,7 +44,7 @@ export default function UserBox(props) {
       if(props.userData.image!==undefined){tempUser.image = props.userData.image;}
       if(props.userData.readyStatus!==undefined){tempUser.readyStatus = props.userData.readyStatus;}
       if(props.userData.team!==undefined){tempUser.team = props.userData.team;
-        const tempColor = (props.userData.team==='A') ? red : blue; setTeamColor(tempColor);}
+        const tempColor = (!props.userData.team || props.userData.team==='') ? white : (props.userData.team==='A') ? red : blue; setTeamColor(tempColor);}
       if(props.userData.team===undefined){setTeamColor(black);}
       if(props.userData.ranking!==undefined){tempUser.ranking = props.userData.ranking;}
       if(props.userData.score!==undefined){tempUser.score = props.userData.score;}
