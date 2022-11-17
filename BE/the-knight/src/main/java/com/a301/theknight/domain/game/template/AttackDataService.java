@@ -2,7 +2,10 @@ package com.a301.theknight.domain.game.template;
 
 import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
+import com.a301.theknight.domain.game.dto.prepare.GamePlayersInfoResponse;
+import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
+import com.a301.theknight.domain.game.dto.prepare.response.GamePlayersInfoDto;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
@@ -11,6 +14,9 @@ import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
@@ -26,6 +32,11 @@ public class AttackDataService extends GameDataService {
 
     @Override
     public void makeAndSendData(long gameId, SendMessageService messageService) {
+        sendAttackerData(gameId, messageService);
+        sendPlayersData(gameId, messageService);
+    }
+
+    private void sendAttackerData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
         inGame.updateCurrentAttackTeam();
         TeamInfoData teamInfoData = getTeamInfoData(inGame);
@@ -39,8 +50,35 @@ public class AttackDataService extends GameDataService {
         MemberTeamResponse response = MemberTeamResponse.builder()
                 .memberId(nextAttackerId)
                 .team(inGame.getCurrentAttackTeam().name()).build();
-
         messageService.sendData(gameId, "/attacker", response);
+    }
+
+    private void sendPlayersData(long gameId, SendMessageService messageService) {
+        GamePlayersInfoResponse playersInfo = getPlayersInfo(gameId);
+        messageService.sendData(gameId, "/a/players", playersInfo.getPlayersAInfoDto());
+        messageService.sendData(gameId, "/b/players", playersInfo.getPlayersBInfoDto());
+    }
+
+    private GamePlayersInfoResponse getPlayersInfo(long gameId) {
+        GamePlayersInfoDto playersAInfo = getTeamPlayersInfo(gameId, Team.A);
+        GamePlayersInfoDto playersBInfo = getTeamPlayersInfo(gameId, Team.B);
+
+        return GamePlayersInfoResponse.builder()
+                .playersAInfoDto(playersAInfo)
+                .playersBInfoDto(playersBInfo)
+                .build();
+    }
+
+    private GamePlayersInfoDto getTeamPlayersInfo(long gameId, Team team) {
+        List<InGamePlayer> playerList = redisRepository.getInGamePlayerList(gameId);
+
+        List<PlayerDataDto> players = playerList.stream()
+                .map(inGamePlayer -> PlayerDataDto.toDto(inGamePlayer, team))
+                .collect(Collectors.toList());
+
+        return GamePlayersInfoDto.builder()
+                .maxMember(players.size())
+                .players(players).build();
     }
 
     private TeamInfoData getTeamInfoData(InGame inGame) {
