@@ -31,22 +31,21 @@ export default function Game() {
     }
   }, []);
 
-  const isLoading = useSelector(state => state.game.isLoading)
   const phase = useSelector(state => state.game.phase)
   
   return (
     <div className={styled.imgGame}>
       <GameWebSocket></GameWebSocket>
-      {isLoading && <LoadingPhase></LoadingPhase>}
-      {!isLoading && phase === "PREPARE" && <PreparePhase></PreparePhase>}
-      {!isLoading && phase === "PREDECESSOR" && <PredecessorPhase></PredecessorPhase>}
-      {!isLoading && phase === "ATTACK" && <AttackPhase></AttackPhase>}
-      {!isLoading && phase === "ATTACK_DOUBT" && <AttackDoubtPhase></AttackDoubtPhase>}
-      {!isLoading && phase === "DEFENSE" && <DefensePhase></DefensePhase>}
-      {!isLoading && phase === "DEFENSE_DOUBT" && <DefenseDoubtPhase></DefenseDoubtPhase>}
-      {!isLoading && phase === "DOUBT_RESULT" && <DoubtResultPhase></DoubtResultPhase>}
-      {!isLoading && phase === "EXECUTE" && <ExecutePhase></ExecutePhase>}
-      {!isLoading && phase === "END" && <EndPhase></EndPhase>}
+      {phase === "LOADING" && <LoadingPhase></LoadingPhase>}
+      {phase === "PREPARE" && <PreparePhase></PreparePhase>}
+      {phase === "PREDECESSOR" && <PredecessorPhase></PredecessorPhase>}
+      {phase === "ATTACK" && <AttackPhase></AttackPhase>}
+      {phase === "ATTACK_DOUBT" && <AttackDoubtPhase></AttackDoubtPhase>}
+      {phase === "DEFENSE" && <DefensePhase></DefensePhase>}
+      {phase === "DEFENSE_DOUBT" && <DefenseDoubtPhase></DefenseDoubtPhase>}
+      {phase === "DOUBT_RESULT" && <DoubtResultPhase></DoubtResultPhase>}
+      {phase === "EXECUTE" && <ExecutePhase></ExecutePhase>}
+      {phase === "END" && <EndPhase></EndPhase>}
 			<Chatting size={size} stompClient={stompClient} gameId={gameId}/>
     </div>
   );

@@ -1,10 +1,8 @@
 import React from "react";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const isLoadingInit = true;
-
-// PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "PREPARE";
+// LOADING, PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
+const phaseInit = "LOADING";
 
 const meInit = {
   memberId: 1,
@@ -210,7 +208,7 @@ const doubtInfoInit =   {
   doubtStatus : "",
 }
 
-const doubtPassListInit = []
+const doubtPassListInit = [1]
 
 const executeInfoInit = {
   attackTeam: "",
@@ -220,10 +218,10 @@ const executeInfoInit = {
     hand: "",
   },
   defender : {
-    memberId: 1,
+    memberId: 3,
     hand: "",
     isDead: false,
-    restCount: 0,
+    hitCount: 0,
     passedDefense: false,
   }
 }
@@ -260,7 +258,6 @@ export const gameSlice = createSlice({
     isSelectComplete: isSelectCompleteInit,
     phase: phaseInit,
     subscribeObject: subscribeObjectInit,
-    isLoading: isLoadingInit,
     currentAttacker: currentAttackerInit,
     currentDefender: currentDefenderInit,
     selectAttack: selectAttackInit,
@@ -309,12 +306,6 @@ export const gameSlice = createSlice({
     },
     fetchPhase: (state, action) => {
       state.phase = action.payload;
-    },
-    switchOffIsLoading: (state) => {
-      state.isLoading = false;
-    },
-    switchOnIsLoading: (state) => { 
-      state.isLoading = true;
     },
     initializePass: (state) => {
       state.doubtPassList = [];
@@ -418,8 +409,6 @@ export const {
   fetchPlayers,
   fetchOrder,
   fetchPhase,
-  switchOffIsLoading,
-  switchOnIsLoading,
   initializePass,
   setEndInfo,
   setLeader,
