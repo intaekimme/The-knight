@@ -168,8 +168,8 @@ public class PrepareDataService extends GameDataService {
                         .image(player.getMember().getImage())
                         .team(player.getTeam())
                         .leader(player.isLeader())
-                        .leftCount(3)
-                        .rightCount(3).build()).collect(Collectors.toList());
+                        .leftCount(0)
+                        .rightCount(0).build()).collect(Collectors.toList());
         redisRepository.saveInGamePlayerAll(gameId, inGamePlayers);
 
         return inGamePlayers;

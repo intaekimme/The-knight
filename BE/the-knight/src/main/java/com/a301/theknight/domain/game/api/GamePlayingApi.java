@@ -58,7 +58,6 @@ public class GamePlayingApi {
     // DoubtApi 3개
     @MessageMapping(value = "/games/{gameId}/doubt")
     public void doubt(@Min(1) @DestinationVariable long gameId, @Valid GameDoubtRequest doubtRequest, @LoginMemberId long memberId) {
-        GameStatus curStatus = doubtRequest.getDoubtStatus();
         gameDoubtService.doubt(gameId, memberId, doubtRequest.getSuspected().getMemberId(), doubtRequest.getDoubtStatus());
 
         messageService.convertCall(gameId);

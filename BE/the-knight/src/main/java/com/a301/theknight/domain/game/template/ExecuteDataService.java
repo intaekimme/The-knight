@@ -37,8 +37,8 @@ public class ExecuteDataService extends GameDataService {
         boolean isDefendPass = defendData.isDefendPass();
 
         Weapon attackWeapon = attackData.getWeapon();
-        int resultCount = defendCount - attackWeapon.getCount();
-        if (resultCount < 0 || isDefendPass) {
+        int resultCount = defendCount + attackWeapon.getCount();
+        if (resultCount > 3 || isDefendPass) {
             defender.death();
         } else {
             defender.changeCount(resultCount, defendData.getDefendHand());
