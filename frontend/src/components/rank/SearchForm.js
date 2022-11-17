@@ -19,17 +19,17 @@ export default function SearchForm() {
   return (
       <Paper
       component="form"
-      sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 500 }}
-    >
-      <InputBase
-        sx={{ ml: 1, flex: 1 }}
-        placeholder="Search Name"
-        inputProps={{ 'aria-label': 'search name' }}
-        onChange={onChangeValue}
-      />
-      <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={searchRankMem}>
-        <SearchIcon />
-      </IconButton>
+      sx={{ p: '2px 4px', mt: 2, display: 'flex', alignItems: 'center', width: 500 }}
+      >
+        <InputBase
+          sx={{ ml: 1, flex: 1 }}
+          placeholder="닉네임 검색"
+          inputProps={{ 'aria-label': 'search name' }}
+          onChange={onChangeValue}
+        />
+        <IconButton type="button" sx={{ p: '10px', color: "#4F585B" }} aria-label="search" onClick={searchRankMem}>
+          <SearchIcon />
+        </IconButton>
       </Paper>
   );
 }
