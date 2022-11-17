@@ -96,7 +96,7 @@ export default function DefenseDoubtPhase() {
           </Box>
           <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "space-evenly" }}>
             <Box
-              onClick={() => clickDoubt}
+              onClick={() => clickDoubt()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
@@ -112,7 +112,7 @@ export default function DefenseDoubtPhase() {
               의심
             </Box>
             <Box
-              onClick={() => clickPass}
+              onClick={() => clickPass()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
