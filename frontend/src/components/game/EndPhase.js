@@ -1,5 +1,6 @@
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
+import { fetchPhase } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
@@ -8,6 +9,7 @@ export default function EndPhase() {
   const me = useSelector((state) => state.game.me)
   const endInfo = useSelector((state) => state.game.endInfo)
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
@@ -15,6 +17,7 @@ export default function EndPhase() {
   const onClick = () => {
     stompClient.send(api.pubEnd(gameId), {}, {})
     stompClient.disconnect();
+    dispatch(fetchPhase("LOADING"))
     navigate('/lobby');
   }
 
