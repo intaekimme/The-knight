@@ -67,8 +67,8 @@ export default function Sword(props) {
 
 
   const rotateProps = useSpring({
-    from: { rotateZ: startRotate, opacity: 0 },
-    to: { rotateZ: endRotate, opacity: 1 },
+    from: { rotateZ: startRotate },
+    to: { rotateZ: endRotate },
     config: { duration: 800 },
     ref: rotateRef,
   });

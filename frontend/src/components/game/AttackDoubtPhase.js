@@ -42,12 +42,10 @@ export default function AttackDoubtPhase() {
       doubtStatus: "ATTACK_DOUBT",
     };
     stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
-    console.log(data);
   };
 
   const onPubDoubtPass = () => {
     stompClient.send(api.pubDoubtPass(gameId), {}, {});
-    console.log("패스");
   };
 
   function clickDoubt() {
@@ -59,9 +57,9 @@ export default function AttackDoubtPhase() {
     dispatch(addDoubtPass());
   }
 
-  useEffect(() => {
-    dispatch(initializePass());
-  }, []);
+  // useEffect(() => {
+  //   dispatch(initializePass());
+  // }, []);
 
   function BoxRender() {
     // 공격자가 우리 팀일 때
