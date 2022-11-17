@@ -45,11 +45,11 @@ function PlayerWithWeaponItem({ player, isOpp }) {
     const arr = [];
     if (hand === "LEFT") {
       for (let i = 0; i < player.leftCount; i++) {
-        arr.push(<img src={scarImg} style={{ width: "5vmin", height: "2vmin"}} alt="?" />)
+        arr.push(<img src={scarImg} style={{ width: "5vmin", height: "2vmin"}} alt="?" key={ `left${i}` } />)
       }
     } else if (hand === "RIGHT") {
       for (let i = 0; i < player.rightCount; i++) {
-        arr.push(<img src={scarImg} style={{ width: "5vmin", height: "2vmin"}} alt="?" />)
+        arr.push(<img src={scarImg} style={{ width: "5vmin", height: "2vmin"}} alt="?" key={ `right${i}` }/>)
       }
     }
     return arr;
