@@ -21,7 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(domainProperties.getMainList().get(0), domainProperties.getMainList().get(1),
+                .allowedOrigins(domainProperties.getMain().get(0), domainProperties.getMain().get(1),
                         domainProperties.getLocal())
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")

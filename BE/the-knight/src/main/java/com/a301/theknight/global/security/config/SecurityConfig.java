@@ -89,8 +89,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(DomainProperties domainProperties) {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        domainProperties.getMainList()
-                .forEach(main -> configuration.addAllowedOrigin(main));
+        domainProperties.getMain()
+                .forEach(configuration::addAllowedOrigin);
         configuration.addAllowedOrigin(domainProperties.getLocal());
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
