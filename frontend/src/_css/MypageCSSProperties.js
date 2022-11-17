@@ -36,10 +36,12 @@ const cardMem = {
 const textResult = {
     fontSize: 25,
     fontWeight: 'bold',
+    color: '#424242'
 }
 const textMaxMem = {
     fontSize: 20,
     fontWeight: 'bold',
+    color: '#424242'
 }
 
 export { imgMypage, memberImg, formMem, btnModify, cardMem, textResult, textMaxMem }

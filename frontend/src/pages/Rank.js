@@ -4,16 +4,19 @@ import RankTable from "../components/rank/RankTable";
 
 import { Container } from "@mui/system";
 import "../_css/Rank.module.css"
-import Table from "../components/test/table";
+import styled from "../_css/Rank.module.css"
 
 export default function Rank() {
   return (
+    <div className={styled.imgRank}>
     <Container fixed >
-      <SearchForm/>
+      <br/>
+      <SearchForm />
       <br />
       <RankTable />
       {/* <Table/> */}
       <br/>
     </Container>
+    </div>
   );
 }

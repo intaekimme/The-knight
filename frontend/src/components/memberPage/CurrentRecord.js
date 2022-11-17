@@ -47,9 +47,9 @@ export default function CurrentRecord() {
                         <AllianceMem alliMems={recordInfoDesc.alliance} />
                       </Grid>
                       <Grid item sx={{ pl: 2, pr: 2 }}>
-                        <h2>
+                        <Typography sx={textMaxMem}>
                           VS
-                        </h2>
+                        </Typography>
                       </Grid>
                       <Grid item>
                         <OppositeMem oppoMems={recordInfoDesc.opposite} />
@@ -71,9 +71,9 @@ export default function CurrentRecord() {
                         <AllianceMem alliMems={recordInfoDesc.alliance} />
                       </Grid>
                       <Grid item sx={{ pl: 2, pr: 2 }}>
-                        <h2>
+                        <Typography sx={textMaxMem}>
                           VS
-                        </h2>
+                        </Typography>
                       </Grid>
                       <Grid item>
                         <OppositeMem oppoMems={recordInfoDesc.opposite} />
