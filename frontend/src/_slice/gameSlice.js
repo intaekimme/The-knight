@@ -119,7 +119,7 @@ const leaderInit = 0;
 
 const attackFirstInit = "";
 
-const orderInit = [];
+const orderInit = [null];
 
 const countWeaponInit = {
   sword: 0,
@@ -304,8 +304,11 @@ export const gameSlice = createSlice({
     fetchPhase: (state, action) => {
       state.phase = action.payload;
     },
-    offIsLoading: (state) => {
+    switchOffIsLoading: (state) => {
       state.isLoading = false;
+    },
+    switchOnIsLoading: (state) => { 
+      state.isLoading = true;
     },
     initializePass: (state) => {
       state.doubtPassList = [];
@@ -409,7 +412,8 @@ export const {
   fetchPlayers,
   fetchOrder,
   fetchPhase,
-  offIsLoading,
+  switchOffIsLoading,
+  switchOnIsLoading,
   initializePass,
   setEndInfo,
   setLeader,

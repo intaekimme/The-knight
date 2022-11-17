@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { offIsLoading } from "../../_slice/gameSlice";
+import { switchOffIsLoading } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import {
   setMe,
@@ -141,7 +141,7 @@ export default function GameWebSocket() {
     dispatch(setTimer(data.limitTime));
 
     if (data.gameStatus === "PREPARE") {
-      dispatch(offIsLoading())
+      dispatch(switchOffIsLoading())
     }
 
     const intervalObject = setInterval(() => {
