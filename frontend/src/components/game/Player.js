@@ -38,6 +38,7 @@ function Player({ player, isOpp }) {
       })
     );
   }, []);
+
   const size = {
     2: "14vmin",
     3: "13vmin",
@@ -112,16 +113,19 @@ function Player({ player, isOpp }) {
       )}
       <Box sx={{ ...(isMe && { color: "green" }), fontSize: "2vmin" }}>{player.nickname}</Box>
       {(isAttackDoubtPhase || isDefenseDoubtPhase) && isPass && (
-        <div
-          style={{
+        <Box
+          sx={{
             position: "absolute",
-            top: "50%",
+            top: "40%",
             left: "50%",
             transform: "translate(-50%, -50%)",
+            fontSize: "3.5vmin",
+            color: "white",
+            textShadow: "-1.5px 0 black, 0 1.5px black, 1.5px 0 black, 0 -1.5px black"
           }}
         >
           PASS
-        </div>
+        </Box>
       )}
     </Box>
   );
