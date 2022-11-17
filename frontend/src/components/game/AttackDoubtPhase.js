@@ -57,9 +57,9 @@ export default function AttackDoubtPhase() {
     dispatch(addDoubtPass());
   }
 
-  // useEffect(() => {
-  //   dispatch(initializePass());
-  // }, []);
+  useEffect(() => {
+    dispatch(initializePass());
+  }, []);
 
   function BoxRender() {
     // 공격자가 우리 팀일 때
