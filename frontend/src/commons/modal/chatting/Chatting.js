@@ -155,7 +155,6 @@ export default function Chatting(props){
                     currentChatSx = {...currentChatSx, ...chattingOthers};
                     currentJustifyContent="flex-start";
                   }
-                  console.log(currentChatSx);
                   return <Grid container item xs={12} justifyContent={currentJustifyContent} sx={{...currentChatSx, color:currentChatColor}}>{chat.nickname}<br/><Box sx={{...currentChatBox}}>{chat.content}</Box></Grid>
                 }
               })}
