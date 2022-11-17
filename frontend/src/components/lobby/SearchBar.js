@@ -80,7 +80,7 @@ export default function SearchBar() {
   }
 
   return (
-    <Grid container sx={{ pt: 2 }} spacing={3}>
+    <Grid container sx={{ pt: 6 }} spacing={3}>
       <Grid item xs={3}></Grid>
       <Grid item sx={{ p: '2px 4px', display: 'flex', justifyContent: 'center' }} xs={6} >
         <Paper

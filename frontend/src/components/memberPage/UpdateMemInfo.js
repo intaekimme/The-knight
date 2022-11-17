@@ -89,7 +89,7 @@ export default function UpdateMemInfo() {
           onChange={onChangeNickname}
         />
       </Grid>
-      <Grid sx={{ pt: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Grid sx={{ pt: 10, pb: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Stack spacing={5} direction="row">
           <Button variant="outlined" onClick={updateProfile}>프로필 변경</Button>
           <Button variant="outlined" onClick={deleteProfile}>회원탈퇴</Button>
