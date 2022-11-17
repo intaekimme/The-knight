@@ -32,6 +32,8 @@ public class PredecessorDataService extends GameDataService {
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
         Team preAttackTeam = inGame.getCurrentAttackTeam();
+        inGame.updateCurrentAttackTeam();
+        redisRepository.saveInGame(gameId, inGame);
         GamePreAttackResponse response = new GamePreAttackResponse(preAttackTeam);
         messageService.sendData(gameId, "/pre-attack", response);
 
