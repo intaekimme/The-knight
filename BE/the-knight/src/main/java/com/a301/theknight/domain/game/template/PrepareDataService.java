@@ -36,7 +36,7 @@ public class PrepareDataService extends GameDataService {
 
     public PrepareDataService(RedissonClient redissonClient, GameRedisRepository redisRepository,
                                   GameRepository gameRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
         this.gameRepository = gameRepository;
     }
@@ -51,7 +51,7 @@ public class PrepareDataService extends GameDataService {
         List<Player> players = game.getPlayers();
 
         makeAndSendLeader(gameId, messageService, players);
-        makeAndSendPlayer(gameId, messageService, players);
+        makeInGamePlayerData(gameId, players);
         makeAndSendWeapon(gameId, messageService, game);
         initInGameData(game);
     }

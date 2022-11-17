@@ -21,11 +21,11 @@ public class Ranking extends BaseTimeEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    private int score = 0;
+    private int score;
 
-    private int win = 0;
+    private int win;
 
-    private int lose = 0;
+    private int lose;
 
     @Builder
     public Ranking(Member member) {

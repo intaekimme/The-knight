@@ -6,11 +6,13 @@ import com.a301.theknight.domain.game.template.*;
 import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class GameScreenDataServiceFactory {
@@ -49,6 +51,7 @@ public class GameScreenDataServiceFactory {
             case END:
                 return endDataService;
         }
+        log.info("  Wrong Game Status = {}", gameStatus);
         throw new CustomWebSocketException(WRONG_GAME_STATUS);
     }
 

@@ -20,7 +20,7 @@ public class ExecuteDataService extends GameDataService {
     private final GameRedisRepository redisRepository;
 
     public ExecuteDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
     }
 
@@ -65,7 +65,7 @@ public class ExecuteDataService extends GameDataService {
                 .memberId(turnData.getDefenderId())
                 .hand(defendData.getDefendHand())
                 .isDead(defender.isDead())
-                .restCount(nextCount)
+                .hitCount(nextCount)
                 .build();
 
         return GameExecuteResponse.builder()

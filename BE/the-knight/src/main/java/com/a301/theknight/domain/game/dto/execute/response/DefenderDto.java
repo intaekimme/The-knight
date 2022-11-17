@@ -10,6 +10,6 @@ public class DefenderDto {
     private long memberId;
     private Hand hand;
     private Boolean isDead;
-    private int restCount;
+    private int hitCount;
     private boolean passedDefense;
 }

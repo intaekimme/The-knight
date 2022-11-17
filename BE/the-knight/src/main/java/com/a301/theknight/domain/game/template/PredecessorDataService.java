@@ -24,7 +24,7 @@ public class PredecessorDataService extends GameDataService {
     private final GameRedisRepository redisRepository;
 
     public PredecessorDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
     }
 

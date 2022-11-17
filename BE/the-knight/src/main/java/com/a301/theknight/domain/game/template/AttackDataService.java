@@ -26,17 +26,12 @@ public class AttackDataService extends GameDataService {
     private final GameRedisRepository redisRepository;
 
     public AttackDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
     }
 
     @Override
     public void makeAndSendData(long gameId, SendMessageService messageService) {
-        sendAttackerData(gameId, messageService);
-        sendPlayersData(gameId, messageService);
-    }
-
-    private void sendAttackerData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
         int maxMembers = inGame.getMaxMemberNum() / 2;
         Team attackTeam = inGame.updateCurrentAttackTeam();
@@ -51,34 +46,6 @@ public class AttackDataService extends GameDataService {
                 .memberId(nextAttackerId)
                 .team(inGame.getCurrentAttackTeam().name()).build();
         messageService.sendData(gameId, "/attacker", response);
-    }
-
-    private void sendPlayersData(long gameId, SendMessageService messageService) {
-        GamePlayersInfoResponse playersInfo = getPlayersInfo(gameId);
-        messageService.sendData(gameId, "/a/players", playersInfo.getPlayersAInfoDto());
-        messageService.sendData(gameId, "/b/players", playersInfo.getPlayersBInfoDto());
-    }
-
-    private GamePlayersInfoResponse getPlayersInfo(long gameId) {
-        GamePlayersInfoDto playersAInfo = getTeamPlayersInfo(gameId, Team.A);
-        GamePlayersInfoDto playersBInfo = getTeamPlayersInfo(gameId, Team.B);
-
-        return GamePlayersInfoResponse.builder()
-                .playersAInfoDto(playersAInfo)
-                .playersBInfoDto(playersBInfo)
-                .build();
-    }
-
-    private GamePlayersInfoDto getTeamPlayersInfo(long gameId, Team team) {
-        List<InGamePlayer> playerList = redisRepository.getInGamePlayerList(gameId);
-
-        List<PlayerDataDto> players = playerList.stream()
-                .map(inGamePlayer -> PlayerDataDto.toDto(inGamePlayer, team))
-                .collect(Collectors.toList());
-
-        return GamePlayersInfoDto.builder()
-                .maxMember(players.size())
-                .players(players).build();
     }
 
     private int findNextAttacker(long gameId, int maxMembers, TeamInfoData teamInfoData) {
