@@ -5,6 +5,10 @@ import ClearIcon from '@mui/icons-material/Clear';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import modalBackground from "../../_assets/room/roomInfo.png";
+import swordIcon from "../../_assets/game/sword-icon.png";
+import twinSwordIcon from "../../_assets/game/twin-icon.png";
+import shieldIcon from "../../_assets/game/shield-icon.png";
+import handIcon from "../../_assets/game/hand-icon.png";
 import ItemBox from "../ItemBox";
 import { red, blue, white, black } from '../../_css/ReactCSSProperties';
 import { modalStyle, inModalStyle, titleStyle, infoStyle, itemStyle, roomInfoTitleStyle, buttonStyle } from '../../_css/ModalCSSProperties';
@@ -78,6 +82,8 @@ export default function RoomSetting(props) {
 
 	//아이템 목록
 	const items = ["검", "쌍검", "방패", "맨손"];
+	// item img
+	const itemImages = [swordIcon, twinSwordIcon, shieldIcon, handIcon];
 
 	//아이템 개수증가
 	const itemCountUp = (index) => {
@@ -166,7 +172,7 @@ export default function RoomSetting(props) {
 							<Grid container columns={24} item xs={4} sx={titleStyle} justifyContent="flex-end">아이템</Grid>
 							{items.map((item, index) => (
 								<Grid container columns={24} item xs={5} key={`item${item}`}>
-									<Grid columns={12} item xs={12}><ItemBox size={150} textColor="#DCD7C9" buttonDisabled={true} /></Grid>
+									<Grid columns={12} item xs={12}><ItemBox size={150} textColor="#DCD7C9" buttonDisabled={true} image={ itemImages[index] } /></Grid>
 									{/* <Grid columns={12} item xs={12}><ItemBox text={item} size={190} textColor="#DCD7C9" buttonDisabled={true}/></Grid> */}
 									<Grid columns={12} container item xs={12} alignItems="center">
 										<Grid columns={12} item xs={7} sx={itemStyle}>{itemCount[index]}</Grid>

@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import api from '../api/api';
 import { sanitizeSortModel } from "@mui/x-data-grid/hooks/features/sorting/gridSortingUtils";
+import GoogleLogin from '../commons/login/GoogleLogin';
 
 const initRoom = createAsyncThunk('room/initRoom', async (props, { rejectWithValue }) => {
   try {
@@ -12,6 +13,9 @@ const initRoom = createAsyncThunk('room/initRoom', async (props, { rejectWithVal
     console.log("방 생성 성공", res);
     return {gameId: res.data.gameId};
   } catch (err) {
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
     console.log(props.roomInfo);
     console.log("방 생성 실패", err);
     return rejectWithValue(err.response.data);
@@ -25,6 +29,9 @@ const getRoomInfo = createAsyncThunk('room/getRoomInfo', async (gameId, { reject
     console.log(res.data);
     return res.data;
   } catch (err) {
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
     console.log(err);
     return rejectWithValue(err.response.data);
   }

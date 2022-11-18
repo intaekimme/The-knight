@@ -104,7 +104,7 @@ export default function NavBar() {
             <Link to="/info">&nbsp;&nbsp;소개&nbsp;&nbsp;</Link>
             <Link to="/lobby">&nbsp;&nbsp;로비&nbsp;&nbsp;</Link>
             <Link to="/rank">&nbsp;&nbsp;랭킹&nbsp;&nbsp;</Link>
-            <Link to="/login">test Login</Link>
+            {/* <Link to="/login">test Login</Link> */}
             {/* <Link to="/makeroom">test makeRoom</Link>
             <Link to="/room/1">test enterRoom</Link> */}
           </Navigation>

@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import api from "../api/api";
 import { create } from "@mui/material/styles/createTransitions";
+import GoogleLogin from '../commons/login/GoogleLogin';
 
 const memberInfoSliceInit = {
   confirmPassword: false,
@@ -240,6 +241,9 @@ const fetchMemberInfo = createAsyncThunk('fetchMemberInfo', async () => {
     return res.data;
   } catch (err) {
     console.log(err);
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
   }
 })
 
@@ -252,6 +256,9 @@ const fetchMemberHistory = createAsyncThunk('fetchMemberHistory', async () => {
     return res.data;
   } catch (err) {
     console.log(err);
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
   }
 })
 
@@ -265,6 +272,9 @@ const patchMemberInfo = createAsyncThunk('patchMemberInfo', async (newInfo) => {
     );
     console.log("update profile success");
   } catch (err) {
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
     return err;
   }
 })
@@ -277,6 +287,9 @@ const deleteMemberInfo = createAsyncThunk('deleteMemberInfo', async () => {
     });
     console.log("delete member success");
   } catch (err) {
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
     return err;
   }
 })
