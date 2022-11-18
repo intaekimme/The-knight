@@ -1,9 +1,9 @@
-.imgRank{
-  background-image: url("../_assets/rank/rank.png");
+.imgMain{
+  background-image: url("../_assets/main.png");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
   /* width: 100vw; */
-  height: 700px;
+  height: 727px;
 }
