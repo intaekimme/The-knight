@@ -19,7 +19,6 @@ import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
@@ -42,7 +41,6 @@ public class PrepareDataService extends GameDataService {
     }
 
     @Override
-    @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         Game game = getGame(gameId);
         if (!game.isCanStart()) {
@@ -60,14 +58,6 @@ public class PrepareDataService extends GameDataService {
         GameWeaponData weaponData = makeWeaponsData(game);
         messageService.sendData(gameId, "/a/weapons", weaponData);
         messageService.sendData(gameId, "/b/weapons", weaponData);
-    }
-
-    private void makeAndSendPlayer(long gameId, SendMessageService messageService, List<Player> players) {
-        List<InGamePlayer> inGamePlayerList = makeInGamePlayerData(gameId, players);
-        GamePlayersInfoResponse response = getGamePlayerData(inGamePlayerList);
-
-        messageService.sendData(gameId, "/a/players", response.getPlayersAInfoDto());
-        messageService.sendData(gameId, "/b/players", response.getPlayersBInfoDto());
     }
 
     private void makeAndSendLeader(long gameId, SendMessageService messageService, List<Player> players) {
