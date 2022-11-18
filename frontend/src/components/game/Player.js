@@ -20,7 +20,11 @@ function Player({ player, isOpp }) {
   const isMe = player.memberId === me.memberId;
   const isAttacker = player.memberId === currentAttacker.memberId;
   const AttackerIsMe = me.memberId === currentAttacker.memberId;
-  const isPass = doubtPassList.includes(player.memberId);
+  
+  let isPass = doubtPassList.includes(player.memberId);
+  useEffect(() => {
+    isPass = doubtPassList.includes(player.memberId);
+  }, [doubtPassList])
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));

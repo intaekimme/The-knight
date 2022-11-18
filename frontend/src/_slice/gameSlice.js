@@ -346,8 +346,8 @@ export const gameSlice = createSlice({
     fetchExecuteInfo: (state, action) => {
       state.executeInfo = action.payload;
     },
-    addDoubtPass: (state) => {
-      state.doubtPassList.push(state.me.memberId);
+    addDoubtPass: (state, action) => {
+      state.doubtPassList.push(action.payload);
     },
     selectWeaponForAttack: (state, action) => { 
       state.selectAttack.weapon = action.payload.weapon;
