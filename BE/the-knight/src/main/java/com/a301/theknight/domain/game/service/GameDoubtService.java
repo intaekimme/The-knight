@@ -43,7 +43,6 @@ public class GameDoubtService {
         InGamePlayer deadPlayer = killByDoubt(suspect, suspected, isLying);
 
         saveDoubtData(suspectId, suspectedId, inGame, suspected, deadPlayer);
-//        inGame.changeStatus(DOUBT_RESULT);
         inGame.addTurn();
 
         gameRedisRepository.saveInGamePlayer(gameId, deadPlayer.getMemberId(), deadPlayer);
@@ -57,8 +56,6 @@ public class GameDoubtService {
 
         DoubtResponse doubtResponse = makeDoubtResponse(gameId, doubtData);
 
-//        GameStatus nextStatus = getNextGameStatus(doubtData);
-//        inGame.changeStatus(nextStatus);
         inGame.clearDoubtData();
         gameRedisRepository.saveInGame(gameId, inGame);
 
@@ -120,16 +117,6 @@ public class GameDoubtService {
         return !(ATTACK_DOUBT.equals(gameStatus) || DEFENSE_DOUBT.equals(gameStatus));
     }
 
-    // TODO
-    public GameStatus getNextGameStatus(DoubtData doubtData) {
-        if (doubtData.isDeadLeader()) {
-            return END;
-        }
-        if (doubtData.isDoubtSuccess()) {
-            return ATTACK;
-        }
-        return DoubtStatus.ATTACK.equals(doubtData.getDoubtStatus()) ? DEFENSE : EXECUTE;
-    }
 
     // TODO
     public DoubtResponse makeDoubtResponse(long gameId, DoubtData doubtData) {

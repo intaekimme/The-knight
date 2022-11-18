@@ -2,6 +2,7 @@ package com.a301.theknight.domain.game.entity.redis;
 
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Team;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -68,21 +69,17 @@ public class InGame {
         requestCount = 0;
     }
 
-    public void initDoubtPassCount() {
-        turnData.getDoubtData().setDoubtPassCount(0);
-    }
-
     public void addDoubtPassCount() {
         turnData.addDoubtPassCount();
     }
 
+    @JsonIgnore
     public int getDoubtPassCount() {
         return turnData.getDoubtData().getDoubtPassCount();
     }
 
     public boolean getLyingData() {
-        return (gameStatus.equals(GameStatus.ATTACK_DOUBT) && turnData.isLyingAttack())
-                || (gameStatus.equals(GameStatus.DEFENSE_DOUBT) && turnData.isLyingDefense());
+        return gameStatus.equals(GameStatus.ATTACK_DOUBT) ? turnData.isLyingAttack() : turnData.isLyingDefense();
     }
 
     public void clearTurnData() {

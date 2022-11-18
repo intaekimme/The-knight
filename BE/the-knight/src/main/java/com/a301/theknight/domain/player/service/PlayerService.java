@@ -1,16 +1,13 @@
 package com.a301.theknight.domain.player.service;
 
-import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
-import com.a301.theknight.domain.game.entity.redis.InGame;
-import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
-import com.a301.theknight.domain.game.entity.redis.TurnData;
+import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
-import com.a301.theknight.domain.player.dto.*;
+import com.a301.theknight.domain.player.dto.ReadyDto;
 import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
 import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
@@ -177,8 +174,17 @@ public class PlayerService {
                 .maxMemberNum(game.getCapacity())
                 .teamAInfo(TeamInfoData.builder().build())
                 .teamBInfo(TeamInfoData.builder().build())
-                .turnData(new TurnData()).build();
+                .turnData(makeTurnData()).build();
 
         return redisRepository.saveInGame(game.getId(), initInGame);
+    }
+
+    private TurnData makeTurnData() {
+        TurnData turnData = new TurnData();
+        turnData.setAttackData(AttackData.builder().build());
+        turnData.setDefenseData(DefendData.builder().build());
+        turnData.setDoubtData(DoubtData.builder().build());
+
+        return turnData;
     }
 }
