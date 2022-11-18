@@ -4,7 +4,7 @@ import { Modal, Box, Button, Grid, Input, InputLabel, MenuItem, FormControl, Sel
 import ClearIcon from '@mui/icons-material/Clear';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import modalBackground from "../../_assets/room/enterRoom.png";
+import modalBackground from "../../_assets/room/roomInfo.png";
 import ItemBox from "../ItemBox";
 import { red, blue, white, black } from '../../_css/ReactCSSProperties';
 import { modalStyle, inModalStyle, titleStyle, infoStyle, itemStyle, roomInfoTitleStyle, buttonStyle } from '../../_css/ModalCSSProperties';

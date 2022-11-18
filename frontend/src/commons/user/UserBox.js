@@ -1,7 +1,8 @@
 import React from "react";
-import { black, red, blue, yellow, white } from "../../_css/ReactCSSProperties";
 import { Grid, Box } from "@mui/material";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import { black, red, blue, yellow, white } from "../../_css/ReactCSSProperties";
+import { userBoxSx, nickname, userImage,userBoxReady } from "../../_css/UserBoxCSSProperties";
 
 export default function UserBox(props) {
   // user 초기 데이터
@@ -56,21 +57,8 @@ export default function UserBox(props) {
   }, [props.userData]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        position: "relative",
-        flexDirection: "column",
-        alignItems: "center",
-        width: width,
-        height: height,
-        p: 2,
-				border: `7px solid ${teamColor}`,
-				borderRadius: "10px",
-        background: teamColor,
-      }}
-    >
-      <div style={{ fontSize: size / 6, color: white }}>{user.nickname}</div>
+    <Box sx={{...userBoxSx(teamColor, width, height)}}>
+      <div style={{ ...nickname(size) }}>{user.nickname}</div>
       <div>
         {user.empty && user.empty === true ? (
           <QuestionMarkIcon sx={{ pt:1, fontSize: size }} />
@@ -78,11 +66,11 @@ export default function UserBox(props) {
           <img
             src={user.image}
             // alt={user.image}
-            style={{ width: size, height: size }}
+            style={{ ...userImage(size) }}
           />
         )}
       </div>
-      <div style={{position:"absolute", top:"50%", fontWeight:900, fontSize:size/3, color:yellow}}>{ user.readyStatus ? "Ready" : "" }</div>
+      <div style={{...userBoxReady(size)}}>{ user.readyStatus ? "Ready" : "" }</div>
     </Box>
   );
 }
