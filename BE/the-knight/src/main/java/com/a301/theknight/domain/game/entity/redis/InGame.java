@@ -75,12 +75,13 @@ public class InGame {
 
     public boolean getLyingData() {
         return (gameStatus.equals(GameStatus.ATTACK_DOUBT) && turnData.isLyingAttack())
-                || (gameStatus.equals(GameStatus.DEFENSE_DOUBT) && turnData.isLyingDefend());
+                || (gameStatus.equals(GameStatus.DEFENSE_DOUBT) && turnData.isLyingDefense());
     }
 
     public void clearTurnData() {
         turnData.clearAttackData();
         turnData.clearDefenseData();
+        turnData.clearDoubtData();
     }
 
     public void clearDoubtData() {

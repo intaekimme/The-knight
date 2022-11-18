@@ -114,7 +114,7 @@ public class GameDoubtService {
         doubtData.setDoubtSuccess(deadPlayer.getMemberId().equals(suspected.getMemberId()));
         doubtData.setDoubtHand(ATTACK_DOUBT.equals(inGame.getGameStatus()) ?
                 inGame.getTurnData().getAttackData().getAttackHand() :
-                inGame.getTurnData().getDefendData().getDefendHand());
+                inGame.getTurnData().getDefenseData().getDefendHand());
         doubtData.setDoubtStatus(ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DoubtStatus.ATTACK : DoubtStatus.DEFENSE);
         doubtData.setDeadLeader(deadPlayer.isLeader());
     }
