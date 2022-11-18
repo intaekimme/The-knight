@@ -44,6 +44,7 @@ public class GameDoubtService {
 
         saveDoubtData(suspectId, suspectedId, inGame, suspected, deadPlayer);
         inGame.changeStatus(DOUBT_RESULT);
+        inGame.addTurn();
 
         gameRedisRepository.saveInGamePlayer(gameId, deadPlayer.getMemberId(), deadPlayer);
         gameRedisRepository.saveInGame(gameId, inGame);

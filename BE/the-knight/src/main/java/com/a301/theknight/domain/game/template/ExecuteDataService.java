@@ -44,6 +44,7 @@ public class ExecuteDataService extends GameDataService {
             defender.changeCount(resultCount, defendData.getDefendHand());
         }
 
+        inGame.addTurn();
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.saveInGamePlayer(gameId, defender.getMemberId(), defender);
 

@@ -25,13 +25,15 @@ public abstract class TimeLimitServiceTemplate {
     }
 
     public void executeTimeLimit(long gameId, SendMessageService sendMessageService) {
-        GameStatus preStatus = getInGame(gameId).getGameStatus();
+        InGame preInGame = getInGame(gameId);
+        GameStatus preStatus = preInGame.getGameStatus();
+        int preTurn = preInGame.getTurnNumber();
 
         RLock dataLock = null;
         try {
             Thread.sleep(preStatus.getLimitMilliSeconds());
             InGame curInGame = getInGame(gameId);
-            if (!preStatus.equals(curInGame.getGameStatus())) {
+            if (curInGame.getTurnNumber() != preTurn || !preStatus.equals(curInGame.getGameStatus())) {
                 return;
             }
 

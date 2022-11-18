@@ -91,4 +91,11 @@ public class InGame {
         return currentAttackTeam;
     }
 
+    public int getTurnNumber() {
+        return turnData.getTurn();
+    }
+
+    public void addTurn() {
+        turnData.addTurn();
+    }
 }

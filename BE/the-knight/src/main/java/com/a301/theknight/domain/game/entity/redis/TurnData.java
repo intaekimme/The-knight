@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class TurnData {
+    private int turn;
     private long attackerId;
     private long defenderId;
     private AttackData attackData;
@@ -43,5 +44,9 @@ public class TurnData {
 
     public void setDoubtData(DoubtData doubtData) {
         this.doubtData = doubtData;
+    }
+
+    public void addTurn() {
+        turn++;
     }
 }
