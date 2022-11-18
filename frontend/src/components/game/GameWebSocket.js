@@ -317,7 +317,7 @@ export default function GameWebSocket() {
     //       hand: String
     //     }
     //     doubtTeam: String (A,B),
-    //     doubtResult: boolean
+    //     doubtSuccess: boolean
     //   },
     //   doubtStatus : String (ATTACK_DOUBT, DEFENSE_DOUBT)
     // }
