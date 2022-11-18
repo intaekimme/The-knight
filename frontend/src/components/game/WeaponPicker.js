@@ -64,7 +64,7 @@ function WeaponPicker() {
                 ...(isSelectComplete || !countWeapon[weapon.toLowerCase()]
                   ? { backgroundColor: "#646464" }
                   : { backgroundColor: "#f0f0f0" }),
-                border: "7px solid #7406ff",
+                border: "5px solid #424242",
                 borderRadius: "10px",
                 position: "relative",
                 display: "flex",
