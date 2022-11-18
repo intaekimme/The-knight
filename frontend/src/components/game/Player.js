@@ -5,6 +5,8 @@ import api from "../../api/api";
 import PersonIcon from "@mui/icons-material/Person";
 import Box from "@mui/material/Box";
 import deadImg from "../../_assets/game/dead.png";
+import knightImg from "../../_assets/game/knight.png";
+import knightGreenImg from "../../_assets/game/knight-green.png";
 
 // 해당 Player가 본인이면 녹색아이콘
 function Player({ player, isOpp }) {
@@ -15,16 +17,18 @@ function Player({ player, isOpp }) {
   const doubtPassList = useSelector((state) => state.game.doubtPassList);
   const players = useSelector((state) => state.game.players);
   const isAttackPhase = useSelector((state) => state.game.phase) === "ATTACK";
-  const isAttackDoubtPhase = useSelector((state) => state.game.phase) === "ATTACK_DOUBT";
-  const isDefenseDoubtPhase = useSelector((state) => state.game.phase) === "DEFENSE_DOUBT";
+  const isAttackDoubtPhase =
+    useSelector((state) => state.game.phase) === "ATTACK_DOUBT";
+  const isDefenseDoubtPhase =
+    useSelector((state) => state.game.phase) === "DEFENSE_DOUBT";
   const isMe = player.memberId === me.memberId;
   const isAttacker = player.memberId === currentAttacker.memberId;
   const AttackerIsMe = me.memberId === currentAttacker.memberId;
-  
+
   let isPass = doubtPassList.includes(player.memberId);
   useEffect(() => {
     isPass = doubtPassList.includes(player.memberId);
-  }, [doubtPassList])
+  }, [doubtPassList]);
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
@@ -74,7 +78,36 @@ function Player({ player, isOpp }) {
         position: "relative",
       }}
     >
-      <PersonIcon
+      <img
+        ref={person}
+        src={isMe ? knightGreenImg : knightImg}
+        alt="player"
+        style={{
+          ...(isMe && { color: "green" }),
+          ...(isAttacker && {
+            background: "radial-gradient(yellow 10%, white 90%)",
+            borderRadius: "50%",
+          }),
+          ...(isAttackPhase &&
+            AttackerIsMe &&
+            isOpp &&
+            selectAttack.weapon &&
+            isHovering && {
+              background: "radial-gradient(red 10%, white 90%)",
+              borderRadius: "50%",
+            }),
+          width: size[String(players.maxMember / 2)],
+          height: size[String(players.maxMember / 2)],
+        }}
+        onClick={
+          isAttackPhase && AttackerIsMe && isOpp && selectAttack.weapon
+            ? () => onSelectPlayer()
+            : undefined
+        }
+        onMouseOver={() => setIsHovering(true)}
+        onMouseOut={() => setIsHovering(false)}
+      />
+      {/* <PersonIcon
         ref={person}
         sx={{
           ...(isMe && { color: "green" }),
@@ -99,11 +132,11 @@ function Player({ player, isOpp }) {
         }
         onMouseOver={() => setIsHovering(true)}
         onMouseOut={() => setIsHovering(false)}
-      />
+      /> */}
       {player.isDead && (
         <img
           src={deadImg}
-          art="dead"
+          alt="dead"
           style={{
             position: "absolute",
             width: "20vmin",
@@ -115,7 +148,9 @@ function Player({ player, isOpp }) {
           }}
         ></img>
       )}
-      <Box sx={{ ...(isMe && { color: "green" }), fontSize: "2vmin" }}>{player.nickname}</Box>
+      <Box sx={{ ...(isMe && { color: "green" }), fontSize: "2vmin" }}>
+        {player.nickname}
+      </Box>
       {(isAttackDoubtPhase || isDefenseDoubtPhase) && isPass && (
         <Box
           sx={{
@@ -125,7 +160,8 @@ function Player({ player, isOpp }) {
             transform: "translate(-50%, -50%)",
             fontSize: "3.5vmin",
             color: "white",
-            textShadow: "-1.5px 0 black, 0 1.5px black, 1.5px 0 black, 0 -1.5px black"
+            textShadow:
+              "-1.5px 0 black, 0 1.5px black, 1.5px 0 black, 0 -1.5px black",
           }}
         >
           PASS
