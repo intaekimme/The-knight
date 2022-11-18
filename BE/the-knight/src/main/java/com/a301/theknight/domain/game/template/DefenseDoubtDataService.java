@@ -11,6 +11,7 @@ import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
@@ -26,8 +27,12 @@ public class DefenseDoubtDataService extends GameDataService {
     }
 
     @Override
+    @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame findInGame = getInGame(gameId);
+        findInGame.clearDoubtData();
+        redisRepository.saveInGame(gameId, findInGame);
+
         TurnData turn = getTurnData(findInGame);
 
         InGamePlayer defender = getInGamePlayer(gameId, turn.getDefenderId());

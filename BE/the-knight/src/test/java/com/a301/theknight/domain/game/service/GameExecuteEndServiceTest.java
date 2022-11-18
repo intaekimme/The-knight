@@ -24,7 +24,6 @@ import com.a301.theknight.domain.ranking.entity.Ranking;
 import com.a301.theknight.domain.ranking.repository.RankingRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -201,8 +200,8 @@ class GameExecuteEndServiceTest {
         gameDefenseRequest.setHand(Hand.LEFT);
 
 
-        testInGame.getTurnData().recordAttackTurn(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
-        testInGame.getTurnData().recordDefenseTurn(testInGamePlayer4, gameDefenseRequest);
+        testInGame.getTurnData().recordAttackData(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
+        testInGame.getTurnData().recordDefenseData(testInGamePlayer4, gameDefenseRequest);
         testInGame.getTurnData().getDefendData().defendPass();
 
         //when
@@ -232,8 +231,8 @@ class GameExecuteEndServiceTest {
         gameDefenseRequest.setHand(Hand.LEFT);
 
 
-        testInGame.getTurnData().recordAttackTurn(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
-        testInGame.getTurnData().recordDefenseTurn(testInGamePlayer4, gameDefenseRequest);
+        testInGame.getTurnData().recordAttackData(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
+        testInGame.getTurnData().recordDefenseData(testInGamePlayer4, gameDefenseRequest);
 
         //when
 //        gameExecuteEndService.executeTurn(gameId);
@@ -261,8 +260,8 @@ class GameExecuteEndServiceTest {
         gameDefenseRequest.setHand(Hand.LEFT);
 
 
-        testInGame.getTurnData().recordAttackTurn(testInGamePlayer1, testInGamePlayer3, gameAttackRequest);
-        testInGame.getTurnData().recordDefenseTurn(testInGamePlayer3, gameDefenseRequest);
+        testInGame.getTurnData().recordAttackData(testInGamePlayer1, testInGamePlayer3, gameAttackRequest);
+        testInGame.getTurnData().recordDefenseData(testInGamePlayer3, gameDefenseRequest);
         testInGame.getTurnData().getDefendData().defendPass();
 
         //when
@@ -292,8 +291,8 @@ class GameExecuteEndServiceTest {
         gameDefenseRequest.setHand(Hand.LEFT);
 
 
-        testInGame.getTurnData().recordAttackTurn(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
-        testInGame.getTurnData().recordDefenseTurn(testInGamePlayer4, gameDefenseRequest);
+        testInGame.getTurnData().recordAttackData(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
+        testInGame.getTurnData().recordDefenseData(testInGamePlayer4, gameDefenseRequest);
 
         //when
 //        GameExecuteResponse gameExecuteResponse = gameExecuteEndService.executeTurn(gameId);

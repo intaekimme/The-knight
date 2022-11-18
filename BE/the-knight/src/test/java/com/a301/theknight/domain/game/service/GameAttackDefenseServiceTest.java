@@ -216,7 +216,7 @@ class GameAttackDefenseServiceTest {
         given(gameRedisRepository.getInGamePlayer(1L, 1L)).willReturn(Optional.of(attacker));
 
         //  when
-        gameAttackDefenseService.isAttackPass(1L, 1L);
+        gameAttackDefenseService.checkAttackPass(1L, 1L);
 
         //  then
 
@@ -229,7 +229,7 @@ class GameAttackDefenseServiceTest {
         inGame.changeStatus(GameStatus.DEFENSE);
         // when
         // then
-        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.isAttackPass(1L, 1L));
+        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.checkAttackPass(1L, 1L));
     }
 
     @DisplayName("방어 / 손에 들고 있는 방패로 방어")

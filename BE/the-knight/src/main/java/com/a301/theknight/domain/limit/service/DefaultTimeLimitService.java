@@ -1,6 +1,5 @@
 package com.a301.theknight.domain.limit.service;
 
-import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.limit.template.TimeLimitServiceTemplate;
 import org.redisson.api.RedissonClient;

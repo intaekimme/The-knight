@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class TurnData {
+    private int turn;
     private long attackerId;
     private long defenderId;
     private AttackData attackData;
@@ -17,18 +18,32 @@ public class TurnData {
     private boolean lyingDefend;
     private DoubtData doubtData;
 
-    public void recordAttackTurn(InGamePlayer attacker, InGamePlayer defender, GameAttackRequest gameAttackRequest){
+    public void recordAttackData(InGamePlayer attacker, InGamePlayer defender, GameAttackRequest gameAttackRequest){
         attackerId = attacker.getMemberId();
         attackData.setWeapon(gameAttackRequest.getWeapon());
         attackData.setAttackHand(gameAttackRequest.getHand());
         defenderId = defender.getMemberId();
     }
 
-    public void recordDefenseTurn(InGamePlayer defender, GameDefenseRequest gameDefenseRequest){
+    public void recordDefenseData(InGamePlayer defender, GameDefenseRequest gameDefenseRequest){
         defenderId = defender.getMemberId();
         defendData.setDefendHand(gameDefenseRequest.getHand());
         defendData.setShieldCount(Hand.LEFT.equals(gameDefenseRequest.getHand()) ?
                 defender.getLeftCount() : defender.getRightCount());
+    }
+
+    public void clearAttackData() {
+        attackerId = 0L;
+        attackData.setWeapon(null);
+        attackData.setAttackHand(null);
+        lyingAttack = false;
+    }
+
+    public void clearDefenseData() {
+        defenderId = 0L;
+        defendData.setDefendHand(null);
+        defendData.setShieldCount(0);
+        lyingDefend = false;
     }
 
     public void checkLyingAttack(InGamePlayer attacker){
@@ -43,5 +58,18 @@ public class TurnData {
 
     public void setDoubtData(DoubtData doubtData) {
         this.doubtData = doubtData;
+    }
+
+    public void addTurn() {
+        turn++;
+    }
+
+    public void clearDoubtData() {
+        doubtData.setSuspectId(0L);
+        doubtData.setSuspectedId(0L);
+        doubtData.setDoubtStatus(null);
+        doubtData.setDoubtHand(null);
+        doubtData.setDoubtSuccess(false);
+        doubtData.setDeadLeader(false);
     }
 }

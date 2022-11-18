@@ -16,7 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.a301.theknight.domain.game.entity.GameStatus.*;
+import static com.a301.theknight.domain.game.entity.GameStatus.ATTACK;
+import static com.a301.theknight.domain.game.entity.GameStatus.DEFENSE;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
 @RequiredArgsConstructor
@@ -59,7 +60,6 @@ public class GameAttackDefenseService {
         InGame inGame = getInGame(gameId);
         Team preAttackTeam = inGame.getCurrentAttackTeam();
 
-        inGame.changeStatus(ATTACK);
         gameRedisRepository.saveInGame(gameId, inGame);
 
         return new GamePreAttackResponse(preAttackTeam);
@@ -73,11 +73,10 @@ public class GameAttackDefenseService {
 
         InGamePlayer attacker = getInGamePlayer(gameId, memberId);
         InGamePlayer defender = getInGamePlayer(gameId, gameAttackRequest.getDefender().getMemberId());
-        turn.recordAttackTurn(attacker, defender, gameAttackRequest);
+        turn.recordAttackData(attacker, defender, gameAttackRequest);
         turn.checkLyingAttack(attacker);
 
         findInGame.recordTurnData(turn);
-        findInGame.changeStatus(ATTACK_DOUBT);
         gameRedisRepository.saveInGame(gameId, findInGame);
     }
 
@@ -105,11 +104,15 @@ public class GameAttackDefenseService {
     }
 
     @Transactional
-    public void isAttackPass(long gameId, long memberId) {
+    public void checkAttackPass(long gameId, long memberId) {
         InGame findInGame = getInGame(gameId);
         getInGamePlayer(gameId, memberId);
 
-        if (findInGame.getGameStatus().equals(ATTACK)) return;
+        if (findInGame.getGameStatus().equals(ATTACK)) {
+            findInGame.addTurn();
+            gameRedisRepository.saveInGame(gameId, findInGame);
+            return;
+        }
         throw new CustomWebSocketException(UNABLE_TO_PASS_ATTACK);
     }
 
@@ -120,11 +123,10 @@ public class GameAttackDefenseService {
         TurnData turn = getTurnData(findInGame);
 
         InGamePlayer defender = getInGamePlayer(gameId, memberId);
-        turn.recordDefenseTurn(defender, gameDefenseRequest);
+        turn.recordDefenseData(defender, gameDefenseRequest);
         turn.checkLyingDefense(defender);
 
         findInGame.recordTurnData(turn);
-        findInGame.changeStatus(DEFENSE_DOUBT);
         gameRedisRepository.saveInGame(gameId, findInGame);
 
     }
@@ -157,7 +159,6 @@ public class GameAttackDefenseService {
         DefendData defendData = turnData.getDefendData();
         defendData.defendPass();
 
-        findInGame.changeStatus(EXECUTE);
         gameRedisRepository.saveInGame(gameId, findInGame);
 
     }

@@ -145,7 +145,7 @@ public class PrepareDataService extends GameDataService {
         int peopleNum = game.getPlayers().size() / 2;
 
         return TeamInfoData.builder()
-                .currentAttackIndex(peopleNum - 1)
+                .currentAttackIndex(peopleNum - 1) //attacker 조회 로직에 의해 마지막 인덱스로 초기화
                 .orderList(new GameOrderDto[peopleNum])
                 .leaderId(leaderId == null ? 0 : leaderId).build();
     }
