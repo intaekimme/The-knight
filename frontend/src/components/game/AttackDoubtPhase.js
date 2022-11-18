@@ -9,8 +9,11 @@ export default function AttackDoubtPhase() {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.game.me);
   const timer = useSelector((state) => state.game.timer).timer;
+  const players = useSelector((state) => state.game.players);
   const attackInfo = useSelector((state) => state.game.attackInfo);
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
+  const isDead = players.players.find((player) => (player.memberId === me.memberId)).isDead; 
+
   const weaponsKr = {
     SWORD: "검",
     TWIN: "쌍검",
@@ -62,7 +65,7 @@ export default function AttackDoubtPhase() {
   }, []);
 
   function BoxRender() {
-    // 공격자가 우리 팀일 때
+    // 상대의 의심을 기다릴 때
     if (me.team === currentAttacker.team) {
       return (
         <Box
@@ -82,7 +85,26 @@ export default function AttackDoubtPhase() {
           </Box>
         </Box>
       );
-      // 공격자가 적팀일 때
+      // 우리 팀의 의심이지만, 나는 죽었을 때
+    } else if (isDead) {
+      return (
+        <Box
+          sx={{
+            width: "70vmin",
+            height: "40vmin",
+            backgroundColor: "#d9d9d9",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative",
+          }}
+        >
+          <Box sx={{ fontSize: "2.5vmin" }}>아군이 의심여부를 선택 중입니다</Box>
+          <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
+            제한시간 : {timer}
+          </Box>
+        </Box>
+      );
     } else {
       return (
         <Box
@@ -155,6 +177,11 @@ export default function AttackDoubtPhase() {
       );
     }
   }
+    
+    
+    
+    
+    
 
   return (
     <Box
