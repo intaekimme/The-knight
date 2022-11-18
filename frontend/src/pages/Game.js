@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { resetGameSlice } from "../_slice/gameSlice";
 
 import styled from "../_css/Game.module.css";
 import LoginCheck from "../commons/login/LoginCheck";
@@ -18,6 +19,7 @@ import GameWebSocket from "../components/game/GameWebSocket";
 import Chatting from "../commons/modal/chatting/Chatting";
 
 export default function Game() {
+	const dispatch = useDispatch();
 	const stompClient = useSelector((state) => state.websocket.stompClient);
 	const gameId = useSelector((state) => state.room.roomInfo.gameId);
 	const size = 35;
@@ -29,6 +31,7 @@ export default function Game() {
     if (!isLogin) {
       navigate("/login");
     }
+    dispatch(resetGameSlice())
   }, []);
 
   const phase = useSelector(state => state.game.phase)

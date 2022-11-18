@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
-import { fetchPhase } from "../../_slice/gameSlice";
+import { resetGameSlice } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
@@ -17,7 +17,7 @@ export default function EndPhase() {
   const onClick = () => {
     stompClient.send(api.pubEnd(gameId), {}, {})
     stompClient.disconnect();
-    dispatch(fetchPhase("LOADING"))
+    dispatch(resetGameSlice())
     navigate('/lobby');
   }
 
