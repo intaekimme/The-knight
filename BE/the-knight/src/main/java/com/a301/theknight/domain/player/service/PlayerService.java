@@ -41,13 +41,14 @@ public class PlayerService {
 
     @Transactional
     public PlayerEntryResponse entry(long gameId, long memberId){
-        Game entryGame = getGame(gameId);
+        Game entryGame = getGameFetchJoin(gameId);
         if(!isWaiting(entryGame)){
             throw new CustomWebSocketException(GAME_IS_NOT_READY_STATUS);
         }
         if(!isEnterPossible(entryGame)){
             throw new CustomWebSocketException(CAN_NOT_ACCOMMODATE);
         }
+        checkAlreadyEntry(memberId, entryGame);
 
         Member entryMember = getMember(memberId);
         Member owner = entryGame.getOwner().getMember();
@@ -62,6 +63,14 @@ public class PlayerService {
                 .memberId(entryMember.getId())
                 .nickname(entryMember.getNickname())
                 .image(entryMember.getImage()).build();
+    }
+
+    private void checkAlreadyEntry(long memberId, Game entryGame) {
+        entryGame.getPlayers().forEach(player -> {
+            if (player.getMember().getId().equals(memberId)) {
+                throw new CustomWebSocketException(PLAYER_IS_ALREADY_ENTRY);
+            }
+        });
     }
 
     @Transactional
@@ -130,6 +139,11 @@ public class PlayerService {
 
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
+                .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
+    }
+
+    private Game getGameFetchJoin(long gameId) {
+        return gameRepository.findByIdFetchJoin(gameId)
                 .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
