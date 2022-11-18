@@ -41,10 +41,12 @@ public class GameDoubtService {
 
         boolean isLying = inGame.getLyingData();
         InGamePlayer deadPlayer = killByDoubt(suspect, suspected, isLying);
-        gameRedisRepository.saveInGamePlayer(gameId, deadPlayer.getMemberId(), deadPlayer);
 
         saveDoubtData(suspectId, suspectedId, inGame, suspected, deadPlayer);
-        inGame.changeStatus(DOUBT_RESULT);
+//        inGame.changeStatus(DOUBT_RESULT);
+        inGame.addTurn();
+
+        gameRedisRepository.saveInGamePlayer(gameId, deadPlayer.getMemberId(), deadPlayer);
         gameRedisRepository.saveInGame(gameId, inGame);
     }
 
@@ -55,8 +57,8 @@ public class GameDoubtService {
 
         DoubtResponse doubtResponse = makeDoubtResponse(gameId, doubtData);
 
-        GameStatus nextStatus = getNextGameStatus(doubtData);
-        inGame.changeStatus(nextStatus);
+//        GameStatus nextStatus = getNextGameStatus(doubtData);
+//        inGame.changeStatus(nextStatus);
         inGame.clearDoubtData();
         gameRedisRepository.saveInGame(gameId, inGame);
 
@@ -86,8 +88,8 @@ public class GameDoubtService {
 
             inGame.addDoubtPassCount();
             if(inGame.getDoubtPassCount() >= alivePlayerCount){
-                GameStatus nextStatus = ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DEFENSE : EXECUTE;
-                inGame.changeStatus(nextStatus);
+//                GameStatus nextStatus = ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DEFENSE : EXECUTE;
+//                inGame.changeStatus(nextStatus);
 
                 inGame.initDoubtPassCount();
             }
@@ -105,15 +107,16 @@ public class GameDoubtService {
     }
 
     private void saveDoubtData(long suspectId, long suspectedId, InGame inGame, InGamePlayer suspected, InGamePlayer deadPlayer) {
-        inGame.setDoubtData(DoubtData.builder()
-                .suspectId(suspectId)
-                .suspectedId(suspectedId)
-                .doubtResult(deadPlayer.equals(suspected))
-                .doubtHand(ATTACK_DOUBT.equals(inGame.getGameStatus()) ?
-                        inGame.getTurnData().getAttackData().getAttackHand() :
-                        inGame.getTurnData().getDefendData().getDefendHand())
-                .doubtStatus(ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DoubtStatus.ATTACK : DoubtStatus.DEFENSE)
-                .deadLeader(deadPlayer.isLeader()).build());
+        DoubtData doubtData = inGame.getTurnData().getDoubtData();
+
+        doubtData.setSuspectId(suspectId);
+        doubtData.setSuspectedId(suspectedId);
+        doubtData.setDoubtSuccess(deadPlayer.getMemberId().equals(suspected.getMemberId()));
+        doubtData.setDoubtHand(ATTACK_DOUBT.equals(inGame.getGameStatus()) ?
+                inGame.getTurnData().getAttackData().getAttackHand() :
+                inGame.getTurnData().getDefendData().getDefendHand());
+        doubtData.setDoubtStatus(ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DoubtStatus.ATTACK : DoubtStatus.DEFENSE);
+        doubtData.setDeadLeader(deadPlayer.isLeader());
     }
 
     // TODO
@@ -126,7 +129,7 @@ public class GameDoubtService {
         if (doubtData.isDeadLeader()) {
             return END;
         }
-        if (doubtData.isDoubtResult()) {
+        if (doubtData.isDoubtSuccess()) {
             return ATTACK;
         }
         return DoubtStatus.ATTACK.equals(doubtData.getDoubtStatus()) ? DEFENSE : EXECUTE;
@@ -141,7 +144,7 @@ public class GameDoubtService {
                 .suspect(DoubtPlayerDto.toDto(suspect))
                 .suspected(SuspectedPlayerDto.toDto(suspected, doubtData.getDoubtHand()))
                 .doubtTeam(suspect.getTeam().name())
-                .doubtResult(doubtData.isDoubtResult()).build();
+                .doubtSuccess(doubtData.isDoubtSuccess()).build();
     }
 
     // TODO

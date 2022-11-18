@@ -2,10 +2,7 @@ package com.a301.theknight.domain.game.template;
 
 import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.player.response.MemberTeamResponse;
-import com.a301.theknight.domain.game.dto.prepare.GamePlayersInfoResponse;
-import com.a301.theknight.domain.game.dto.prepare.PlayerDataDto;
 import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
-import com.a301.theknight.domain.game.dto.prepare.response.GamePlayersInfoDto;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
@@ -14,9 +11,7 @@ import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
@@ -31,10 +26,13 @@ public class AttackDataService extends GameDataService {
     }
 
     @Override
+    @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
-        int maxMembers = inGame.getMaxMemberNum() / 2;
+        inGame.clearTurnData();
         Team attackTeam = inGame.updateCurrentAttackTeam();
+
+        int maxMembers = inGame.getMaxMemberNum() / 2;
         TeamInfoData teamInfoData = inGame.getTeamInfoData(attackTeam);
 
         int nextAttackerIndex = findNextAttacker(gameId, maxMembers, teamInfoData);

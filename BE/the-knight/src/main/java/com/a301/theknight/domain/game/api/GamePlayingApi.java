@@ -6,7 +6,6 @@ import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtRequest;
 import com.a301.theknight.domain.game.dto.doubt.response.DoubtPassResponse;
-import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.service.GameAttackDefenseService;
 import com.a301.theknight.domain.game.service.GameDoubtService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class GamePlayingApi {
 
     @MessageMapping(value = "/games/{gameId}/attack-pass")
     public void attackPass(@Min(1) @DestinationVariable long gameId,  @LoginMemberId long memberId) {
-        gameAttackDefenseService.isAttackPass(gameId, memberId);
+        gameAttackDefenseService.checkAttackPass(gameId, memberId);
 
         messageService.convertCall(gameId);
     }

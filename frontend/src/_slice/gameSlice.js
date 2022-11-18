@@ -245,31 +245,34 @@ const endInfoInit = {
 
 const playersDOMInit = {}
 
+const initialState = {
+  me: meInit,
+  timer: timerInit,
+  players: playersInit,
+  leader: leaderInit,
+  attakFirst: attackFirstInit,
+  order: orderInit,
+  countWeapon: countWeaponInit,
+  isSelectComplete: isSelectCompleteInit,
+  phase: phaseInit,
+  subscribeObject: subscribeObjectInit,
+  currentAttacker: currentAttackerInit,
+  currentDefender: currentDefenderInit,
+  selectAttack: selectAttackInit,
+  attackInfo: attackInfoInit,
+  defenseInfo: defenseInfoInit,
+  doubtInfo: doubtInfoInit,
+  doubtPassList: doubtPassListInit,
+  executeInfo: executeInfoInit,
+  endInfo: endInfoInit,
+  playersDOM: playersDOMInit,
+}
+
 export const gameSlice = createSlice({
   name: "gameSlice",
-  initialState: {
-    me: meInit,
-    timer: timerInit,
-    players: playersInit,
-    leader: leaderInit,
-    attakFirst: attackFirstInit,
-    order: orderInit,
-    countWeapon: countWeaponInit,
-    isSelectComplete: isSelectCompleteInit,
-    phase: phaseInit,
-    subscribeObject: subscribeObjectInit,
-    currentAttacker: currentAttackerInit,
-    currentDefender: currentDefenderInit,
-    selectAttack: selectAttackInit,
-    attackInfo: attackInfoInit,
-    defenseInfo: defenseInfoInit,
-    doubtInfo: doubtInfoInit,
-    doubtPassList: doubtPassListInit,
-    executeInfo: executeInfoInit,
-    endInfo: endInfoInit,
-    playersDOM: playersDOMInit,
-  },
+  initialState: initialState,
   reducers: {
+    resetGameSlice: () => initialState,
     setMe: (state) => {
       const memberId = parseInt(window.localStorage.getItem("memberId"));
       const player = state.players.players.find((player) => player.memberId === memberId);
@@ -402,6 +405,7 @@ export const gameSlice = createSlice({
   },
 });
 export const {
+  resetGameSlice,
   setMe,
   setTimer,
   countTimer,
