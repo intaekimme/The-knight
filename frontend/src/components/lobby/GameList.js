@@ -6,9 +6,22 @@ import RoomInfoModal from "../../commons/modal/RoomInfoModal";
 import { gameDesc, gameListAll } from "../../_slice/tempGameSlice";
 import { getRoomInfo } from "../../_slice/roomSlice";
 
+import styled from 'styled-components';
 import { Button, Card, CardActions, CardContent, CardHeader, Grid, Pagination, PaginationItem, Typography } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+
+const RoomStyle = styled.div`
+  .css-1r4fj62-MuiPaper-root-MuiCard-root:hover {
+    color: #424242 !important;
+    box-shadow: 2px 2px 25px #424242;
+    transition-duration: 0.2s;
+  }
+  > a:visited {
+    color: black;
+    text-decoration: none;
+  }
+`;
 
 export default function GameList() {
   const dispatch = useDispatch();
@@ -127,54 +140,58 @@ export default function GameList() {
             <Grid item key={key}>
               {
                 game.status === 'WAITING' ?
-                  <Card sx={{ width: '23vw', height: '14vw', opacity: 0.8, borderRadius: 1.5 }} onClick={(e) => { setClickGameId(game.gameId); fetchGameInfo(game.gameId, e); onRoomInfoModalOpen(); }}>
-                    <CardHeader sx={{ p: 1, bgcolor: '#424242', color: '#DCD7C9', height: '1vw' }} subheader={
-                      <Typography>
-                        #{game.gameId}
-                      </Typography>
-                    }>
-                    </CardHeader>
-                    <CardContent>
-                      <Typography sx={{ fontSize: 22 }} color={'#4F585B'}>
-                        {game.title}
-                      </Typography>
-                    </CardContent>
-                    <CardActions sx={{ pt: 9, pr: 3, display: 'flex', justifyContent: 'end' }}>
-                      <Typography sx={{ pr: 1 }}>
-                        {game.currentMembers}/{game.maxMember}
-                      </Typography>
-                      <Button variant="outlined" sx={btnStyle}>
-                        입장
-                      </Button>
-                    </CardActions>
-                  </Card>
-                  :
-                  <Card sx={{ width: '23vw', height: '14vw', position: 'relative', borderRadius: 1.5 }}>
-                    <Card sx={{ width: '23vw', height: '14vw', position: 'absolute', opacity: 0.8, bgcolor: "#282316" }}>
-                      <Typography sx={{ pt: '20%', fontSize: 30, display: 'flex', justifyContent: 'center' }} color={'#DCD7C9'}>
-                        게임 진행 중
-                      </Typography>
+                  <RoomStyle>
+                    <Card sx={{ width: '23vw', height: '14vw', opacity: 0.8, borderRadius: 1.5 }} onClick={(e) => { setClickGameId(game.gameId); fetchGameInfo(game.gameId, e); onRoomInfoModalOpen(); }}>
+                      <CardHeader sx={{ p: 1, bgcolor: '#424242', color: '#DCD7C9', height: '1vw' }} subheader={
+                        <Typography>
+                          #{game.gameId}
+                        </Typography>
+                      }>
+                      </CardHeader>
+                      <CardContent>
+                        <Typography sx={{ fontSize: 22 }} color={'#4F585B'}>
+                          {game.title}
+                        </Typography>
+                      </CardContent>
+                      <CardActions sx={{ pt: 9, pr: 3, display: 'flex', justifyContent: 'end' }}>
+                        <Typography sx={{ pr: 1 }}>
+                          {game.currentMembers}/{game.maxMember}
+                        </Typography>
+                        <Button variant="outlined" sx={btnStyle}>
+                          입장
+                        </Button>
+                      </CardActions>
                     </Card>
-                    <CardHeader sx={{ p: 1, bgcolor: '#424242', color: '#DCD7C9', height: '1vw' }} subheader={
-                      <Typography>
-                        #{game.gameId}
-                      </Typography>
-                    }>
-                    </CardHeader>
-                    <CardContent>
-                      <Typography sx={{ fontSize: 22 }} color={'#4F585B'}>
-                        {game.title}
-                      </Typography>
-                    </CardContent>
-                    <CardActions sx={{ pt: 9, pr: 3, display: 'flex', justifyContent: 'end' }}>
-                      <Typography sx={{ pr: 1 }}>
-                        {game.currentMembers}/{game.maxMember}
-                      </Typography>
-                      <Button variant="disabled" sx={nobtnStyle}>
-                        입장불가
-                      </Button>
-                    </CardActions>
-                  </Card>
+                  </RoomStyle>
+                  :
+                  <RoomStyle>
+                    <Card sx={{ width: '23vw', height: '14vw', position: 'relative', borderRadius: 1.5 }}>
+                      <Card sx={{ width: '23vw', height: '14vw', position: 'absolute', opacity: 0.8, bgcolor: "#282316" }}>
+                        <Typography sx={{ pt: '20%', fontSize: 30, display: 'flex', justifyContent: 'center' }} color={'#DCD7C9'}>
+                          게임 진행 중
+                        </Typography>
+                      </Card>
+                      <CardHeader sx={{ p: 1, bgcolor: '#424242', color: '#DCD7C9', height: '1vw' }} subheader={
+                        <Typography>
+                          #{game.gameId}
+                        </Typography>
+                      }>
+                      </CardHeader>
+                      <CardContent>
+                        <Typography sx={{ fontSize: 22 }} color={'#4F585B'}>
+                          {game.title}
+                        </Typography>
+                      </CardContent>
+                      <CardActions sx={{ pt: 9, pr: 3, display: 'flex', justifyContent: 'end' }}>
+                        <Typography sx={{ pr: 1 }}>
+                          {game.currentMembers}/{game.maxMember}
+                        </Typography>
+                        <Button variant="disabled" sx={nobtnStyle}>
+                          입장불가
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  </RoomStyle>
               }
             </Grid>
           )
@@ -186,7 +203,7 @@ export default function GameList() {
         <RoomInfoModal canEdit={false} roomData={roomData} open={open} onClose={onRoomInfoModalClose} onConfirm={() => { onRoomEnter(clickGameId); }} />
       </Grid>
       <Pagination
-        sx={{ pt: 7, pb: 2, display: 'flex', justifyContent: 'center'}}
+        sx={{ pt: 7, pb: 2, display: 'flex', justifyContent: 'center' }}
         shape="rounded"
         page={page}
         count={gameList.maxPageNum}

@@ -22,7 +22,7 @@ const MainButton = styled.div`
   }
 `;
 
-export default function Main() {
+export default function MainBtn() {
     const navigate = useNavigate();
     const goLobby = () => {
         navigate("/lobby");
