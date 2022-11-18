@@ -32,6 +32,10 @@ public class TurnData {
                 defender.getLeftCount() : defender.getRightCount());
     }
 
+    public void addDoubtPassCount() {
+        doubtData.addPassCount();
+    }
+
     public void clearAttackData() {
         attackerId = 0L;
         attackData.setWeapon(null);
@@ -71,5 +75,6 @@ public class TurnData {
         doubtData.setDoubtHand(null);
         doubtData.setDoubtSuccess(false);
         doubtData.setDeadLeader(false);
+        doubtData.setDoubtPassCount(0);
     }
 }

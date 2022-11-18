@@ -16,4 +16,9 @@ public class DoubtData {
     private Hand doubtHand;
     private boolean doubtSuccess;
     private boolean deadLeader;
+    private int doubtPassCount;
+
+    public void addPassCount() {
+        doubtPassCount++;
+    }
 }

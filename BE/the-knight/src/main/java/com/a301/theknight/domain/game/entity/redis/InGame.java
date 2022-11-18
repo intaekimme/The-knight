@@ -18,7 +18,6 @@ public class InGame {
     private int maxMemberNum;
     private TurnData turnData;
     private int requestCount;
-    private int doubtPassCount;
 
     @Builder
     public InGame(GameStatus gameStatus, Team currentAttackTeam, TeamInfoData teamAInfo, TeamInfoData teamBInfo, int maxMemberNum, TurnData turnData) {
@@ -37,8 +36,6 @@ public class InGame {
     public void addRequestCount() {
         requestCount++;
     }
-
-    public void addDoubtPassCount() { doubtPassCount++; }
 
     public boolean isFullCount() {
         return requestCount >= maxMemberNum;
@@ -71,7 +68,17 @@ public class InGame {
         requestCount = 0;
     }
 
-    public void initDoubtPassCount() { doubtPassCount = 0; }
+    public void initDoubtPassCount() {
+        turnData.getDoubtData().setDoubtPassCount(0);
+    }
+
+    public void addDoubtPassCount() {
+        turnData.addDoubtPassCount();
+    }
+
+    public int getDoubtPassCount() {
+        return turnData.getDoubtData().getDoubtPassCount();
+    }
 
     public boolean getLyingData() {
         return (gameStatus.equals(GameStatus.ATTACK_DOUBT) && turnData.isLyingAttack())
