@@ -49,7 +49,7 @@ public class EndDataService extends GameDataService {
     @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new CustomRestException(GAME_IS_NOT_EXIST));
+                .orElseThrow(() -> new CustomWebSocketException(GAME_IS_NOT_EXIST));
         game.changeStatus(GameStatus.END);
 
         InGame inGame = getInGame(gameId);
@@ -74,9 +74,9 @@ public class EndDataService extends GameDataService {
         for (InGamePlayer inGamePlayer : playerList) {
             long memberId = inGamePlayer.getMemberId();
             Player player = playerRepository.findByGameIdAndMemberId(gameId, memberId)
-                    .orElseThrow(() -> new CustomRestException(PLAYER_IS_NOT_EXIST));
+                    .orElseThrow(() -> new CustomWebSocketException(PLAYER_IS_NOT_EXIST));
             Ranking ranking = rankingRepository.findByMemberId(memberId)
-                    .orElseThrow(() -> new CustomRestException(RANKING_IS_NOT_EXIST));
+                    .orElseThrow(() -> new CustomWebSocketException(RANKING_IS_NOT_EXIST));
 
             if (player.getTeam().name().equals(winningTeam)) {
                 player.winGame();
