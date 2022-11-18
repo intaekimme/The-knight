@@ -1,5 +1,5 @@
 import React from "react";
-import modalBackground from "../_assets/room/enterRoom.png"
+import modalBackground from "../_assets/room/roomInfo.png"
 
 const modalStyle = {
   // position: 'absolute',
