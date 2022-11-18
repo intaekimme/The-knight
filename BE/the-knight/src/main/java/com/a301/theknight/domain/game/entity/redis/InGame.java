@@ -78,6 +78,7 @@ public class InGame {
         return turnData.getDoubtData().getDoubtPassCount();
     }
 
+    @JsonIgnore
     public boolean getLyingData() {
         return gameStatus.equals(GameStatus.ATTACK_DOUBT) ? turnData.isLyingAttack() : turnData.isLyingDefense();
     }
