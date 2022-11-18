@@ -31,7 +31,6 @@ export default function GameWebSocket() {
   const myId = parseInt(window.localStorage.getItem("memberId"));
   const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === myId).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
-  const currentPhase = useSelector((state) => state.game.phase);
 
   // sub 함수
 
@@ -64,13 +63,14 @@ export default function GameWebSocket() {
   // 최초 화면전환 요청
   const onSubConvert = (payload) => {
     // {
+    //   preStatus: String, 
     //   gameStatus : String,
     // }
     const data = JSON.parse(payload.body);
     const nextPhase = data.gameStatus;
 
     // 기존 phase 구독 끊기
-    dispatch(cancelSubscribe(currentPhase))
+    dispatch(cancelSubscribe(data.preStatus))
 
     // 다음 phase에 필요한 구독
     if (nextPhase === "PREPARE") {
