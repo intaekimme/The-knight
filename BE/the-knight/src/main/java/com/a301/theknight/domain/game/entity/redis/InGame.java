@@ -78,12 +78,13 @@ public class InGame {
                 || (gameStatus.equals(GameStatus.DEFENSE_DOUBT) && turnData.isLyingDefend());
     }
 
-    public void setDoubtData(DoubtData doubtData) {
-        turnData.setDoubtData(doubtData);
+    public void clearTurnData() {
+        turnData.clearAttackData();
+        turnData.clearDefenseData();
     }
 
     public void clearDoubtData() {
-        turnData.setDoubtData(null);
+        turnData.clearDoubtData();
     }
 
     public Team updateCurrentAttackTeam(){

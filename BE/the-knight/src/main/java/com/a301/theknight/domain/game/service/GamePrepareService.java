@@ -6,7 +6,6 @@ import com.a301.theknight.domain.game.dto.prepare.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.prepare.response.*;
 import com.a301.theknight.domain.game.entity.Game;
-import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
@@ -119,9 +118,6 @@ public class GamePrepareService {
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
         inGame.completeSelect(myTeam);
-        if (inGame.isAllSelected()) {
-            inGame.changeStatus(GameStatus.PREDECESSOR);
-        }
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.deleteGameWeaponData(gameId, myTeam);
 

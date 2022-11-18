@@ -25,15 +25,15 @@ public class GameConvertUtil {
     private final GameRedisRepository gameRedisRepository;
     private final RedissonClient redissonClient;
 
-    public ConvertResponse convertScreen(long gameId) {
-        InGame inGame = getInGame(gameId);
-
-        GameStatus gameStatus = inGame.getGameStatus();
-        return new ConvertResponse(gameStatus.name());
-    }
+//    public ConvertResponse convertScreen(long gameId) {
+//        InGame inGame = getInGame(gameId);
+//
+//        GameStatus gameStatus = inGame.getGameStatus();
+//        return new ConvertResponse(gameStatus.name());
+//    }
 
     @Transactional
-    public ConvertResponse forceConvertScreen(long gameId) {
+    public ConvertResponse convertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
         GameStatus curStatus = getGameStatus(gameId);
 
@@ -41,12 +41,12 @@ public class GameConvertUtil {
         inGame.changeStatus(nextStatus);
         gameRedisRepository.saveInGame(gameId, inGame);
 
-        return new ConvertResponse(nextStatus.name());
+        return new ConvertResponse(curStatus.name(), nextStatus.name());
     }
 
-//    @Transactional
+    @Transactional
     public boolean requestCounting(long gameId) {
-        RLock countLock = redissonClient.getLock(generateCountKey(gameId));
+        RLock countLock = redissonClient.getLock(generateCountLockKey(gameId));
         try {
             boolean available = countLock.tryLock(15, 30, TimeUnit.SECONDS);
             if (!available) {
@@ -75,25 +75,47 @@ public class GameConvertUtil {
     }
 
     public GameStatus getNextStatus(long gameId, InGame inGame, GameStatus gameStatus) {
+        TurnData turnData = inGame.getTurnData();
+
         switch (gameStatus) {
             case PREPARE:
                 return PREDECESSOR;
-            case PREDECESSOR: case ATTACK:
+            case PREDECESSOR:
                 return ATTACK;
+            case ATTACK:
+                return getStatusAfterAttack(turnData.getAttackData());
             case ATTACK_DOUBT:
-                return DEFENSE;
-            case DEFENSE: case DEFENSE_DOUBT:
-                return EXECUTE;
+                return getStatusAfterAttackDoubt(turnData.getDoubtData());
+            case DEFENSE:
+                return getStatusAfterDefense(turnData.getDefendData());
+            case DEFENSE_DOUBT:
+                return getStatusAfterDefenseDoubt(turnData.getDoubtData());
             case EXECUTE:
-                return getStatusAfterExecute(gameId, inGame);
+                return getStatusAfterExecute(gameId, turnData);
             case DOUBT_RESULT:
-                return getStatusAfterDoubt(inGame.getTurnData());
+                return getStatusAfterDoubt(turnData);
         }
         throw new CustomWebSocketException(WRONG_GAME_STATUS);
     }
 
-    private GameStatus getStatusAfterExecute(long gameId, InGame inGame) {
-        long defenderId = inGame.getTurnData().getDefenderId();
+    private GameStatus getStatusAfterDefenseDoubt(DoubtData doubtData) {
+        return doubtData.getSuspectId() > 0 ? DOUBT_RESULT : EXECUTE;
+    }
+
+    private GameStatus getStatusAfterDefense(DefendData defendData) {
+        return defendData.getDefendHand() != null ? DEFENSE_DOUBT : EXECUTE;
+    }
+
+    private GameStatus getStatusAfterAttackDoubt(DoubtData doubtData) {
+        return doubtData.getSuspectId() > 0 ? DOUBT_RESULT : DEFENSE;
+    }
+
+    private GameStatus getStatusAfterAttack(AttackData attackData) {
+        return attackData.getWeapon() == null ? ATTACK : ATTACK_DOUBT;
+    }
+
+    private GameStatus getStatusAfterExecute(long gameId, TurnData turnData) {
+        long defenderId = turnData.getDefenderId();
         InGamePlayer defender = gameRedisRepository.getInGamePlayer(gameId, defenderId)
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_PLAYER_IS_NOT_EXIST));
 
@@ -126,6 +148,10 @@ public class GameConvertUtil {
     }
 
     private String generateCountKey(long gameId) {
+        return "game_count:" + gameId;
+    }
+
+    private String generateCountLockKey(long gameId) {
         return "game_count_lock:" + gameId;
     }
 }

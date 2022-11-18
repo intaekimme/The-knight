@@ -6,5 +6,6 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class ConvertResponse {
+    private String preStatus;
     private String gameStatus;
 }

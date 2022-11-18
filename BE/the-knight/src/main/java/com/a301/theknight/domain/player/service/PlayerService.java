@@ -1,5 +1,6 @@
 package com.a301.theknight.domain.player.service;
 
+import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
@@ -175,7 +176,8 @@ public class PlayerService {
                 .gameStatus(GameStatus.PREPARE)
                 .maxMemberNum(game.getCapacity())
                 .teamAInfo(TeamInfoData.builder().build())
-                .teamBInfo(TeamInfoData.builder().build()).build();
+                .teamBInfo(TeamInfoData.builder().build())
+                .turnData(new TurnData()).build();
 
         return redisRepository.saveInGame(game.getId(), initInGame);
     }
