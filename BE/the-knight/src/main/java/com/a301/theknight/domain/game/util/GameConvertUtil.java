@@ -80,7 +80,7 @@ public class GameConvertUtil {
             case ATTACK_DOUBT:
                 return getStatusAfterAttackDoubt(turnData.getDoubtData());
             case DEFENSE:
-                return getStatusAfterDefense(turnData.getDefendData());
+                return getStatusAfterDefense(turnData.getDefenseData());
             case DEFENSE_DOUBT:
                 return getStatusAfterDefenseDoubt(turnData.getDoubtData());
             case EXECUTE:

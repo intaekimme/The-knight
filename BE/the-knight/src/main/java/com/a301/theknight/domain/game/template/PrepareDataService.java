@@ -131,7 +131,7 @@ public class PrepareDataService extends GameDataService {
     private TurnData makeTurnData() {
         TurnData turnData = new TurnData();
         turnData.setAttackData(AttackData.builder().build());
-        turnData.setDefendData(DefendData.builder().build());
+        turnData.setDefenseData(DefendData.builder().build());
         turnData.setDoubtData(DoubtData.builder().build());
 
         return turnData;

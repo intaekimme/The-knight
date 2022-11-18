@@ -74,9 +74,8 @@ public class GameAttackDefenseService {
         InGamePlayer attacker = getInGamePlayer(gameId, memberId);
         InGamePlayer defender = getInGamePlayer(gameId, gameAttackRequest.getDefender().getMemberId());
         turn.recordAttackData(attacker, defender, gameAttackRequest);
-        turn.checkLyingAttack(attacker);
+        turn.recordAttackLying(attacker);
 
-        findInGame.recordTurnData(turn);
         gameRedisRepository.saveInGame(gameId, findInGame);
     }
 
@@ -124,11 +123,9 @@ public class GameAttackDefenseService {
 
         InGamePlayer defender = getInGamePlayer(gameId, memberId);
         turn.recordDefenseData(defender, gameDefenseRequest);
-        turn.checkLyingDefense(defender);
+        turn.recordDefenseLying(defender);
 
-        findInGame.recordTurnData(turn);
         gameRedisRepository.saveInGame(gameId, findInGame);
-
     }
 
     @Transactional
@@ -144,7 +141,7 @@ public class GameAttackDefenseService {
                         .team(getInGamePlayer(gameId, defenderId).getTeam().name())
                         .build())
                 .weapon(Weapon.SHIELD.name())
-                .hand(turn.getDefendData().getDefendHand().name())
+                .hand(turn.getDefenseData().getDefendHand().name())
                 .build();
     }
 
@@ -156,7 +153,7 @@ public class GameAttackDefenseService {
             throw new CustomWebSocketException(UNABLE_TO_PASS_DEFENSE);
         }
         TurnData turnData = findInGame.getTurnData();
-        DefendData defendData = turnData.getDefendData();
+        DefendData defendData = turnData.getDefenseData();
         defendData.defendPass();
 
         gameRedisRepository.saveInGame(gameId, findInGame);
