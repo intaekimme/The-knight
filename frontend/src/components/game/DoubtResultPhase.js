@@ -21,14 +21,14 @@ export default function DoubtResultPhase() {
         }}
       >
         <Box sx={{ position: "absolute", top: "4vmin", fontSize: "3.5vmin" }}>
-          {doubtResponse.doubtResult ? "의심 성공" : "의심 실패"}
+          {doubtResponse.doubtSuccess ? "의심 성공" : "의심 실패"}
         </Box>
         <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>
           {doubtResponse.suspect.nickname}님의 의심이
-          {doubtResponse.doubtResult ? "성공" : "실패"}했습니다
+          {doubtResponse.doubtSuccess ? "성공" : "실패"}했습니다
         </Box>
         <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>
-          {doubtResponse.doubtResult
+          {doubtResponse.doubtSuccess
             ? doubtResponse.suspected.nickname
             : doubtResponse.suspect.nickname}
           님이 사망했습니다
