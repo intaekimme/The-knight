@@ -51,8 +51,8 @@ public class TurnData {
     }
 
     public void recordAttackLying(InGamePlayer attacker){
-        Weapon attackerWeapon = Hand.LEFT.equals(defenseData.getDefendHand()) ? attacker.getLeftWeapon() : attacker.getRightWeapon();
-        lyingAttack = !Weapon.SHIELD.equals(attackerWeapon);
+        Weapon attackerWeapon = Hand.LEFT.equals(attackData.getAttackHand()) ? attacker.getLeftWeapon() : attacker.getRightWeapon();
+        lyingAttack = !attackerWeapon.equals(attackData.getWeapon());
     }
 
     public void recordDefenseLying(InGamePlayer defender){
