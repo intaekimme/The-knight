@@ -37,7 +37,6 @@ public abstract class GameDataService {
             tryDataLock(dataLock);
 
             makeAndSendData(gameId, messageService);
-            sendPlayersData(gameId, messageService);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
@@ -47,7 +46,8 @@ public abstract class GameDataService {
 
     protected abstract void makeAndSendData(long gameId, SendMessageService messageService);
 
-    private void sendPlayersData(long gameId, SendMessageService messageService) {
+    @Transactional
+    public void sendPlayersData(long gameId, SendMessageService messageService) {
         GamePlayersInfoResponse playersInfo = getPlayersInfo(gameId);
         messageService.sendData(gameId, "/a/players", playersInfo.getPlayersAInfoDto());
         messageService.sendData(gameId, "/b/players", playersInfo.getPlayersBInfoDto());

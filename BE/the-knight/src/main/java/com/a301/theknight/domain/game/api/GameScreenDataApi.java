@@ -29,6 +29,7 @@ public class GameScreenDataApi {
 
         GameDataService dataTemplate = dataTemplateFactory.getGameDataTemplate(gameId);
         dataTemplate.sendScreenData(gameId, messageService);
+        dataTemplate.sendPlayersData(gameId, messageService);
 
         messageService.proceedCall(gameId, 500);
     }
