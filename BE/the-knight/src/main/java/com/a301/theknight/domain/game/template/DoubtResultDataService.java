@@ -45,7 +45,7 @@ public class DoubtResultDataService extends GameDataService {
                 .suspect(DoubtPlayerDto.toDto(suspect))
                 .suspected(SuspectedPlayerDto.toDto(suspected, doubtData.getDoubtHand()))
                 .doubtTeam(suspect.getTeam().name())
-                .doubtResult(doubtData.isDoubtResult()).build();
+                .doubtSuccess(doubtData.isDoubtSuccess()).build();
     }
 
     private InGamePlayer getInGamePlayer(long gameId, long memberId) {

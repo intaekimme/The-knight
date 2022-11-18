@@ -10,5 +10,5 @@ public class DoubtResponse {
     private DoubtPlayerDto suspect;
     private SuspectedPlayerDto suspected;
     private String doubtTeam;
-    private boolean doubtResult;
+    private boolean doubtSuccess;
 }

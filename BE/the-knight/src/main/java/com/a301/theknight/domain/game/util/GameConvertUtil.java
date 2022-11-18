@@ -2,10 +2,7 @@ package com.a301.theknight.domain.game.util;
 
 import com.a301.theknight.domain.game.dto.convert.ConvertResponse;
 import com.a301.theknight.domain.game.entity.GameStatus;
-import com.a301.theknight.domain.game.entity.redis.DoubtData;
-import com.a301.theknight.domain.game.entity.redis.DoubtStatus;
-import com.a301.theknight.domain.game.entity.redis.InGame;
-import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
+import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +87,7 @@ public class GameConvertUtil {
             case EXECUTE:
                 return getStatusAfterExecute(gameId, inGame);
             case DOUBT_RESULT:
-                return getStatusAfterDoubt(inGame.getTurnData().getDoubtData());
+                return getStatusAfterDoubt(inGame.getTurnData());
         }
         throw new CustomWebSocketException(WRONG_GAME_STATUS);
     }
@@ -103,14 +100,18 @@ public class GameConvertUtil {
         return defender.isDead() && defender.isLeader() ? END : ATTACK;
     }
 
-    private GameStatus getStatusAfterDoubt(DoubtData doubtData) {
+    private GameStatus getStatusAfterDoubt(TurnData turnData) {
+        DoubtData doubtData = turnData.getDoubtData();
         if (doubtData.isDeadLeader()) {
             return END;
         }
-        if (doubtData.isDoubtResult()) {
+        if (doubtData.isDoubtSuccess()) {
             return ATTACK;
         }
-        return DoubtStatus.ATTACK.equals(doubtData.getDoubtStatus()) ? DEFENSE : EXECUTE;
+        if (DoubtStatus.ATTACK.equals(doubtData.getDoubtStatus())) {
+            return turnData.getDefenderId() == doubtData.getSuspectId() ? ATTACK : DEFENSE;
+        }
+        return turnData.getAttackerId() == doubtData.getSuspectId() ? ATTACK : EXECUTE;
     }
 
     private InGame getInGame(long gameId) {
