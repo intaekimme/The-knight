@@ -203,7 +203,7 @@ const doubtInfoInit =   {
       hand: "",
     },
     doubtTeam: "",  // 의심을 건 사람의 팀
-    doubtResult: false,  // 의심 성공 여부
+    doubtSuccess: false,  // 의심 성공 여부
   },
   doubtStatus : "",
 }
