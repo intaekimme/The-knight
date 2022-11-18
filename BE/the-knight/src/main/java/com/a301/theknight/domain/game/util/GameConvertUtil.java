@@ -25,13 +25,6 @@ public class GameConvertUtil {
     private final GameRedisRepository gameRedisRepository;
     private final RedissonClient redissonClient;
 
-//    public ConvertResponse convertScreen(long gameId) {
-//        InGame inGame = getInGame(gameId);
-//
-//        GameStatus gameStatus = inGame.getGameStatus();
-//        return new ConvertResponse(gameStatus.name());
-//    }
-
     @Transactional
     public ConvertResponse convertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
@@ -94,6 +87,8 @@ public class GameConvertUtil {
                 return getStatusAfterExecute(gameId, turnData);
             case DOUBT_RESULT:
                 return getStatusAfterDoubt(turnData);
+            case END:
+                return null;
         }
         throw new CustomWebSocketException(WRONG_GAME_STATUS);
     }
