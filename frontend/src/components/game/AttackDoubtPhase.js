@@ -57,7 +57,6 @@ export default function AttackDoubtPhase() {
 
   function clickPass() {
     onPubDoubtPass();
-    dispatch(addDoubtPass());
   }
 
   useEffect(() => {
