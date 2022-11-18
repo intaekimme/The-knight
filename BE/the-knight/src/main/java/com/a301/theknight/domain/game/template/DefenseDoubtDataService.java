@@ -43,7 +43,7 @@ public class DefenseDoubtDataService extends GameDataService {
                         .nickname(defender.getNickname())
                         .team(defender.getTeam().name()).build())
                 .weapon(Weapon.SHIELD.name())
-                .hand(turn.getDefendData().getDefendHand().name())
+                .hand(turn.getDefenseData().getDefendHand().name())
                 .build();
         messageService.sendData(gameId, "/defense-info", response);
     }

@@ -33,7 +33,7 @@ public class ExecuteDataService extends GameDataService {
 
         InGamePlayer defender = getInGamePlayer(gameId, turnData.getDefenderId());
         AttackData attackData = turnData.getAttackData();
-        DefendData defendData = turnData.getDefendData();
+        DefendData defendData = turnData.getDefenseData();
 
         int defendCount = defendData.getShieldCount();
         boolean isDefendPass = defendData.isDefendPass();
@@ -57,7 +57,7 @@ public class ExecuteDataService extends GameDataService {
     private GameExecuteResponse getGameExecuteResponse(InGame inGame, InGamePlayer defender, int nextCount) {
         TurnData turnData = inGame.getTurnData();
         AttackData attackData = turnData.getAttackData();
-        DefendData defendData = turnData.getDefendData();
+        DefendData defendData = turnData.getDefenseData();
 
         AttackerDto attackerDto = AttackerDto.builder()
                 .memberId(turnData.getAttackerId())

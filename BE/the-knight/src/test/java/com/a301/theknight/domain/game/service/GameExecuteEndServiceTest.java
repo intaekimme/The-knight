@@ -202,7 +202,7 @@ class GameExecuteEndServiceTest {
 
         testInGame.getTurnData().recordAttackData(testInGamePlayer1, testInGamePlayer4, gameAttackRequest);
         testInGame.getTurnData().recordDefenseData(testInGamePlayer4, gameDefenseRequest);
-        testInGame.getTurnData().getDefendData().defendPass();
+        testInGame.getTurnData().getDefenseData().defendPass();
 
         //when
 //        gameExecuteEndService.executeTurn(gameId);
@@ -262,7 +262,7 @@ class GameExecuteEndServiceTest {
 
         testInGame.getTurnData().recordAttackData(testInGamePlayer1, testInGamePlayer3, gameAttackRequest);
         testInGame.getTurnData().recordDefenseData(testInGamePlayer3, gameDefenseRequest);
-        testInGame.getTurnData().getDefendData().defendPass();
+        testInGame.getTurnData().getDefenseData().defendPass();
 
         //when
 //        gameExecuteEndService.executeTurn(gameId);

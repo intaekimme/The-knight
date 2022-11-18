@@ -2,6 +2,7 @@ package com.a301.theknight.domain.game.entity.redis;
 
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Team;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,6 @@ public class InGame {
     private int maxMemberNum;
     private TurnData turnData;
     private int requestCount;
-    private int doubtPassCount;
 
     @Builder
     public InGame(GameStatus gameStatus, Team currentAttackTeam, TeamInfoData teamAInfo, TeamInfoData teamBInfo, int maxMemberNum, TurnData turnData) {
@@ -37,8 +37,6 @@ public class InGame {
     public void addRequestCount() {
         requestCount++;
     }
-
-    public void addDoubtPassCount() { doubtPassCount++; }
 
     public boolean isFullCount() {
         return requestCount >= maxMemberNum;
@@ -71,16 +69,23 @@ public class InGame {
         requestCount = 0;
     }
 
-    public void initDoubtPassCount() { doubtPassCount = 0; }
+    public void addDoubtPassCount() {
+        turnData.addDoubtPassCount();
+    }
+
+    @JsonIgnore
+    public int getDoubtPassCount() {
+        return turnData.getDoubtData().getDoubtPassCount();
+    }
 
     public boolean getLyingData() {
-        return (gameStatus.equals(GameStatus.ATTACK_DOUBT) && turnData.isLyingAttack())
-                || (gameStatus.equals(GameStatus.DEFENSE_DOUBT) && turnData.isLyingDefend());
+        return gameStatus.equals(GameStatus.ATTACK_DOUBT) ? turnData.isLyingAttack() : turnData.isLyingDefense();
     }
 
     public void clearTurnData() {
         turnData.clearAttackData();
         turnData.clearDefenseData();
+        turnData.clearDoubtData();
     }
 
     public void clearDoubtData() {

@@ -13,9 +13,9 @@ public class TurnData {
     private long attackerId;
     private long defenderId;
     private AttackData attackData;
-    private DefendData defendData;
+    private DefendData defenseData;
     private boolean lyingAttack;
-    private boolean lyingDefend;
+    private boolean lyingDefense;
     private DoubtData doubtData;
 
     public void recordAttackData(InGamePlayer attacker, InGamePlayer defender, GameAttackRequest gameAttackRequest){
@@ -27,9 +27,13 @@ public class TurnData {
 
     public void recordDefenseData(InGamePlayer defender, GameDefenseRequest gameDefenseRequest){
         defenderId = defender.getMemberId();
-        defendData.setDefendHand(gameDefenseRequest.getHand());
-        defendData.setShieldCount(Hand.LEFT.equals(gameDefenseRequest.getHand()) ?
+        defenseData.setDefendHand(gameDefenseRequest.getHand());
+        defenseData.setShieldCount(Hand.LEFT.equals(gameDefenseRequest.getHand()) ?
                 defender.getLeftCount() : defender.getRightCount());
+    }
+
+    public void addDoubtPassCount() {
+        doubtData.addPassCount();
     }
 
     public void clearAttackData() {
@@ -41,19 +45,19 @@ public class TurnData {
 
     public void clearDefenseData() {
         defenderId = 0L;
-        defendData.setDefendHand(null);
-        defendData.setShieldCount(0);
-        lyingDefend = false;
+        defenseData.setDefendHand(null);
+        defenseData.setShieldCount(0);
+        lyingDefense = false;
     }
 
-    public void checkLyingAttack(InGamePlayer attacker){
-         this.lyingAttack = (this.attackData.getAttackHand().name().equals("LEFT") && (!this.attackData.getWeapon().name().equals(attacker.getLeftWeapon().name()))) ||
-                 (this.attackData.getAttackHand().name().equals("RIGHT") && (!this.attackData.getWeapon().name().equals(attacker.getRightWeapon().name())));
+    public void recordAttackLying(InGamePlayer attacker){
+        Weapon attackerWeapon = Hand.LEFT.equals(defenseData.getDefendHand()) ? attacker.getLeftWeapon() : attacker.getRightWeapon();
+        lyingAttack = !Weapon.SHIELD.equals(attackerWeapon);
     }
 
-    public void checkLyingDefense(InGamePlayer defender){
-        this.lyingDefend = (this.defendData.getDefendHand().name().equals("LEFT") && (!defender.getLeftWeapon().equals(Weapon.SHIELD))) ||
-                (this.defendData.getDefendHand().name().equals("RIGHT") && (!defender.getRightWeapon().equals(Weapon.SHIELD)));
+    public void recordDefenseLying(InGamePlayer defender){
+        Weapon defenderWeapon = Hand.LEFT.equals(defenseData.getDefendHand()) ? defender.getLeftWeapon() : defender.getRightWeapon();
+        lyingDefense = !Weapon.SHIELD.equals(defenderWeapon);
     }
 
     public void setDoubtData(DoubtData doubtData) {
@@ -71,5 +75,6 @@ public class TurnData {
         doubtData.setDoubtHand(null);
         doubtData.setDoubtSuccess(false);
         doubtData.setDeadLeader(false);
+        doubtData.setDoubtPassCount(0);
     }
 }
