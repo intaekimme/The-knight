@@ -19,7 +19,7 @@ export default function GameList() {
   React.useEffect(() => {
     if (!isSetting) {
       setIsSetting(true);
-      dispatch(gameListAll());
+      dispatch(gameListAll(0));
     }
   }, []);
   //temp data
