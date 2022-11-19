@@ -13,7 +13,7 @@ function OrderPicker() {
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
-  const playerSize = "10vmin"
+  const playerSize = "8vmin"
 
   const onPubOrder = (payload) => {
     // {
