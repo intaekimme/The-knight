@@ -25,9 +25,9 @@ export default function ExecutePhase() {
         sx={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
+          justifyContent: "space-around",
           alignItems: "center",
-          height: "97vh",
+          height: "100vh",
         }}
       >
         <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>

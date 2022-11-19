@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import api from "../../api/api";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Button } from "@mui/material";
 import handIconImg from "../../_assets/game/hand-icon.png";
 import swordIconImg from "../../_assets/game/sword-icon.png";
 import twinIconImg from "../../_assets/game/twin-icon.png";
@@ -56,8 +56,9 @@ function WeaponPicker() {
             key={index}
             sx={{ display: "flex", justifyContent: "center" }}
           >
-            <div
+            <Button
               onClick={() => onClick(weapon)}
+              color="dark"
               style={{
                 width: "12vmin",
                 height: "12vmin",
@@ -70,6 +71,7 @@ function WeaponPicker() {
                 display: "flex",
                 justifyContent: "center",
               }}
+              disabled={isSelectComplete || !countWeapon[weapon.toLowerCase()]}
             >
               <img
                 src={weaponsImg[weapon]}
@@ -97,12 +99,12 @@ function WeaponPicker() {
                   transform: "translate(50%, 50%)",
                   border: ".65vmin solid #ffe600",
                   borderRadius: "1.3vmin",
-                  fontSize: "2.5vmin"
+                  fontSize: "2.5vmin",
                 }}
               >
                 {countWeapon[weapon.toLowerCase()]}
               </Box>
-            </div>
+            </Button>
           </Grid>
         );
       })}
