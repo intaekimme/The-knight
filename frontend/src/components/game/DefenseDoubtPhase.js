@@ -172,7 +172,7 @@ export default function DefenseDoubtPhase() {
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
-        height: "97vh",
+        height: "100vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>

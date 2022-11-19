@@ -34,7 +34,7 @@ export default function PreparePhase() {
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
-        height: "97vh",
+        height: "100vh",
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
