@@ -47,9 +47,9 @@ function OrderPicker() {
               ...(isSelectComplete
                 ? { backgroundColor: "#646464" }
                 : { backgroundColor: "#f0f0f0" }),
-              border: "5px solid #424242",
+              border: ".65vmin solid #424242",
               borderLeftWidth: "4vmin",
-              borderRadius: "10px",
+              borderRadius: "1.3vmin",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",

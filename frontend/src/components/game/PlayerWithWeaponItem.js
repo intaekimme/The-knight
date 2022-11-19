@@ -98,7 +98,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                 style={{
                   width: size[players.maxMember / 2],
                   height: size[players.maxMember / 2],
-                  border: "7px solid #4d4d4d",
+                  border: ".65vmin solid #424242",
                   ...((phase === "PREPARE" && isSelectComplete) || isOpp
                     ? { backgroundColor: "#646464" }
                     : { backgroundColor: "#f0f0f0" }),
@@ -108,7 +108,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                     player.memberId === attackInfo.attacker.memberId &&
                     attackInfo.hand === "LEFT" && {
                       backgroundColor: "#e45826",
-                      border: "7px solid #a27b5c",
+                      border: ".65vmin solid #a27b5c",
                     }),
                   borderRadius: "10px",
                   position: "relative",
@@ -125,9 +125,10 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                         position: "absolute",
                         top: 0,
                         left: 0,
-                        transform: "translate(-70%, -70%)",
+                        transform: "translate(-60%, -60%)",
+                        color: "#424242",
                         backgroundColor: "#d9d9d9",
-                        border: "3px solid #33363f",
+                        border: ".4vmin solid #424242",
                         borderRadius: "50%",
                         fontSize: "small",
                       }}
@@ -173,7 +174,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                   style={{
                     width: "3vmin",
                     height: "3vmin",
-                    border: "3px solid black",
+                    border: ".4vmin solid #424242",
                     backgroundColor: "white",
                     display: "flex",
                     justifyContent: "center",
@@ -201,7 +202,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                 style={{
                   width: size[players.maxMember / 2],
                   height: size[players.maxMember / 2],
-                  border: "7px solid #4d4d4d",
+                  border: ".65vmin solid #424242",
                   ...((phase === "PREPARE" && isSelectComplete) || isOpp
                     ? { backgroundColor: "#646464" }
                     : { backgroundColor: "#f0f0f0" }),
@@ -211,7 +212,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                     player.memberId === attackInfo.attacker.memberId &&
                     attackInfo.hand === "RIGHT" && {
                       backgroundColor: "#e45826",
-                      border: "7px solid #a27b5c",
+                      border: ".65vmin solid #a27b5c",
                     }),
                   borderRadius: "10px",
                   position: "relative",
@@ -228,9 +229,10 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                         position: "absolute",
                         top: 0,
                         left: 0,
-                        transform: "translate(-70%, -70%)",
+                        transform: "translate(-60%, -60%)",
+                        color: "#424242",
                         backgroundColor: "#d9d9d9",
-                        border: "3px solid #33363f",
+                        border: ".4vmin solid #424242",
                         borderRadius: "50%",
                         fontSize: "small",
                       }}

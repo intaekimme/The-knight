@@ -64,8 +64,8 @@ function WeaponPicker() {
                 ...(isSelectComplete || !countWeapon[weapon.toLowerCase()]
                   ? { backgroundColor: "#646464" }
                   : { backgroundColor: "#f0f0f0" }),
-                border: "5px solid #424242",
-                borderRadius: "10px",
+                border: ".65vmin solid #424242",
+                borderRadius: "1.3vmin",
                 position: "relative",
                 display: "flex",
                 justifyContent: "center",
@@ -95,8 +95,8 @@ function WeaponPicker() {
                   bottom: 0,
                   right: 0,
                   transform: "translate(50%, 50%)",
-                  border: "7px solid #ffe600",
-                  borderRadius: "10px",
+                  border: ".65vmin solid #ffe600",
+                  borderRadius: "1.3vmin",
                 }}
               >
                 {countWeapon[weapon.toLowerCase()]}

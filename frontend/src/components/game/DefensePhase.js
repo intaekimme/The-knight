@@ -96,8 +96,8 @@ export default function DefensePhase() {
                     width: "10vmin",
                     height: "10vmin",
                     backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
                   }}
                 >
                   shield
@@ -117,8 +117,8 @@ export default function DefensePhase() {
                     width: "10vmin",
                     height: "10vmin",
                     backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
                   }}
                 >
                   shield
@@ -134,8 +134,8 @@ export default function DefensePhase() {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                border: "7px solid #4d4d4d",
-                borderRadius: "10px",
+                border: ".65vmin solid #424242",
+                borderRadius: "1.3vmin",
                 fontSize: "3vmin",
               }}
             >

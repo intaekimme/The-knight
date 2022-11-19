@@ -59,20 +59,20 @@ export default function AttackPhase() {
               }}
             >
               L
-              <Box sx={{ width: "24.5vmin", display: "flex", justifyContent: "space-between" }}>
+              <Box sx={{ width: "23.5vmin", display: "flex", justifyContent: "space-between" }}>
                 <Box
                   onClick={() => onSelectWeapon("SWORD", "LEFT")}
                   sx={{
                     width: "10vmin",
                     height: "10vmin",
                     backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     fontSize: "1.8vmin",
                     ...(selectAttack.weapon === "SWORD" &&
-                      selectAttack.hand === "LEFT" && { border: "7px solid #e45826" }),
+                      selectAttack.hand === "LEFT" && { border: ".65vmin solid #e45826" }),
                   }}
                 >
                   검
@@ -83,13 +83,13 @@ export default function AttackPhase() {
                     width: "10vmin",
                     height: "10vmin",
                     backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     fontSize: "1.8vmin",
                     ...(selectAttack.weapon === "TWIN" &&
-                      selectAttack.hand === "LEFT" && { border: "7px solid #e45826" }),
+                      selectAttack.hand === "LEFT" && { border: ".65vmin solid #e45826" }),
                   }}
                 >
                   쌍검
@@ -105,20 +105,20 @@ export default function AttackPhase() {
               }}
             >
               R
-              <Box sx={{ width: "24.5vmin", display: "flex", justifyContent: "space-between" }}>
+              <Box sx={{ width: "23.5vmin", display: "flex", justifyContent: "space-between" }}>
                 <Box
                   onClick={() => onSelectWeapon("SWORD", "RIGHT")}
                   sx={{
                     width: "10vmin",
                     height: "10vmin",
                     backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     fontSize: "1.8vmin",
                     ...(selectAttack.weapon === "SWORD" &&
-                      selectAttack.hand === "RIGHT" && { border: "7px solid #e45826" }),
+                      selectAttack.hand === "RIGHT" && { border: ".65vmin solid #e45826" }),
                   }}
                 >
                   검
@@ -129,13 +129,13 @@ export default function AttackPhase() {
                     width: "10vmin",
                     height: "10vmin",
                     backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     fontSize: "1.8vmin",
                     ...(selectAttack.weapon === "TWIN" &&
-                      selectAttack.hand === "RIGHT" && { border: "7px solid #e45826" }),
+                      selectAttack.hand === "RIGHT" && { border: ".65vmin solid #e45826" }),
                   }}
                 >
                   쌍검
@@ -152,8 +152,8 @@ export default function AttackPhase() {
                 justifyContent: "center",
                 alignItems: "center",
                 fontSize: "3vmin",
-                border: "7px solid #4d4d4d",
-                borderRadius: "10px",
+                border: ".65vmin solid #424242",
+                borderRadius: "1.3vmin",
               }}
             >
               PASS
