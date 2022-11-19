@@ -187,7 +187,7 @@ export default function AttackDoubtPhase() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
         height: "100vh",
       }}
