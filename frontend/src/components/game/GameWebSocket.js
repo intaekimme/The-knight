@@ -23,6 +23,7 @@ import {
   addDoubtPass,
   addSubscribeObject,
   cancelSubscribe,
+  resetWeaponForAttack,
 } from "../../_slice/gameSlice";
 
 export default function GameWebSocket() {
@@ -82,6 +83,7 @@ export default function GameWebSocket() {
       }))
     } else if (nextPhase === "ATTACK") {
       const subCurrentAttacker = stompClient.subscribe(api.subCurrentAttacker(gameId), onSubCurrentAttacker);
+      dispatch(resetWeaponForAttack());
       dispatch(addSubscribeObject({
         phase: "ATTACK",
         subscribeObject: subCurrentAttacker,

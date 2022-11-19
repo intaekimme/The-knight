@@ -3,6 +3,8 @@ import { selectWeaponForAttack } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
+import swordIconImg from "../../_assets/game/sword-icon.png";
+import twinIconImg from "../../_assets/game/twin-icon.png";
 
 export default function AttackPhase() {
   const me = useSelector((state) => state.game.me);
@@ -70,12 +72,12 @@ export default function AttackPhase() {
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
-                    fontSize: "1.8vmin",
+                    alignItems: "center",
                     ...(selectAttack.weapon === "SWORD" &&
                       selectAttack.hand === "LEFT" && { border: ".65vmin solid #e45826" }),
                   }}
                 >
-                  검
+                  <img src={swordIconImg} alt="SWORD" style={{ width: "8vmin", height: "8vmin" }} />
                 </Box>
                 <Box
                   onClick={() => onSelectWeapon("TWIN", "LEFT")}
@@ -87,12 +89,12 @@ export default function AttackPhase() {
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
-                    fontSize: "1.8vmin",
+                    alignItems: "center",
                     ...(selectAttack.weapon === "TWIN" &&
                       selectAttack.hand === "LEFT" && { border: ".65vmin solid #e45826" }),
                   }}
                 >
-                  쌍검
+                  <img src={twinIconImg} alt="TWIN" style={{ width: "8vmin", height: "8vmin" }} />
                 </Box>
               </Box>
             </Box>
@@ -116,12 +118,12 @@ export default function AttackPhase() {
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
-                    fontSize: "1.8vmin",
+                    alignItems: "center",
                     ...(selectAttack.weapon === "SWORD" &&
                       selectAttack.hand === "RIGHT" && { border: ".65vmin solid #e45826" }),
                   }}
                 >
-                  검
+                  <img src={swordIconImg} alt="SWORD" style={{ width: "8vmin", height: "8vmin" }} />
                 </Box>
                 <Box
                   onClick={() => onSelectWeapon("TWIN", "RIGHT")}
@@ -133,12 +135,12 @@ export default function AttackPhase() {
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
-                    fontSize: "1.8vmin",
+                    alignItems: "center",
                     ...(selectAttack.weapon === "TWIN" &&
                       selectAttack.hand === "RIGHT" && { border: ".65vmin solid #e45826" }),
                   }}
                 >
-                  쌍검
+                  <img src={twinIconImg} alt="TWIN" style={{ width: "8vmin", height: "8vmin" }} />
                 </Box>
               </Box>
             </Box>
