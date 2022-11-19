@@ -97,6 +97,7 @@ function WeaponPicker() {
                   transform: "translate(50%, 50%)",
                   border: ".65vmin solid #ffe600",
                   borderRadius: "1.3vmin",
+                  fontSize: "2.5vmin"
                 }}
               >
                 {countWeapon[weapon.toLowerCase()]}
