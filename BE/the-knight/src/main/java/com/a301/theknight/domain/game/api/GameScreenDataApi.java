@@ -23,11 +23,17 @@ public class GameScreenDataApi {
     @MessageMapping(value = "/games/{gameId}/screen-data")
     public void makeAndSendScreenData(@Min(1) @DestinationVariable long gameId) {
         boolean isFullCount = gameConvertUtil.requestCounting(gameId);
+        log.info("  [Request Count Flag = {}]", isFullCount);
         if (!isFullCount) {
             return;
         }
+        gameConvertUtil.initRequestQueue(gameId);
 
         GameDataService dataTemplate = dataTemplateFactory.getGameDataTemplate(gameId);
+        if (dataTemplate == null) {
+            gameConvertUtil.clearData(gameId);
+            return;
+        }
         dataTemplate.sendScreenData(gameId, messageService);
         dataTemplate.sendPlayersData(gameId, messageService);
 

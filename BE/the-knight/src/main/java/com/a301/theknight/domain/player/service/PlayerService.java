@@ -5,6 +5,7 @@ import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
+import com.a301.theknight.domain.game.util.GameConvertUtil;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.domain.player.dto.ReadyDto;
@@ -38,6 +39,7 @@ public class PlayerService {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
     private final GameRedisRepository redisRepository;
+    private final GameConvertUtil gameConvertUtil;
 
     @Transactional
     public PlayerEntryResponse entry(long gameId, long memberId){
@@ -122,6 +124,8 @@ public class PlayerService {
                 throw new CustomWebSocketException(NOT_All_USERS_ARE_READY);
             }
             findGame.changeStatus(GameStatus.PLAYING);
+            //TODO: 방장 레디 -> 게임 시작 부분도 Screen-Data 시퀀스로 맞춰서 의존성 분리시키기
+            gameConvertUtil.initRequestQueue(gameId, findGame.getCapacity());
             redisRepository.saveInGame(findGame.getId(), makeInGame(findGame));
         }
 

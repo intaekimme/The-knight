@@ -61,14 +61,14 @@ public class RedisConfig {
         return new JpaTransactionManager(entityManagerFactory);
     }
 
-    @Bean
-    public RedissonClient redissonClient() {
-        Config config = new Config();
-        config.useSingleServer()
-                .setAddress("redis://" + host + ":" + port)
-                .setPassword(password);
-        RedissonClient client = Redisson.create(config);
-
-        return client;
-    }
+//    @Bean
+//    public RedissonClient redissonClient() {
+//        Config config = new Config();
+//        config.useSingleServer()
+//                .setAddress("redis://" + host + ":" + port)
+//                .setPassword(password);
+//        RedissonClient client = Redisson.create(config);
+//
+//        return client;
+//    }
 }

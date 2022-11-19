@@ -15,8 +15,8 @@ public enum GameStatus {
     DEFENSE(60_000L),
     ATTACK_DOUBT(60_000L),
     DEFENSE_DOUBT(60_000L),
-    DOUBT_RESULT(5_000L),
-    EXECUTE(5_000L),
+    DOUBT_RESULT(4_000L),
+    EXECUTE(4_000L),
 
     ;
     private final long limitMilliSeconds;
