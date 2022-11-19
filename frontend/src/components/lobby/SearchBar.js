@@ -70,11 +70,11 @@ export default function SearchBar() {
     fontSize: 17,
     fontWeight: 'bold',
     color: '#4F585B',
-    bgcolor: '#fff',
+    bgcolor: '#E9E9E9',
     border: '0.5px solid #4F585B',
     '&:hover': {
-      color: '#fff',
-      bgcolor: '#4F585B',
+      color: '#424242',
+      bgcolor: '#DEDEDE',
       border: '0px solid #DCD7C9',
     }
   }

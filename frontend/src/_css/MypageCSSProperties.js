@@ -19,6 +19,7 @@ const formMem = {
 }
 
 const btnModify = {
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
     '&:hover': {
@@ -30,7 +31,7 @@ const btnModify = {
 const cardMem = {
     backgroundColor: '#fff',
     // opacity: 0.8,
-    boxShadow: '1px 1px 5px #424242',
+    boxShadow: '1px 1px 20px #DCD7C9',
 }
 
 const textResult = {
@@ -44,4 +45,32 @@ const textMaxMem = {
     color: '#424242'
 }
 
-export { imgMypage, memberImg, formMem, btnModify, cardMem, textResult, textMaxMem }
+const btnLeft = {
+    width: 140,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#424242',
+    bgcolor: '#DCD7C9',
+    border: '1px solid #DCD7C9',
+    '&:hover': {
+        color: '#424242',
+        bgcolor: '#D2CCBB',
+        border: '1px solid #D2CCBB',
+    }
+}
+
+const btnRight = {
+    width: 140,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#DCD7C9',
+    bgcolor: 'red',
+    border: '1px solid red',
+    '&:hover': {
+        color: '#E2D6B5',
+        bgcolor: '#B50000',
+        border: '1px solid #B50000',
+    }
+}
+
+export { imgMypage, memberImg, formMem, btnModify, cardMem, textResult, textMaxMem, btnLeft, btnRight }

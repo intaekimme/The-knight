@@ -33,7 +33,7 @@ export default function CurrentRecord() {
             <Grid item sx={{ pt: 6 }} key={key} capac={capac}>
               {
                 recordInfoDesc.result === 'WIN' ?
-                  <Card sx={{ backgroundColor: '#7487CB', opacity: 0.8 }}>
+                  <Card sx={{ backgroundColor: '#7487CB', opacity: 0.8, boxShadow: '2px 2px 10px #7487CB' }}>
                     <Grid container alignItems="center">
                       <Grid item sx={{ pl: 3, pr: 5 }}>
                         <Typography sx={textResult}>
@@ -57,7 +57,7 @@ export default function CurrentRecord() {
                     </Grid>
                   </Card>
                   :
-                  <Card sx={{ backgroundColor: '#CB7474', opacity: 0.8 }}>
+                  <Card sx={{ backgroundColor: '#CB7474', opacity: 0.8, boxShadow: '2px 2px 10px #CB7474' }}>
                     <Grid container alignItems="center">
                       <Grid item sx={{ pl: 3, pr: 5 }}>
                         <Typography sx={textResult}>

@@ -42,7 +42,7 @@ const Navigation = styled.div`
     margin-right: 25px;
     text-decoration: none;
     font-weight: 700;
-    font-size: 20px;
+    font-size: 24px;
     color: #424242 !important;
   }
   > button {
@@ -92,10 +92,10 @@ export default function NavBar() {
             <Link to="/">
               <Grid container direction="row" alignItems="center">
                 <Grid item>
-                <Avatar src={logo} sx={{ width: 65, height: 65 }} variant="square"></Avatar>
+                  <Avatar src={logo} sx={{ width: 65, height: 65 }} variant="square"></Avatar>
                 </Grid>
-                <Grid item sx={{display: 'flex', alignItems:'center'}}>
-                <Avatar src={name} sx={{ width: 200 }} variant="square"></Avatar>
+                <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar src={name} sx={{ width: 200 }} variant="square"></Avatar>
                 </Grid>
               </Grid>
             </Link>
@@ -110,24 +110,24 @@ export default function NavBar() {
           </Navigation>
         </StyledNav>
         <StyledNav>
-        <Navigation>
-          <Link to={`/game`}>진행중인 게임</Link>
-          {/* <Link to={`/friendList`}>친구목록</Link> */}
+          <Navigation>
+            <Link to={`/game`}>진행중인 게임</Link>
+            {/* <Link to={`/friendList`}>친구목록</Link> */}
             <Link to={`/memberPage`}>
-            <IconButton
-              edge="end"
-              aria-label="account of current user"
-              // aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
+              <IconButton
+                edge="end"
+                aria-label="account of current user"
+                // aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
               >
-              <Person sx={{fontSize: 36, color: '#DCD7C9'}} />
+                <Person sx={{ fontSize: 45, color: '#DCD7C9' }} />
               </IconButton>
               &nbsp;&nbsp;
-                </Link>
-          {/* <button type="button" onClick={handdleLogout}>Logout</button> */}
-        </Navigation>
+            </Link>
+            {/* <button type="button" onClick={handdleLogout}>Logout</button> */}
+          </Navigation>
         </StyledNav>
         {/* {isLogin ? (
           <Navigation>

@@ -27,7 +27,6 @@ public class GameScreenDataApi {
         if (!isFullCount) {
             return;
         }
-        gameConvertUtil.initRequestQueue(gameId);
 
         GameDataService dataTemplate = dataTemplateFactory.getGameDataTemplate(gameId);
         if (dataTemplate == null) {
@@ -37,6 +36,7 @@ public class GameScreenDataApi {
         dataTemplate.sendScreenData(gameId, messageService);
         dataTemplate.sendPlayersData(gameId, messageService);
 
+        gameConvertUtil.initRequestQueue(gameId);
         messageService.proceedCall(gameId, 500);
     }
 

@@ -9,7 +9,7 @@ public enum GameStatus {
     WAITING(5_000L),
     PLAYING(5_000L),
     END(5_000L),
-    PREPARE(50_000L),
+    PREPARE(60_000L),
     PREDECESSOR(3_000L),
     ATTACK(60_000L),
     DEFENSE(60_000L),
