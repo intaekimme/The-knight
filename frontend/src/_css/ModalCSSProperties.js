@@ -1,4 +1,5 @@
 import React from "react";
+import { backgroundWhite } from "./ReactCSSProperties";
 import modalBackground from "../_assets/room/roomInfo.png"
 
 const modalStyle = {
@@ -41,24 +42,24 @@ const inModalStyle = {
 };
 const titleStyle = {
   pr: 2,
-  color: "#DCD7C9",
+  color: backgroundWhite,
   fontWeight: 'bold',
   textAlign: "right",
   fontSize: 20
 };
 const infoStyle = {
   pl: 1,
-  color: "#DCD7C9",
+  color: backgroundWhite,
   fontSize: 18,
   height: 38,
 };
 const itemStyle = {
-  color: "#DCD7C9",
+  color: backgroundWhite,
   textAlign: "right",
   fontSize: 18
 };
 const roomInfoTitleStyle = {
-  color: "#DCD7C9",
+  color: backgroundWhite,
   fontSize: 25,
   fontWeight: 'bold',
 }
@@ -68,12 +69,12 @@ const buttonStyle = {
   fontSize: 18,
   fontWeight: 'bold',
   color: '#424242',
-  bgcolor: '#DCD7C9',
+  bgcolor: backgroundWhite,
   border: '0px solid #424242',
   '&:hover': {
     color: '#fff',
     bgcolor: '#4F585B',
-    border: '0px solid #DCD7C9',
+    border: `0px solid ${backgroundWhite}`,
   }
 }
 
