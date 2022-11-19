@@ -83,7 +83,7 @@ export default function Chatting(props){
   // 키 판정
   const onKeyDown = (e)=>{
     // tab
-    if(e.keyCode == 9){
+    if(e.keyCode === 9){
       e.preventDefault();
       let tempKind = chattingKind;
       switch(tempKind){
@@ -99,10 +99,9 @@ export default function Chatting(props){
       setChattingKind(tempKind);
     }
     // enter
-    if(e.keyCode == 13 && e.shiftKey == false) {
+    if(e.keyCode === 13 && e.shiftKey === false) {
       e.preventDefault();
       onMessageSend();
-      e.target.value="";
     }
   }
 
@@ -123,6 +122,7 @@ export default function Chatting(props){
     }
     onPubChat({stompClient:props.stompClient, gameId:props.gameId, message:payload});
     console.log(inputMessage);
+    document.getElementById("inputArea").value = "";
     setInputMessage("");
   }
 
@@ -143,7 +143,7 @@ export default function Chatting(props){
           <Grid container item xs={12} justifyContent="center" alignItems="flex-end"
           sx={{minHeight:100, textAlign:"center"}}>
             <Grid container item xs={12} sx={{...chattingHeader}}>
-              <Grid item xs={10} sx={{fontSize:size/2, paddingLeft:5}}>채팅</Grid>
+              <Grid item xs={10} sx={{fontWeight:500, fontSize:size/2, pt:1, pb:1, pl:5}}>Chat</Grid>
               <Grid item xs={2}><Button onClick={onChattingClose} sx={{color:red}}><MinimizeIcon sx={{fontSize:size/2}}/></Button></Grid>
             </Grid>
             <Grid id="chattingBody" container item xs={12} alignItems="flex-end" onScroll={onChatScroll} sx={{...chattingBody}}>
@@ -198,17 +198,18 @@ export default function Chatting(props){
                 }
               })}
             </Grid>
-            <Grid container item xs={12} sx={{border:"1px solid black"}}>
+            <Grid container item xs={12}>
               <Grid item xs={12} sx={{textAlign:"left", background:"#ADADAD"}}>
-                <Box sx={{paddingLeft:1, fontSize:size/1.5, border:"1px solid black", backgroundColor:chattingColor, color:white}}>{`To `}{chattingKind}</Box>
+                <Box sx={{paddingLeft:1, fontSize:size/1.5, border:"1px solid black", backgroundColor:chattingColor, color:white}}>{`[TAB] To `}{chattingKind}</Box>
               </Grid>
               <Grid container item xs={12} sx={{...chattingInput, textAlign:"left", paddingTop:1}}>
                 <Grid item xs={9} sx={{position:"relative", top:"7%"}}>
-                  <TextareaAutosize aria-label="minimum height" minRows={2} maxRows={3} placeholder="채팅을 입력하세요"
+                  <TextareaAutosize aria-label="minimum height" minRows={2} maxRows={3} cols={40}
+                    id="inputArea" placeholder="채팅을 입력하세요"
                     onKeyDown={onKeyDown} onChange={onMessageChange}
                     sx={{fontSize:size/2, width:"100%", height:"100%"}}/>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={3} sx={{pb:1, pr:1, textAlign:"right"}}>
                   <Button onClick={onMessageSend} sx={{...chattingSendButton, fontSize:size/3}}>보내기</Button>
                   </Grid>
               </Grid>
