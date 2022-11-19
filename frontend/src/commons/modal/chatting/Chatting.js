@@ -103,7 +103,6 @@ export default function Chatting(props){
       e.preventDefault();
       onMessageSend();
       e.target.value="";
-      setInputMessage("");
     }
   }
 
@@ -124,6 +123,7 @@ export default function Chatting(props){
     }
     onPubChat({stompClient:props.stompClient, gameId:props.gameId, message:payload});
     console.log(inputMessage);
+    setInputMessage("");
   }
 
   return(
