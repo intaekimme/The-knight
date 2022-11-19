@@ -9,7 +9,7 @@ import knightImg from "../../_assets/game/knight.png";
 import knightGreenImg from "../../_assets/game/knight-green.png";
 
 // 해당 Player가 본인이면 녹색아이콘
-function Player({ player, isOpp }) {
+function Player({ player, isOpp, size }) {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.game.me);
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
@@ -47,7 +47,7 @@ function Player({ player, isOpp }) {
     );
   }, []);
 
-  const size = {
+  const defaultSize = {
     2: "14vmin",
     3: "13vmin",
     4: "12vmin",
@@ -93,11 +93,19 @@ function Player({ player, isOpp }) {
             isOpp &&
             selectAttack.weapon &&
             isHovering && {
-              background: "radial-gradient(red 10%, white 90%)",
-              borderRadius: "50%",
-            }),
-          width: size[String(players.maxMember / 2)],
-          height: size[String(players.maxMember / 2)],
+            background: "radial-gradient(red 10%, white 90%)",
+            borderRadius: "50%",
+          }),
+          ...(size ?
+            {
+              width: size,
+              height: size,
+            } :
+            {
+              width: defaultSize[String(players.maxMember / 2)],
+              height: defaultSize[String(players.maxMember / 2)],
+            }
+          )
         }}
         onClick={
           isAttackPhase && AttackerIsMe && isOpp && selectAttack.weapon
