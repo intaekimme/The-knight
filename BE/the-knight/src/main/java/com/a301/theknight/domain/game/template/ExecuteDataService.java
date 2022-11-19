@@ -7,8 +7,8 @@ import com.a301.theknight.domain.game.dto.execute.response.GameExecuteResponse;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
+import com.a301.theknight.domain.game.util.GameLockUtil;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +20,8 @@ public class ExecuteDataService extends GameDataService {
 
     private final GameRedisRepository redisRepository;
 
-    public ExecuteDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient, redisRepository);
+    public ExecuteDataService(GameLockUtil gameLockUtil, GameRedisRepository redisRepository) {
+        super(gameLockUtil, redisRepository);
         this.redisRepository = redisRepository;
     }
 

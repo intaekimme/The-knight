@@ -6,9 +6,9 @@ import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
+import com.a301.theknight.domain.game.util.GameLockUtil;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,8 +19,8 @@ public class DefenseDataService extends GameDataService {
 
     private final GameRedisRepository redisRepository;
 
-    public DefenseDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient, redisRepository);
+    public DefenseDataService(GameLockUtil gameLockUtil, GameRedisRepository redisRepository) {
+        super(gameLockUtil, redisRepository);
         this.redisRepository = redisRepository;
     }
 

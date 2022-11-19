@@ -26,7 +26,7 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 @Service
 public class GameConvertUtil {
     private final GameRedisRepository gameRedisRepository;
-    private final RedissonClient redissonClient;
+    private final GameLockUtil gameLockUtil;
     private final Map<Long, Integer> peopleMap = new ConcurrentHashMap<>();
     private final Map<Long, ConcurrentLinkedQueue<String>> countMap = new HashMap<>();
 
@@ -48,15 +48,7 @@ public class GameConvertUtil {
         ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
         queue.add("count");
         if (queue.size() >= maxMember) {
-            try {
-                RLock countLock = redissonClient.getLock(generateCountLockKey(gameId));
-                if (countLock.tryLock(1, 10, TimeUnit.SECONDS)) {
-                    return true;
-                }
-            } catch (InterruptedException e) {
-                log.info("<< Count Lock Error");
-                throw new RuntimeException(e);
-            }
+            return gameLockUtil.countLock(gameId, 1, 10);
         }
         return false;
     }
@@ -71,10 +63,7 @@ public class GameConvertUtil {
         ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
         queue.clear();
 
-        RLock countLock = redissonClient.getLock(generateCountLockKey(gameId));
-        if (countLock != null && countLock.isLocked()) {
-            countLock.unlock();
-        }
+        gameLockUtil.countUnLock(gameId);
     }
 
     public void clearData(long gameId) {
@@ -153,16 +142,6 @@ public class GameConvertUtil {
     private InGame getInGame(long gameId) {
         return gameRedisRepository.getInGame(gameId)
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
-    }
-
-    private void unLock(RLock countLock) {
-        if (countLock != null && countLock.isLocked()) {
-            countLock.unlock();
-        }
-    }
-
-    private String generateNextKey(long gameId) {
-        return "game_next:" + gameId;
     }
 
     private String generateCountLockKey(long gameId) {

@@ -12,12 +12,12 @@ import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
+import com.a301.theknight.domain.game.util.GameLockUtil;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,9 +33,9 @@ public class PrepareDataService extends GameDataService {
     private final GameRedisRepository redisRepository;
     private final GameRepository gameRepository;
 
-    public PrepareDataService(RedissonClient redissonClient, GameRedisRepository redisRepository,
-                                  GameRepository gameRepository) {
-        super(redissonClient, redisRepository);
+    public PrepareDataService(GameLockUtil gameLockUtil, GameRedisRepository redisRepository,
+                              GameRepository gameRepository) {
+        super(gameLockUtil, redisRepository);
         this.redisRepository = redisRepository;
         this.gameRepository = gameRepository;
     }
