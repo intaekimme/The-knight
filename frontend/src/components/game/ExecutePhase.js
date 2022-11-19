@@ -27,7 +27,7 @@ export default function ExecutePhase() {
           flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
-          height: "88vh",
+          height: "97vh",
         }}
       >
         <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>
