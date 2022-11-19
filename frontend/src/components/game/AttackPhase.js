@@ -19,7 +19,7 @@ export default function AttackPhase() {
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubAttackPass = () => {
-    stompClient.send(api.pubAttackPass(gameId), {}, {})
+    stompClient.send(api.pubAttackPass(gameId), {}, {});
   };
 
   const onSelectWeapon = (weapon, hand) => {
@@ -51,17 +51,39 @@ export default function AttackPhase() {
           }}
         >
           <Box sx={{ textAlign: "center", fontSize: "3.5vmin" }}>공격 선택</Box>
-          <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "space-evenly" }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "space-evenly",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                fontSize: "2vmin",
+                borderRadius: "1.3vmin",
+                backgroundColor: "#424242",
               }}
             >
-              L
-              <Box sx={{ width: "23.5vmin", display: "flex", justifyContent: "space-between" }}>
+              <Box
+                sx={{
+                  fontSize: "2vmin",
+                  color: "#f0f0f0",
+                  height: "3vmin",
+                  lineHeight: "3vmin",
+                }}
+              >
+                L
+              </Box>
+              <Box
+                sx={{
+                  width: "23vmin",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
                 <Box
                   onClick={() => onSelectWeapon("SWORD", "LEFT")}
                   sx={{
@@ -74,10 +96,16 @@ export default function AttackPhase() {
                     justifyContent: "center",
                     alignItems: "center",
                     ...(selectAttack.weapon === "SWORD" &&
-                      selectAttack.hand === "LEFT" && { border: ".65vmin solid #e45826" }),
+                      selectAttack.hand === "LEFT" && {
+                        border: ".65vmin solid #e45826",
+                      }),
                   }}
                 >
-                  <img src={swordIconImg} alt="SWORD" style={{ width: "8vmin", height: "8vmin" }} />
+                  <img
+                    src={swordIconImg}
+                    alt="SWORD"
+                    style={{ width: "8vmin", height: "8vmin" }}
+                  />
                 </Box>
                 <Box
                   onClick={() => onSelectWeapon("TWIN", "LEFT")}
@@ -91,10 +119,16 @@ export default function AttackPhase() {
                     justifyContent: "center",
                     alignItems: "center",
                     ...(selectAttack.weapon === "TWIN" &&
-                      selectAttack.hand === "LEFT" && { border: ".65vmin solid #e45826" }),
+                      selectAttack.hand === "LEFT" && {
+                        border: ".65vmin solid #e45826",
+                      }),
                   }}
                 >
-                  <img src={twinIconImg} alt="TWIN" style={{ width: "8vmin", height: "8vmin" }} />
+                  <img
+                    src={twinIconImg}
+                    alt="TWIN"
+                    style={{ width: "8vmin", height: "8vmin" }}
+                  />
                 </Box>
               </Box>
             </Box>
@@ -103,11 +137,27 @@ export default function AttackPhase() {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                fontSize: "2vmin",
+                borderRadius: "1.3vmin",
+                backgroundColor: "#424242",
               }}
             >
-              R
-              <Box sx={{ width: "23.5vmin", display: "flex", justifyContent: "space-between" }}>
+              <Box
+                sx={{
+                  fontSize: "2vmin",
+                  color: "#f0f0f0",
+                  height: "3vmin",
+                  lineHeight: "3vmin",
+                }}
+              >
+                R
+              </Box>
+              <Box
+                sx={{
+                  width: "23vmin",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
                 <Box
                   onClick={() => onSelectWeapon("SWORD", "RIGHT")}
                   sx={{
@@ -120,10 +170,16 @@ export default function AttackPhase() {
                     justifyContent: "center",
                     alignItems: "center",
                     ...(selectAttack.weapon === "SWORD" &&
-                      selectAttack.hand === "RIGHT" && { border: ".65vmin solid #e45826" }),
+                      selectAttack.hand === "RIGHT" && {
+                        border: ".65vmin solid #e45826",
+                      }),
                   }}
                 >
-                  <img src={swordIconImg} alt="SWORD" style={{ width: "8vmin", height: "8vmin" }} />
+                  <img
+                    src={swordIconImg}
+                    alt="SWORD"
+                    style={{ width: "8vmin", height: "8vmin" }}
+                  />
                 </Box>
                 <Box
                   onClick={() => onSelectWeapon("TWIN", "RIGHT")}
@@ -137,10 +193,16 @@ export default function AttackPhase() {
                     justifyContent: "center",
                     alignItems: "center",
                     ...(selectAttack.weapon === "TWIN" &&
-                      selectAttack.hand === "RIGHT" && { border: ".65vmin solid #e45826" }),
+                      selectAttack.hand === "RIGHT" && {
+                        border: ".65vmin solid #e45826",
+                      }),
                   }}
                 >
-                  <img src={twinIconImg} alt="TWIN" style={{ width: "8vmin", height: "8vmin" }} />
+                  <img
+                    src={twinIconImg}
+                    alt="TWIN"
+                    style={{ width: "8vmin", height: "8vmin" }}
+                  />
                 </Box>
               </Box>
             </Box>
