@@ -10,6 +10,8 @@ const chattingPosition ={
 }
 const chattingHeader = {
   background:yellow,
+  borderTopLeftRadius:20,
+  borderTopRightRadius:20,
 };
 const chattingBody = {
   minHeight:100,
@@ -19,6 +21,7 @@ const chattingBody = {
 };
 const chattingInput = {
   background:white,
+  borderBottomRightRadius: 20,
 };
 const chattingSendButton = {
   fontWeight: 'bold',
