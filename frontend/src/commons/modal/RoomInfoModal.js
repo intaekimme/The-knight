@@ -10,7 +10,7 @@ import twinSwordIcon from "../../_assets/game/twin-icon.png";
 import shieldIcon from "../../_assets/game/shield-icon.png";
 import handIcon from "../../_assets/game/hand-icon.png";
 import ItemBox from "../ItemBox";
-import { red, blue, white, black } from '../../_css/ReactCSSProperties';
+import { red, blue, white, black, backgroundWhite } from '../../_css/ReactCSSProperties';
 import { modalStyle, inModalStyle, titleStyle, infoStyle, itemStyle, roomInfoTitleStyle, buttonStyle } from '../../_css/ModalCSSProperties';
 
 // props - canEdit:boolean, roomData:redux, open:boolean_modalOpen, onClose:function_modalClose, onConfirm:function
@@ -135,7 +135,7 @@ export default function RoomSetting(props) {
 						<Grid container item xs={12} sx={{ mt: 1, mb: 1 }}>
 							<Grid item xs={2} sx={titleStyle}>방제목</Grid>
 							{canEdit ?
-								<Grid item xs={10} sx={{ pl: 4, pr: 4 }}><Input sx={{ ...infoStyle, color: black, pl: 3, width: "100%", background: white }} defaultValue={title} onChange={onChangeTitle} /></Grid>
+								<Grid item xs={10} sx={{ pl: 4, pr: 4 }}><Input sx={{ ...infoStyle, color: black, background: backgroundWhite, pl: 3, width: "100%"}} defaultValue={title} onChange={onChangeTitle} /></Grid>
 								:
 								<Grid item xs={10} sx={{ ...infoStyle, pl: 4, pr: 4 }}>{roomData.title}</Grid>
 							}
@@ -154,7 +154,7 @@ export default function RoomSetting(props) {
 												defaultValue={maxMember}
 												label="인원 수"
 												onChange={maxMemberChange}
-												sx={{ ...infoStyle, color: black, width: "100%", background: white }}
+												sx={{ ...infoStyle, color: black, background: backgroundWhite, width: "100%"}}
 											>
 												<MenuItem value={4} sx={{ fontSize: 18 }}>2 vs 2</MenuItem>
 												<MenuItem value={6} sx={{ fontSize: 18 }}>3 vs 3</MenuItem>
@@ -171,17 +171,17 @@ export default function RoomSetting(props) {
 						<Grid container columns={24} item xs={24} sx={{ mt: 1, mb: 1 }}>
 							<Grid container columns={24} item xs={4} sx={titleStyle} justifyContent="flex-end">아이템</Grid>
 							{items.map((item, index) => (
-								<Grid container columns={24} item xs={5} key={`item${item}`}>
-									<Grid columns={12} item xs={12}><ItemBox size={150} textColor="#DCD7C9" buttonDisabled={true} image={ itemImages[index] } /></Grid>
-									{/* <Grid columns={12} item xs={12}><ItemBox text={item} size={190} textColor="#DCD7C9" buttonDisabled={true}/></Grid> */}
-									<Grid columns={12} container item xs={12} alignItems="center">
-										<Grid columns={12} item xs={7} sx={itemStyle}>{itemCount[index]}</Grid>
+								<Grid container columns={24} item xs={5} key={`item${item}`} sx={{textAlign:"center"}}>
+									<Grid columns={24} item xs={24} sx={{textAlign:"center"}}><ItemBox textColor="#DCD7C9" buttonDisabled={true} image={ itemImages[index] } /></Grid>
+									{/* <Grid columns={24} item xs={24}><ItemBox text={item} size={190} textColor="#DCD7C9" buttonDisabled={true}/></Grid> */}
+									<Grid columns={24} container item xs={24} alignItems="center">
+										<Grid columns={24} item xs={14} sx={itemStyle}>{itemCount[index]}</Grid>
 										{canEdit ?
-											<Grid container columns={12} item xs={5} sx={{ mt: '-15px' }}>
-												<Grid columns={12} item xs={12} alignItems="center">
+											<Grid container columns={24} item xs={10} sx={{ mt: '-15px' }}>
+												<Grid columns={24} item xs={24} alignItems="center">
 													<Button onClick={(e) => { itemCountUp(index); }} sx={{ width: "100%", height: "100%", color: "#DCD7C9" }}><ArrowDropUpIcon /></Button>
 												</Grid>
-												<Grid columns={12} item xs={12} alignItems="center">
+												<Grid columns={24} item xs={24} alignItems="center">
 													<Button onClick={(e) => { itemCountDown(index); }} sx={{ width: "100%", height: "100%", color: "#DCD7C9" }}><ArrowDropDownIcon /></Button>
 												</Grid>
 											</Grid>

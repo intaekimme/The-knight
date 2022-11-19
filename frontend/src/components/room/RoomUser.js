@@ -54,14 +54,14 @@ export default function RoomUser(props) {
 		onPubReady({ stompClient: props.stompClient, gameId: roomData.gameId, ready: !currentReady });
 	}
 	return (
-		<Box sx={{...RoomUserBox}}>
-			<Box sx={{...RoomUserListBox}}>
+		<Box sx={{...RoomUserBox()}}>
+			<Box sx={{...RoomUserListBox()}}>
 				{memberDatas.slice(0, parseInt(roomData.maxMember / 2)).map((memberData, index) => (
 					<UserBox key={`user${memberData.nickname}${index + parseInt(roomData.maxMember / 2) - parseInt(roomData.maxMember / 2)}`}
 						userData={memberData} width={props.size * 6} height={props.size * 6}/>
 				))}
 			</Box>
-			<Box sx={{ ...RoomUserListBox, position:"relative"}}>
+			<Box sx={{ ...RoomUserListBox(), position:"relative"}}>
 				{memberDatas.slice(parseInt(roomData.maxMember / 2), memberDatas.length).map((memberData, index) => (
 					<UserBox key={`user${memberData.nickname}${index + parseInt(roomData.maxMember / 2)}`} 
 					userData={memberData} width={props.size*6} height={props.size*6}/>
