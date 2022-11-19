@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectWeaponForAttack } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
 import swordIconImg from "../../_assets/game/sword-icon.png";
 import twinIconImg from "../../_assets/game/twin-icon.png";
 
@@ -39,7 +39,7 @@ export default function AttackPhase() {
     // 내가 공격자일 때
     if (me.memberId === currentAttacker.memberId) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -240,12 +240,12 @@ export default function AttackPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 우리 팀이 공격자일 때
     } else if (me.team === currentAttacker.team) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -269,12 +269,12 @@ export default function AttackPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 적팀이 공격자일 때
     } else {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -298,7 +298,7 @@ export default function AttackPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     }
   }

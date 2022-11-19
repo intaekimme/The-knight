@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { resetGameSlice } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import {Box, Button} from "@mui/material";
+import {Box, Button, Paper} from "@mui/material";
 
 export default function EndPhase() {
   const me = useSelector((state) => state.game.me)
@@ -23,7 +23,7 @@ export default function EndPhase() {
 
   function BoxRender() {
     return (
-      <Box
+      <Paper
         sx={{
           width: "70vmin",
           height: "40vmin",
@@ -56,7 +56,7 @@ export default function EndPhase() {
         >
           나가기
         </Button>
-      </Box>
+      </Paper>
     );
   }
 
