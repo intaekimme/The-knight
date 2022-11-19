@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import api from "../../api/api";
 import Player from "./Player";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, Button } from "@mui/material";
 
 function OrderPicker() {
   const players = useSelector((state) => state.game.players);
@@ -41,11 +41,12 @@ function OrderPicker() {
           key={i}
           sx={{ display: "flex", justifyContent: "center" }}
         >
-          <Box
+          <Button
             onClick={() => onClick(i)}
-            sx={{
-              width: "12vmin",
-              height: "12vmin",
+            color="dark"
+            style={{
+              width: "16vmin",
+              height: "13.3vmin",
               ...(isSelectComplete
                 ? { backgroundColor: "#646464" }
                 : { backgroundColor: "#f0f0f0" }),
@@ -56,7 +57,9 @@ function OrderPicker() {
               justifyContent: "center",
               alignItems: "center",
               position: "relative",
+              textTransform: "none",
             }}
+            disabled={isSelectComplete}
           >
             <Box
               sx={{
@@ -78,7 +81,7 @@ function OrderPicker() {
                 meFontColor={meFontColor}
               ></Player>
             ) : null}
-          </Box>
+          </Button>
         </Grid>
       );
     }

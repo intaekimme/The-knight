@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectWeaponForAttack } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import { Box, Button } from "@mui/material";
 import swordIconImg from "../../_assets/game/sword-icon.png";
 import twinIconImg from "../../_assets/game/twin-icon.png";
 
@@ -84,11 +84,12 @@ export default function AttackPhase() {
                   justifyContent: "space-between",
                 }}
               >
-                <Box
+                <Button
                   onClick={() => onSelectWeapon("SWORD", "LEFT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
                     backgroundColor: "#f0f0f0",
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
@@ -106,12 +107,13 @@ export default function AttackPhase() {
                     alt="SWORD"
                     style={{ width: "8vmin", height: "8vmin" }}
                   />
-                </Box>
-                <Box
+                </Button>
+                <Button
                   onClick={() => onSelectWeapon("TWIN", "LEFT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
                     backgroundColor: "#f0f0f0",
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
@@ -129,7 +131,7 @@ export default function AttackPhase() {
                     alt="TWIN"
                     style={{ width: "8vmin", height: "8vmin" }}
                   />
-                </Box>
+                </Button>
               </Box>
             </Box>
             <Box
@@ -158,11 +160,12 @@ export default function AttackPhase() {
                   justifyContent: "space-between",
                 }}
               >
-                <Box
+                <Button
                   onClick={() => onSelectWeapon("SWORD", "RIGHT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
                     backgroundColor: "#f0f0f0",
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
@@ -180,12 +183,13 @@ export default function AttackPhase() {
                     alt="SWORD"
                     style={{ width: "8vmin", height: "8vmin" }}
                   />
-                </Box>
-                <Box
+                </Button>
+                <Button
                   onClick={() => onSelectWeapon("TWIN", "RIGHT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
                     backgroundColor: "#f0f0f0",
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
@@ -203,14 +207,15 @@ export default function AttackPhase() {
                     alt="TWIN"
                     style={{ width: "8vmin", height: "8vmin" }}
                   />
-                </Box>
+                </Button>
               </Box>
             </Box>
-            <Box
+            <Button
               onClick={() => onPass()}
-              sx={{
-                width: "10vmin",
-                height: "10vmin",
+              color="dark"
+              style={{
+                width: "11.3vmin",
+                height: "11.3vmin",
                 backgroundColor: "#f0f0f0",
                 display: "flex",
                 justifyContent: "center",
@@ -221,7 +226,7 @@ export default function AttackPhase() {
               }}
             >
               PASS
-            </Box>
+            </Button>
           </Box>
           <Box
             sx={{

@@ -95,6 +95,7 @@ function Player({ player, isOpp, size, fontColor, meFontColor }) {
             isHovering && {
               background: "radial-gradient(red 10%, white 90%)",
               borderRadius: "50%",
+              cursor: "pointer",
             }),
           ...(size
             ? {

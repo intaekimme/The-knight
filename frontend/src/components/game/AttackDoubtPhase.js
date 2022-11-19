@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addDoubtPass, initializePass } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import { Box, Button } from "@mui/material";
 
 export default function AttackDoubtPhase() {
   const dispatch = useDispatch();
@@ -12,7 +12,9 @@ export default function AttackDoubtPhase() {
   const players = useSelector((state) => state.game.players);
   const attackInfo = useSelector((state) => state.game.attackInfo);
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
-  const isDead = players.players.find((player) => (player.memberId === me.memberId)).isDead; 
+  const isDead = players.players.find(
+    (player) => player.memberId === me.memberId
+  ).isDead;
 
   const weaponsKr = {
     SWORD: "검",
@@ -78,8 +80,12 @@ export default function AttackDoubtPhase() {
             position: "relative",
           }}
         >
-          <Box sx={{ fontSize: "2.5vmin" }}>적팀이 의심여부를 선택 중입니다</Box>
-          <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
+          <Box sx={{ fontSize: "2.5vmin" }}>
+            적팀이 의심여부를 선택 중입니다
+          </Box>
+          <Box
+            sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}
+          >
             제한시간 : {timer}
           </Box>
         </Box>
@@ -98,8 +104,12 @@ export default function AttackDoubtPhase() {
             position: "relative",
           }}
         >
-          <Box sx={{ fontSize: "2.5vmin" }}>아군이 의심여부를 선택 중입니다</Box>
-          <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
+          <Box sx={{ fontSize: "2.5vmin" }}>
+            아군이 의심여부를 선택 중입니다
+          </Box>
+          <Box
+            sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}
+          >
             제한시간 : {timer}
           </Box>
         </Box>
@@ -119,7 +129,8 @@ export default function AttackDoubtPhase() {
         >
           <Box sx={{ textAlign: "center", fontSize: "2.7vmin" }}>
             {attackInfo.attacker.nickname}이(가) {attackInfo.defender.nickname}
-            을(를) {side[attackInfo.hand]} {weaponsKr[attackInfo.weapon]}(으)로 공격했습니다
+            을(를) {side[attackInfo.hand]} {weaponsKr[attackInfo.weapon]}(으)로
+            공격했습니다
           </Box>
           <Box
             sx={{
@@ -128,38 +139,40 @@ export default function AttackDoubtPhase() {
               justifyContent: "space-evenly",
             }}
           >
-            <Box
+            <Button
               onClick={() => clickDoubt()}
+              color="dark"
               sx={{
-                width: "10vmin",
-                height: "10vmin",
+                width: "11.3vmin",
+                height: "11.3vmin",
                 backgroundColor: "#f0f0f0",
                 border: ".65vmin solid #424242",
                 borderRadius: "1.3vmin",
-                fontSize: "3.5vmin",
+                fontSize: "3vmin",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
               }}
             >
               의심
-            </Box>
-            <Box
+            </Button>
+            <Button
               onClick={() => clickPass()}
+              color="dark"
               sx={{
-                width: "10vmin",
-                height: "10vmin",
+                width: "11.3vmin",
+                height: "11.3vmin",
                 backgroundColor: "#f0f0f0",
                 border: ".65vmin solid #424242",
                 borderRadius: "1.3vmin",
-                fontSize: "3.5vmin",
+                fontSize: "3vmin",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
               }}
             >
               Pass
-            </Box>
+            </Button>
           </Box>
           <Box
             sx={{
@@ -176,11 +189,6 @@ export default function AttackDoubtPhase() {
       );
     }
   }
-    
-    
-    
-    
-    
 
   return (
     <Box

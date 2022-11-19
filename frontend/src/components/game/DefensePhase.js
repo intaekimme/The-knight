@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import api from "../../api/api"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import {Box, Button} from "@mui/material";
 import shieldIconImg from "../../_assets/game/shield-icon.png";
 
 export default function DefensePhase() {
@@ -102,11 +102,12 @@ export default function DefensePhase() {
                 >
                   L
                 </Box>
-                <Box
+                <Button
                   onClick={() => selectShield("LEFT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
                     backgroundColor: "#f0f0f0",
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
@@ -116,7 +117,7 @@ export default function DefensePhase() {
                   }}
                 >
                   <img src={shieldIconImg} alt="SHIELD" style={{ width: "8vmin", height: "8vmin" }} />
-                </Box>
+                </Button>
               </Box>
               <Box
                 sx={{
@@ -137,11 +138,12 @@ export default function DefensePhase() {
                 >
                   R
                 </Box>
-                <Box
+                <Button
                   onClick={() => selectShield("RIGHT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
                     backgroundColor: "#f0f0f0",
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
@@ -151,14 +153,15 @@ export default function DefensePhase() {
                   }}
                 >
                   <img src={shieldIconImg} alt="SHIELD" style={{ width: "8vmin", height: "8vmin" }} />
-                </Box>
+                </Button>
               </Box>
             </Box>
-            <Box
+            <Button
               onClick={() => selectPass()}
-              sx={{
-                width: "10vmin",
-                height: "10vmin",
+              color="dark"
+              style={{
+                width: "11.3vmin",
+                height: "11.3vmin",
                 backgroundColor: "#f0f0f0",
                 display: "flex",
                 justifyContent: "center",
@@ -169,7 +172,7 @@ export default function DefensePhase() {
               }}
             >
               Pass
-            </Box>
+            </Button>
           </Box>
           <Box
             sx={{

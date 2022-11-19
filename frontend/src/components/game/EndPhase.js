@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { resetGameSlice } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import {Box, Button} from "@mui/material";
 
 export default function EndPhase() {
   const me = useSelector((state) => state.game.me)
@@ -38,9 +38,10 @@ export default function EndPhase() {
         <Box sx={{ position: "absolute", top: "4vmin", fontSize: "3.5vmin" }}>{me.team === endInfo.winningTeam?"게임 승리":"게임 패배"}</Box>
         <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>{endInfo.winningTeam === "A"? "B": "A"}팀의 리더가 사망했습니다</Box>
         <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>{me.team === endInfo.winningTeam?"10 포인트 상승":"10 포인트 하락"}</Box>
-        <Box
+        <Button
           onClick = {() => onClick()}
-          sx={{
+          color = "dark"
+          style={{
             width: "25vmin",
             height: "6vmin",
             display: "flex",
@@ -54,7 +55,7 @@ export default function EndPhase() {
           }}
         >
           나가기
-        </Box>
+        </Button>
       </Box>
     );
   }
