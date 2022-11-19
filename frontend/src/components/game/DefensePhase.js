@@ -88,9 +88,20 @@ export default function DefensePhase() {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  borderRadius: "1.3vmin",
+                  backgroundColor: "#424242",
                 }}
               >
-                <Box sx={{ fontSize: "2.7vmin" }}>L</Box>
+                <Box
+                  sx={{
+                    fontSize: "2vmin",
+                    color: "#f0f0f0",
+                    height: "3vmin",
+                    lineHeight: "3vmin",
+                  }}
+                >
+                  L
+                </Box>
                 <Box
                   onClick={() => selectShield("LEFT")}
                   sx={{
@@ -112,9 +123,20 @@ export default function DefensePhase() {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  borderRadius: "1.3vmin",
+                  backgroundColor: "#424242",
                 }}
               >
-                <Box sx={{ fontSize: "2.7vmin" }}>R</Box>
+                <Box
+                  sx={{
+                    fontSize: "2vmin",
+                    color: "#f0f0f0",
+                    height: "3vmin",
+                    lineHeight: "3vmin",
+                  }}
+                >
+                  R
+                </Box>
                 <Box
                   onClick={() => selectShield("RIGHT")}
                   sx={{
