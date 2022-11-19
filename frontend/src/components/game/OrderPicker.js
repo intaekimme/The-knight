@@ -13,7 +13,9 @@ function OrderPicker() {
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
-  const playerSize = "8vmin"
+  const playerSize = "8vmin";
+  const fontColor = "black";
+  const meFontColor = "#448b69";
 
   const onPubOrder = (payload) => {
     // {
@@ -63,12 +65,19 @@ function OrderPicker() {
                 top: "50%",
                 transform: "translate(0, -50%)",
                 color: "white",
-                fontSize: "2.5vmin"
+                fontSize: "2.5vmin",
               }}
             >
               {i + 1}
             </Box>
-            {order[i] ? <Player player={order[i]} size={playerSize}></Player> : null}
+            {order[i] ? (
+              <Player
+                player={order[i]}
+                size={playerSize}
+                fontColor={fontColor}
+                meFontColor={meFontColor}
+              ></Player>
+            ) : null}
           </Box>
         </Grid>
       );
