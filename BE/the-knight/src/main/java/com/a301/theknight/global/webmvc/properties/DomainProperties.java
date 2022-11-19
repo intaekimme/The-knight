@@ -12,6 +12,6 @@ import java.util.List;
 @ConstructorBinding
 @ConfigurationProperties(value = "domain", ignoreInvalidFields = true)
 public class DomainProperties {
-    private final List<String> main;
+    private final String main;
     private final String local;
 }
