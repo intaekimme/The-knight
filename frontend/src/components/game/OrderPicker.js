@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import api from "../../api/api";
 import Player from "./Player";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, Button } from "@mui/material";
 
 function OrderPicker() {
   const players = useSelector((state) => state.game.players);
@@ -13,7 +13,9 @@ function OrderPicker() {
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
-  const playerSize = "10vmin"
+  const playerSize = "8vmin";
+  const fontColor = "black";
+  const meFontColor = "#448b69";
 
   const onPubOrder = (payload) => {
     // {
@@ -39,11 +41,12 @@ function OrderPicker() {
           key={i}
           sx={{ display: "flex", justifyContent: "center" }}
         >
-          <Box
+          <Button
             onClick={() => onClick(i)}
-            sx={{
-              width: "12vmin",
-              height: "12vmin",
+            color="dark"
+            style={{
+              width: "16vmin",
+              height: "13.3vmin",
               ...(isSelectComplete
                 ? { backgroundColor: "#646464" }
                 : { backgroundColor: "#f0f0f0" }),
@@ -54,7 +57,9 @@ function OrderPicker() {
               justifyContent: "center",
               alignItems: "center",
               position: "relative",
+              textTransform: "none",
             }}
+            disabled={isSelectComplete}
           >
             <Box
               sx={{
@@ -63,13 +68,20 @@ function OrderPicker() {
                 top: "50%",
                 transform: "translate(0, -50%)",
                 color: "white",
-                fontSize: "2.5vmin"
+                fontSize: "2.5vmin",
               }}
             >
               {i + 1}
             </Box>
-            {order[i] ? <Player player={order[i]} size={playerSize}></Player> : null}
-          </Box>
+            {order[i] ? (
+              <Player
+                player={order[i]}
+                size={playerSize}
+                fontColor={fontColor}
+                meFontColor={meFontColor}
+              ></Player>
+            ) : null}
+          </Button>
         </Grid>
       );
     }

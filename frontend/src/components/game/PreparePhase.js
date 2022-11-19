@@ -32,14 +32,14 @@ export default function PreparePhase() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
-        height: "88vh",
+        height: "100vh",
       }}
     >
       <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Box sx={{ fontSize: "5vmin", marginBottom: ".5rem" }}>진행 순서와 무기를 선택하세요</Box>
-        <Box sx={{ fontSize: "3vmin", marginTop: ".5rem", marginBottom: ".5rem" }}>{timer}</Box>
+        <Box sx={{ fontSize: "5vmin", color: "white"}}>진행 순서와 무기를 선택하세요</Box>
+        <Box sx={{ fontSize: "2.5vmin", paddingTop: "1vmin", color: "white" }}>제한시간: {timer}</Box>
         <div
           style={{
             width: "100vmin",
@@ -48,7 +48,8 @@ export default function PreparePhase() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            fontSize: "2.5vmin",
+            fontSize: "2.2vmin",
+            marginTop: "3vmin"
           }}
         >
           {isLeader

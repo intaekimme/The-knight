@@ -162,7 +162,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                   {renderScar("LEFT")}
                 </Box>
               </div>
-              <Box sx={{ fontSize: "2vmin" }}>L</Box>
+              <Box sx={{ fontSize: "2vmin", color: "white" }}>L</Box>
             </Box>
             <Box sx={{ position: "relative" }}>
               <Player
@@ -266,7 +266,7 @@ function PlayerWithWeaponItem({ player, isOpp }) {
                   {renderScar("RIGHT")}
                 </Box>
               </div>
-              <Box sx={{ fontSize: "2vmin" }}>R</Box>
+              <Box sx={{ fontSize: "2vmin", color: "white" }}>R</Box>
             </Box>
           </Box>
         </Box>
