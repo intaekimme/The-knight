@@ -13,6 +13,8 @@ function OrderPicker() {
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
+  const playerSize = "10vmin"
+
   const onPubOrder = (payload) => {
     // {
     //   orderNumber : int
@@ -66,7 +68,7 @@ function OrderPicker() {
             >
               {i + 1}
             </Box>
-            {order[i] ? <Player player={order[i]}></Player> : null}
+            {order[i] ? <Player player={order[i]} size={playerSize}></Player> : null}
           </Box>
         </Grid>
       );
