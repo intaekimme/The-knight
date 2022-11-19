@@ -5,7 +5,7 @@ const chattingModalWidth = 400;
 const chattingModalHeight = 600;
 const chattingPosition ={
   position:"fixed",
-  bottom:20, left:20,
+  bottom: "3vmin", left:"2vmin",
   width: chattingModalWidth,
 }
 const chattingHeader = {
