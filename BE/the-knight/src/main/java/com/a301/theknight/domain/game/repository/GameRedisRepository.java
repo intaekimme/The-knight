@@ -108,6 +108,10 @@ public class GameRedisRepository {
         redisTemplate.delete(generateWeaponKey(gameId, team));
     }
 
+    public void deleteInGame(long gameId) {
+        redisTemplate.delete(generateGameKey(gameId));
+    }
+
     private <T> Optional<T> getData(String key, Class<T> classType) {
         String jsonData = (String) redisTemplate.opsForValue().get(key);
 
@@ -177,5 +181,4 @@ public class GameRedisRepository {
     private String generateWeaponKey(long gameId, Team team) {
         return "weapon" + team.name() + ":" + gameId;
     }
-
 }

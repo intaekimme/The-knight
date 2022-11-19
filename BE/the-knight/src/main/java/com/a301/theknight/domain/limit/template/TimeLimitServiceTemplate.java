@@ -41,7 +41,7 @@ public abstract class TimeLimitServiceTemplate {
 
             dataLock = redissonClient.getLock(dataLockKeyGen(gameId));
             tryDataLock(dataLock);
-            log.info("  [Time Out] : preStatus = {}, nextStatus = {}", preStatus.name(), curInGame.getGameStatus().name());
+            log.info("  [Time Out] : status = {}", curInGame.getGameStatus().name());
             sendMessageService.convertCall(gameId);
             runLimitLogic(gameId);
         } catch (InterruptedException e) {

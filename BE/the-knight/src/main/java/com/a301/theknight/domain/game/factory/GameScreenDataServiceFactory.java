@@ -30,6 +30,9 @@ public class GameScreenDataServiceFactory {
 
     public GameDataService getGameDataTemplate(long gameId) {
         GameStatus gameStatus = getGameStatus(gameId);
+        if (gameStatus == null) {
+            return null;
+        }
 
         switch (gameStatus) {
             case PREPARE:

@@ -12,6 +12,10 @@ import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
@@ -24,6 +28,8 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 public class GameConvertUtil {
     private final GameRedisRepository gameRedisRepository;
     private final RedissonClient redissonClient;
+    private final Map<Long, Integer> peopleMap = new ConcurrentHashMap<>();
+    private final Map<Long, ConcurrentLinkedQueue<String>> countMap = new HashMap<>();
 
     @Transactional
     public ConvertResponse convertScreen(long gameId) {
@@ -34,33 +40,42 @@ public class GameConvertUtil {
         inGame.changeStatus(nextStatus);
         gameRedisRepository.saveInGame(gameId, inGame);
 
-        return new ConvertResponse(curStatus.name(), nextStatus.name());
+        return new ConvertResponse(curStatus, nextStatus);
     }
 
     @Transactional
     public boolean requestCounting(long gameId) {
-        RLock countLock = redissonClient.getLock(generateCountLockKey(gameId));
-        try {
-            boolean available = countLock.tryLock(15, 30, TimeUnit.SECONDS);
-            if (!available) {
-                throw new CustomWebSocketException(FAIL_TO_ACQUIRE_REDISSON_LOCK);
+        Integer maxMember = peopleMap.get(gameId);
+        ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
+        queue.add("count");
+        if (queue.size() >= maxMember) {
+            try {
+                RLock countLock = redissonClient.getLock(generateCountLockKey(gameId));
+                if (countLock.tryLock(1, 3, TimeUnit.SECONDS)) {
+                    return true;
+                }
+            } catch (InterruptedException e) {
+                log.info("<< Count Lock Error");
+                throw new RuntimeException(e);
             }
-
-            InGame inGame = getInGame(gameId);
-            inGame.addRequestCount();
-            log.info("  [{} Counting= {}]", inGame.getGameStatus().name(), inGame.getRequestCount());
-
-            boolean isFullCount = inGame.isFullCount();
-            if (isFullCount) {
-                inGame.initRequestCount();
-            }
-            gameRedisRepository.saveInGame(gameId, inGame);
-            return isFullCount;
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            unLock(countLock);
         }
+        return false;
+    }
+
+    public void initRequestQueue(long gameId, int maxMember) {
+        peopleMap.put(gameId, maxMember);
+        ConcurrentLinkedQueue<String> queue = countMap.computeIfAbsent(gameId, key -> new ConcurrentLinkedQueue<>());
+        queue.clear();
+    }
+
+    public void initRequestQueue(long gameId) {
+        ConcurrentLinkedQueue<String> queue = countMap.computeIfAbsent(gameId, key -> new ConcurrentLinkedQueue<>());
+        queue.clear();
+    }
+
+    public void clearData(long gameId) {
+        countMap.remove(gameId);
+        peopleMap.remove(gameId);
     }
 
     public GameStatus getGameStatus(long gameId) {
@@ -142,11 +157,12 @@ public class GameConvertUtil {
         }
     }
 
-    private String generateCountKey(long gameId) {
-        return "game_count:" + gameId;
+    private String generateNextKey(long gameId) {
+        return "game_next:" + gameId;
     }
 
     private String generateCountLockKey(long gameId) {
         return "game_count_lock:" + gameId;
     }
+
 }
