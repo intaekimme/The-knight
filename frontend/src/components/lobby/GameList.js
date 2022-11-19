@@ -14,6 +14,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 const RoomStyle = styled.div`
   .css-1r4fj62-MuiPaper-root-MuiCard-root:hover {
     color: #424242 !important;
+    background-color: #E9E9E9;
     box-shadow: 2px 2px 25px #424242;
     transition-duration: 0.2s;
   }
@@ -113,8 +114,8 @@ export default function GameList() {
     bgcolor: '#4F585B',
     border: '0px solid #424242',
     '&:hover': {
-      color: '#4F585B',
-      bgcolor: '#fff',
+      color: '#fff',
+      bgcolor: '#424242',
       border: '0.5px solid #4F585B',
     }
   }
@@ -149,11 +150,11 @@ export default function GameList() {
                       }>
                       </CardHeader>
                       <CardContent>
-                        <Typography sx={{ fontSize: 22 }} color={'#4F585B'}>
+                        <Typography sx={{ fontSize: 22, fontWeight: 'bold' }} color={'#4F585B'}>
                           {game.title}
                         </Typography>
                       </CardContent>
-                      <CardActions sx={{ pt: 9, pr: 3, display: 'flex', justifyContent: 'end' }}>
+                      <CardActions sx={{ pt: 7.5, pr: 3, display: 'flex', justifyContent: 'end' }}>
                         <Typography sx={{ pr: 1 }}>
                           {game.currentMembers}/{game.maxMember}
                         </Typography>
@@ -182,7 +183,7 @@ export default function GameList() {
                           {game.title}
                         </Typography>
                       </CardContent>
-                      <CardActions sx={{ pt: 9, pr: 3, display: 'flex', justifyContent: 'end' }}>
+                      <CardActions sx={{ pt: 7.5, pr: 3, display: 'flex', justifyContent: 'end' }}>
                         <Typography sx={{ pr: 1 }}>
                           {game.currentMembers}/{game.maxMember}
                         </Typography>

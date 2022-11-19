@@ -40,7 +40,7 @@ export default function MainBtn() {
                 //   opacity: [0.9, 0.8, 0.7],
                 // },
             }}>
-                <Box sx={{ bgcolor: '#fff', opacity: 0.7, height: 647, display: 'flex', justifyContent: 'center' }}>
+                <Box sx={{ bgcolor: '#fff', opacity: 0.7, height: 647, display: 'flex', justifyContent: 'center', boxShadow: '2px 2px 2px 10px #fff' }}>
                     <Grid>
                         <Avatar src={fullLogo} sx={{ pb: 3, height: 400, width: 'auto' }}></Avatar>
                         <MainButton>
