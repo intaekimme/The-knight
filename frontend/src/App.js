@@ -1,5 +1,5 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { resize } from "./_slice/windowSlice";
 import NavBar from './components/header/NavBar';
@@ -14,9 +14,10 @@ function App() {
       dispatch(resize({ width: window.innerWidth, height: window.innerHeight }));
     });
   }, [window.innerWidth, window.innerHeight]);
+  const { pathname } = useLocation();
   return (
     <Grid sx={{minWidth:1024}}>
-      <NavBar />
+      { pathname !== "/game" && <NavBar />}
       <Outlet />
     </Grid>
   )
