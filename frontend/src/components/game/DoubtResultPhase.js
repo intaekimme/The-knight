@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import {Box, Paper} from "@mui/material";
 
 export default function DoubtResultPhase() {
   const me = useSelector((state) => state.game.me);
@@ -8,7 +8,7 @@ export default function DoubtResultPhase() {
 
   function BoxRender() {
     return (
-      <Box
+      <Paper
         sx={{
           width: "70vmin",
           height: "40vmin",
@@ -33,7 +33,7 @@ export default function DoubtResultPhase() {
             : doubtResponse.suspect.nickname}
           이 사망했습니다
         </Box>
-      </Box>
+      </Paper>
     );
   }
 
