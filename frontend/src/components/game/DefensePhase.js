@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import api from "../../api/api"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
+import shieldIconImg from "../../_assets/game/shield-icon.png";
 
 export default function DefensePhase() {
   const me = useSelector((state) => state.game.me);
@@ -98,9 +99,12 @@ export default function DefensePhase() {
                     backgroundColor: "#f0f0f0",
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  shield
+                  <img src={shieldIconImg} alt="SHIELD" style={{ width: "8vmin", height: "8vmin" }} />
                 </Box>
               </Box>
               <Box
@@ -119,9 +123,12 @@ export default function DefensePhase() {
                     backgroundColor: "#f0f0f0",
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  shield
+                  <img src={shieldIconImg} alt="SHIELD" style={{ width: "8vmin", height: "8vmin" }} />
                 </Box>
               </Box>
             </Box>

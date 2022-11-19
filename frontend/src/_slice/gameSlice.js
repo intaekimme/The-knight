@@ -350,8 +350,16 @@ export const gameSlice = createSlice({
       state.doubtPassList.push(action.payload);
     },
     selectWeaponForAttack: (state, action) => { 
-      state.selectAttack.weapon = action.payload.weapon;
-      state.selectAttack.hand = action.payload.hand;
+      state.selectAttack = {
+        weapon: action.payload.weapon,
+        hand: action.payload.hand,
+      };
+    },
+    resetWeaponForAttack: (state) => {
+      state.selectAttack = {
+        weapon: null,
+        hand: null,
+      }
     },
     addSubscribeObject: (state, action) => { 
       if (action.payload.phase === "PREPARE") {
@@ -427,6 +435,7 @@ export const {
   fetchExecuteInfo,
   addDoubtPass,
   selectWeaponForAttack,
+  resetWeaponForAttack,
   addSubscribeObject,
   cancelSubscribe,
   setDOM,
