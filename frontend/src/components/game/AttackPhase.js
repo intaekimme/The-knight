@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectWeaponForAttack } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
 import swordIconImg from "../../_assets/game/sword-icon.png";
 import twinIconImg from "../../_assets/game/twin-icon.png";
 
@@ -39,18 +39,50 @@ export default function AttackPhase() {
     // 내가 공격자일 때
     if (me.memberId === currentAttacker.memberId) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
             backgroundColor: "#d9d9d9",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-evenly",
+            justifyContent: "center",
             position: "relative",
           }}
         >
-          <Box sx={{ textAlign: "center", fontSize: "3.5vmin" }}>공격 선택</Box>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "4vmin",
+              left: "50%",
+              transform: "translate(-50%)",
+              fontSize: "3.5vmin",
+            }}
+          >
+            공격 선택
+          </Box>
+          {!selectAttack.weapon && (
+            <Box
+              sx={{
+                textAlign: "center",
+                fontSize: "1.8vmin",
+                paddingBottom: "3vmin",
+              }}
+            >
+              공격 무기를 선택해주세요
+            </Box>
+          )}
+          {selectAttack.weapon && (
+            <Box
+              sx={{
+                textAlign: "center",
+                fontSize: "1.8vmin",
+                paddingBottom: "3vmin",
+              }}
+            >
+              공격할 대상을 선택해주세요
+            </Box>
+          )}
           <Box
             sx={{
               display: "flex",
@@ -90,18 +122,31 @@ export default function AttackPhase() {
                   style={{
                     width: "11.3vmin",
                     height: "11.3vmin",
-                    backgroundColor: "#f0f0f0",
+                    ...(selectAttack.weapon &&
+                    (selectAttack.weapon !== "SWORD" ||
+                      selectAttack.hand !== "LEFT")
+                      ? { backgroundColor: "#878886" }
+                      : { backgroundColor: "#f0f0f0" }),
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    ...(selectAttack.weapon === "SWORD" &&
-                      selectAttack.hand === "LEFT" && {
-                        border: ".65vmin solid #e45826",
-                      }),
+                    position: "relative",
                   }}
                 >
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      ...(selectAttack.weapon === "SWORD" &&
+                        selectAttack.hand === "LEFT" && {
+                          border: ".3vmin solid #f0a500",
+                        }),
+                      borderRadius: "1.3vmin",
+                      position: "absolute",
+                    }}
+                  ></Box>
                   <img
                     src={swordIconImg}
                     alt="SWORD"
@@ -114,18 +159,31 @@ export default function AttackPhase() {
                   style={{
                     width: "11.3vmin",
                     height: "11.3vmin",
-                    backgroundColor: "#f0f0f0",
+                    ...(selectAttack.weapon &&
+                    (selectAttack.weapon !== "TWIN" ||
+                      selectAttack.hand !== "LEFT")
+                      ? { backgroundColor: "#878886" }
+                      : { backgroundColor: "#f0f0f0" }),
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    ...(selectAttack.weapon === "TWIN" &&
-                      selectAttack.hand === "LEFT" && {
-                        border: ".65vmin solid #e45826",
-                      }),
+                    position: "relative",
                   }}
                 >
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      ...(selectAttack.weapon === "TWIN" &&
+                        selectAttack.hand === "LEFT" && {
+                          border: ".3vmin solid #f0a500",
+                        }),
+                      borderRadius: "1.3vmin",
+                      position: "absolute",
+                    }}
+                  ></Box>
                   <img
                     src={twinIconImg}
                     alt="TWIN"
@@ -166,18 +224,31 @@ export default function AttackPhase() {
                   style={{
                     width: "11.3vmin",
                     height: "11.3vmin",
-                    backgroundColor: "#f0f0f0",
+                    ...(selectAttack.weapon &&
+                    (selectAttack.weapon !== "SWORD" ||
+                      selectAttack.hand !== "RIGHT")
+                      ? { backgroundColor: "#878886" }
+                      : { backgroundColor: "#f0f0f0" }),
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    ...(selectAttack.weapon === "SWORD" &&
-                      selectAttack.hand === "RIGHT" && {
-                        border: ".65vmin solid #e45826",
-                      }),
+                    position: "relative",
                   }}
                 >
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      ...(selectAttack.weapon === "SWORD" &&
+                        selectAttack.hand === "RIGHT" && {
+                          border: ".3vmin solid #f0a500",
+                        }),
+                      borderRadius: "1.3vmin",
+                      position: "absolute",
+                    }}
+                  ></Box>
                   <img
                     src={swordIconImg}
                     alt="SWORD"
@@ -190,18 +261,31 @@ export default function AttackPhase() {
                   style={{
                     width: "11.3vmin",
                     height: "11.3vmin",
-                    backgroundColor: "#f0f0f0",
+                    ...(selectAttack.weapon &&
+                    (selectAttack.weapon !== "TWIN" ||
+                      selectAttack.hand !== "RIGHT")
+                      ? { backgroundColor: "#878886" }
+                      : { backgroundColor: "#f0f0f0" }),
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    ...(selectAttack.weapon === "TWIN" &&
-                      selectAttack.hand === "RIGHT" && {
-                        border: ".65vmin solid #e45826",
-                      }),
+                    position: "relative",
                   }}
                 >
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      ...(selectAttack.weapon === "TWIN" &&
+                        selectAttack.hand === "RIGHT" && {
+                          border: ".3vmin solid #f0a500",
+                        }),
+                      borderRadius: "1.3vmin",
+                      position: "absolute",
+                    }}
+                  ></Box>
                   <img
                     src={twinIconImg}
                     alt="TWIN"
@@ -240,12 +324,12 @@ export default function AttackPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 우리 팀이 공격자일 때
     } else if (me.team === currentAttacker.team) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -269,12 +353,12 @@ export default function AttackPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 적팀이 공격자일 때
     } else {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -298,7 +382,7 @@ export default function AttackPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     }
   }

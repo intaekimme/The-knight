@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addDoubtPass, initializePass } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper } from "@mui/material";
 
 export default function AttackDoubtPhase() {
   const dispatch = useDispatch();
@@ -69,7 +69,7 @@ export default function AttackDoubtPhase() {
     // 상대의 의심을 기다릴 때
     if (me.team === currentAttacker.team) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -88,12 +88,12 @@ export default function AttackDoubtPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 우리 팀의 의심이지만, 나는 죽었을 때
     } else if (isDead) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -112,11 +112,11 @@ export default function AttackDoubtPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     } else {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -185,7 +185,7 @@ export default function AttackDoubtPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     }
   }

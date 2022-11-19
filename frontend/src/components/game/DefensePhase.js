@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import api from "../../api/api"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import {Box, Button} from "@mui/material";
+import {Box, Button, Paper} from "@mui/material";
 import shieldIconImg from "../../_assets/game/shield-icon.png";
 
 export default function DefensePhase() {
@@ -54,7 +54,7 @@ export default function DefensePhase() {
     // 내가 수비자일 때
     if (me.memberId === currentDefender.memberId) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -186,12 +186,12 @@ export default function DefensePhase() {
           >
             제한시간: {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 우리 팀이 공격자일 때
     } else if (me.team === currentDefender.team) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -215,12 +215,12 @@ export default function DefensePhase() {
           >
             제한시간: {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 적팀이 공격자일 때
     } else {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -244,7 +244,7 @@ export default function DefensePhase() {
           >
             제한시간: {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     }
   }
