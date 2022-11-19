@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
-import static com.a301.theknight.global.error.errorcode.DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
 @Slf4j
@@ -51,7 +50,7 @@ public class GameConvertUtil {
         if (queue.size() >= maxMember) {
             try {
                 RLock countLock = redissonClient.getLock(generateCountLockKey(gameId));
-                if (countLock.tryLock(1, 3, TimeUnit.SECONDS)) {
+                if (countLock.tryLock(1, 10, TimeUnit.SECONDS)) {
                     return true;
                 }
             } catch (InterruptedException e) {
@@ -69,8 +68,13 @@ public class GameConvertUtil {
     }
 
     public void initRequestQueue(long gameId) {
-        ConcurrentLinkedQueue<String> queue = countMap.computeIfAbsent(gameId, key -> new ConcurrentLinkedQueue<>());
+        ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
         queue.clear();
+
+        RLock countLock = redissonClient.getLock(generateCountLockKey(gameId));
+        if (countLock != null && countLock.isLocked()) {
+            countLock.unlock();
+        }
     }
 
     public void clearData(long gameId) {
