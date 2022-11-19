@@ -1,12 +1,16 @@
 package com.a301.theknight.domain.game.entity.redis;
 
-import com.a301.theknight.domain.game.dto.prepare.response.GameOrderDto;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Team;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 public class InGame {
     private GameStatus gameStatus;
     private Team currentAttackTeam;
@@ -15,7 +19,6 @@ public class InGame {
     private int maxMemberNum;
     private TurnData turnData;
     private int requestCount;
-    private int doubtPassCount;
 
     @Builder
     public InGame(GameStatus gameStatus, Team currentAttackTeam, TeamInfoData teamAInfo, TeamInfoData teamBInfo, int maxMemberNum, TurnData turnData) {
@@ -31,29 +34,9 @@ public class InGame {
         turnData = new TurnData();
     }
 
-    public void choiceOrder(InGamePlayer inGamePlayer, int orderNumber, TeamInfoData teamInfoData) {
-        GameOrderDto playerOrderInfo = null;
-        int preOrderNumber = inGamePlayer.getOrder();
-        if (preOrderNumber != 0) {
-            playerOrderInfo = teamInfoData.getOrderList()[preOrderNumber - 1];
-            teamInfoData.getOrderList()[preOrderNumber - 1] = null;
-        }
-        inGamePlayer.saveOrder(orderNumber);
-
-        if (playerOrderInfo == null) {
-            playerOrderInfo = GameOrderDto.builder()
-                    .memberId(inGamePlayer.getMemberId())
-                    .nickname(inGamePlayer.getNickname())
-                    .image(inGamePlayer.getImage()).build();
-        }
-        teamInfoData.getOrderList()[orderNumber - 1] = playerOrderInfo;
-    }
-
     public void addRequestCount() {
         requestCount++;
     }
-
-    public void addDoubtPassCount() { doubtPassCount++; }
 
     public boolean isFullCount() {
         return requestCount >= maxMemberNum;
@@ -86,24 +69,40 @@ public class InGame {
         requestCount = 0;
     }
 
-    public void initDoubtPassCount() { doubtPassCount = 0; }
-
-    public boolean getLyingData() {
-        return (gameStatus.equals(GameStatus.ATTACK_DOUBT) && turnData.isLyingAttack())
-                || (gameStatus.equals(GameStatus.DEFENSE_DOUBT) && turnData.isLyingDefend());
+    public void addDoubtPassCount() {
+        turnData.addDoubtPassCount();
     }
 
-    public void setDoubtData(DoubtData doubtData) {
-        turnData.setDoubtData(doubtData);
+    @JsonIgnore
+    public int getDoubtPassCount() {
+        return turnData.getDoubtData().getDoubtPassCount();
+    }
+
+    @JsonIgnore
+    public boolean getLyingData() {
+        return gameStatus.equals(GameStatus.ATTACK_DOUBT) ? turnData.isLyingAttack() : turnData.isLyingDefense();
+    }
+
+    public void clearTurnData() {
+        turnData.clearAttackData();
+        turnData.clearDefenseData();
+        turnData.clearDoubtData();
     }
 
     public void clearDoubtData() {
-        turnData.setDoubtData(null);
+        turnData.clearDoubtData();
     }
 
     public Team updateCurrentAttackTeam(){
-        this.currentAttackTeam = Team.A.equals(currentAttackTeam) ? Team.B : Team.A;
+        currentAttackTeam = Team.A.equals(currentAttackTeam) ? Team.B : Team.A;
         return currentAttackTeam;
     }
 
+    public int getTurnNumber() {
+        return turnData.getTurn();
+    }
+
+    public void addTurn() {
+        turnData.addTurn();
+    }
 }

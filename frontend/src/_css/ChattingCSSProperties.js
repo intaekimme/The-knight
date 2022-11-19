@@ -1,18 +1,20 @@
 import React from "react";
 import { black, white, yellow, lightBlue } from "./ReactCSSProperties";
 
-const chattingModalWidth = 300;
+const chattingModalWidth = 400;
 const chattingModalHeight = 600;
 const chattingPosition ={
   position:"fixed",
-  bottom:0, left:0,
+  bottom:20, left:20,
   width: chattingModalWidth,
 }
 const chattingHeader = {
   background:yellow,
 };
 const chattingBody = {
+  minHeight:100,
   maxHeight:chattingModalHeight,
+  overflow: 'auto',
   background:"#DCD7C9",
 };
 const chattingInput = {
@@ -33,8 +35,8 @@ const chattingSendButton = {
 };
 const chattingBox ={
   background: '#4F585B',
-  borderRadius: 10,
-  width: chattingModalWidth*0.8,
+  borderRadius: 4,
+  maxWidth: chattingModalWidth*0.7,
   padding:1,
   fontWeight:900,
 }
@@ -58,5 +60,5 @@ const chattingOthers = {
   marginLeft: 1,
 }
 
-export {chattingPosition, chattingHeader, chattingBody, chattingInput, chattingSendButton,
+export {chattingModalWidth, chattingModalHeight, chattingPosition, chattingHeader, chattingBody, chattingInput, chattingSendButton,
   chattingBox, chattingAll, chattingA, chattingB, chattingMine, chattingOthers};

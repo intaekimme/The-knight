@@ -6,14 +6,12 @@ import com.a301.theknight.domain.game.dto.prepare.request.GameOrderRequest;
 import com.a301.theknight.domain.game.dto.prepare.request.GameWeaponChoiceRequest;
 import com.a301.theknight.domain.game.dto.prepare.response.*;
 import com.a301.theknight.domain.game.entity.Game;
-import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.Weapon;
 import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
-import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
@@ -77,55 +75,79 @@ public class GamePrepareService {
     }
 
     @Transactional
-    public GameOrderResponse choiceOrder(long gameId, long memberId, Team team, GameOrderRequest orderRequest) {
+    public GameOrderResponse saveOrder(long gameId, long memberId, Team team, GameOrderRequest orderRequest) {
         InGame inGame = getInGame(gameId);
         if (!orderRequest.validate(inGame.getMaxMemberNum() / 2)) {
             throw new CustomWebSocketException(ORDER_NUMBER_IS_INVALID);
         }
-        int orderNumber = orderRequest.getOrderNumber();
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
-        if (!inGamePlayer.getTeam().equals(team)) {
+        if (!team.equals(inGamePlayer.getTeam())) {
             throw new CustomWebSocketException(NOT_MATCH_REQUEST_TEAM);
         }
-        TeamInfoData teamInfoData = Team.A.equals(team)
-                ? inGame.getTeamAInfo() : inGame.getTeamBInfo();
-        if (alreadySelectedOrderNumber(orderNumber, teamInfoData)) {
-            if (inGamePlayer.getOrder() == orderNumber) {
-                return null;
-            }
-            throw new CustomWebSocketException(ALREADY_SELECTED_ORDER_NUMBER);
+
+        GameOrderDto[] orderList = getOrderList(inGame, team);
+        int playerOrder = inGamePlayer.getOrder();
+        int requestOrder = orderRequest.getOrderNumber();
+
+        checkAlreadySelectedNumber(requestOrder, playerOrder, orderList);
+
+        if (playerOrder == requestOrder) {
+            cancelOrder(inGamePlayer, orderList);
+        } else {
+            saveOrder(inGamePlayer, requestOrder, orderList);
         }
 
-        inGame.choiceOrder(inGamePlayer, orderNumber, teamInfoData);
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.saveInGamePlayer(gameId, memberId, inGamePlayer);
-
-        return new GameOrderResponse(teamInfoData.getOrderList());
+        return new GameOrderResponse(orderList);
     }
 
     @Transactional
     public SelectCompleteDto completeSelect(long gameId, long memberId) {
         InGame inGame = getInGame(gameId);
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
+        Team myTeam = inGamePlayer.getTeam();
 
         checkLeaderRequest(inGame, inGamePlayer);
-        checkOrderSelect(inGame.getTeamInfoData(inGamePlayer.getTeam()));
+        checkOrderSelect(inGame.getTeamInfoData(myTeam));
 
-        GameWeaponData weaponsData = getWeaponsData(gameId, inGamePlayer.getTeam());
+        GameWeaponData weaponsData = getWeaponsData(gameId, myTeam);
         Game game = getGame(gameId);
-        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, inGamePlayer.getTeam());
+        List<InGamePlayer> teamPlayerList = redisRepository.getTeamPlayerList(gameId, myTeam);
 
         checkWeaponSelect(teamPlayerList, weaponsData, game);
 
-        Team team = inGamePlayer.getTeam();
-        inGame.completeSelect(team);
-        if (inGame.isAllSelected()) {
-            inGame.changeStatus(GameStatus.PREDECESSOR);
-        }
+        inGame.completeSelect(myTeam);
         redisRepository.saveInGame(gameId, inGame);
-        redisRepository.deleteGameWeaponData(gameId, team);
+        redisRepository.deleteGameWeaponData(gameId, myTeam);
 
-        return new SelectCompleteDto(inGame.isAllSelected(), team);
+        return new SelectCompleteDto(inGame.isAllSelected(), myTeam);
+    }
+
+    private void cancelOrder(InGamePlayer inGamePlayer, GameOrderDto[] orderList) {
+        int deleteOrder = inGamePlayer.getOrder();
+        orderList[deleteOrder - 1] = null;
+        inGamePlayer.saveOrder(0);
+    }
+
+    private GameOrderDto[] getOrderList(InGame inGame, Team team) {
+        return inGame.getTeamInfoData(team).getOrderList();
+    }
+
+    private void saveOrder(InGamePlayer inGamePlayer, int orderNumber, GameOrderDto[] orderList) {
+        int preOrderNumber = inGamePlayer.getOrder();
+        inGamePlayer.saveOrder(orderNumber);
+
+        if (preOrderNumber != 0) {
+            orderList[orderNumber - 1] = orderList[preOrderNumber - 1];
+            orderList[preOrderNumber - 1] = null;
+            return;
+        }
+
+        orderList[orderNumber - 1] = GameOrderDto.builder()
+                .memberId(inGamePlayer.getMemberId())
+                .nickname(inGamePlayer.getNickname())
+                .image(inGamePlayer.getImage()).build();
     }
 
     private GamePlayersInfoDto getTeamPlayersInfo(long gameId, Team team) {
@@ -133,9 +155,7 @@ public class GamePrepareService {
 
         List<PlayerDataDto> players = playerList.stream()
                 .map(inGamePlayer -> PlayerDataDto.toDto(inGamePlayer, team))
-                .sorted((o1, o2) -> o1.getOrder() == o2.getOrder()
-                        ? (int) (o1.getMemberId() - o2.getMemberId())
-                        : o1.getOrder() - o2.getOrder())
+                .sorted((o1, o2) -> (int) (o1.getMemberId() - o2.getMemberId()))
                 .collect(Collectors.toList());
 
         return GamePlayersInfoDto.builder()
@@ -174,7 +194,7 @@ public class GamePrepareService {
     private void checkLeaderRequest(InGame inGame, InGamePlayer inGamePlayer) {
         TeamInfoData teamInfoData = inGame.getTeamInfoData(inGamePlayer.getTeam());
         if (teamInfoData.getLeaderId() != inGamePlayer.getMemberId()) {
-            throw new CustomWebSocketException(GamePlayingErrorCode.CAN_COMPLETE_BY_LEADER);
+            throw new CustomWebSocketException(CAN_COMPLETE_BY_LEADER);
         }
     }
 
@@ -188,8 +208,10 @@ public class GamePrepareService {
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
     }
 
-    private boolean alreadySelectedOrderNumber(int orderNumber, TeamInfoData teamInfoData) {
-        return teamInfoData.getOrderList()[orderNumber - 1] != null;
+    private void checkAlreadySelectedNumber(int requestOrder, int playerOrder, GameOrderDto[] orderList) {
+        if (playerOrder != requestOrder && orderList[requestOrder - 1] != null) {
+            throw new CustomWebSocketException(ALREADY_SELECTED_ORDER_NUMBER);
+        }
     }
 
     private InGamePlayer getInGamePlayer(long gameId, Long memberId) {

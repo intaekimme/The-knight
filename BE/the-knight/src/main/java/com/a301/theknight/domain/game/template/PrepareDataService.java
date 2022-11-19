@@ -19,7 +19,6 @@ import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Random;
@@ -36,13 +35,12 @@ public class PrepareDataService extends GameDataService {
 
     public PrepareDataService(RedissonClient redissonClient, GameRedisRepository redisRepository,
                                   GameRepository gameRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
         this.gameRepository = gameRepository;
     }
 
     @Override
-    @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         Game game = getGame(gameId);
         if (!game.isCanStart()) {
@@ -51,7 +49,7 @@ public class PrepareDataService extends GameDataService {
         List<Player> players = game.getPlayers();
 
         makeAndSendLeader(gameId, messageService, players);
-        makeAndSendPlayer(gameId, messageService, players);
+        makeInGamePlayerData(gameId, players);
         makeAndSendWeapon(gameId, messageService, game);
         initInGameData(game);
     }
@@ -60,14 +58,6 @@ public class PrepareDataService extends GameDataService {
         GameWeaponData weaponData = makeWeaponsData(game);
         messageService.sendData(gameId, "/a/weapons", weaponData);
         messageService.sendData(gameId, "/b/weapons", weaponData);
-    }
-
-    private void makeAndSendPlayer(long gameId, SendMessageService messageService, List<Player> players) {
-        List<InGamePlayer> inGamePlayerList = makeInGamePlayerData(gameId, players);
-        GamePlayersInfoResponse response = getGamePlayerData(inGamePlayerList);
-
-        messageService.sendData(gameId, "/a/players", response.getPlayersAInfoDto());
-        messageService.sendData(gameId, "/b/players", response.getPlayersBInfoDto());
     }
 
     private void makeAndSendLeader(long gameId, SendMessageService messageService, List<Player> players) {
@@ -135,7 +125,16 @@ public class PrepareDataService extends GameDataService {
                 .maxMemberNum(game.getCapacity())
                 .teamAInfo(teamAInfo)
                 .teamBInfo(teamBInfo)
-                .turnData(new TurnData()).build());
+                .turnData(makeTurnData()).build());
+    }
+
+    private TurnData makeTurnData() {
+        TurnData turnData = new TurnData();
+        turnData.setAttackData(AttackData.builder().build());
+        turnData.setDefenseData(DefendData.builder().build());
+        turnData.setDoubtData(DoubtData.builder().build());
+
+        return turnData;
     }
 
     private Team getRandomFirstAttackTeam() {
@@ -146,7 +145,7 @@ public class PrepareDataService extends GameDataService {
         int peopleNum = game.getPlayers().size() / 2;
 
         return TeamInfoData.builder()
-                .currentAttackIndex(peopleNum - 1)
+                .currentAttackIndex(peopleNum - 1) //attacker 조회 로직에 의해 마지막 인덱스로 초기화
                 .orderList(new GameOrderDto[peopleNum])
                 .leaderId(leaderId == null ? 0 : leaderId).build();
     }
@@ -158,9 +157,9 @@ public class PrepareDataService extends GameDataService {
                         .nickname(player.getMember().getNickname())
                         .image(player.getMember().getImage())
                         .team(player.getTeam())
-                        .isLeader(player.isLeader())
-                        .leftCount(3)
-                        .rightCount(3).build()).collect(Collectors.toList());
+                        .leader(player.isLeader())
+                        .leftCount(0)
+                        .rightCount(0).build()).collect(Collectors.toList());
         redisRepository.saveInGamePlayerAll(gameId, inGamePlayers);
 
         return inGamePlayers;

@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { Grid } from "@mui/material";
 
+import styled from "../_css/Room.module.css";
 import RoomDisplay from "../components/room/RoomDisplay";
 import Chatting from "../commons/modal/chatting/Chatting";
 import {onPubEntry} from "../websocket/RoomPublishes";
@@ -16,7 +17,7 @@ export default function Room() {
 		onPubEntry({stompClient:stompClient, gameId:gameId});
 	}, []);
   return (
-		<Grid container>
+		<Grid container className={styled.imgRoom}>
 			<Grid item xs={12}><RoomDisplay size={size}/></Grid>
 			<Chatting size={size} stompClient={stompClient} gameId={gameId}/>
     </Grid>

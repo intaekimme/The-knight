@@ -1,12 +1,26 @@
+import { useSelector } from "react-redux";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import Box from "@mui/material/Box";
 import Sword from "./animation/Sword";
+import Shield from "./animation/Shield";
 
 export default function ExecutePhase() {
+  const playersDOM = useSelector((state) => state.game.playersDOM);
+  const executeInfo = useSelector((state) => state.game.executeInfo);
 
   return (
-    <div>
-      <Sword startX={500} startY={500} endX={0} endY={0} isOpp={true}></Sword>
+    <div sx={{ position: "relative" }}>
+      {playersDOM[executeInfo.attacker.memberId.toString()] && (
+        <Sword
+          from={executeInfo.attacker.memberId}
+          to={executeInfo.defender.memberId}
+        ></Sword>
+      )}
+      {playersDOM[executeInfo.attacker.memberId.toString()] && (
+        <Shield
+          defender={executeInfo.defender.memberId}
+        ></Shield>
+      )}
       <Box
         sx={{
           display: "flex",

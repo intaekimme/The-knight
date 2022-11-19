@@ -9,8 +9,11 @@ export default function AttackDoubtPhase() {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.game.me);
   const timer = useSelector((state) => state.game.timer).timer;
+  const players = useSelector((state) => state.game.players);
   const attackInfo = useSelector((state) => state.game.attackInfo);
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
+  const isDead = players.players.find((player) => (player.memberId === me.memberId)).isDead; 
+
   const weaponsKr = {
     SWORD: "검",
     TWIN: "쌍검",
@@ -22,10 +25,10 @@ export default function AttackDoubtPhase() {
     RIGHT: "오른쪽",
   };
 
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.game.me).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.game.me).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubDoubt = () => {
     // {
@@ -41,13 +44,11 @@ export default function AttackDoubtPhase() {
       },
       doubtStatus: "ATTACK_DOUBT",
     };
-    // stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
-    console.log(data);
+    stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
   };
 
   const onPubDoubtPass = () => {
-    // stompClient.send(api.pubDoubtPass(gameId), {}, {});
-    console.log("패스");
+    stompClient.send(api.pubDoubtPass(gameId), {}, {});
   };
 
   function clickDoubt() {
@@ -56,7 +57,6 @@ export default function AttackDoubtPhase() {
 
   function clickPass() {
     onPubDoubtPass();
-    dispatch(addDoubtPass());
   }
 
   useEffect(() => {
@@ -64,7 +64,7 @@ export default function AttackDoubtPhase() {
   }, []);
 
   function BoxRender() {
-    // 공격자가 우리 팀일 때
+    // 상대의 의심을 기다릴 때
     if (me.team === currentAttacker.team) {
       return (
         <Box
@@ -84,7 +84,26 @@ export default function AttackDoubtPhase() {
           </Box>
         </Box>
       );
-      // 공격자가 적팀일 때
+      // 우리 팀의 의심이지만, 나는 죽었을 때
+    } else if (isDead) {
+      return (
+        <Box
+          sx={{
+            width: "70vmin",
+            height: "40vmin",
+            backgroundColor: "#d9d9d9",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative",
+          }}
+        >
+          <Box sx={{ fontSize: "2.5vmin" }}>아군이 의심여부를 선택 중입니다</Box>
+          <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
+            제한시간 : {timer}
+          </Box>
+        </Box>
+      );
     } else {
       return (
         <Box
@@ -110,13 +129,13 @@ export default function AttackDoubtPhase() {
             }}
           >
             <Box
-              onClick={() => clickDoubt}
+              onClick={() => clickDoubt()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
                 backgroundColor: "#f0f0f0",
-                border: "7px solid #4d4d4d",
-                borderRadius: "10px",
+                border: ".65vmin solid #424242",
+                borderRadius: "1.3vmin",
                 fontSize: "3.5vmin",
                 display: "flex",
                 justifyContent: "center",
@@ -126,13 +145,13 @@ export default function AttackDoubtPhase() {
               의심
             </Box>
             <Box
-              onClick={() => clickPass}
+              onClick={() => clickPass()}
               sx={{
                 width: "10vmin",
                 height: "10vmin",
                 backgroundColor: "#f0f0f0",
-                border: "7px solid #4d4d4d",
-                borderRadius: "10px",
+                border: ".65vmin solid #424242",
+                borderRadius: "1.3vmin",
                 fontSize: "3.5vmin",
                 display: "flex",
                 justifyContent: "center",
@@ -157,6 +176,11 @@ export default function AttackDoubtPhase() {
       );
     }
   }
+    
+    
+    
+    
+    
 
   return (
     <Box

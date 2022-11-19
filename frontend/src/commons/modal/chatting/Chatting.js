@@ -1,10 +1,10 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, Modal, Box, Grid, TextareaAutosize } from "@mui/material";
-import MessageIcon from '@mui/icons-material/Message';
+import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import MinimizeIcon from '@mui/icons-material/Minimize';
 import {black, white, blue, red, yellow, lightBlue} from "../../../_css/ReactCSSProperties"; 
-import {chattingPosition, chattingHeader, chattingBody, chattingInput, chattingSendButton,
+import {chattingModalHeight, chattingPosition, chattingHeader, chattingBody, chattingInput, chattingSendButton,
   chattingBox, chattingAll, chattingA, chattingB, chattingMine, chattingOthers} from "../../../_css/ChattingCSSProperties"; 
 import { onPubChat } from "../../../websocket/RoomPublishes";
 
@@ -12,12 +12,15 @@ import { onPubChat } from "../../../websocket/RoomPublishes";
 export default function Chatting(props){
   const dispatch = useDispatch();
 
-  const chattingLog = useSelector(state=>state.chatting.chatting);
-
   // 채팅 모달
 	const [open, setOpen] = React.useState(false);
 	const onChattingOpen = () => setOpen(true);
 	const onChattingClose = () => setOpen(false);
+
+  // chatting data
+  const chattingLog = useSelector(state=>state.chatting.chatting);
+  const [chatScrollTop, setChatScrollTop] = React.useState(0);
+  const [chatScrollHeight, setChatScrollHeight] = React.useState(0);
 
   // 현재 방의 member들
   const members = useSelector(state=>state.room.usersInfo);
@@ -58,6 +61,24 @@ export default function Chatting(props){
       }
     }
   }, [members]);
+  
+  // 스크롤이 맨 아래에 있을 경우 자동 스크롤 down
+  React.useEffect(()=>{
+    const chattingBodyElement = document.getElementById("chattingBody");
+    if(chattingBodyElement && (chatScrollHeight - chatScrollTop) < (chattingModalHeight+10)){
+      chattingBodyElement.scrollTop = chattingBodyElement.scrollHeight;
+      setChatScrollTop(chattingBodyElement.scrollHeight);
+      setChatScrollHeight(chattingBodyElement.scrollHeight);
+    }
+  }, [chattingLog]);
+
+  //chatting scroll
+  const onChatScroll = (e)=>{
+    e.preventDefault();
+    const chattingBodyElement = e.target;
+    setChatScrollTop(chattingBodyElement.scrollTop);
+    setChatScrollHeight(chattingBodyElement.scrollHeight);
+  }
 
   // 키 판정
   const onKeyDown = (e)=>{
@@ -81,6 +102,8 @@ export default function Chatting(props){
     if(e.keyCode == 13 && e.shiftKey == false) {
       e.preventDefault();
       onMessageSend();
+      e.target.value="";
+      setInputMessage("");
     }
   }
 
@@ -92,6 +115,9 @@ export default function Chatting(props){
 
   // 메세지 전송
   const onMessageSend = ()=>{
+    if(!inputMessage || inputMessage===""){
+      return;
+    }
     const payload = {
       content : inputMessage,
       chattingSet : chattingKind,
@@ -104,7 +130,7 @@ export default function Chatting(props){
     <div sx={{position:"fixed", bottom:0, left:0}}>
       {open
       ? <div sx={{height:100}}/>
-      : <Button onClick={onChattingOpen} sx={{...chattingPosition, color:black, width:120}}><MessageIcon sx={{fontSize:100}}/></Button>
+      : <Button onClick={onChattingOpen} sx={{...chattingPosition, color:black, width:120}}><ChatBubbleIcon sx={{fontSize:100, color:white}}/></Button>
       }
       <Modal
         open={open}
@@ -120,7 +146,7 @@ export default function Chatting(props){
               <Grid item xs={10} sx={{fontSize:size/2, paddingLeft:5}}>채팅</Grid>
               <Grid item xs={2}><Button onClick={onChattingClose} sx={{color:red}}><MinimizeIcon sx={{fontSize:size/2}}/></Button></Grid>
             </Grid>
-            <Grid container item xs={12} alignItems="flex-end" sx={{...chattingBody}}>
+            <Grid id="chattingBody" container item xs={12} alignItems="flex-end" onScroll={onChatScroll} sx={{...chattingBody}}>
               {/* 채팅로그 */}
               {chattingLog.map((chat, index)=>{
                 {
@@ -155,14 +181,26 @@ export default function Chatting(props){
                     currentChatSx = {...currentChatSx, ...chattingOthers};
                     currentJustifyContent="flex-start";
                   }
-                  console.log(currentChatSx);
-                  return <Grid container item xs={12} justifyContent={currentJustifyContent} sx={{...currentChatSx, color:currentChatColor}}>{chat.nickname}<br/><Box sx={{...currentChatBox}}>{chat.content}</Box></Grid>
+                  
+                  const innerHTML = `<div>${chat.content.toString().replaceAll('\n', '</div><div>')}</div>`;
+                  const chatText = [...innerHTML.split('</div>')];
+                  return (
+                    <Grid key={`${chat}${index}`} container item xs={12} justifyContent={currentJustifyContent}
+                      sx={{...currentChatSx, color:currentChatColor}}>
+                      <Grid item xs={12}>{chat.nickname}</Grid>
+                      <Box sx={{...currentChatBox}}>
+                        {chatText.map((text, index)=>(
+                          <div key={`${chat}${text}${index}`}>{text.replace('<div>', '')}</div>
+                        ))}
+                      </Box>
+                    </Grid>
+                  );
                 }
               })}
             </Grid>
             <Grid container item xs={12} sx={{border:"1px solid black"}}>
               <Grid item xs={12} sx={{textAlign:"left", background:"#ADADAD"}}>
-                <Box sx={{paddingLeft:1, fontSize:size/1.5, border:"1px solid black", color:chattingColor}}>{chattingKind}</Box>
+                <Box sx={{paddingLeft:1, fontSize:size/1.5, border:"1px solid black", backgroundColor:chattingColor, color:white}}>{`To `}{chattingKind}</Box>
               </Grid>
               <Grid container item xs={12} sx={{...chattingInput, textAlign:"left", paddingTop:1}}>
                 <Grid item xs={9} sx={{position:"relative", top:"7%"}}>

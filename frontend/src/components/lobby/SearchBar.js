@@ -17,41 +17,41 @@ import RoomInfoModal from "../../commons/modal/RoomInfoModal";
 
 export default function SearchBar() {
   const dispatch = useDispatch();
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
   // 방설정 모달
   const [open, setOpen] = React.useState(false);
   const onRoomInfoModalOpen = () => setOpen(true);
   const onRoomInfoModalClose = () => setOpen(false);
-  
+
   // 방 정보
-	const roomData = useSelector((state) => state.room.roomInfo);
+  const roomData = useSelector((state) => state.room.roomInfo);
 
   // 방만들기 정보 update
-	const onRoomMake = (title, maxMember, itemCount)=>{
-		const tempRoomData = {...roomData};
-		tempRoomData.title = title;
-		tempRoomData.maxMember = maxMember;
-		tempRoomData.sword = itemCount[0];
-		tempRoomData.twin = itemCount[1];
-		tempRoomData.shield = itemCount[2];
-		tempRoomData.hand = itemCount[3];
+  const onRoomMake = (title, maxMember, itemCount) => {
+    const tempRoomData = { ...roomData };
+    tempRoomData.title = title;
+    tempRoomData.maxMember = maxMember;
+    tempRoomData.sword = itemCount[0];
+    tempRoomData.twin = itemCount[1];
+    tempRoomData.shield = itemCount[2];
+    tempRoomData.hand = itemCount[3];
     let sum = 0;
-    for(let i=0;i<itemCount.length;i++){
+    for (let i = 0; i < itemCount.length; i++) {
       sum += itemCount[i];
     }
-    if(maxMember === sum){
+    if (maxMember === sum) {
       dispatch(modifyRoomSetting(tempRoomData));
-      dispatch(initRoom({roomInfo:tempRoomData})).then((response)=>{
+      dispatch(initRoom({ roomInfo: tempRoomData })).then((response) => {
         const gameId = response.payload.gameId;
         navigate(api.routeConnectWebsocket(gameId));
       });
       onRoomInfoModalClose();
     }
-    else{
+    else {
       alert(`필요 아이템 개수 : ${maxMember} / 현재 아이템 개수 : ${sum}\n아이템 개수가 올바르지 않습니다`);
     }
-	}
+  }
 
   const [keyword, setKeyword] = React.useState();
   const onChangeValue = (e) => {
@@ -63,8 +63,24 @@ export default function SearchBar() {
     dispatch(searchRoom(keyword));
   }
 
+  //style
+  const btnMakeRoom = {
+    width: '120px',
+    height: '40px',
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#4F585B',
+    bgcolor: '#fff',
+    border: '0.5px solid #4F585B',
+    '&:hover': {
+      color: '#fff',
+      bgcolor: '#4F585B',
+      border: '0px solid #DCD7C9',
+    }
+  }
+
   return (
-    <Grid container sx={{ pt: 2 }} spacing={3}>
+    <Grid container sx={{ pt: 6 }} spacing={3}>
       <Grid item xs={3}></Grid>
       <Grid item sx={{ p: '2px 4px', display: 'flex', justifyContent: 'center' }} xs={6} >
         <Paper
@@ -73,18 +89,18 @@ export default function SearchBar() {
         >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
-            placeholder="Search Game"
+            placeholder="방 검색"
             inputProps={{ 'aria-label': 'search game' }}
             onChange={onChangeValue}
           />
-          <IconButton type="button" sx={{ p: '10px' }} aria-label="search" onClick={searchGameRoom}>
+          <IconButton type="button" sx={{ p: '10px', color: "#4F585B" }} aria-label="search" onClick={searchGameRoom}>
             <SearchIcon />
           </IconButton>
         </Paper>
       </Grid>
       <Grid item xs={3} sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', justifyContent: 'end' }}>
-        <Button variant="outlined" onClick={onRoomInfoModalOpen}>방 만들기</Button>
-        <RoomInfoModal canEdit={true} roomData={roomInit} open={open} onClose={ onRoomInfoModalClose } onConfirm={onRoomMake}/>
+        <Button variant="outlined" onClick={onRoomInfoModalOpen} sx={btnMakeRoom}>방 만들기</Button>
+        <RoomInfoModal canEdit={true} roomData={roomInit} open={open} onClose={onRoomInfoModalClose} onConfirm={onRoomMake} />
       </Grid>
     </Grid>
   )

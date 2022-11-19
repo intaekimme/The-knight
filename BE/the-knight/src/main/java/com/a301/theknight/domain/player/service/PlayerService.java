@@ -2,14 +2,12 @@ package com.a301.theknight.domain.player.service;
 
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
-import com.a301.theknight.domain.game.entity.redis.InGame;
-import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
-import com.a301.theknight.domain.game.entity.redis.TurnData;
+import com.a301.theknight.domain.game.entity.redis.*;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
-import com.a301.theknight.domain.player.dto.*;
+import com.a301.theknight.domain.player.dto.ReadyDto;
 import com.a301.theknight.domain.player.dto.request.PlayerReadyRequest;
 import com.a301.theknight.domain.player.dto.request.PlayerTeamRequest;
 import com.a301.theknight.domain.player.dto.response.PlayerEntryResponse;
@@ -23,6 +21,7 @@ import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.MemberErrorCode;
 import com.a301.theknight.global.error.errorcode.PlayerErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,13 +41,14 @@ public class PlayerService {
 
     @Transactional
     public PlayerEntryResponse entry(long gameId, long memberId){
-        Game entryGame = getGame(gameId);
+        Game entryGame = getGameFetchJoin(gameId);
         if(!isWaiting(entryGame)){
-            throw new CustomRestException(GAME_IS_NOT_READY_STATUS);
+            throw new CustomWebSocketException(GAME_IS_NOT_READY_STATUS);
         }
         if(!isEnterPossible(entryGame)){
-            throw new CustomRestException(CAN_NOT_ACCOMMODATE);
+            throw new CustomWebSocketException(CAN_NOT_ACCOMMODATE);
         }
+        checkAlreadyEntry(memberId, entryGame);
 
         Member entryMember = getMember(memberId);
         Member owner = entryGame.getOwner().getMember();
@@ -65,12 +65,20 @@ public class PlayerService {
                 .image(entryMember.getImage()).build();
     }
 
+    private void checkAlreadyEntry(long memberId, Game entryGame) {
+        entryGame.getPlayers().forEach(player -> {
+            if (player.getMember().getId().equals(memberId)) {
+                throw new CustomWebSocketException(PLAYER_IS_ALREADY_ENTRY);
+            }
+        });
+    }
+
     @Transactional
     public PlayerExitDto exit(long gameId, long memberId){
         Game findGame = getGame(gameId);
 
         if(!isWaiting(findGame)){
-            throw new CustomRestException(GAME_IS_NOT_READY_STATUS);
+            throw new CustomWebSocketException(GAME_IS_NOT_READY_STATUS);
         }
         Member findMember = getMember(memberId);
         Player exitPlayer = getPlayer(findGame, findMember);
@@ -108,10 +116,10 @@ public class PlayerService {
 
         if(isOwner(findGame, readyPlayer)){
             if (!isEqualPlayerNum(findGame)) {
-                throw new CustomRestException(NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
+                throw new CustomWebSocketException(NUMBER_OF_PLAYERS_ON_BOTH_TEAM_IS_DIFFERENT);
             }
             if (!isAllReady(findGame)) {
-                throw new CustomRestException(NOT_All_USERS_ARE_READY);
+                throw new CustomWebSocketException(NOT_All_USERS_ARE_READY);
             }
             findGame.changeStatus(GameStatus.PLAYING);
             redisRepository.saveInGame(findGame.getId(), makeInGame(findGame));
@@ -131,6 +139,11 @@ public class PlayerService {
 
     private Game getGame(long gameId) {
         return gameRepository.findById(gameId)
+                .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
+    }
+
+    private Game getGameFetchJoin(long gameId) {
+        return gameRepository.findByIdFetchJoin(gameId)
                 .orElseThrow(() -> new CustomRestException(GameErrorCode.GAME_IS_NOT_EXIST));
     }
 
@@ -174,8 +187,18 @@ public class PlayerService {
                 .gameStatus(GameStatus.PREPARE)
                 .maxMemberNum(game.getCapacity())
                 .teamAInfo(TeamInfoData.builder().build())
-                .teamBInfo(TeamInfoData.builder().build()).build();
+                .teamBInfo(TeamInfoData.builder().build())
+                .turnData(makeTurnData()).build();
 
         return redisRepository.saveInGame(game.getId(), initInGame);
+    }
+
+    private TurnData makeTurnData() {
+        TurnData turnData = new TurnData();
+        turnData.setAttackData(AttackData.builder().build());
+        turnData.setDefenseData(DefendData.builder().build());
+        turnData.setDoubtData(DoubtData.builder().build());
+
+        return turnData;
     }
 }

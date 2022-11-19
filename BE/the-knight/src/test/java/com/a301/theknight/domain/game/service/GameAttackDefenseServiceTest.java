@@ -216,7 +216,7 @@ class GameAttackDefenseServiceTest {
         given(gameRedisRepository.getInGamePlayer(1L, 1L)).willReturn(Optional.of(attacker));
 
         //  when
-        gameAttackDefenseService.isAttackPass(1L, 1L);
+        gameAttackDefenseService.checkAttackPass(1L, 1L);
 
         //  then
 
@@ -229,7 +229,7 @@ class GameAttackDefenseServiceTest {
         inGame.changeStatus(GameStatus.DEFENSE);
         // when
         // then
-        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.isAttackPass(1L, 1L));
+        assertThrows(CustomWebSocketException.class, () -> gameAttackDefenseService.checkAttackPass(1L, 1L));
     }
 
     @DisplayName("방어 / 손에 들고 있는 방패로 방어")
@@ -244,7 +244,7 @@ class GameAttackDefenseServiceTest {
         gameAttackDefenseService.defense(1L, 2L, defenseRequest);
         //  then
         assertEquals(2L, inGame.getTurnData().getDefenderId());
-        assertFalse(inGame.getTurnData().isLyingDefend());
+        assertFalse(inGame.getTurnData().isLyingDefense());
         assertEquals(GameStatus.DEFENSE_DOUBT, inGame.getGameStatus());
     }
 
@@ -258,14 +258,14 @@ class GameAttackDefenseServiceTest {
         //  when
         gameAttackDefenseService.defense(1L, 2L, defenseRequest);
         //  then
-        assertTrue(inGame.getTurnData().isLyingDefend());
+        assertTrue(inGame.getTurnData().isLyingDefense());
     }
     @DisplayName("방어 조회")
     @Test
     void getDefenseInfo() {
         //  given
         DefendData defendData = new DefendData(Hand.LEFT, 3);
-        inGame.getTurnData().setDefendData(defendData);
+        inGame.getTurnData().setDefenseData(defendData);
         given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
 
         //  when
@@ -284,13 +284,13 @@ class GameAttackDefenseServiceTest {
         inGame.changeStatus(GameStatus.DEFENSE);
 
         DefendData defendData = new DefendData(Hand.LEFT, 3);
-        inGame.getTurnData().setDefendData(defendData);
+        inGame.getTurnData().setDefenseData(defendData);
 
         given(gameRedisRepository.getInGamePlayer(1L, 2L)).willReturn(Optional.of(defender));
         //  when
         gameAttackDefenseService.isDefensePass(1L, 2L);
         //  then
-        assertTrue(inGame.getTurnData().getDefendData().isDefendPass());
+        assertTrue(inGame.getTurnData().getDefenseData().isDefendPass());
         assertEquals(GameStatus.EXECUTE, inGame.getGameStatus());
     }
 

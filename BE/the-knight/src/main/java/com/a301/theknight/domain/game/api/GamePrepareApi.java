@@ -62,7 +62,7 @@ public class GamePrepareApi {
             return;
         }
 
-        GameOrderResponse orderResponse = gamePrepareService.choiceOrder(gameId, memberId, requestTeam, gameOrderRequest);
+        GameOrderResponse orderResponse = gamePrepareService.saveOrder(gameId, memberId, requestTeam, gameOrderRequest);
         if (orderResponse != null) {
             sendOrderResponse(gameId, requestTeam, orderResponse);
         }

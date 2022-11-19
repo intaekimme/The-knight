@@ -14,6 +14,11 @@ public class DoubtData {
     private long suspectedId;
     private DoubtStatus doubtStatus;
     private Hand doubtHand;
-    private boolean doubtResult;
+    private boolean doubtSuccess;
     private boolean deadLeader;
+    private int doubtPassCount;
+
+    public void addPassCount() {
+        doubtPassCount++;
+    }
 }

@@ -23,7 +23,10 @@ export default function RoomDisplay(props) {
   return (
 		<Box sx={{display: "flex", flexDirection: "column", alignItems: "center", minWidth:size*35, height: size*23}}>
 			<RoomHeader stompClient={stompClient} memberDatas={memberDatas} roomData={roomData} size={size}/>
-			<RoomUser stompClient={stompClient} memberDatas={memberDatas} roomData={roomData} size={size}/>
+			<Grid container>
+				<Grid item xs={11}><RoomUser stompClient={stompClient} memberDatas={memberDatas} roomData={roomData} size={size}/></Grid>
+				<Grid item xs={1}></Grid>
+			</Grid>
 		</Box>
   );
 }

@@ -5,8 +5,7 @@ import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtRequest;
-import com.a301.theknight.domain.game.dto.doubt.response.DoubtPassResponse;
-import com.a301.theknight.domain.game.entity.GameStatus;
+import com.a301.theknight.domain.game.dto.doubt.response.DoubtPassDto;
 import com.a301.theknight.domain.game.service.GameAttackDefenseService;
 import com.a301.theknight.domain.game.service.GameDoubtService;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +34,7 @@ public class GamePlayingApi {
 
     @MessageMapping(value = "/games/{gameId}/attack-pass")
     public void attackPass(@Min(1) @DestinationVariable long gameId,  @LoginMemberId long memberId) {
-        gameAttackDefenseService.isAttackPass(gameId, memberId);
+        gameAttackDefenseService.checkAttackPass(gameId, memberId);
 
         messageService.convertCall(gameId);
     }
@@ -58,7 +57,6 @@ public class GamePlayingApi {
     // DoubtApi 3개
     @MessageMapping(value = "/games/{gameId}/doubt")
     public void doubt(@Min(1) @DestinationVariable long gameId, @Valid GameDoubtRequest doubtRequest, @LoginMemberId long memberId) {
-        GameStatus curStatus = doubtRequest.getDoubtStatus();
         gameDoubtService.doubt(gameId, memberId, doubtRequest.getSuspected().getMemberId(), doubtRequest.getDoubtStatus());
 
         messageService.convertCall(gameId);
@@ -66,11 +64,13 @@ public class GamePlayingApi {
 
     @MessageMapping(value = "/games/{gameId}/doubt-pass")
     public void doubtPass(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId) {
-        DoubtPassResponse doubtPassResponse = gameDoubtService.doubtPass(gameId, memberId);
+        DoubtPassDto doubtPassDto = gameDoubtService.doubtPass(gameId, memberId);
 
-        if(doubtPassResponse != null)
-            messageService.sendData(gameId, "/doubt-pass", doubtPassResponse);
-        messageService.convertCall(gameId);
+        if (doubtPassDto.isFullCount()) {
+            messageService.convertCall(gameId);
+        } else {
+            messageService.sendData(gameId, "/doubt-pass", doubtPassDto.getDoubtPassResponse());
+        }
     }
 
 }

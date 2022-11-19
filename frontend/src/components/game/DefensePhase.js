@@ -8,10 +8,12 @@ export default function DefensePhase() {
   const timer = useSelector((state) => state.game.timer).timer;
   const attackInfo = useSelector((state) => state.game.attackInfo);
   const currentDefender = useSelector((state) => state.game.currentDefender);
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.game.me).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.game.me).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
   const weaponsKr = {
     SWORD: "검",
     TWIN: "쌍검",
@@ -30,12 +32,12 @@ export default function DefensePhase() {
     const data = {
       hand: payload
     }
-    // stompClient.send(api.pubDefense(gameId), {}, JSON.stringify(data));
+    stompClient.send(api.pubDefense(gameId), {}, JSON.stringify(data));
     console.log(data)
   }
 
   const onPubDefensePass = () => {
-    // stompClient.send(api.pubDefensePass(gameId), {}, {});
+    stompClient.send(api.pubDefensePass(gameId), {}, {});
     console.log("패스!")
   }
 
@@ -94,8 +96,8 @@ export default function DefensePhase() {
                     width: "10vmin",
                     height: "10vmin",
                     backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
                   }}
                 >
                   shield
@@ -115,8 +117,8 @@ export default function DefensePhase() {
                     width: "10vmin",
                     height: "10vmin",
                     backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
                   }}
                 >
                   shield
@@ -132,8 +134,8 @@ export default function DefensePhase() {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                border: "7px solid #4d4d4d",
-                borderRadius: "10px",
+                border: ".65vmin solid #424242",
+                borderRadius: "1.3vmin",
                 fontSize: "3vmin",
               }}
             >

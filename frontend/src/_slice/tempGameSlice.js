@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
 import axios from 'axios';
+import GoogleLogin from '../commons/login/GoogleLogin';
 
 // const gameListSliceInit = {
 //   gameList: [
@@ -92,6 +93,9 @@ const gameListAll = createAsyncThunk('gameList/gameListAll', async (page) => {
     return res.data;
   } catch (err) {
     console.log(err);
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
   }
 })
 const searchRoom = createAsyncThunk('gameList/searchRoom', async (keyword) => {
@@ -104,6 +108,9 @@ const searchRoom = createAsyncThunk('gameList/searchRoom', async (keyword) => {
     return res.data;
   } catch (err) {
     console.log(err);
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
   }
 })
 
@@ -116,6 +123,9 @@ const gameDesc = createAsyncThunk('gameList/gameDesc', async (gameId) => {
     return res.data;
   } catch (err) {
     console.log(err);
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
     return err;
   }
 })

@@ -3,8 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import api from '../../api/api';
 import {enterRoomSubscribe, exitRoom} from '../../_slice/websocketSlice';
-import {addChatting} from '../../_slice/chattingSlice';
-import { getRoomInfo, modifyRoomSetting, setState, setMembers, changeTeam, changeReady } from '../../_slice/roomSlice';
+import {initChatting, addChatting} from '../../_slice/chattingSlice';
+import { initRoomSetting, getRoomInfo, modifyRoomSetting, setState, setMembers, changeTeam, changeReady } from '../../_slice/roomSlice';
 // import {onSubModifyRoom, onSubState, onSubChatAll, onSubChatTeam, onSubEntry,
 //   onSubMembers, onSubSelectTeam, onSubReady, onSubExit} from '../../websocket/RoomReceivers';
 import { onPubMembers, onPubExit } from '../../websocket/RoomPublishes';
@@ -49,7 +49,7 @@ export default function EnterRoom(){
     //    (ALL, A, B)
     // }
     const data = JSON.parse(payload.body);
-    console.log("전채 채팅 sub", data);
+    console.log("전체 채팅 sub", data);
     const text = `${data.nickname} : ${data.content}`;
     console.log(text);
     dispatch(addChatting(data));
@@ -231,7 +231,9 @@ export default function EnterRoom(){
     }
   },[isSetting]);
   
-  React.useEffect(()=>{
+  React.useEffect(() => {
+    dispatch(initRoomSetting());
+		dispatch(initChatting());
     dispatch(enterRoomSubscribe(payload)).then((response)=>{
       console.log(response);
       //room 정보 요청 후 update

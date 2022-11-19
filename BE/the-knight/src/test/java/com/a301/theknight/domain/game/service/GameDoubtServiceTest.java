@@ -58,14 +58,14 @@ class GameDoubtServiceTest {
             suspects.add(i, InGamePlayer.builder()
                     .memberId((long)(i))
                     .team(Team.A)
-                    .isLeader(false)
+                    .leader(false)
                     .build());
         }
 
         suspected = InGamePlayer.builder()
                 .memberId(4L)
                 .team(Team.B)
-                .isLeader(false)
+                .leader(false)
                 .build();
         suspected.randomChoiceWeapon(Weapon.SWORD);
         suspected.randomChoiceWeapon(Weapon.TWIN);
@@ -116,7 +116,7 @@ class GameDoubtServiceTest {
 
         assertEquals(0, inGame.getTurnData().getDoubtData().getSuspectId());
         assertEquals(4L, inGame.getTurnData().getDoubtData().getSuspectedId());
-        assertFalse(inGame.getTurnData().getDoubtData().isDoubtResult());
+        assertFalse(inGame.getTurnData().getDoubtData().isDoubtSuccess());
         assertEquals(DoubtStatus.ATTACK, inGame.getTurnData().getDoubtData().getDoubtStatus());
     }
 
@@ -129,7 +129,7 @@ class GameDoubtServiceTest {
 
         DoubtResponseDto doubtResponseDto =  gameDoubtService.getDoubtInfo(1L);
 
-        assertFalse(doubtResponseDto.getDoubtResponse().isDoubtResult());
+        assertFalse(doubtResponseDto.getDoubtResponse().isDoubtSuccess());
         assertEquals(GameStatus.DEFENSE, doubtResponseDto.getDoubtStatus());
         assertEquals("A", doubtResponseDto.getDoubtResponse().getDoubtTeam());
     }

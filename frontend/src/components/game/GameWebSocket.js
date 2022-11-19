@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { switchIsLoading } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import {
   setMe,
@@ -32,7 +31,6 @@ export default function GameWebSocket() {
   const myId = parseInt(window.localStorage.getItem("memberId"));
   const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === myId).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
-  const currentPhase = useSelector((state) => state.game.phase);
 
   // sub 함수
 
@@ -65,13 +63,14 @@ export default function GameWebSocket() {
   // 최초 화면전환 요청
   const onSubConvert = (payload) => {
     // {
+    //   preStatus: String, 
     //   gameStatus : String,
     // }
     const data = JSON.parse(payload.body);
     const nextPhase = data.gameStatus;
 
     // 기존 phase 구독 끊기
-    dispatch(cancelSubscribe(currentPhase))
+    dispatch(cancelSubscribe(data.preStatus))
 
     // 다음 phase에 필요한 구독
     if (nextPhase === "PREPARE") {
@@ -136,12 +135,9 @@ export default function GameWebSocket() {
     //   limitTime: long,
     // }
     const data = JSON.parse(payload.body);
+
     dispatch(fetchPhase(data.gameStatus));
     dispatch(setTimer(data.limitTime));
-
-    if (data.gameStatus === "PREPARE") {
-      dispatch(switchIsLoading())
-    }
 
     const intervalObject = setInterval(() => {
       // 1초씩 감소
@@ -321,7 +317,7 @@ export default function GameWebSocket() {
     //       hand: String
     //     }
     //     doubtTeam: String (A,B),
-    //     doubtResult: boolean
+    //     doubtSuccess: boolean
     //   },
     //   doubtStatus : String (ATTACK_DOUBT, DEFENSE_DOUBT)
     // }
@@ -354,12 +350,18 @@ export default function GameWebSocket() {
     dispatch(fetchExecuteInfo(data));
   };
 
+  const onSubError = (payload) => { 
+    const data = JSON.parse(payload.body)
+    console.log(data)
+  }
+
   useEffect(() => {
     // for common
     stompClient.subscribe(api.subPlayersInfo(gameId, myTeam), onSubPlayersInfo);
     stompClient.subscribe(api.subConvert(gameId), onSubConvert);
     stompClient.subscribe(api.subNextPhase(gameId), onSubNextPhase);
     stompClient.subscribe(api.subEnd(gameId), onSubEnd);
+    stompClient.subscribe(api.subError(gameId), onSubError);
 
     // for prepare
     const subLeader = stompClient.subscribe(api.subLeader(gameId, myTeam), onSubLeader);

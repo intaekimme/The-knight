@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../api/api";
 import axios from 'axios';
+import GoogleLogin from '../commons/login/GoogleLogin';
 
 const fetchRankAll = createAsyncThunk('fetchRankAll', async () => {
   try {
@@ -9,6 +10,9 @@ const fetchRankAll = createAsyncThunk('fetchRankAll', async () => {
     });
     return res.data;
   } catch (err) {
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
     return err;
   }
 })
@@ -20,6 +24,9 @@ const searchRank = createAsyncThunk('searchRank', async (keyword) => {
     console.log("get searched rank", res.data);
     return res.data;
   } catch (err) {
+    if (err.response.status === 401) {
+      GoogleLogin();
+    }
     return err;
   }
 })

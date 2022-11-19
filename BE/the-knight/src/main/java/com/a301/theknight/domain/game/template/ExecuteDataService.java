@@ -10,6 +10,7 @@ import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
@@ -20,30 +21,32 @@ public class ExecuteDataService extends GameDataService {
     private final GameRedisRepository redisRepository;
 
     public ExecuteDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
     }
 
     @Override
+    @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
         TurnData turnData = inGame.getTurnData();
 
         InGamePlayer defender = getInGamePlayer(gameId, turnData.getDefenderId());
         AttackData attackData = turnData.getAttackData();
-        DefendData defendData = turnData.getDefendData();
+        DefendData defendData = turnData.getDefenseData();
 
         int defendCount = defendData.getShieldCount();
         boolean isDefendPass = defendData.isDefendPass();
 
         Weapon attackWeapon = attackData.getWeapon();
-        int resultCount = defendCount - attackWeapon.getCount();
-        if (resultCount < 0 || isDefendPass) {
+        int resultCount = defendCount + attackWeapon.getCount();
+        if (resultCount > 3 || isDefendPass) {
             defender.death();
         } else {
             defender.changeCount(resultCount, defendData.getDefendHand());
         }
 
+        inGame.addTurn();
         redisRepository.saveInGame(gameId, inGame);
         redisRepository.saveInGamePlayer(gameId, defender.getMemberId(), defender);
 
@@ -54,18 +57,18 @@ public class ExecuteDataService extends GameDataService {
     private GameExecuteResponse getGameExecuteResponse(InGame inGame, InGamePlayer defender, int nextCount) {
         TurnData turnData = inGame.getTurnData();
         AttackData attackData = turnData.getAttackData();
-        DefendData defendData = turnData.getDefendData();
+        DefendData defendData = turnData.getDefenseData();
 
         AttackerDto attackerDto = AttackerDto.builder()
                 .memberId(turnData.getAttackerId())
-                .hand(attackData.getAttackHand().name())
-                .weapon(attackData.getWeapon().name())
+                .hand(attackData.getAttackHand())
+                .weapon(attackData.getWeapon())
                 .build();
         DefenderDto defenderDto = DefenderDto.builder()
                 .memberId(turnData.getDefenderId())
-                .hand(defendData.getDefendHand().name())
+                .hand(defendData.getDefendHand())
                 .isDead(defender.isDead())
-                .restCount(nextCount)
+                .hitCount(nextCount)
                 .build();
 
         return GameExecuteResponse.builder()

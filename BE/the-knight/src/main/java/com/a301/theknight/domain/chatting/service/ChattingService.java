@@ -49,11 +49,15 @@ public class ChattingService {
     }
 
     private void sendCheckOtherTeam(Member member, Game game, ChattingSet chattingSet) {
+        if (ChattingSet.ALL.equals(chattingSet)) {
+            return;
+        }
         Player player = game.getPlayers().stream()
-                .filter(p -> p.getMember().getId().equals(member))
+                .filter(p -> p.getMember().getId().equals(member.getId()))
                 .findFirst()
                 .orElseThrow(() -> new CustomWebSocketException(PlayerErrorCode.PLAYER_IS_NOT_EXIST));
-        if (!ChattingSet.ALL.equals(chattingSet) && isOtherTeam(chattingSet, player)) {
+
+        if (isOtherTeam(chattingSet, player)) {
             throw new CustomWebSocketException(ChattingErrorCode.CAN_NOT_SEND_OTHER_TEAM);
         }
     }

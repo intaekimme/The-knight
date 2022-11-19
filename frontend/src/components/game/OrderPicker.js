@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
-import api from "../../api/api"
+import api from "../../api/api";
 import Player from "./Player";
-import Grid from "@mui/material/Grid";
+import { Grid, Box } from "@mui/material";
 
 function OrderPicker() {
   const players = useSelector((state) => state.game.players);
@@ -13,15 +13,17 @@ function OrderPicker() {
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
+  const playerSize = "10vmin"
+
   const onPubOrder = (payload) => {
     // {
     //   orderNumber : int
     // }
     const data = {
-      orderNumber: payload
-    }
+      orderNumber: payload,
+    };
     stompClient.send(api.pubOrder(gameId, myTeam), {}, JSON.stringify(data));
-  }
+  };
 
   function onClick(order) {
     onPubOrder(order + 1);
@@ -37,23 +39,37 @@ function OrderPicker() {
           key={i}
           sx={{ display: "flex", justifyContent: "center" }}
         >
-          <div
+          <Box
             onClick={() => onClick(i)}
-            style={{
+            sx={{
               width: "12vmin",
               height: "12vmin",
               ...(isSelectComplete
                 ? { backgroundColor: "#646464" }
                 : { backgroundColor: "#f0f0f0" }),
-              border: "7px solid #7406FF",
-              borderRadius: "10px",
+              border: ".65vmin solid #424242",
+              borderLeftWidth: "4vmin",
+              borderRadius: "1.3vmin",
               display: "flex",
-              justifyContent: "center"
+              justifyContent: "center",
+              alignItems: "center",
+              position: "relative",
             }}
           >
-            {i + 1}
-            {order[i] ? <Player player={order[i]}></Player> : null}
-          </div>
+            <Box
+              sx={{
+                position: "absolute",
+                left: "-2.7vmin",
+                top: "50%",
+                transform: "translate(0, -50%)",
+                color: "white",
+                fontSize: "2.5vmin"
+              }}
+            >
+              {i + 1}
+            </Box>
+            {order[i] ? <Player player={order[i]} size={playerSize}></Player> : null}
+          </Box>
         </Grid>
       );
     }

@@ -26,8 +26,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Slf4j
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -91,7 +89,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(DomainProperties domainProperties) {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.addAllowedOrigin(domainProperties.getMain());
+        domainProperties.getMain()
+                .forEach(configuration::addAllowedOrigin);
         configuration.addAllowedOrigin(domainProperties.getLocal());
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");

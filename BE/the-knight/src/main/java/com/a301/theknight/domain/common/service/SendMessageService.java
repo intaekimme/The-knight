@@ -34,7 +34,10 @@ public class SendMessageService {
 
     public void convertCall(long gameId) {
         ConvertResponse response = gameConvertUtil.convertScreen(gameId);
-        sendData(gameId, "/convert", response);
+        if (response != null) {
+            log.info(" <<-- [Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
+            sendData(gameId, "/convert", response);
+        }
     }
 
     public void convertCall(long gameId, long delayMillis) {
@@ -44,12 +47,6 @@ public class SendMessageService {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void forceConvertCall(long gameId) {
-        ConvertResponse response = gameConvertUtil.forceConvertScreen(gameId);
-        log.info(" <<-- [Force Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
-        sendData(gameId, "/convert", response);
     }
 
     public void proceedCall(long gameId, long delayMillis) {

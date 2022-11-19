@@ -12,6 +12,7 @@ import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_PLAYER_IS_NOT_EXIST;
@@ -22,19 +23,17 @@ public class DoubtResultDataService extends GameDataService {
     private final GameRedisRepository redisRepository;
 
     public DoubtResultDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient);
+        super(redissonClient, redisRepository);
         this.redisRepository = redisRepository;
     }
 
     @Override
+    @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
         DoubtData doubtData = inGame.getTurnData().getDoubtData();
 
         DoubtResponse doubtResponse = makeDoubtResponse(gameId, doubtData);
-
-        inGame.clearDoubtData();
-        redisRepository.saveInGame(gameId, inGame);
 
         DoubtResponseDto response = new DoubtResponseDto(doubtResponse, inGame.getGameStatus());
         messageService.sendData(gameId, "/doubt-info", response);
@@ -48,7 +47,7 @@ public class DoubtResultDataService extends GameDataService {
                 .suspect(DoubtPlayerDto.toDto(suspect))
                 .suspected(SuspectedPlayerDto.toDto(suspected, doubtData.getDoubtHand()))
                 .doubtTeam(suspect.getTeam().name())
-                .doubtResult(doubtData.isDoubtResult()).build();
+                .doubtSuccess(doubtData.isDoubtSuccess()).build();
     }
 
     private InGamePlayer getInGamePlayer(long gameId, long memberId) {

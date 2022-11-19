@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { over, Client } from "stompjs";
 import SockJS from "sockjs-client";
 import api from '../api/api';
+import GoogleLogin from '../commons/login/GoogleLogin';
 
 const connectWebsocket = createAsyncThunk('websocket/connectWebsocket', async (props, { rejectWithValue }) => {
   try {
