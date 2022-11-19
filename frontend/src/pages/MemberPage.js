@@ -29,19 +29,26 @@ export default function MemberPage() {
     )
   }
   return (
-    <div className={styled.imgMypage}>
-      <Container fixed>
-        {!clickUpdate
+    <>
+      {
+        !clickUpdate
           ?
-          <Grid sx={{ pb: 1 }}>
-            <MemberInfoForm updateProfile={updateProfile} />
+          <div className={styled.imgMypage}>
+            <Container fixed>
+              <Grid sx={{ pb: 1 }}>
+                <MemberInfoForm updateProfile={updateProfile} />
 
-            <CurrentRecord />
-          </Grid>
+                <CurrentRecord />
+              </Grid>
+            </Container>
+          </div>
           :
-          <UpdateMemInfo />
-        }
-      </Container>
-    </div>
+          <div className={styled.imgModi}>
+            <Container fixed>
+              <UpdateMemInfo />
+            </Container>
+          </div>
+      }
+    </>
   );
 }

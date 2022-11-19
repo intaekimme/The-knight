@@ -47,10 +47,10 @@ export default function RankTable() {
           autoHeight={true}
           />
       </Paper> */}
-      <TableContainer sx={{mt:2}}>
+      <TableContainer sx={{ mt: 2, borderRadius: 1, boxShadow: '1px 1px 10px 5px #424242' }}>
         <Table aria-label="simple table">
           <TableHead>
-            <TableRow sx={{bgcolor: '#fff', opacity: 0.6}}>
+            <TableRow sx={{ bgcolor: '#fff', opacity: 0.6 }}>
               <TableCell align="left" sx={{ ...headerT, pl: 3.5 }} style={{ width: 210 }}>랭킹</TableCell>
               <TableCell align="left" sx={{ ...headerT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>닉네임</TableCell>
               <TableCell align="center" style={{ ...headerT, width: 210 }}>점수</TableCell>
@@ -61,7 +61,7 @@ export default function RankTable() {
               ? rankRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : rankRows
             ).map((row, i) => (
-              <TableRow key={i} sx={{bgcolor: '#424242', opacity: 0.7}}>
+              <TableRow key={i} sx={{ bgcolor: '#424242', opacity: 0.7 }}>
                 <TableCell align="left" sx={{ ...dataStyle, pl: 5 }}>{row.ranking}</TableCell>
                 <TableCell align="center" sx={{ ...dataNameStyle, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ListItem sx={{ pl: 30 }}>
@@ -78,7 +78,7 @@ export default function RankTable() {
             ))}
           </TableBody>
           <TableFooter>
-            <TableRow sx={{bgcolor:'#fff', opacity: 0.6}}>
+            <TableRow sx={{ bgcolor: '#fff', opacity: 0.6 }}>
               <TablePagination
                 count={rankRows.length}
                 page={page}

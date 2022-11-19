@@ -23,13 +23,13 @@ export default function MemberInfoForm({ updateProfile }) {
         <Avatar
           alt="Remy Sharp"
           src={memberInfo.image}
-          sx={{ width: 250, height: 250, memberImg }}
-          style={{ border: "2px solid #DCD7C9" }}
+          sx={{ width: 250, height: 250, bgcolor: '#000', memberImg }}
+          style={{ border: "1px solid #DCD7C9", boxShadow: '2px 2px 10px #424242' }}
         >
         </Avatar>
       </Grid>
       <Grid item xs={7}>
-        <Card sx={{ ...cardMem, pt: 3, pb: 3, pl: 22, ml: '-150px' }}>
+        <Card sx={{ ...cardMem, pt: 4, pb: 3, pl: 22, ml: '-150px' }}>
           <Grid container direction="column" spacing={2}>
             <Grid item sx={formMem}>
               닉네임: {memberInfo.nickname}
