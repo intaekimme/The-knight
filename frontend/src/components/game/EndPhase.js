@@ -32,6 +32,12 @@ export default function EndPhase() {
     endBGMAudio.play();
   }, [])
 
+  useEffect(() => {
+    return () => {
+      endBGMAudio.pause();
+    }
+  }, []);
+
   function BoxRender() {
     return (
       <Paper
