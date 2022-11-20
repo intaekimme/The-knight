@@ -2,6 +2,7 @@ package com.a301.theknight.domain.game.util;
 
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.global.error.errorcode.DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class GameLockUtil {
@@ -18,6 +20,7 @@ public class GameLockUtil {
 
     public void dataLock(long gameId, long waitTime, long leaseTime) {
         String lockKey = generateDataLock(gameId);
+        log.info("===== Data Lock Key = {} =====", lockKey);
         if (!tryLock(lockKey, waitTime, leaseTime)) {
             throw new CustomWebSocketException(FAIL_TO_ACQUIRE_REDISSON_LOCK);
         }
@@ -25,6 +28,7 @@ public class GameLockUtil {
 
     public void dataUnLock(long gameId) {
         String dataLock = generateDataLock(gameId);
+        log.info("===== Data UnLock Key = {} =====", dataLock);
         unLock(dataLock);
     }
 
@@ -40,7 +44,8 @@ public class GameLockUtil {
 
     public boolean clickLock(long gameId, long memberId, String MethodName) {
         String lockKey = generateClickLock(gameId, memberId, MethodName);
-        return tryLock(lockKey, 1, 5);
+        log.info(" Prevent Lock Key = {}", lockKey);
+        return tryLock(lockKey, 1, 3);
     }
 //
 //    public void clickUnLock(long gameId, long memberId) {

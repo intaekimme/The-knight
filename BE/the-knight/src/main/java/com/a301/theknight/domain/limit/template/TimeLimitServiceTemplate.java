@@ -35,7 +35,7 @@ public abstract class TimeLimitServiceTemplate {
             }
 
             try {
-                gameLockUtil.dataLock(gameId, 1, 10);
+                gameLockUtil.dataLock(gameId, 1, 6);
                 log.info("  [Time Out] : status = {}", curInGame.getGameStatus().name());
                 sendMessageService.convertCall(gameId);
                 runLimitLogic(gameId);

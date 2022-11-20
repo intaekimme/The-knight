@@ -33,7 +33,7 @@ public abstract class GameDataService {
     @Transactional
     public void sendScreenData(long gameId, SendMessageService messageService) {
         try {
-            gameLockUtil.dataLock(gameId, 20 ,4);
+            gameLockUtil.dataLock(gameId, 4,2);
 
             makeAndSendData(gameId, messageService);
         } finally {
