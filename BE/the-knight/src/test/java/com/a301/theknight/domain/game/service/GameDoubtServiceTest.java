@@ -80,7 +80,7 @@ class GameDoubtServiceTest {
         inGame.recordTurnData(turnData);
 
 
-        gameDoubtService = new GameDoubtService(gameRedisRepository, redissonClient);
+//        gameDoubtService = new GameDoubtService(gameRedisRepository, redissonClient);
     }
 
     @Test

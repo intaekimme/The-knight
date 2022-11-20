@@ -35,7 +35,7 @@ public class SendMessageService {
     public void convertCall(long gameId) {
         ConvertResponse response = gameConvertUtil.convertScreen(gameId);
         if (response != null) {
-            log.info(" <<-- [Convert] GameId = {}, Status = {}", gameId, response.getGameStatus());
+            log.info(" <<-- [Convert] Pre = {}, Next = {}", response.getPreStatus(), response.getGameStatus());
             sendData(gameId, "/convert", response);
         }
     }

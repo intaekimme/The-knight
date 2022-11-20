@@ -7,6 +7,8 @@ import com.a301.theknight.domain.game.entity.redis.DoubtStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
+import com.a301.theknight.domain.game.util.GameConvertUtil;
+import com.a301.theknight.domain.game.util.GameLockUtil;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
@@ -19,6 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
@@ -29,7 +34,8 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 @Service
 public class GameDoubtService {
     private final GameRedisRepository gameRedisRepository;
-    private final RedissonClient redissonClient;
+    private final GameLockUtil gameLockUtil;
+    private final Map<Long, ConcurrentHashMap<Long, String>> passMap = new ConcurrentHashMap<>();
 
     @Transactional
     public void doubt(long gameId, long suspectId, long suspectedId, GameStatus doubtStatus) {
@@ -64,39 +70,28 @@ public class GameDoubtService {
 
     @Transactional
     public DoubtPassDto doubtPass(long gameId, long suspectId){
-        RLock lock = redissonClient.getLock(generatePassLockKey(gameId));
-        try {
-            boolean available = lock.tryLock(10, 20, TimeUnit.SECONDS);
-            if (!available) {
-                throw new CustomRestException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
-            }
+        gameLockUtil.doubtPassLock(gameId,7, 2);
 
-            InGame inGame = getInGame(gameId);
-            GameStatus gameStatus = inGame.getGameStatus();
-            InGamePlayer suspect = getInGamePlayer(gameId, suspectId);
-            if (suspect.isDead() || notDoubtStatus(gameStatus)) {
-                throw new CustomWebSocketException(UNABLE_TO_PASS_DOUBT);
-            }
-
-            inGame.addDoubtPassCount();
-            gameRedisRepository.saveInGame(gameId, inGame);
-
-            Team suspectTeam = suspect.getTeam();
-            int alivePlayerCount = getAlivePlayerCount(gameId, suspectTeam);
-
-            return DoubtPassDto.builder()
-                    .fullCount(inGame.getDoubtPassCount() >= alivePlayerCount)
-                    .doubtPassResponse(DoubtPassResponse.builder()
-                            .memberId(suspect.getMemberId())
-                            .nickname(suspect.getNickname()).build())
-                    .build();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (lock != null && lock.isLocked()) {
-                lock.unlock();
-            }
+        InGame inGame = getInGame(gameId);
+        GameStatus gameStatus = inGame.getGameStatus();
+        InGamePlayer suspect = getInGamePlayer(gameId, suspectId);
+        if (suspect.isDead() || notDoubtStatus(gameStatus)) {
+            throw new CustomWebSocketException(UNABLE_TO_PASS_DOUBT);
         }
+
+        inGame.addDoubtPassCount();
+        gameRedisRepository.saveInGame(gameId, inGame);
+
+        Team suspectTeam = suspect.getTeam();
+        int alivePlayerCount = getAlivePlayerCount(gameId, suspectTeam);
+
+        gameLockUtil.doubtPassUnLock(gameId);
+        return DoubtPassDto.builder()
+                .fullCount(inGame.getDoubtPassCount() >= alivePlayerCount)
+                .doubtPassResponse(DoubtPassResponse.builder()
+                        .memberId(suspect.getMemberId())
+                        .nickname(suspect.getNickname()).build())
+                .build();
     }
 
     private void saveDoubtData(long suspectId, long suspectedId, InGame inGame, InGamePlayer suspected, InGamePlayer deadPlayer) {
@@ -155,10 +150,10 @@ public class GameDoubtService {
 
     // TODO
     public void checkDoubtStatus(InGame inGame, GameStatus doubtStatus) {
-        if (!doubtStatus.equals(inGame.getGameStatus())) {
-            log.info("Not Equal Status : Reuqest = {}, inGame = {}", doubtStatus.name(), inGame.getGameStatus().name());
-            throw new CustomWebSocketException(DO_NOT_FIT_REQUEST_BY_GAME_STATUS);
-        }
+//        if (!doubtStatus.equals(inGame.getGameStatus())) {
+//            log.info("Not Equal Status : Reuqest = {}, inGame = {}", doubtStatus.name(), inGame.getGameStatus().name());
+//            throw new CustomWebSocketException(DO_NOT_FIT_REQUEST_BY_GAME_STATUS);
+//        }
     }
 
     // TODO
@@ -185,7 +180,5 @@ public class GameDoubtService {
     }
 
     // TODO
-    public String generatePassLockKey(long gameId) {
-        return "game_doubt_pass:" + gameId;
-    }
+
 }
