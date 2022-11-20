@@ -1,7 +1,7 @@
 import React from "react";
 import { black, white, yellow, lightBlue } from "./ReactCSSProperties";
 
-const chattingModalWidth = "31vmin";
+const chattingModalWidth = 400;
 const chattingModalHeight = 600;
 const chattingPosition ={
   position:"fixed",
