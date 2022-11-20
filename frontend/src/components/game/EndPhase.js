@@ -5,7 +5,7 @@ import { resetGameSlice } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import {Box, Button, Paper} from "@mui/material";
-import endBGM from "../../_assets/game/sound/bgm-game-end"
+import endBGM from "../../_assets/game/sound/bgm-game-end.mp3"
 
 export default function EndPhase() {
   const me = useSelector((state) => state.game.me)
