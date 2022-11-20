@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useSpring, useChain, useSpringRef, animated } from "react-spring";
-import hurtedShieldImg from "../../../_assets/game/hurted-shield.png";
-import originalShieldImg from "../../../_assets/game/original-shield.png";
+import hurtedShieldImg from "../../../_assets/game/image/hurted-shield.png";
+import originalShieldImg from "../../../_assets/game/image/original-shield.png";
 
 export default function Shield(props) {
   const playersDOM = useSelector((state) => state.game.playersDOM);

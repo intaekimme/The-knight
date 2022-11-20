@@ -1,10 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
 import api from "../../api/api";
 import { Box, Grid, Button } from "@mui/material";
-import handIconImg from "../../_assets/game/hand-icon.png";
-import swordIconImg from "../../_assets/game/sword-icon.png";
-import twinIconImg from "../../_assets/game/twin-icon.png";
-import shieldIconImg from "../../_assets/game/shield-icon.png";
+import handIconImg from "../../_assets/game/image/hand-icon.png";
+import swordIconImg from "../../_assets/game/image/sword-icon.png";
+import twinIconImg from "../../_assets/game/image/twin-icon.png";
+import shieldIconImg from "../../_assets/game/image/shield-icon.png";
+import weaponSelectSound from "../../_assets/game/sound/sound-weapon-select.mp3"
 
 function WeaponPicker() {
   const dispatch = useDispatch();
@@ -16,6 +17,8 @@ function WeaponPicker() {
   const memberId = parseInt(window.localStorage.getItem("memberId"));
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const weaponSelectAudio = new Audio(weaponSelectSound)
 
   const onPubSelectWeapon = (payload) => {
     // {
@@ -29,6 +32,7 @@ function WeaponPicker() {
   };
 
   const onClick = (weapon) => {
+    weaponSelectAudio.play();
     onPubSelectWeapon(weapon);
   };
 

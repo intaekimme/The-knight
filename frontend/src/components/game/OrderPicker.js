@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import api from "../../api/api";
 import Player from "./Player";
 import { Grid, Box, Button } from "@mui/material";
+import weaponSelectSound from "../../_assets/game/sound/sound-weapon-select.mp3"
 
 function OrderPicker() {
   const players = useSelector((state) => state.game.players);
@@ -12,6 +13,8 @@ function OrderPicker() {
   const memberId = parseInt(window.localStorage.getItem("memberId"));
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const weaponSelectAudio = new Audio(weaponSelectSound)
 
   const playerSize = "8vmin";
   const fontColor = "black";
@@ -28,7 +31,9 @@ function OrderPicker() {
   };
 
   function onClick(order) {
+    weaponSelectAudio.play();
     onPubOrder(order + 1);
+
   }
 
   function orderList(players) {
