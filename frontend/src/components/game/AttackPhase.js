@@ -5,6 +5,7 @@ import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import { Box, Button, Paper } from "@mui/material";
 import swordIconImg from "../../_assets/game/image/sword-icon.png";
 import twinIconImg from "../../_assets/game/image/twin-icon.png";
+import clickSound from "../../_assets/game/sound/sound-click.mp3"
 
 export default function AttackPhase() {
   const me = useSelector((state) => state.game.me);
@@ -18,6 +19,8 @@ export default function AttackPhase() {
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
+  const clickAudio = new Audio(clickSound)
+
   const onPubAttackPass = () => {
     stompClient.send(api.pubAttackPass(gameId), {}, {});
   };
@@ -29,9 +32,11 @@ export default function AttackPhase() {
         hand: hand,
       })
     );
+    clickAudio.play();
   };
 
   const onPass = () => {
+    clickAudio.play();
     onPubAttackPass();
   };
 
