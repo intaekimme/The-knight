@@ -9,7 +9,7 @@ import knightImg from "../../_assets/game/knight.png";
 import knightGreenImg from "../../_assets/game/knight-green.png";
 
 // 해당 Player가 본인이면 녹색아이콘
-function Player({ player, isOpp, size }) {
+function Player({ player, isOpp, size, fontColor, meFontColor }) {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.game.me);
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
@@ -93,19 +93,19 @@ function Player({ player, isOpp, size }) {
             isOpp &&
             selectAttack.weapon &&
             isHovering && {
-            background: "radial-gradient(red 10%, white 90%)",
-            borderRadius: "50%",
-          }),
-          ...(size ?
-            {
-              width: size,
-              height: size,
-            } :
-            {
-              width: defaultSize[String(players.maxMember / 2)],
-              height: defaultSize[String(players.maxMember / 2)],
-            }
-          )
+              background: "radial-gradient(red 10%, white 90%)",
+              borderRadius: "50%",
+              cursor: "pointer",
+            }),
+          ...(size
+            ? {
+                width: size,
+                height: size,
+              }
+            : {
+                width: defaultSize[String(players.maxMember / 2)],
+                height: defaultSize[String(players.maxMember / 2)],
+              }),
         }}
         onClick={
           isAttackPhase && AttackerIsMe && isOpp && selectAttack.weapon
@@ -156,7 +156,18 @@ function Player({ player, isOpp, size }) {
           }}
         ></img>
       )}
-      <Box sx={{ ...(isMe && { color: "green" }), fontSize: "2vmin" }}>
+      <Box
+        sx={{
+          ...(isMe
+            ? meFontColor
+              ? { color: meFontColor }
+              : { color: "#c1ffa6" }
+            : fontColor
+            ? { color: fontColor }
+            : { color: "white" }),
+          fontSize: "2vmin",
+        }}
+      >
         {player.nickname}
       </Box>
       {(isAttackDoubtPhase || isDefenseDoubtPhase) && isPass && (

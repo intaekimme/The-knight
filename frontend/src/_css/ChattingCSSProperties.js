@@ -5,11 +5,13 @@ const chattingModalWidth = 400;
 const chattingModalHeight = 600;
 const chattingPosition ={
   position:"fixed",
-  bottom:20, left:20,
+  bottom: "3vmin", left:"2vmin",
   width: chattingModalWidth,
 }
 const chattingHeader = {
   background:yellow,
+  borderTopLeftRadius:20,
+  borderTopRightRadius:20,
 };
 const chattingBody = {
   minHeight:100,
@@ -19,6 +21,7 @@ const chattingBody = {
 };
 const chattingInput = {
   background:white,
+  borderBottomRightRadius: 20,
 };
 const chattingSendButton = {
   fontWeight: 'bold',

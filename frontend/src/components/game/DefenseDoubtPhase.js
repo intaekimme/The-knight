@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addDoubtPass, initializePass } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import {Box, Button, Paper} from "@mui/material";
 
 export default function DefenseDoubtPhase() {
   const dispatch = useDispatch();
@@ -62,7 +62,7 @@ export default function DefenseDoubtPhase() {
     // 상대의 의심을 기다릴 때
     if (me.team === defenseInfo.defender.team) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -77,12 +77,12 @@ export default function DefenseDoubtPhase() {
           <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 우리 팀의 의심이지만, 나는 죽었을 때
     } else if (isDead) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -97,11 +97,11 @@ export default function DefenseDoubtPhase() {
           <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     } else {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -116,38 +116,40 @@ export default function DefenseDoubtPhase() {
             {defenseInfo.defender.nickname}이(가) {side[defenseInfo.hand]} 방패로 방어했습니다.
           </Box>
           <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "space-evenly" }}>
-            <Box
+            <Button
               onClick={() => clickDoubt()}
-              sx={{
+              color="dark"
+              style={{
                 width: "10vmin",
                 height: "10vmin",
                 backgroundColor: "#f0f0f0",
                 border: ".65vmin solid #424242",
                 borderRadius: "1.3vmin",
-                fontSize: "3.5vmin",
+                fontSize: "3vmin",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
               }}
             >
               의심
-            </Box>
-            <Box
+            </Button>
+            <Button
               onClick={() => clickPass()}
-              sx={{
+              color="dark"
+              style={{
                 width: "10vmin",
                 height: "10vmin",
                 backgroundColor: "#f0f0f0",
                 border: ".65vmin solid #424242",
                 borderRadius: "1.3vmin",
-                fontSize: "3.5vmin",
+                fontSize: "3vmin",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
               }}
             >
               Pass
-            </Box>
+            </Button>
           </Box>
           <Box
             sx={{
@@ -160,7 +162,7 @@ export default function DefenseDoubtPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     }
   }
@@ -170,9 +172,9 @@ export default function DefenseDoubtPhase() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
-        height: "88vh",
+        height: "100vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>

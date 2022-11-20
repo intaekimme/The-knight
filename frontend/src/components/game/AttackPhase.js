@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectWeaponForAttack } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import { Box, Button, Paper } from "@mui/material";
 import swordIconImg from "../../_assets/game/sword-icon.png";
 import twinIconImg from "../../_assets/game/twin-icon.png";
 
@@ -19,7 +19,7 @@ export default function AttackPhase() {
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubAttackPass = () => {
-    stompClient.send(api.pubAttackPass(gameId), {}, {})
+    stompClient.send(api.pubAttackPass(gameId), {}, {});
   };
 
   const onSelectWeapon = (weapon, hand) => {
@@ -39,63 +39,157 @@ export default function AttackPhase() {
     // 내가 공격자일 때
     if (me.memberId === currentAttacker.memberId) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
             backgroundColor: "#d9d9d9",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "space-evenly",
+            justifyContent: "center",
             position: "relative",
           }}
         >
-          <Box sx={{ textAlign: "center", fontSize: "3.5vmin" }}>공격 선택</Box>
-          <Box sx={{ display: "flex", alignItems: "flex-end", justifyContent: "space-evenly" }}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "4vmin",
+              left: "50%",
+              transform: "translate(-50%)",
+              fontSize: "3.5vmin",
+            }}
+          >
+            공격 선택
+          </Box>
+          {!selectAttack.weapon && (
+            <Box
+              sx={{
+                textAlign: "center",
+                fontSize: "1.8vmin",
+                paddingBottom: "3vmin",
+              }}
+            >
+              공격 무기를 선택해주세요
+            </Box>
+          )}
+          {selectAttack.weapon && (
+            <Box
+              sx={{
+                textAlign: "center",
+                fontSize: "1.8vmin",
+                paddingBottom: "3vmin",
+              }}
+            >
+              공격할 대상을 선택해주세요
+            </Box>
+          )}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "flex-end",
+              justifyContent: "space-evenly",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                fontSize: "2vmin",
+                borderRadius: "1.3vmin",
+                backgroundColor: "#424242",
               }}
             >
-              L
-              <Box sx={{ width: "23.5vmin", display: "flex", justifyContent: "space-between" }}>
-                <Box
+              <Box
+                sx={{
+                  fontSize: "2vmin",
+                  color: "#f0f0f0",
+                  height: "3vmin",
+                  lineHeight: "3vmin",
+                }}
+              >
+                L
+              </Box>
+              <Box
+                sx={{
+                  width: "23vmin",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Button
                   onClick={() => onSelectWeapon("SWORD", "LEFT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
-                    backgroundColor: "#f0f0f0",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
+                    ...(selectAttack.weapon &&
+                    (selectAttack.weapon !== "SWORD" ||
+                      selectAttack.hand !== "LEFT")
+                      ? { backgroundColor: "#878886" }
+                      : { backgroundColor: "#f0f0f0" }),
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    ...(selectAttack.weapon === "SWORD" &&
-                      selectAttack.hand === "LEFT" && { border: ".65vmin solid #e45826" }),
+                    position: "relative",
                   }}
                 >
-                  <img src={swordIconImg} alt="SWORD" style={{ width: "8vmin", height: "8vmin" }} />
-                </Box>
-                <Box
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      ...(selectAttack.weapon === "SWORD" &&
+                        selectAttack.hand === "LEFT" && {
+                          border: ".3vmin solid #f0a500",
+                        }),
+                      borderRadius: "1.3vmin",
+                      position: "absolute",
+                    }}
+                  ></Box>
+                  <img
+                    src={swordIconImg}
+                    alt="SWORD"
+                    style={{ width: "8vmin", height: "8vmin" }}
+                  />
+                </Button>
+                <Button
                   onClick={() => onSelectWeapon("TWIN", "LEFT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
-                    backgroundColor: "#f0f0f0",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
+                    ...(selectAttack.weapon &&
+                    (selectAttack.weapon !== "TWIN" ||
+                      selectAttack.hand !== "LEFT")
+                      ? { backgroundColor: "#878886" }
+                      : { backgroundColor: "#f0f0f0" }),
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    ...(selectAttack.weapon === "TWIN" &&
-                      selectAttack.hand === "LEFT" && { border: ".65vmin solid #e45826" }),
+                    position: "relative",
                   }}
                 >
-                  <img src={twinIconImg} alt="TWIN" style={{ width: "8vmin", height: "8vmin" }} />
-                </Box>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      ...(selectAttack.weapon === "TWIN" &&
+                        selectAttack.hand === "LEFT" && {
+                          border: ".3vmin solid #f0a500",
+                        }),
+                      borderRadius: "1.3vmin",
+                      position: "absolute",
+                    }}
+                  ></Box>
+                  <img
+                    src={twinIconImg}
+                    alt="TWIN"
+                    style={{ width: "8vmin", height: "8vmin" }}
+                  />
+                </Button>
               </Box>
             </Box>
             <Box
@@ -103,52 +197,109 @@ export default function AttackPhase() {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                fontSize: "2vmin",
+                borderRadius: "1.3vmin",
+                backgroundColor: "#424242",
               }}
             >
-              R
-              <Box sx={{ width: "23.5vmin", display: "flex", justifyContent: "space-between" }}>
-                <Box
+              <Box
+                sx={{
+                  fontSize: "2vmin",
+                  color: "#f0f0f0",
+                  height: "3vmin",
+                  lineHeight: "3vmin",
+                }}
+              >
+                R
+              </Box>
+              <Box
+                sx={{
+                  width: "23vmin",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Button
                   onClick={() => onSelectWeapon("SWORD", "RIGHT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
-                    backgroundColor: "#f0f0f0",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
+                    ...(selectAttack.weapon &&
+                    (selectAttack.weapon !== "SWORD" ||
+                      selectAttack.hand !== "RIGHT")
+                      ? { backgroundColor: "#878886" }
+                      : { backgroundColor: "#f0f0f0" }),
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    ...(selectAttack.weapon === "SWORD" &&
-                      selectAttack.hand === "RIGHT" && { border: ".65vmin solid #e45826" }),
+                    position: "relative",
                   }}
                 >
-                  <img src={swordIconImg} alt="SWORD" style={{ width: "8vmin", height: "8vmin" }} />
-                </Box>
-                <Box
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      ...(selectAttack.weapon === "SWORD" &&
+                        selectAttack.hand === "RIGHT" && {
+                          border: ".3vmin solid #f0a500",
+                        }),
+                      borderRadius: "1.3vmin",
+                      position: "absolute",
+                    }}
+                  ></Box>
+                  <img
+                    src={swordIconImg}
+                    alt="SWORD"
+                    style={{ width: "8vmin", height: "8vmin" }}
+                  />
+                </Button>
+                <Button
                   onClick={() => onSelectWeapon("TWIN", "RIGHT")}
-                  sx={{
-                    width: "10vmin",
-                    height: "10vmin",
-                    backgroundColor: "#f0f0f0",
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
+                    ...(selectAttack.weapon &&
+                    (selectAttack.weapon !== "TWIN" ||
+                      selectAttack.hand !== "RIGHT")
+                      ? { backgroundColor: "#878886" }
+                      : { backgroundColor: "#f0f0f0" }),
                     border: ".65vmin solid #424242",
                     borderRadius: "1.3vmin",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    ...(selectAttack.weapon === "TWIN" &&
-                      selectAttack.hand === "RIGHT" && { border: ".65vmin solid #e45826" }),
+                    position: "relative",
                   }}
                 >
-                  <img src={twinIconImg} alt="TWIN" style={{ width: "8vmin", height: "8vmin" }} />
-                </Box>
+                  <Box
+                    sx={{
+                      width: "100%",
+                      height: "100%",
+                      ...(selectAttack.weapon === "TWIN" &&
+                        selectAttack.hand === "RIGHT" && {
+                          border: ".3vmin solid #f0a500",
+                        }),
+                      borderRadius: "1.3vmin",
+                      position: "absolute",
+                    }}
+                  ></Box>
+                  <img
+                    src={twinIconImg}
+                    alt="TWIN"
+                    style={{ width: "8vmin", height: "8vmin" }}
+                  />
+                </Button>
               </Box>
             </Box>
-            <Box
+            <Button
               onClick={() => onPass()}
-              sx={{
-                width: "10vmin",
-                height: "10vmin",
+              color="dark"
+              style={{
+                width: "11.3vmin",
+                height: "11.3vmin",
                 backgroundColor: "#f0f0f0",
                 display: "flex",
                 justifyContent: "center",
@@ -159,7 +310,7 @@ export default function AttackPhase() {
               }}
             >
               PASS
-            </Box>
+            </Button>
           </Box>
           <Box
             sx={{
@@ -173,12 +324,12 @@ export default function AttackPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 우리 팀이 공격자일 때
     } else if (me.team === currentAttacker.team) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -202,12 +353,12 @@ export default function AttackPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 적팀이 공격자일 때
     } else {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -231,7 +382,7 @@ export default function AttackPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     }
   }
@@ -241,9 +392,9 @@ export default function AttackPhase() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
-        height: "88vh",
+        height: "100vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>

@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import { Box } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 
 export default function PredecessorPhase() {
   const attackFirst = useSelector((state) => state.game.attackFirst)
@@ -11,13 +11,13 @@ export default function PredecessorPhase() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
-        height: "88vh",
+        height: "100vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>
-      <Box
+      <Paper
         sx={{
           width: "70vmin",
           height: "40vmin",
@@ -29,7 +29,7 @@ export default function PredecessorPhase() {
         }}
       >
         {attackFirst === me.team ? "아군이 선공입니다" : "적팀이 선공입니다"}
-      </Box>
+      </Paper>
       <PlayerWithWeaponList></PlayerWithWeaponList>
     </Box>
   );

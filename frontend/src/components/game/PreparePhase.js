@@ -32,23 +32,30 @@ export default function PreparePhase() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
-        height: "88vh",
+        height: "100vh",
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Box sx={{ fontSize: "5vmin", marginBottom: ".5rem" }}>진행 순서와 무기를 선택하세요</Box>
-        <Box sx={{ fontSize: "3vmin", marginTop: ".5rem", marginBottom: ".5rem" }}>{timer}</Box>
+      <Box
+        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      >
+        <Box sx={{ fontSize: "4vmin", color: "white" }}>
+          진행 순서와 무기를 선택하세요
+        </Box>
+        <Box sx={{ fontSize: "2.5vmin", paddingTop: "1vmin", color: "white" }}>
+          {timer}
+        </Box>
         <div
           style={{
             width: "100vmin",
-            height: "7vmin",
+            height: "5vmin",
             backgroundColor: "#d9d9d9",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            fontSize: "2.5vmin",
+            fontSize: "2vmin",
+            marginTop: "3vmin",
           }}
         >
           {isLeader
@@ -61,11 +68,18 @@ export default function PreparePhase() {
       {isLeader && (
         <Button
           variant="contained"
+          color="dark"
           style={{
-            width: "50vmin",
-            height: "7vmin",
-            // backgroundColor: "#878886",
-            // color: "white"
+            width: "18vmin",
+            height: "5vmin",
+            ...(!isSelectComplete &&
+            players.players
+              .filter((player) => player.team === me.team)
+              .every((player) => player.weapons[0] && player.weapons[1]) &&
+            order.every((element) => element)
+              ? { backgroundColor: "#1c222e", color: "#dbeaef", border: ".3vmin solid #44888f" }
+              : { backgroundColor: "#1e2327", color: "#666769", border: ".3vmin solid #424242" }),
+            fontSize: "1.5vmin",
           }}
           onClick={() => onClick()}
           // 순서와 무기가 모두 선택되었을 때, 선택완료 활성화
