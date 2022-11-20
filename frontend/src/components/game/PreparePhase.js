@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import OrderPicker from "./OrderPicker";
 import WeaponPicker from "./WeaponPicker";
 import { Box, Button } from "@mui/material";
+import ticktockSound from "../../_assets/game/sound/sound-ticktock.mp3";
 
 export default function PreparePhase() {
   const timer = useSelector((state) => state.game.timer.timer);
@@ -13,6 +15,8 @@ export default function PreparePhase() {
   const order = useSelector((state) => state.game.order);
   const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
   const isLeader = me.memberId === leader;
+
+  const ticktockAudio = new Audio(ticktockSound);
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
@@ -26,6 +30,12 @@ export default function PreparePhase() {
   function onClick() {
     onPubSelectComplete();
   }
+
+  useEffect(() => {
+    if (timer <= 5) {
+      ticktockAudio.play();
+    }
+  }, [timer]);
 
   return (
     <Box
@@ -77,8 +87,16 @@ export default function PreparePhase() {
               .filter((player) => player.team === me.team)
               .every((player) => player.weapons[0] && player.weapons[1]) &&
             order.every((element) => element)
-              ? { backgroundColor: "#1c222e", color: "#dbeaef", border: ".3vmin solid #44888f" }
-              : { backgroundColor: "#1e2327", color: "#666769", border: ".3vmin solid #424242" }),
+              ? {
+                  backgroundColor: "#1c222e",
+                  color: "#dbeaef",
+                  border: ".3vmin solid #44888f",
+                }
+              : {
+                  backgroundColor: "#1e2327",
+                  color: "#666769",
+                  border: ".3vmin solid #424242",
+                }),
             fontSize: "1.5vmin",
           }}
           onClick={() => onClick()}
