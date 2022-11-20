@@ -36,8 +36,8 @@ public class GameScreenDataApi {
         dataTemplate.sendScreenData(gameId, messageService);
         dataTemplate.sendPlayersData(gameId, messageService);
 
+        messageService.proceedCall(gameId, 100);
         gameConvertUtil.initRequestQueue(gameId);
-        messageService.proceedCall(gameId, 500);
     }
 
 }
