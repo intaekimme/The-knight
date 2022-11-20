@@ -45,7 +45,7 @@ public class GameConvertUtil {
         ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
         queue.add("count");
         if (queue.size() >= maxMember) {
-            return gameLockUtil.countLock(gameId, 1, 10);
+            return gameLockUtil.countLock(gameId, 1, 5);
         }
         return false;
     }
@@ -60,7 +60,7 @@ public class GameConvertUtil {
         ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
         queue.clear();
 
-        gameLockUtil.countUnLock(gameId);
+//        gameLockUtil.countUnLock(gameId);
     }
 
     public void clearData(long gameId) {
