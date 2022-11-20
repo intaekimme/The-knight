@@ -18,7 +18,7 @@ export default function Shield(props) {
   useEffect(() => {
     setTimeout(() => {
       setIsHurted(true);
-    }, 1300);
+    }, 800);
   }, []);
 
   const disappearRef = useSpringRef();
@@ -26,8 +26,8 @@ export default function Shield(props) {
   const disappearProps = useSpring({
     from: { opacity: 1 },
     to: { opacity: 0 },
-    config: { duration: 600 },
-    delay: 1300,
+    config: { duration: (props.isTwin ? 900 : 600) },
+    delay: 800,
     ref: disappearRef,
   });
   useChain([disappearRef]);
