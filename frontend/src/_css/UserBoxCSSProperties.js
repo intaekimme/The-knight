@@ -15,8 +15,8 @@ const userBoxSx = (teamColor, width, height) => {
 		background: teamColor
 	};
 };
-const nickname = (size) => {return { fontSize: size / 6, color: white };};
-const userImage = (size) => {return { width: size, height: size };};
-const userBoxReady = (size) => {return {position:"absolute", top:"50%", fontWeight:900, fontSize:size/3, color:yellow};};
+const nickname = (size) => { return { fontSize: size / 6, color: white }; };
+const userImage = (size) => { return { width: size, height: size }; };
+const userBoxReady = (size) => { return { position: "absolute", top: "50%", fontWeight: 900, fontSize: size / 3, color: yellow }; };
 
 export { userBoxSx, nickname, userImage, userBoxReady };
