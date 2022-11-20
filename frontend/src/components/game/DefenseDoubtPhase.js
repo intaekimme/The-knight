@@ -5,6 +5,7 @@ import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import {Box, Button, Paper} from "@mui/material";
 import clickSound from "../../_assets/game/sound/sound-click.mp3"
+import ticktockSound from "../../_assets/game/sound/sound-ticktock.mp3";
 
 export default function DefenseDoubtPhase() {
   const dispatch = useDispatch();
@@ -13,13 +14,14 @@ export default function DefenseDoubtPhase() {
   const players = useSelector((state) => state.game.players);
   const defenseInfo = useSelector((state) => state.game.defenseInfo);
   const isDead = players.players.find((player) => (player.memberId === me.memberId)).isDead; 
-
+  
   const side = {
     LEFT: "왼쪽",
     RIGHT: "오른쪽",
   };
-
+  
   const clickAudio = new Audio(clickSound)
+  const ticktockAudio = new Audio(ticktockSound);
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
@@ -62,6 +64,12 @@ export default function DefenseDoubtPhase() {
     dispatch(initializePass());
   }, []);
 
+  useEffect(() => {
+    if (timer <= 5) {
+      ticktockAudio.play();
+    }
+  }, [timer]);
+  
   function BoxRender() {
     // 상대의 의심을 기다릴 때
     if (me.team === defenseInfo.defender.team) {

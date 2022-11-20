@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectWeaponForAttack } from "../../_slice/gameSlice";
 import api from "../../api/api";
@@ -6,6 +7,7 @@ import { Box, Button, Paper } from "@mui/material";
 import swordIconImg from "../../_assets/game/image/sword-icon.png";
 import twinIconImg from "../../_assets/game/image/twin-icon.png";
 import clickSound from "../../_assets/game/sound/sound-click.mp3"
+import ticktockSound from "../../_assets/game/sound/sound-ticktock.mp3";
 
 export default function AttackPhase() {
   const me = useSelector((state) => state.game.me);
@@ -20,6 +22,7 @@ export default function AttackPhase() {
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const clickAudio = new Audio(clickSound)
+  const ticktockAudio = new Audio(ticktockSound);
 
   const onPubAttackPass = () => {
     stompClient.send(api.pubAttackPass(gameId), {}, {});
@@ -39,6 +42,12 @@ export default function AttackPhase() {
     clickAudio.play();
     onPubAttackPass();
   };
+
+  useEffect(() => {
+    if (timer <= 5) {
+      ticktockAudio.play();
+    }
+  }, [timer]);
 
   function BoxRender() {
     // 내가 공격자일 때
