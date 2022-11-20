@@ -3,8 +3,9 @@ import { selectWeaponForAttack } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import { Box, Button, Paper } from "@mui/material";
-import swordIconImg from "../../_assets/game/sword-icon.png";
-import twinIconImg from "../../_assets/game/twin-icon.png";
+import swordIconImg from "../../_assets/game/image/sword-icon.png";
+import twinIconImg from "../../_assets/game/image/twin-icon.png";
+import clickSound from "../../_assets/game/sound/sound-click.mp3"
 
 export default function AttackPhase() {
   const me = useSelector((state) => state.game.me);
@@ -18,11 +19,14 @@ export default function AttackPhase() {
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
+  const clickAudio = new Audio(clickSound)
+
   const onPubAttackPass = () => {
     stompClient.send(api.pubAttackPass(gameId), {}, {});
   };
 
   const onSelectWeapon = (weapon, hand) => {
+    clickAudio.play();
     dispatch(
       selectWeaponForAttack({
         weapon: weapon,
@@ -32,6 +36,7 @@ export default function AttackPhase() {
   };
 
   const onPass = () => {
+    clickAudio.play();
     onPubAttackPass();
   };
 
@@ -142,6 +147,7 @@ export default function AttackPhase() {
                       ...(selectAttack.weapon === "SWORD" &&
                         selectAttack.hand === "LEFT" && {
                           border: ".3vmin solid #f0a500",
+                          backgroundColor: "white",
                         }),
                       borderRadius: "1.3vmin",
                       position: "absolute",
@@ -150,7 +156,7 @@ export default function AttackPhase() {
                   <img
                     src={swordIconImg}
                     alt="SWORD"
-                    style={{ width: "8vmin", height: "8vmin" }}
+                    style={{ width: "8vmin", height: "8vmin", zIndex: 1 }}
                   />
                 </Button>
                 <Button
@@ -179,6 +185,7 @@ export default function AttackPhase() {
                       ...(selectAttack.weapon === "TWIN" &&
                         selectAttack.hand === "LEFT" && {
                           border: ".3vmin solid #f0a500",
+                          backgroundColor: "white",
                         }),
                       borderRadius: "1.3vmin",
                       position: "absolute",
@@ -187,7 +194,7 @@ export default function AttackPhase() {
                   <img
                     src={twinIconImg}
                     alt="TWIN"
-                    style={{ width: "8vmin", height: "8vmin" }}
+                    style={{ width: "8vmin", height: "8vmin", zIndex: 1}}
                   />
                 </Button>
               </Box>
@@ -244,6 +251,7 @@ export default function AttackPhase() {
                       ...(selectAttack.weapon === "SWORD" &&
                         selectAttack.hand === "RIGHT" && {
                           border: ".3vmin solid #f0a500",
+                          backgroundColor: "white",
                         }),
                       borderRadius: "1.3vmin",
                       position: "absolute",
@@ -252,7 +260,7 @@ export default function AttackPhase() {
                   <img
                     src={swordIconImg}
                     alt="SWORD"
-                    style={{ width: "8vmin", height: "8vmin" }}
+                    style={{ width: "8vmin", height: "8vmin", zIndex: 1 }}
                   />
                 </Button>
                 <Button
@@ -281,6 +289,7 @@ export default function AttackPhase() {
                       ...(selectAttack.weapon === "TWIN" &&
                         selectAttack.hand === "RIGHT" && {
                           border: ".3vmin solid #f0a500",
+                          backgroundColor: "white",
                         }),
                       borderRadius: "1.3vmin",
                       position: "absolute",
@@ -289,7 +298,7 @@ export default function AttackPhase() {
                   <img
                     src={twinIconImg}
                     alt="TWIN"
-                    style={{ width: "8vmin", height: "8vmin" }}
+                    style={{ width: "8vmin", height: "8vmin", zIndex: 1 }}
                   />
                 </Button>
               </Box>

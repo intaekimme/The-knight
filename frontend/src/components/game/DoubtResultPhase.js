@@ -1,10 +1,24 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import {Box, Paper} from "@mui/material";
+import doubtSuccessSound from "../../_assets/game/sound/sound-doubt-success.mp3"
+import doubtFailSound from "../../_assets/game/sound/sound-doubt-fail.mp3"
 
 export default function DoubtResultPhase() {
   const me = useSelector((state) => state.game.me);
   const doubtResponse = useSelector((state) => state.game.doubtInfo).doubtResponse;
+
+  const doubtSuccessAudio = new Audio(doubtSuccessSound)
+  const doubtFailAudio = new Audio(doubtFailSound)
+
+  useEffect(() => {
+    if (doubtResponse.doubtSuccess) {
+      doubtSuccessAudio.play();
+    } else {
+      doubtFailAudio.play();
+    }
+  }, [])
 
   function BoxRender() {
     return (

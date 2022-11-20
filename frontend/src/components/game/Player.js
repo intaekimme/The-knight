@@ -4,9 +4,10 @@ import { setDOM } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PersonIcon from "@mui/icons-material/Person";
 import Box from "@mui/material/Box";
-import deadImg from "../../_assets/game/dead.png";
-import knightImg from "../../_assets/game/knight.png";
-import knightGreenImg from "../../_assets/game/knight-green.png";
+import deadImg from "../../_assets/game/image/dead.png";
+import knightImg from "../../_assets/game/image/knight.png";
+import knightGreenImg from "../../_assets/game/image/knight-green.png";
+import clickSound from "../../_assets/game/sound/sound-click.mp3"
 
 // 해당 Player가 본인이면 녹색아이콘
 function Player({ player, isOpp, size, fontColor, meFontColor }) {
@@ -29,6 +30,8 @@ function Player({ player, isOpp, size, fontColor, meFontColor }) {
   useEffect(() => {
     isPass = doubtPassList.includes(player.memberId);
   }, [doubtPassList]);
+
+  const clickAudio = new Audio(clickSound)
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
@@ -62,10 +65,10 @@ function Player({ player, isOpp, size, fontColor, meFontColor }) {
       },
     };
     stompClient.send(api.pubAttack(gameId), {}, JSON.stringify(data));
-    console.log(data);
   };
 
   const onSelectPlayer = () => {
+    clickAudio.play();
     onPubAttack();
   };
 

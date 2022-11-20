@@ -4,6 +4,7 @@ import { addDoubtPass, initializePass } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import { Box, Button, Paper } from "@mui/material";
+import clickSound from "../../_assets/game/sound/sound-click.mp3"
 
 export default function AttackDoubtPhase() {
   const dispatch = useDispatch();
@@ -26,6 +27,8 @@ export default function AttackDoubtPhase() {
     LEFT: "왼쪽",
     RIGHT: "오른쪽",
   };
+  
+  const clickAudio = new Audio(clickSound)
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
@@ -54,10 +57,12 @@ export default function AttackDoubtPhase() {
   };
 
   function clickDoubt() {
+    clickAudio.play();
     onPubDoubt();
   }
 
   function clickPass() {
+    clickAudio.play();
     onPubDoubtPass();
   }
 

@@ -1,10 +1,13 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useSpring, useChain, useSpringRef, animated } from "react-spring";
-import swordImg from "../../../_assets/game/sword.png";
-import swordUpImg from "../../../_assets/game/sword-up.png";
+import swordImg from "../../../_assets/game/image/sword.png";
+import swordUpImg from "../../../_assets/game/image/sword-up.png";
+import swordSound from "../../../_assets/game/sound/sound-sword.mp3"
 
 export default function Sword(props) {
   const playersDOM = useSelector((state) => state.game.playersDOM);
+  const swordAudio = new Audio(swordSound);
 
   const vmin =
     (window.innerHeight > window.innerWidth
@@ -17,6 +20,10 @@ export default function Sword(props) {
   let startY = playersDOM[props.from.toString()].y;
   let endX = playersDOM[props.to.toString()].x + width / 2 - 3 * vmin;
   let endY = playersDOM[props.to.toString()].y;
+
+  const rotateDuration = 500
+  const shootDuration = 300
+  const disappearDuration = 600
 
   function radianToDegree(x) {
     return (x * 180) / Math.PI;
@@ -76,23 +83,29 @@ export default function Sword(props) {
   const rotateProps = useSpring({
     from: { rotateZ: startRotate },
     to: { rotateZ: endRotate },
-    config: { duration: 500 },
+    config: { duration: rotateDuration },
     ref: rotateRef,
   });
   const shootProps = useSpring({
     from: { x: startX, y: startY },
     to: { x: adjustedEndX, y: adjustedEndY },
-    ...(startRotate === endRotate && { delay: 500 }),
-    config: { duration: 300 },
+    ...(startRotate === endRotate && { delay: rotateDuration }),
+    config: { duration: shootDuration },
     ref: shootRef,
   });
   const disappearProps = useSpring({
     from: { opacity: 1 },
     to: { opacity: 0 },
-    config: { duration: 600 },
+    config: { duration: disappearDuration },
     ref: disappearRef,
   });
   useChain([rotateRef, shootRef, disappearRef]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      swordAudio.play();
+    }, rotateDuration)
+  }, [])
 
   return (
     <animated.div
