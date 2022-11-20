@@ -42,9 +42,9 @@ public class ExecuteDataService extends GameDataService {
         int resultCount = defendCount + attackWeapon.getCount();
         if (resultCount > 3 || isDefendPass) {
             defender.death();
-        } else {
-            defender.changeCount(resultCount, defendData.getDefendHand());
+            resultCount = 3;
         }
+        defender.changeCount(resultCount, defendData.getDefendHand());
 
         inGame.addTurn();
         redisRepository.saveInGame(gameId, inGame);
