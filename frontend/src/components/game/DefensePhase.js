@@ -3,6 +3,7 @@ import api from "../../api/api"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import {Box, Button, Paper} from "@mui/material";
 import shieldIconImg from "../../_assets/game/image/shield-icon.png";
+import clickSound from "../../_assets/game/sound/sound-click.mp3"
 
 export default function DefensePhase() {
   const me = useSelector((state) => state.game.me);
@@ -14,6 +15,8 @@ export default function DefensePhase() {
   const memberId = parseInt(window.localStorage.getItem("memberId"));
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const clickAudio = new Audio(clickSound)
 
   const weaponsKr = {
     SWORD: "검",
@@ -34,19 +37,19 @@ export default function DefensePhase() {
       hand: payload
     }
     stompClient.send(api.pubDefense(gameId), {}, JSON.stringify(data));
-    console.log(data)
   }
 
   const onPubDefensePass = () => {
     stompClient.send(api.pubDefensePass(gameId), {}, {});
-    console.log("패스!")
   }
 
   function selectShield(hand) {
+    clickAudio.play();
     onPubDefense(hand)
   }
 
   function selectPass() {
+    clickAudio.play();
     onPubDefensePass()
   }
 
