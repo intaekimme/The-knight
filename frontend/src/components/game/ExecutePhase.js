@@ -10,6 +10,7 @@ export default function ExecutePhase() {
   const playersDOM = useSelector((state) => state.game.playersDOM);
   const executeInfo = useSelector((state) => state.game.executeInfo);
   const isTwin = executeInfo.attacker.weapon === "TWIN"
+  const isDefensePass = executeInfo.defender.passedDefense
 
   return (
     <div sx={{ position: "relative" }}>
@@ -25,7 +26,7 @@ export default function ExecutePhase() {
           to={executeInfo.defender.memberId}
         ></SecondSword>
       )}
-      {playersDOM[executeInfo.attacker.memberId.toString()] && (
+      {playersDOM[executeInfo.attacker.memberId.toString()] && !isDefensePass && (
         <Shield
           defender={executeInfo.defender.memberId}
           isTwin={isTwin}
