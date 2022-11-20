@@ -19,6 +19,7 @@ function OrderPicker() {
   const playerSize = "8vmin";
   const fontColor = "black";
   const meFontColor = "#448b69";
+  const nicknameLength = 8;
 
   const onPubOrder = (payload) => {
     // {
@@ -33,7 +34,6 @@ function OrderPicker() {
   function onClick(order) {
     weaponSelectAudio.play();
     onPubOrder(order + 1);
-
   }
 
   function orderList(players) {
@@ -84,6 +84,7 @@ function OrderPicker() {
                 size={playerSize}
                 fontColor={fontColor}
                 meFontColor={meFontColor}
+                nicknameLength={nicknameLength}
               ></Player>
             ) : null}
           </Button>
