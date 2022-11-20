@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useSpring, useChain, useSpringRef, animated } from "react-spring";
-import swordImg from "../../../_assets/game/sword.png";
-import swordUpImg from "../../../_assets/game/sword-up.png";
+import swordImg from "../../../_assets/game/image/sword.png";
+import swordUpImg from "../../../_assets/game/image/sword-up.png";
 
 export default function Sword(props) {
   const playersDOM = useSelector((state) => state.game.playersDOM);

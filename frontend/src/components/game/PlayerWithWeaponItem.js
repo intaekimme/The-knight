@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import api from "../../api/api";
 import { Grid, Box } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import scarImg from "../../_assets/game/scar.png";
-import handIconImg from "../../_assets/game/hand-icon.png";
-import swordIconImg from "../../_assets/game/sword-icon.png";
-import twinIconImg from "../../_assets/game/twin-icon.png";
-import shieldIconImg from "../../_assets/game/shield-icon.png";
+import scarImg from "../../_assets/game/image/scar.png";
+import handIconImg from "../../_assets/game/image/hand-icon.png";
+import swordIconImg from "../../_assets/game/image/sword-icon.png";
+import twinIconImg from "../../_assets/game/image/twin-icon.png";
+import shieldIconImg from "../../_assets/game/image/shield-icon.png";
 
 function PlayerWithWeaponItem({ player, isOpp }) {
   const phase = useSelector((state) => state.game.phase);

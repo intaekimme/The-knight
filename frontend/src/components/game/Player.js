@@ -4,9 +4,9 @@ import { setDOM } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PersonIcon from "@mui/icons-material/Person";
 import Box from "@mui/material/Box";
-import deadImg from "../../_assets/game/dead.png";
-import knightImg from "../../_assets/game/knight.png";
-import knightGreenImg from "../../_assets/game/knight-green.png";
+import deadImg from "../../_assets/game/image/dead.png";
+import knightImg from "../../_assets/game/image/knight.png";
+import knightGreenImg from "../../_assets/game/image/knight-green.png";
 
 // 해당 Player가 본인이면 녹색아이콘
 function Player({ player, isOpp, size, fontColor, meFontColor }) {

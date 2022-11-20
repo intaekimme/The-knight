@@ -3,8 +3,8 @@ import { selectWeaponForAttack } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import { Box, Button, Paper } from "@mui/material";
-import swordIconImg from "../../_assets/game/sword-icon.png";
-import twinIconImg from "../../_assets/game/twin-icon.png";
+import swordIconImg from "../../_assets/game/image/sword-icon.png";
+import twinIconImg from "../../_assets/game/image/twin-icon.png";
 
 export default function AttackPhase() {
   const me = useSelector((state) => state.game.me);

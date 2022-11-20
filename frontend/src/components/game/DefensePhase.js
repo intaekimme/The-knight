@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import api from "../../api/api"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import {Box, Button, Paper} from "@mui/material";
-import shieldIconImg from "../../_assets/game/shield-icon.png";
+import shieldIconImg from "../../_assets/game/image/shield-icon.png";
 
 export default function DefensePhase() {
   const me = useSelector((state) => state.game.me);
