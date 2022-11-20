@@ -41,10 +41,12 @@ public class GameConvertUtil {
 
     @Transactional
     public boolean requestCounting(long gameId) {
-        Integer maxMember = peopleMap.get(gameId);
+        int maxCount = peopleMap.get(gameId) * 3 - 1;
         ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
         queue.add("count");
-        if (queue.size() >= maxMember) {
+        queue.add("count");
+        queue.add("count");
+        if (queue.size() >= maxCount) {
             return gameLockUtil.countLock(gameId, 1, 4);
         }
         return false;
