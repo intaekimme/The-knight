@@ -35,9 +35,8 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 public class GameDoubtService {
     private final GameRedisRepository gameRedisRepository;
     private final GameLockUtil gameLockUtil;
-    private final Map<Long, ConcurrentHashMap<Long, String>> passMap = new ConcurrentHashMap<>();
 
-    @Transactional
+//    @Transactional
     public void doubt(long gameId, long suspectId, long suspectedId, GameStatus doubtStatus) {
         InGame inGame = getInGame(gameId);
         InGamePlayer suspect = getInGamePlayer(gameId, suspectId);
@@ -68,7 +67,7 @@ public class GameDoubtService {
         return new DoubtResponseDto(doubtResponse, inGame.getGameStatus());
     }
 
-    @Transactional
+//    @Transactional
     public DoubtPassDto doubtPass(long gameId, long suspectId){
         gameLockUtil.doubtPassLock(gameId,7, 2);
 
