@@ -6,6 +6,7 @@ import OrderPicker from "./OrderPicker";
 import WeaponPicker from "./WeaponPicker";
 import { Box, Button } from "@mui/material";
 import ticktockSound from "../../_assets/game/sound/sound-ticktock.mp3";
+import prepareBGM from "../../_assets/game/sound/bgm-game-prepare.mp3";
 
 export default function PreparePhase() {
   const timer = useSelector((state) => state.game.timer.timer);
@@ -17,6 +18,7 @@ export default function PreparePhase() {
   const isLeader = me.memberId === leader;
 
   const ticktockAudio = new Audio(ticktockSound);
+  const prepareBGMAudio = new Audio(prepareBGM);
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
@@ -33,9 +35,22 @@ export default function PreparePhase() {
 
   useEffect(() => {
     if (timer <= 5) {
+      ticktockAudio.volume = 0.1;
       ticktockAudio.play();
     }
   }, [timer]);
+
+  useEffect(() => {
+    prepareBGMAudio.loop = true;
+    prepareBGMAudio.volume = 0.15;
+    prepareBGMAudio.play();
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      prepareBGMAudio.pause();
+    }
+  }, []);
 
   return (
     <Box
