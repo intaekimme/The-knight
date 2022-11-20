@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import api from "../../api/api"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import {Box, Button, Paper} from "@mui/material";
 import shieldIconImg from "../../_assets/game/image/shield-icon.png";
 import clickSound from "../../_assets/game/sound/sound-click.mp3"
+import ticktockSound from "../../_assets/game/sound/sound-ticktock.mp3";
 
 export default function DefensePhase() {
   const me = useSelector((state) => state.game.me);
@@ -16,7 +18,8 @@ export default function DefensePhase() {
   const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
-  const clickAudio = new Audio(clickSound)
+  const clickAudio = new Audio(clickSound);
+  const ticktockAudio = new Audio(ticktockSound);
 
   const weaponsKr = {
     SWORD: "검",
@@ -52,6 +55,12 @@ export default function DefensePhase() {
     clickAudio.play();
     onPubDefensePass()
   }
+
+  useEffect(() => {
+    if (timer <= 5) {
+      ticktockAudio.play();
+    }
+  }, [timer]);
 
   function BoxRender() {
     // 내가 수비자일 때
