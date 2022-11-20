@@ -14,7 +14,7 @@ export default function PredecessorPhase() {
 
   useEffect(() => {
     gameBGMAudio.loop = true;
-    gameBGMAudio.volume = 0.15;
+    gameBGMAudio.volume = 0.1;
     gameBGMAudio.play();
     dispatch(setBGM(gameBGMAudio));
   }, [])
