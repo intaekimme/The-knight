@@ -4,6 +4,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
+    height: 1200px;
 }
 .imgModi{
     background-image: url("../_assets/mypage/mypage.png");

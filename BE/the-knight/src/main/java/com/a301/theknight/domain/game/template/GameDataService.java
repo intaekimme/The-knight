@@ -30,10 +30,9 @@ public abstract class GameDataService {
         this.redisRepository = redisRepository;
     }
 
-    @Transactional
     public void sendScreenData(long gameId, SendMessageService messageService) {
         try {
-            gameLockUtil.dataLock(gameId, 4,2);
+            gameLockUtil.dataLock(gameId, 4,1);
 
             makeAndSendData(gameId, messageService);
         } finally {

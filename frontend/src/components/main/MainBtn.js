@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const MainButton = styled.div`
-  .css-kaa6sa-MuiPaper-root-MuiCard-root:hover {
+  .css-18g63oc:hover {
     color: #424242 !important;
     background-color: transparent;
     transition-duration: 0.2s;

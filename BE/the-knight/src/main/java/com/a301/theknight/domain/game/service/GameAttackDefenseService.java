@@ -148,7 +148,7 @@ public class GameAttackDefenseService {
     @Transactional
     public void isDefensePass(long gameId, long memberId) {
         InGame findInGame = getInGame(gameId);
-        getInGamePlayer(gameId, memberId);
+//        getInGamePlayer(gameId, memberId);
         if (!DEFENSE.equals(findInGame.getGameStatus())) {
             throw new CustomWebSocketException(UNABLE_TO_PASS_DEFENSE);
         }
@@ -157,7 +157,6 @@ public class GameAttackDefenseService {
         defendData.defendPass();
 
         gameRedisRepository.saveInGame(gameId, findInGame);
-
     }
 
     private InGame getInGame(long gameId) {
