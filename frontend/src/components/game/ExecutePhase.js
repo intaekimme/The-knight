@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import { Box, Paper } from "@mui/material";
 import Sword from "./animation/Sword";
 import SecondSword from "./animation/SecondSword";
 import Shield from "./animation/Shield";
@@ -9,8 +9,16 @@ import Shield from "./animation/Shield";
 export default function ExecutePhase() {
   const playersDOM = useSelector((state) => state.game.playersDOM);
   const executeInfo = useSelector((state) => state.game.executeInfo);
-  const isTwin = executeInfo.attacker.weapon === "TWIN"
-  const isDefensePass = executeInfo.defender.passedDefense
+  const isTwin = executeInfo.attacker.weapon === "TWIN";
+  const isDefensePass = executeInfo.defender.passedDefense;
+
+  function BoxRender() {
+    return (
+      <Paper
+        sx={{ width: "70vmin", height: "40vmin", visibility: "hidden" }}
+      ></Paper>
+    );
+  }
 
   return (
     <div sx={{ position: "relative" }}>
@@ -42,6 +50,7 @@ export default function ExecutePhase() {
         }}
       >
         <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>
+        <BoxRender></BoxRender>
         <PlayerWithWeaponList></PlayerWithWeaponList>
       </Box>
     </div>
