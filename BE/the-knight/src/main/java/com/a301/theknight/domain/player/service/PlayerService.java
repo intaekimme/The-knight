@@ -69,7 +69,7 @@ public class PlayerService {
 
     private void checkAlreadyEntry(long memberId, Game entryGame) {
         entryGame.getPlayers().forEach(player -> {
-            if (player.getMember().getId().equals(memberId)) {
+            if (!player.isOwner() && player.getMember().getId().equals(memberId)) {
                 throw new CustomWebSocketException(PLAYER_IS_ALREADY_ENTRY);
             }
         });
