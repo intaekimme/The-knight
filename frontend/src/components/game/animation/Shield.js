@@ -6,16 +6,19 @@ import originalShieldImg from "../../../_assets/game/original-shield.png";
 
 export default function Shield(props) {
   const playersDOM = useSelector((state) => state.game.playersDOM);
+
+
+  const vmin = ((window.innerHeight > window.innerWidth) ? window.innerWidth : window.innerHeight) / 100
   let width = playersDOM[props.defender].width;
   let height = playersDOM[props.defender].height;
-  let defenderX = playersDOM[props.defender].x + width / 2.4;
-  let defenderY = playersDOM[props.defender].y - height / 2.1;
+  let defenderX = playersDOM[props.defender].x + width / 2 - 4.5 * vmin
+  let defenderY = playersDOM[props.defender].y + height / 2 - 4.5 * vmin
 
   const [isHurted, setIsHurted] = useState(false);
   useEffect(() => {
     setTimeout(() => {
       setIsHurted(true);
-    }, 930);
+    }, 800);
   }, []);
 
   const disappearRef = useSpringRef();
@@ -23,41 +26,25 @@ export default function Shield(props) {
   const disappearProps = useSpring({
     from: { opacity: 1 },
     to: { opacity: 0 },
-    config: { duration: 600 },
-    delay: 930,
+    config: { duration: (props.isTwin ? 900 : 600) },
+    delay: 800,
     ref: disappearRef,
   });
   useChain([disappearRef]);
 
   return (
     <div>
-      <animated.div style={{ ...disappearProps }}>
+      <animated.div style={{ ...disappearProps, position: "absolute",top: defenderY,
+            left: defenderX, zIndex: 2,}}>
         <img
-          src={hurtedShieldImg}
+          src={isHurted ? hurtedShieldImg : originalShieldImg}
           alt="hurted-shield"
           style={{
             width: "9vmin",
             height: "9vmin",
-            position: "absolute",
-            top: defenderY,
-            left: defenderX,
-            zIndex: 2,
           }}
         ></img>
       </animated.div>
-      <img
-        src={originalShieldImg}
-        alt="original-shield"
-        style={{
-          width: "9vmin",
-          height: "9vmin",
-          ...(isHurted && { display: "none" }),
-          position: "absolute",
-          top: defenderY,
-          left: defenderX,
-          zIndex: 2,
-        }}
-      ></img>
     </div>
   );
 }

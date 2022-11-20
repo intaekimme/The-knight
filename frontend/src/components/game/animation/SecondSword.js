@@ -2,6 +2,8 @@ import { useSelector } from "react-redux"
 import { useSpring, useChain, useSpringRef, animated } from "react-spring";
 import swordImg from "../../../_assets/game/sword.png";
 import swordUpImg from "../../../_assets/game/sword-up.png";
+import { useState, useEffect } from "react";
+import { Visibility } from "@mui/icons-material";
 
 export default function Sword(props) {
   const playersDOM = useSelector((state) => state.game.playersDOM)
@@ -15,10 +17,18 @@ export default function Sword(props) {
   let endX = playersDOM[props.to.toString()].x + width / 2 - 3 * vmin
   let endY = playersDOM[props.to.toString()].y
   
+  const delay = 650
+
+  const [isStart, setIsStart] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setIsStart(true);
+    }, delay);
+  }, []);
+
   function radianToDegree(x) {
     return (x * 180) / Math.PI;
   }
-  
   
   // if (startY > endY) {
   //   startY -= height * 1.5
@@ -66,9 +76,9 @@ export default function Sword(props) {
     endY = endY + 2 * Math.log(Math.abs(endX - startX))
   }
 
-  const rotateRef = useSpringRef();
   const shootRef = useSpringRef();
   const disappearRef = useSpringRef();
+
   
   // 각도 계산
   const radian = Math.atan((endX - startX) / (endY - startY))
@@ -76,17 +86,10 @@ export default function Sword(props) {
   const startRotate = 0
   const endRotate = startRotate - degree
 
-
-  const rotateProps = useSpring({
-    from: { rotateZ: startRotate },
-    to: { rotateZ: endRotate },
-    config: { duration: 500 },
-    ref: rotateRef,
-  });
   const shootProps = useSpring({
     from: { x: startX, y: startY },
     to: { x: endX, y: endY },
-    ...(startRotate === endRotate && {delay: 500}),
+    delay: delay,
     config: { duration: 300 },
     ref: shootRef,
   });
@@ -96,23 +99,23 @@ export default function Sword(props) {
     config: { duration: 600 },
     ref: disappearRef,
   })
-  useChain([rotateRef, shootRef, disappearRef]);
+  useChain([shootRef, disappearRef]);
 
   return (
     <div>
       <animated.div
         style={{
-          ...rotateProps,
           ...shootProps,
           ...disappearProps,
           position: "absolute",
           zIndex: 3,
+          ...(!isStart && {visibility: "hidden"})
         }}
       >
         <img
           src={isMyTeamAttack ? swordUpImg : swordImg}
           alt="sword"
-          style={{ width: "6vmin", height: "18vmin" }}
+          style={{ width: "6vmin", height: "18vmin", transform: `rotate(${endRotate}deg)` }}
         />
       </animated.div>
     </div>
