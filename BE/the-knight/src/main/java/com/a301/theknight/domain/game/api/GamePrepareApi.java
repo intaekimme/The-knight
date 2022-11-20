@@ -13,6 +13,7 @@ import com.a301.theknight.domain.game.dto.prepare.response.SelectResponse;
 import com.a301.theknight.domain.game.entity.redis.GameWeaponData;
 import com.a301.theknight.domain.game.service.GamePrepareService;
 import com.a301.theknight.domain.player.entity.Team;
+import com.a301.theknight.global.aop.annotation.PreventClick;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -68,6 +69,7 @@ public class GamePrepareApi {
         }
     }
 
+    @PreventClick
     @MessageMapping(value="/games/{gameId}/select-complete")
     public void completeSelect(@Min(1) @DestinationVariable long gameId, @LoginMemberId long memberId){
         SelectCompleteDto selectCompleteDto = gamePrepareService.completeSelect(gameId, memberId);

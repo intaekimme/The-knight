@@ -4,13 +4,9 @@ import com.a301.theknight.domain.common.service.SendMessageService;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
-import com.a301.theknight.global.error.errorcode.DomainErrorCode;
+import com.a301.theknight.domain.game.util.GameLockUtil;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
-
-import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
 
@@ -18,12 +14,12 @@ import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.ING
 public abstract class TimeLimitServiceTemplate {
 
     private GameRedisRepository redisRepository;
-    private RedissonClient redissonClient;
+    private GameLockUtil gameLockUtil;
 
 
-    public TimeLimitServiceTemplate(GameRedisRepository redisRepository, RedissonClient redissonClient) {
+    public TimeLimitServiceTemplate(GameRedisRepository redisRepository, GameLockUtil gameLockUtil) {
         this.redisRepository = redisRepository;
-        this.redissonClient = redissonClient;
+        this.gameLockUtil = gameLockUtil;
     }
 
     public void executeTimeLimit(long gameId, SendMessageService sendMessageService) {
@@ -31,7 +27,6 @@ public abstract class TimeLimitServiceTemplate {
         GameStatus preStatus = preInGame.getGameStatus();
         int preTurn = preInGame.getTurnNumber();
 
-        RLock dataLock = null;
         try {
             Thread.sleep(preStatus.getLimitMilliSeconds());
             InGame curInGame = getInGame(gameId);
@@ -39,27 +34,14 @@ public abstract class TimeLimitServiceTemplate {
                 return;
             }
 
-            dataLock = redissonClient.getLock(dataLockKeyGen(gameId));
-            tryDataLock(dataLock);
+            gameLockUtil.dataLock(gameId, 1, 20);
             log.info("  [Time Out] : status = {}", curInGame.getGameStatus().name());
             sendMessageService.convertCall(gameId);
             runLimitLogic(gameId);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } finally {
-            unLock(dataLock);
-        }
-    }
-
-    private void unLock(RLock dataLock) {
-        if (dataLock != null && dataLock.isLocked()) {
-            dataLock.unlock();
-        }
-    }
-
-    private void tryDataLock(RLock dataLock) throws InterruptedException {
-        if (!dataLock.tryLock(1, 20, TimeUnit.SECONDS)) {
-            throw new CustomWebSocketException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
+            gameLockUtil.dataUnLock(gameId);
         }
     }
 
@@ -68,9 +50,5 @@ public abstract class TimeLimitServiceTemplate {
     private InGame getInGame(long gameId) {
         return redisRepository.getInGame(gameId)
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
-    }
-
-    private String dataLockKeyGen(long gameId) {
-        return "data_lock:" + gameId;
     }
 }
