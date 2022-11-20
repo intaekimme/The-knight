@@ -17,7 +17,7 @@ export default function Sword(props) {
   let endX = playersDOM[props.to.toString()].x + width / 2 - 3 * vmin
   let endY = playersDOM[props.to.toString()].y
   
-  const delay = 650
+  const delay = 700;
 
   const [isStart, setIsStart] = useState(false);
   useEffect(() => {
@@ -30,12 +30,6 @@ export default function Sword(props) {
     return (x * 180) / Math.PI;
   }
   
-  // if (startY > endY) {
-  //   startY -= height * 1.5
-  // } else {
-  //   startY -= height * 0.5
-  //   endY -= height * 1.8
-  // }
   
   let quadrant = null
   if (startX < endX && startY > endY) {
@@ -55,40 +49,41 @@ export default function Sword(props) {
   const isMyTeamAttack = (quadrant === 1 || quadrant === 2 || quadrant === 10)
   if (isMyTeamAttack) {
     startY = startY - 0.5 * height
-    endY = endY + 0.5 * height
+    endY = endY + 0.25 * height
   } else {
     startY = startY + 0.5 * height
-    endY = endY - 0.5 * height
+    endY = endY - 0.2 * height
   }
-  
+
+  let adjustedEndX
+  let adjustedEndY
 
   if (quadrant === 1) {
-    endX = endX - 12 * Math.log(Math.abs(endX - startX))
-    endY = endY - 6 * Math.log(Math.abs(endX - startX))
+    adjustedEndX = endX - 9 * vmin;
+    adjustedEndY = endY
   } else if (quadrant === 2) {
-    endX = endX + 12 * Math.log(Math.abs(endX - startX))
-    endY = endY - 6 * Math.log(Math.abs(endX - startX))
+    adjustedEndX = endX + 9 * vmin;
+    adjustedEndY = endY
   } else if (quadrant === 3) {
-    endX = endX + 12 * Math.log(Math.abs(endX - startX))
-    endY = endY + 2 * Math.log(Math.abs(endX - startX))
+    adjustedEndX = endX + 9 * vmin;
+    adjustedEndY = endY - 9 * vmin / Math.abs(endX - startX) * (endY - startY);
   } else if (quadrant === 4) {
-    endX = endX - 12 * Math.log(Math.abs(endX - startX))
-    endY = endY + 2 * Math.log(Math.abs(endX - startX))
+    adjustedEndX = endX - 9 * vmin;
+    adjustedEndY = endY - 9 * vmin / Math.abs(endX - startX) * (endY - startY);
   }
 
   const shootRef = useSpringRef();
   const disappearRef = useSpringRef();
 
-  
   // 각도 계산
-  const radian = Math.atan((endX - startX) / (endY - startY))
+  const radian = Math.atan((adjustedEndX - startX) / (adjustedEndY - startY))
   const degree = radianToDegree(radian)
   const startRotate = 0
   const endRotate = startRotate - degree
 
   const shootProps = useSpring({
     from: { x: startX, y: startY },
-    to: { x: endX, y: endY },
+    to: { x: adjustedEndX, y: adjustedEndY },
     delay: delay,
     config: { duration: 300 },
     ref: shootRef,
