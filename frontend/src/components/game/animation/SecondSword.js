@@ -28,7 +28,7 @@ export default function Sword(props) {
     }, delay);
     setTimeout(() => {
       swordAudio.play();
-    }, rotateDuration)
+    }, delay)
   }, []);
 
   function radianToDegree(x) {
