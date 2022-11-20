@@ -40,7 +40,7 @@ public class GameLockUtil {
 
     public boolean clickLock(long gameId, long memberId, String MethodName) {
         String lockKey = generateClickLock(gameId, memberId, MethodName);
-        return tryLock(lockKey, 1, 7);
+        return tryLock(lockKey, 1, 5);
     }
 //
 //    public void clickUnLock(long gameId, long memberId) {
