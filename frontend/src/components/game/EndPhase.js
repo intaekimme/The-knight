@@ -17,29 +17,29 @@ export default function EndPhase() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // const endBGMAudio = new Audio(endBGM);
+  const endBGMAudio = new Audio(endBGM);
 
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onClick = () => {
-    // stompClient.send(api.pubEnd(gameId), {}, {})
-    // stompClient.disconnect();
-    // dispatch(resetGameSlice())
-    // navigate('/lobby');
+    stompClient.send(api.pubEnd(gameId), {}, {})
+    stompClient.disconnect();
+    dispatch(resetGameSlice())
+    navigate('/lobby');
   };
 
-  // useEffect(() => {
-  //   BGM.pause();
-  //   endBGMAudio.volume = 0.15
-  //   endBGMAudio.play();
-  // }, [])
+  useEffect(() => {
+    BGM.pause();
+    endBGMAudio.volume = 0.15
+    endBGMAudio.play();
+  }, [])
 
-  // useEffect(() => {
-  //   return () => {
-  //     endBGMAudio.pause();
-  //   }
-  // }, []);
+  useEffect(() => {
+    return () => {
+      endBGMAudio.pause();
+    }
+  }, []);
 
   function BoxRender() {
     return (
