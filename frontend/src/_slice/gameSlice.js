@@ -290,6 +290,9 @@ export const gameSlice = createSlice({
     },
     countTimer: (state, action) => {
       const later = state.timer.timer - 1;
+      if (state.timer.intervalObject) {
+        clearInterval(state.timer.intervalObject);
+      }
       state.timer = {
         timer: later,
         intervalObject: action.payload,
