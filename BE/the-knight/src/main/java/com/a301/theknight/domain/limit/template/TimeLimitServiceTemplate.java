@@ -34,14 +34,16 @@ public abstract class TimeLimitServiceTemplate {
                 return;
             }
 
-            gameLockUtil.dataLock(gameId, 1, 20);
-            log.info("  [Time Out] : status = {}", curInGame.getGameStatus().name());
-            sendMessageService.convertCall(gameId);
-            runLimitLogic(gameId);
+            try {
+                gameLockUtil.dataLock(gameId, 1, 10);
+                log.info("  [Time Out] : status = {}", curInGame.getGameStatus().name());
+                sendMessageService.convertCall(gameId);
+                runLimitLogic(gameId);
+            } finally {
+                gameLockUtil.dataUnLock(gameId);
+            }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
-        } finally {
-            gameLockUtil.dataUnLock(gameId);
         }
     }
 
