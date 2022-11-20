@@ -26,13 +26,13 @@ export default function AttackPhase() {
   };
 
   const onSelectWeapon = (weapon, hand) => {
+    clickAudio.play();
     dispatch(
       selectWeaponForAttack({
         weapon: weapon,
         hand: hand,
       })
     );
-    clickAudio.play();
   };
 
   const onPass = () => {

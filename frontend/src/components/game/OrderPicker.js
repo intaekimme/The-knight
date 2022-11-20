@@ -31,8 +31,8 @@ function OrderPicker() {
   };
 
   function onClick(order) {
-    onPubOrder(order + 1);
     weaponSelectAudio.play();
+    onPubOrder(order + 1);
 
   }
 

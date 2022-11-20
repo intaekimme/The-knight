@@ -52,8 +52,8 @@ function PlayerWithWeaponItem({ player, isOpp }) {
   };
 
   function deleteHand(hand) {
-    onPubDeleteWeapon(hand);
     weaponSelectAudio.play();
+    onPubDeleteWeapon(hand);
 
   }
 

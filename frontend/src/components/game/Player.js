@@ -68,8 +68,8 @@ function Player({ player, isOpp, size, fontColor, meFontColor }) {
   };
 
   const onSelectPlayer = () => {
-    onPubAttack();
     clickAudio.play();
+    onPubAttack();
   };
 
   return (

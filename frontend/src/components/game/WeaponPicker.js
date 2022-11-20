@@ -32,8 +32,8 @@ function WeaponPicker() {
   };
 
   const onClick = (weapon) => {
-    onPubSelectWeapon(weapon);
     weaponSelectAudio.play();
+    onPubSelectWeapon(weapon);
   };
 
   const weaponsKr = {
