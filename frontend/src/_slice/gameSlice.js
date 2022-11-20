@@ -286,13 +286,13 @@ export const gameSlice = createSlice({
       };
     },
     setTimer: (state, action) => {
+      if (state.timer.intervalObject) {
+        clearInterval(state.timer.intervalObject);
+      }
       state.timer.timer = action.payload;
     },
     countTimer: (state, action) => {
       const later = state.timer.timer - 1;
-      if (state.timer.intervalObject) {
-        clearInterval(state.timer.intervalObject);
-      }
       state.timer = {
         timer: later,
         intervalObject: action.payload,
