@@ -47,7 +47,7 @@ public class GameConvertUtil {
         queue.add("count");
         queue.add("count");
         if (queue.size() >= maxCount) {
-            return gameLockUtil.countLock(gameId, 1, 4);
+            return gameLockUtil.countLock(gameId, 1, 5);
         }
         return false;
     }

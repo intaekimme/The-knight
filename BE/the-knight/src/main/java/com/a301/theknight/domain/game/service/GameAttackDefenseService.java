@@ -116,7 +116,7 @@ public class GameAttackDefenseService {
     }
 
     //  Defense
-    @Transactional
+//    @Transactional
     public void defense(long gameId, long memberId, GameDefenseRequest gameDefenseRequest) {
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
