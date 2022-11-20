@@ -22,14 +22,20 @@ public abstract class TimeLimitServiceTemplate {
         this.gameLockUtil = gameLockUtil;
     }
 
-    public void executeTimeLimit(long gameId, SendMessageService sendMessageService) {
+    public void executeTimeLimit(long gameId, SendMessageService sendMessageService, GameStatus preStatus) {
         InGame preInGame = getInGame(gameId);
-        GameStatus preStatus = preInGame.getGameStatus();
         int preTurn = preInGame.getTurnNumber();
 
         try {
-            Thread.sleep(preStatus.getLimitMilliSeconds());
+            log.info(" [Time Limit] preStatus = {}, preturn = {}, Sleep = {}", preStatus, preTurn, preStatus.getLimitMilliSeconds());
+//            Thread.sleep(preStatus.getLimitMilliSeconds());
+            int time = (int)preStatus.getLimitMilliSeconds() / 200;
+            for (int i = 0; i < time; i++) {
+                Thread.sleep(190);
+            }
             InGame curInGame = getInGame(gameId);
+            log.info(" [Time Limit] preStatus = {}, nextStatus = {}, preturn = {}, nextturn = {}", preStatus, curInGame.getGameStatus(),
+                    preStatus.getLimitMilliSeconds(), curInGame.getTurnNumber());
             if (curInGame.getTurnNumber() != preTurn || !preStatus.equals(curInGame.getGameStatus())) {
                 return;
             }

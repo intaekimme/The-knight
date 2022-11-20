@@ -56,7 +56,7 @@ public class SendMessageService {
 
             sendData(gameId, "/proceed", ProceedResponse.toDto(gameStatus));
             TimeLimitServiceTemplate timeLimitService = timeLimitServiceFactory.getTimeLimitService(gameStatus);
-            timeLimitService.executeTimeLimit(gameId, this);
+            timeLimitService.executeTimeLimit(gameId, this, gameStatus);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

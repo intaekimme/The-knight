@@ -2,7 +2,7 @@ import React from "react";
 import { Grid, Box } from "@mui/material";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
 import { black, red, blue, yellow, white } from "../../_css/ReactCSSProperties";
-import { userBoxSx, nickname, userImage,userBoxReady } from "../../_css/UserBoxCSSProperties";
+import { userBoxSx, nickname, userImage, userBoxReady } from "../../_css/UserBoxCSSProperties";
 
 export default function UserBox(props) {
   // user 초기 데이터
@@ -24,8 +24,8 @@ export default function UserBox(props) {
   const [size, setSize] = React.useState(80);
   // 초기 team 컬러
   const [teamColor, setTeamColor] = React.useState(black);
-  React.useEffect(()=>{
-    if(props.width){
+  React.useEffect(() => {
+    if (props.width) {
       setWidth(props.width);
     }
     if (props.height) {
@@ -39,29 +39,31 @@ export default function UserBox(props) {
   React.useEffect(() => {
     console.log(props.userData);
     if (props.userData) {
-      const tempUser = {...user};
-      if(props.userData.id!==undefined){tempUser.id = props.userData.id;}
-      if(props.userData.nickname!==undefined){tempUser.nickname = props.userData.nickname;}
-      if(props.userData.image!==undefined){tempUser.image = props.userData.image;}
-      if(props.userData.readyStatus!==undefined){tempUser.readyStatus = props.userData.readyStatus;}
-      if(props.userData.team!==undefined){tempUser.team = props.userData.team;
-        const tempColor = (!props.userData.team || props.userData.team==='') ? white : (props.userData.team==='A') ? red : blue; setTeamColor(tempColor);}
-      if(props.userData.team===undefined){setTeamColor(black);}
-      if(props.userData.ranking!==undefined){tempUser.ranking = props.userData.ranking;}
-      if(props.userData.score!==undefined){tempUser.score = props.userData.score;}
-      if(props.userData.win!==undefined){tempUser.win = props.userData.win;}
-      if(props.userData.lose!==undefined){tempUser.lose = props.userData.lose;}
-      if(props.userData.empty!==undefined){tempUser.empty = props.userData.empty;}
+      const tempUser = { ...user };
+      if (props.userData.id !== undefined) { tempUser.id = props.userData.id; }
+      if (props.userData.nickname !== undefined) { tempUser.nickname = props.userData.nickname; }
+      if (props.userData.image !== undefined) { tempUser.image = props.userData.image; }
+      if (props.userData.readyStatus !== undefined) { tempUser.readyStatus = props.userData.readyStatus; }
+      if (props.userData.team !== undefined) {
+        tempUser.team = props.userData.team;
+        const tempColor = (!props.userData.team || props.userData.team === '') ? white : (props.userData.team === 'A') ? red : blue; setTeamColor(tempColor);
+      }
+      if (props.userData.team === undefined) { setTeamColor(black); }
+      if (props.userData.ranking !== undefined) { tempUser.ranking = props.userData.ranking; }
+      if (props.userData.score !== undefined) { tempUser.score = props.userData.score; }
+      if (props.userData.win !== undefined) { tempUser.win = props.userData.win; }
+      if (props.userData.lose !== undefined) { tempUser.lose = props.userData.lose; }
+      if (props.userData.empty !== undefined) { tempUser.empty = props.userData.empty; }
       setUser(tempUser);
     }
   }, [props.userData]);
 
   return (
-    <Box sx={{...userBoxSx(teamColor, width, height)}}>
-      <div style={{ ...nickname(size) }}>{user.nickname}</div>
+    <Box sx={{ ...userBoxSx(teamColor, width, height) }}>
+      <div style={{ ...nickname(size), paddingBottom: '10px', marginTop: '-8px' }}>{user.nickname}</div>
       <div>
         {user.empty && user.empty === true ? (
-          <QuestionMarkIcon sx={{ pt:1, fontSize: size }} />
+          <QuestionMarkIcon sx={{ pt: 1, fontSize: size, color: '#6A6969' }} />
         ) : (
           <img
             src={user.image}
@@ -70,7 +72,7 @@ export default function UserBox(props) {
           />
         )}
       </div>
-      <div style={{...userBoxReady(size)}}>{ user.readyStatus ? "Ready" : "" }</div>
+      <div style={{ ...userBoxReady(size) }}>{user.readyStatus ? "Ready" : ""}</div>
     </Box>
   );
 }
