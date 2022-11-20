@@ -136,9 +136,9 @@ public class PrepareDataService extends GameDataService {
         TeamInfoData teamBInfo = makeTeamInfoData(game, getTeamLeaderId(game, Team.B));
         //TODO 시연을 위한 하드코딩
         if (teamAInfo.getLeaderId() == 113L) {
-            firstAttackTeam = Team.A;
-        } else if (teamBInfo.getLeaderId() == 113L) {
             firstAttackTeam = Team.B;
+        } else if (teamBInfo.getLeaderId() == 113L) {
+            firstAttackTeam = Team.A;
         }
 
         redisRepository.saveInGame(game.getId(), InGame.builder()
