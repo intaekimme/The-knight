@@ -4,9 +4,9 @@
 const BASE_URL = 'https://sword-shield.co.kr';
 
 //frontend Local
-// const LOGIN_REDIRECT = 'http://localhost:3000/islogin';
+const LOGIN_REDIRECT = 'http://localhost:3000/islogin';
 //frontend 배포
-const LOGIN_REDIRECT = 'https://sword-shield.co.kr/islogin';
+// const LOGIN_REDIRECT = 'https://sword-shield.co.kr/islogin';
 
 const API = '/api';
 const WEBSOCKET = '/websocket';
