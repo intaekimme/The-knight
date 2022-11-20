@@ -7,8 +7,6 @@ import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;

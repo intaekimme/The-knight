@@ -38,6 +38,16 @@ public class GameLockUtil {
         unLock(countLock);
     }
 
+    public boolean clickLock(long gameId, long memberId, String MethodName) {
+        String lockKey = generateClickLock(gameId, memberId, MethodName);
+        return tryLock(lockKey, 1, 7);
+    }
+//
+//    public void clickUnLock(long gameId, long memberId) {
+//        String lockKey = generateClickLock(gameId, memberId, MethodName);
+//        unLock(lockKey);
+//    }
+
     private boolean tryLock(String key, long waitTime, long leaseTime) {
         RLock lock = redissonClient.getLock(key);
         try {
@@ -52,6 +62,10 @@ public class GameLockUtil {
         if (lock != null && lock.isLocked()) {
             lock.unlock();
         }
+    }
+
+    private String generateClickLock(long gameId, long memberId, String methodName) {
+        return methodName + "_click_lock:" + gameId + "_" + memberId;
     }
 
     private String generateDataLock(long gameId) {
