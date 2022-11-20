@@ -19,11 +19,9 @@ public class RankingService {
 
     @Transactional
     public RankingResponse getRankings(@Nullable String keyword) {
-        //TODO: 쿼리 테스트 필요!!
         List<RankingDto> rankings = StringUtils.hasText(keyword)
-                ? rankingRepository.getRankingList()
-                : rankingRepository.getRankingListByKeyword(keyword);
-
+                ? rankingRepository.getRankingListByKeyword(keyword)
+                : rankingRepository.getRankingList();
         return new RankingResponse(rankings);
     }
 }
