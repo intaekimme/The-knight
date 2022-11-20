@@ -8,6 +8,7 @@ import handIconImg from "../../_assets/game/image/hand-icon.png";
 import swordIconImg from "../../_assets/game/image/sword-icon.png";
 import twinIconImg from "../../_assets/game/image/twin-icon.png";
 import shieldIconImg from "../../_assets/game/image/shield-icon.png";
+import weaponSelectSound from "../../_assets/game/sound/sound-weapon-select.mp3"
 
 function PlayerWithWeaponItem({ player, isOpp }) {
   const phase = useSelector((state) => state.game.phase);
@@ -31,6 +32,8 @@ function PlayerWithWeaponItem({ player, isOpp }) {
     HAND: handIconImg,
   };
 
+  const weaponSelectAudio = new Audio(weaponSelectSound)
+
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
   const myTeam = useSelector((state) => state.game.me).team;
@@ -50,6 +53,8 @@ function PlayerWithWeaponItem({ player, isOpp }) {
 
   function deleteHand(hand) {
     onPubDeleteWeapon(hand);
+    weaponSelectAudio.play();
+
   }
 
   const renderScar = (hand) => {
