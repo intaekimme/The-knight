@@ -42,10 +42,20 @@ public class GameLockUtil {
         unLock(countLock);
     }
 
+    public boolean doubtPassLock(long gameId, long waitTime, long leaseTime) {
+        String lockKey = generatePassLockKey(gameId);
+        return tryLock(lockKey, waitTime, leaseTime);
+    }
+
+    public void doubtPassUnLock(long gameId) {
+        String lockKey = generatePassLockKey(gameId);
+        unLock(lockKey);
+    }
+
     public boolean clickLock(long gameId, long memberId, String MethodName) {
         String lockKey = generateClickLock(gameId, memberId, MethodName);
         log.info(" Prevent Lock Key = {}", lockKey);
-        return tryLock(lockKey, 1, 3);
+        return tryLock(lockKey, 1, 7);
     }
 //
 //    public void clickUnLock(long gameId, long memberId) {
@@ -77,12 +87,11 @@ public class GameLockUtil {
         return "data_lock:" + gameId;
     }
 
-    private String generateNextKey(long gameId) {
-        return "game_next:" + gameId;
-    }
-
     private String generateCountLockKey(long gameId) {
         return "game_count_lock:" + gameId;
     }
 
+    public String generatePassLockKey(long gameId) {
+        return "game_doubt_pass:" + gameId;
+    }
 }

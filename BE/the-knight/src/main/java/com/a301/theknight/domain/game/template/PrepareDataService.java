@@ -19,6 +19,7 @@ import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
