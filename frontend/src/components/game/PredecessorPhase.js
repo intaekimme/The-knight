@@ -1,10 +1,23 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setBGM } from "../../_slice/gameSlice"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import { Box, Paper } from "@mui/material";
+import gameBGM from "../../_assets/game/sound/bgm-game.mp3";
 
 export default function PredecessorPhase() {
+  const dispatch = useDispatch();
   const attackFirst = useSelector((state) => state.game.attackFirst)
   const me = useSelector((state) => state.game.me)
+
+  const gameBGMAudio = new Audio(gameBGM)
+
+  useEffect(() => {
+    gameBGMAudio.loop = true;
+    gameBGMAudio.volume = 0.15;
+    gameBGMAudio.play();
+    dispatch(setBGM(gameBGMAudio));
+  }, [])
 
   return (
     <Box

@@ -1,15 +1,20 @@
+import { useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { resetGameSlice } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import {Box, Button, Paper} from "@mui/material";
+import endBGM from "../../_assets/game/sound/bgm-game-end.mp3"
 
 export default function EndPhase() {
   const me = useSelector((state) => state.game.me)
   const endInfo = useSelector((state) => state.game.endInfo)
+  const BGM = useSelector((state) => state.game.BGM)
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const endBGMAudio = new Audio(endBGM);
   
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
@@ -20,6 +25,12 @@ export default function EndPhase() {
     dispatch(resetGameSlice())
     navigate('/lobby');
   }
+
+  useEffect(() => {
+    BGM.pause();
+    endBGMAudio.volume = 0.15
+    endBGMAudio.play();
+  }, [])
 
   function BoxRender() {
     return (

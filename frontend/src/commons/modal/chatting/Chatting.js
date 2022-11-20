@@ -158,7 +158,7 @@ export default function Chatting(props){
                     case "ALL":
                       currentChatColor = black;
                       currentChatSx = {...currentChatSx, ...chattingAll};
-                      currentChatBox = {...chattingBox, color:white};
+                      currentChatBox = {...chattingBox, background:white, color:black};
                       break;
                     case "A":
                       currentChatColor = red;
