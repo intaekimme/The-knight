@@ -4,9 +4,11 @@ import swordImg from "../../../_assets/game/image/sword.png";
 import swordUpImg from "../../../_assets/game/image/sword-up.png";
 import { useState, useEffect } from "react";
 import { Visibility } from "@mui/icons-material";
+import swordSound from "../../../_assets/game/sound/sound-sword.mp3"
 
 export default function Sword(props) {
   const playersDOM = useSelector((state) => state.game.playersDOM)
+  const swordAudio = new Audio(swordSound);
 
   const vmin = ((window.innerHeight > window.innerWidth) ? window.innerWidth : window.innerHeight) / 100
   const swordHeight = 18 * vmin
@@ -24,6 +26,9 @@ export default function Sword(props) {
     setTimeout(() => {
       setIsStart(true);
     }, delay);
+    setTimeout(() => {
+      swordAudio.play();
+    }, rotateDuration)
   }, []);
 
   function radianToDegree(x) {
