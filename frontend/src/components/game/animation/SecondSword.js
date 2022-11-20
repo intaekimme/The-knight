@@ -19,7 +19,7 @@ export default function Sword(props) {
   let endX = playersDOM[props.to.toString()].x + width / 2 - 3 * vmin
   let endY = playersDOM[props.to.toString()].y
   
-  const delay = 700;
+  const delay = 800;
 
   const [isStart, setIsStart] = useState(false);
   useEffect(() => {
