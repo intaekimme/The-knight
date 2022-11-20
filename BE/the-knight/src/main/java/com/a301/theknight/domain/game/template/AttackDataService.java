@@ -39,9 +39,10 @@ public class AttackDataService extends GameDataService {
         teamInfoData.updateCurrentAttackIndex(nextAttackerIndex);
         redisRepository.saveInGame(gameId, inGame);
 
-        long nextAttackerId = teamInfoData.getOrderList()[nextAttackerIndex].getMemberId();
+        GameOrderDto nextAttackerData = teamInfoData.getOrderList()[nextAttackerIndex];
         MemberTeamResponse response = MemberTeamResponse.builder()
-                .memberId(nextAttackerId)
+                .memberId(nextAttackerData.getMemberId())
+                .nickname(nextAttackerData.getNickname())
                 .team(inGame.getCurrentAttackTeam().name()).build();
         messageService.sendData(gameId, "/attacker", response);
     }
