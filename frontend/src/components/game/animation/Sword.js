@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux"
 import { useSpring, useChain, useSpringRef, animated } from "react-spring";
 import swordImg from "../../../_assets/game/sword.png";
+import swordUpImg from "../../../_assets/game/sword-up.png";
 
 export default function Sword(props) {
   const playersDOM = useSelector((state) => state.game.playersDOM)
@@ -9,9 +10,9 @@ export default function Sword(props) {
   const swordHeight = 18 * vmin
   const width = playersDOM[props.from.toString()].width
   const height = playersDOM[props.from.toString()].height
-  let startX = playersDOM[props.from.toString()].x + (width / 3.6)
+  let startX = playersDOM[props.from.toString()].x + width / 2 - 3 * vmin
   let startY = playersDOM[props.from.toString()].y
-  let endX = playersDOM[props.to.toString()].x + (width / 3.6)
+  let endX = playersDOM[props.to.toString()].x + width / 2 - 3 * vmin
   let endY = playersDOM[props.to.toString()].y
   
   function radianToDegree(x) {
@@ -19,12 +20,12 @@ export default function Sword(props) {
   }
   
   
-  if (startY > endY) {
-    startY -= height * 1.5
-  } else {
-    startY -= height * 0.5
-    endY -= height * 1.8
-  }
+  // if (startY > endY) {
+  //   startY -= height * 1.5
+  // } else {
+  //   startY -= height * 0.5
+  //   endY -= height * 1.8
+  // }
   
   let quadrant = null
   if (startX < endX && startY > endY) {
@@ -41,18 +42,28 @@ export default function Sword(props) {
     quadrant = 10
   }
   
+  const isMyTeamAttack = (quadrant === 1 || quadrant === 2 || quadrant === 10)
+  if (isMyTeamAttack) {
+    startY = startY - 0.5 * height
+    endY = endY + 0.5 * height
+  } else {
+    startY = startY + 0.5 * height
+    endY = endY - 0.5 * height
+  }
+  
+
   if (quadrant === 1) {
-    endX = endX - 8 * Math.log(Math.abs(endX - startX))
-    endY = endY - 4 * Math.log(Math.abs(endX - startX))
+    endX = endX - 12 * Math.log(Math.abs(endX - startX))
+    endY = endY - 6 * Math.log(Math.abs(endX - startX))
   } else if (quadrant === 2) {
-    endX = endX + 8 * Math.log(Math.abs(endX - startX))
-    endY = endY - 4 * Math.log(Math.abs(endX - startX))
+    endX = endX + 12 * Math.log(Math.abs(endX - startX))
+    endY = endY - 6 * Math.log(Math.abs(endX - startX))
   } else if (quadrant === 3) {
-    endX = endX + 8 * Math.log(Math.abs(endX - startX))
-    endY = endY + 4 * Math.log(Math.abs(endX - startX))
+    endX = endX + 12 * Math.log(Math.abs(endX - startX))
+    endY = endY + 2 * Math.log(Math.abs(endX - startX))
   } else if (quadrant === 4) {
-    endX = endX - 8 * Math.log(Math.abs(endX - startX))
-    endY = endY + 4 * Math.log(Math.abs(endX - startX))
+    endX = endX - 12 * Math.log(Math.abs(endX - startX))
+    endY = endY + 2 * Math.log(Math.abs(endX - startX))
   }
 
   const rotateRef = useSpringRef();
@@ -62,20 +73,21 @@ export default function Sword(props) {
   // 각도 계산
   const radian = Math.atan((endX - startX) / (endY - startY))
   const degree = radianToDegree(radian)
-  const startRotate = (quadrant === 1 || quadrant === 2 || quadrant === 10) ? 180 : 0
+  const startRotate = 0
   const endRotate = startRotate - degree
 
 
   const rotateProps = useSpring({
     from: { rotateZ: startRotate },
     to: { rotateZ: endRotate },
-    config: { duration: 800 },
+    config: { duration: 1000 },
     ref: rotateRef,
   });
   const shootProps = useSpring({
     from: { x: startX, y: startY },
     to: { x: endX, y: endY },
-    config: { duration: 130 },
+    ...(startRotate === endRotate && {delay: 1000}),
+    config: { duration: 300 },
     ref: shootRef,
   });
   const disappearProps = useSpring({
@@ -87,21 +99,23 @@ export default function Sword(props) {
   useChain([rotateRef, shootRef, disappearRef]);
 
   return (
-    <animated.div
-      style={{
-        ...rotateProps,
-        ...shootProps,
-        ...disappearProps,
-        position: "absolute",
-        zIndex: 2,
-      }}
-    >
-      <img
-        src={swordImg}
-        alt="sword"
-        style={{ width: "6vmin", height: "18vmin" }}
-      />
-    </animated.div>
+    <div>
+      <animated.div
+        style={{
+          ...rotateProps,
+          ...shootProps,
+          ...disappearProps,
+          position: "absolute",
+          zIndex: 2,
+        }}
+      >
+        <img
+          src={isMyTeamAttack ? swordUpImg : swordImg}
+          alt="sword"
+          style={{ width: "6vmin", height: "18vmin" }}
+        />
+      </animated.div>
+    </div>
   );
   
 }
