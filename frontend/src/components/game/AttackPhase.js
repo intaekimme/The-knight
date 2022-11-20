@@ -142,6 +142,7 @@ export default function AttackPhase() {
                       ...(selectAttack.weapon === "SWORD" &&
                         selectAttack.hand === "LEFT" && {
                           border: ".3vmin solid #f0a500",
+                          backgroundColor: "white",
                         }),
                       borderRadius: "1.3vmin",
                       position: "absolute",
@@ -150,7 +151,7 @@ export default function AttackPhase() {
                   <img
                     src={swordIconImg}
                     alt="SWORD"
-                    style={{ width: "8vmin", height: "8vmin" }}
+                    style={{ width: "8vmin", height: "8vmin", zIndex: 1 }}
                   />
                 </Button>
                 <Button
@@ -179,6 +180,7 @@ export default function AttackPhase() {
                       ...(selectAttack.weapon === "TWIN" &&
                         selectAttack.hand === "LEFT" && {
                           border: ".3vmin solid #f0a500",
+                          backgroundColor: "white",
                         }),
                       borderRadius: "1.3vmin",
                       position: "absolute",
@@ -187,7 +189,7 @@ export default function AttackPhase() {
                   <img
                     src={twinIconImg}
                     alt="TWIN"
-                    style={{ width: "8vmin", height: "8vmin" }}
+                    style={{ width: "8vmin", height: "8vmin", zIndex: 1}}
                   />
                 </Button>
               </Box>
@@ -244,6 +246,7 @@ export default function AttackPhase() {
                       ...(selectAttack.weapon === "SWORD" &&
                         selectAttack.hand === "RIGHT" && {
                           border: ".3vmin solid #f0a500",
+                          backgroundColor: "white",
                         }),
                       borderRadius: "1.3vmin",
                       position: "absolute",
@@ -252,7 +255,7 @@ export default function AttackPhase() {
                   <img
                     src={swordIconImg}
                     alt="SWORD"
-                    style={{ width: "8vmin", height: "8vmin" }}
+                    style={{ width: "8vmin", height: "8vmin", zIndex: 1 }}
                   />
                 </Button>
                 <Button
@@ -281,6 +284,7 @@ export default function AttackPhase() {
                       ...(selectAttack.weapon === "TWIN" &&
                         selectAttack.hand === "RIGHT" && {
                           border: ".3vmin solid #f0a500",
+                          backgroundColor: "white",
                         }),
                       borderRadius: "1.3vmin",
                       position: "absolute",
@@ -289,7 +293,7 @@ export default function AttackPhase() {
                   <img
                     src={twinIconImg}
                     alt="TWIN"
-                    style={{ width: "8vmin", height: "8vmin" }}
+                    style={{ width: "8vmin", height: "8vmin", zIndex: 1 }}
                   />
                 </Button>
               </Box>
