@@ -7,10 +7,17 @@ import Box from "@mui/material/Box";
 import deadImg from "../../_assets/game/image/dead.png";
 import knightImg from "../../_assets/game/image/knight.png";
 import knightGreenImg from "../../_assets/game/image/knight-green.png";
-import clickSound from "../../_assets/game/sound/sound-click.mp3"
+import clickSound from "../../_assets/game/sound/sound-click.mp3";
 
 // 해당 Player가 본인이면 녹색아이콘
-function Player({ player, isOpp, size, fontColor, meFontColor }) {
+function Player({
+  player,
+  isOpp,
+  size,
+  fontColor,
+  meFontColor,
+  nicknameLength,
+}) {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.game.me);
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
@@ -31,7 +38,7 @@ function Player({ player, isOpp, size, fontColor, meFontColor }) {
     isPass = doubtPassList.includes(player.memberId);
   }, [doubtPassList]);
 
-  const clickAudio = new Audio(clickSound)
+  const clickAudio = new Audio(clickSound);
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
@@ -171,7 +178,9 @@ function Player({ player, isOpp, size, fontColor, meFontColor }) {
           fontSize: "2vmin",
         }}
       >
-        {player.nickname}
+        {nicknameLength && (0 < nicknameLength && nicknameLength < player.nickname.length)
+          ? player.nickname.slice(0, nicknameLength - 1) + "..."
+          : player.nickname}
       </Box>
       {(isAttackDoubtPhase || isDefenseDoubtPhase) && isPass && (
         <Box

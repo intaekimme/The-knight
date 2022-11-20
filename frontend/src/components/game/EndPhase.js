@@ -37,7 +37,7 @@ export default function EndPhase() {
       >
         <Box sx={{ position: "absolute", top: "4vmin", fontSize: "3.5vmin" }}>{me.team === endInfo.winningTeam?"게임 승리":"게임 패배"}</Box>
         <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>{endInfo.winningTeam === "A"? "B": "A"}팀의 리더가 사망했습니다</Box>
-        <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>{me.team === endInfo.winningTeam?"10 포인트 상승":"10 포인트 하락"}</Box>
+        <Box sx={{ fontSize: "2.5vmin", padding: "1vmin" }}>{me.team === endInfo.winningTeam?"10 포인트 상승":"5 포인트 하락"}</Box>
         <Button
           onClick = {() => onClick()}
           color = "dark"
