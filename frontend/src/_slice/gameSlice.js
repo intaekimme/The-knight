@@ -245,6 +245,8 @@ const endInfoInit = {
 
 const playersDOMInit = {}
 
+const BGMinit = {}
+
 const initialState = {
   me: meInit,
   timer: timerInit,
@@ -266,6 +268,7 @@ const initialState = {
   executeInfo: executeInfoInit,
   endInfo: endInfoInit,
   playersDOM: playersDOMInit,
+  BGM: BGMinit,
 }
 
 export const gameSlice = createSlice({
@@ -413,6 +416,9 @@ export const gameSlice = createSlice({
     setDOM: (state, action) => {
       state.playersDOM[action.payload.memberIdString] = action.payload.dom
     },
+    setBGM: (state, action) => {
+      state.BGM = action.payload
+    },
   },
 });
 export const {
@@ -442,5 +448,6 @@ export const {
   addSubscribeObject,
   cancelSubscribe,
   setDOM,
+  setBGM,
 } = gameSlice.actions;
 export default gameSlice.reducer;
