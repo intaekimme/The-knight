@@ -21,6 +21,7 @@ import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -99,6 +100,20 @@ public class PrepareDataService extends GameDataService {
 
         Player teamALeader = teamA.get(teamALeaderIndex);
         Player teamBLeader = teamB.get(teamBLeaderIndex);
+
+        //TODO : 시연을 위한 하드코딩, 추후 삭제!
+        Optional<Player> optionalLeader = players.stream()
+                .filter(player -> player.getMember().getId().equals(113L))
+                .findFirst();
+        if (optionalLeader.isPresent()) {
+            Player leader = optionalLeader.get();
+            if (Team.A.equals(leader.getTeam())) {
+                teamALeader = leader;
+            } else {
+                teamBLeader = leader;
+            }
+        }
+
         teamALeader.becomeLeader();
         teamBLeader.becomeLeader();
 
