@@ -111,7 +111,6 @@ export default function NavBar() {
         </StyledNav>
         <StyledNav>
           <Navigation>
-            <Link to={`/game`}>진행중인 게임</Link>
             {/* <Link to={`/friendList`}>친구목록</Link> */}
             <Link to={`/memberPage`}>
               <IconButton
