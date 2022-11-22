@@ -1,6 +1,5 @@
 package com.a301.theknight.global.redis.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -21,8 +20,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Configuration
 public class RedisCacheConfig {
-
-    private final ObjectMapper objectMapper;
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {
