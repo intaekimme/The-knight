@@ -8,3 +8,4 @@ export const red = '#D2AB66';
 export const blue = '#6A6969';
 export const lightBlue = '#BADBFF';
 export const backgroundWhite = "#DCD7C9";
+export const shadowWhite = "rgba(255, 255, 255, 0.7)";

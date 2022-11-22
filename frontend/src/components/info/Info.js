@@ -1,8 +1,8 @@
 import React from "react";
 import infoLogo from '../../_assets/infoLogo.png'
-import { Box } from "@mui/system";
-import { Avatar, Container, Grid, Typography } from "@mui/material";
+import { Avatar, Container, Grid, Typography, Box, Paper } from "@mui/material";
 import video from '../../_assets/info/video.mp4'
+import { shadowWhite } from '../../_css/ReactCSSProperties';
 
 
 export default function Info() {
@@ -12,7 +12,7 @@ export default function Info() {
                 pt: 10,
                 pb: 10,
             }}>
-                <Box sx={{ bgcolor: '#fff', opacity: 0.7, height: 800, display: 'flex', justifyContent: 'center', boxShadow: '2px 2px 2px 10px #fff' }}>
+                <Paper sx={{ bgcolor: shadowWhite, height: 800, display: 'flex', justifyContent: 'center', boxShadow: `0 0 5px 5px ${shadowWhite}` }}>
                     <Grid container direction="column" alignItems={'center'} spacing={6}>
                     <Grid item>
                     <Avatar src={infoLogo} sx={{ pt: 5, width: 500, height: 'auto' }} variant="square"></Avatar>
@@ -23,7 +23,7 @@ export default function Info() {
                     </video>
                     </Grid>
                     </Grid>
-                </Box>
+                </Paper>
             </Box>
         </Container>
     );
