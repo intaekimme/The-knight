@@ -29,8 +29,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .build();
     }
 
-    @Cacheable(value = "memberCacheStore", key = "'member_id:' + #id")
-    public MemberPrincipal loadMemberById(Long id) throws UsernameNotFoundException {
+    @Cacheable(value = "memberCacheStore", key = "#id")
+    public UserDetails loadMemberById(Long id) throws UsernameNotFoundException {
         Member member = memberRepository.findById(id)
                 .orElseThrow(() -> new CustomRestException(MemberErrorCode.MEMBER_IS_NOT_EXIST));
 
