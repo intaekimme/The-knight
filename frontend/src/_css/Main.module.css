@@ -1,0 +1,10 @@
+.imgMain{
+  background-image: url("../_assets/main.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  /* width: 100vw; */
+  /* height: 727px; */
+  height: 1200px;
+}

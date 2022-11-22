@@ -4,7 +4,7 @@ import React from "react";
 import SearchBar from "../components/lobby/SearchBar";
 import GameList from "../components/lobby/GameList";
 import Table from "../components/test/table"
-import "../_css/TableStyles.css"
+import styled from "../_css/Lobby.module.css"
 
 import { Container } from "@mui/material";
 
@@ -17,10 +17,12 @@ export default function Lobby() {
   //   }
   // }, []);
   return (
-    <Container>
+    <div className={styled.imgLobby}>
+    <Container fixed >
       <SearchBar />
       <GameList/>
       {/* <Table/> */}
     </Container>
+    </div>
   );
 }

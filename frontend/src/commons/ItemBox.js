@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Box, Grid } from "@mui/material";
+import { backgroundWhite, white } from "../_css/ReactCSSProperties";
 
 export default function ItemBox(props) {
 	// click 함수
@@ -8,6 +9,8 @@ export default function ItemBox(props) {
 			props.onClick(params);
 		}
 	}
+
+	React.useEffect(() => { console.log(props.image) }, [props.image]);
 
 	// 버튼 비활성화
 	const [buttonDisabled, setButtonDisabled] = React.useState(true);
@@ -36,9 +39,9 @@ export default function ItemBox(props) {
 				{props.text
 					? <Grid container>
 							<Grid item xs={12} sx={{fontSize:size/10}}>{props.text}</Grid>
-							<Grid item xs={12}><img src={props.item} alt={props.item} style={{width:size*0.7, height:size*0.7}} /></Grid>
+							<Grid item xs={12}><img src={props.image} alt={props.image} style={{width:size*0.7, height:size*0.7, objectFit: "contain", background:white}} /></Grid>
 						</Grid>
-					: <img src={props.item} alt={props.item} style={{width:size*0.9, height:size*0.9}} />
+					: <img src={props.image} alt={props.image} style={{width:size*0.9, height:size*0.9, objectFit: "contain", background:backgroundWhite}} />
 				}
 			</Box>
 		</Button>

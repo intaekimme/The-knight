@@ -1,23 +1,36 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setBGM } from "../../_slice/gameSlice"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import { Box } from "@mui/material";
+import { Box, Paper } from "@mui/material";
+import gameBGM from "../../_assets/game/sound/bgm-game.mp3";
 
 export default function PredecessorPhase() {
+  const dispatch = useDispatch();
   const attackFirst = useSelector((state) => state.game.attackFirst)
   const me = useSelector((state) => state.game.me)
+
+  const gameBGMAudio = new Audio(gameBGM)
+
+  useEffect(() => {
+    gameBGMAudio.loop = true;
+    gameBGMAudio.volume = 0.1;
+    gameBGMAudio.play();
+    dispatch(setBGM(gameBGMAudio));
+  }, [])
 
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
-        height: "88vh",
+        height: "100vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>
-      <Box
+      <Paper
         sx={{
           width: "70vmin",
           height: "40vmin",
@@ -29,7 +42,7 @@ export default function PredecessorPhase() {
         }}
       >
         {attackFirst === me.team ? "아군이 선공입니다" : "적팀이 선공입니다"}
-      </Box>
+      </Paper>
       <PlayerWithWeaponList></PlayerWithWeaponList>
     </Box>
   );

@@ -6,9 +6,10 @@ import UpdateMemInfo from '../components/memberPage/UpdateMemInfo';
 
 // import { useNavigate } from 'react-router-dom';
 // import LoginCheck from "../commons/login/LoginCheck";
-
+import "../_css/Mypage.module.css"
 import { Container } from "@mui/system";
 import { Grid } from "@mui/material";
+import styled from "../_css/Mypage.module.css";
 
 export default function MemberPage() {
   // const isLogin = LoginCheck();
@@ -20,24 +21,34 @@ export default function MemberPage() {
   // }, []);
   const [clickUpdate, setClickUpdate] = useState(false);
   const updateProfile = () => {
-      console.log("this");
-      clickUpdate === true ? (
-        setClickUpdate(false)
-      ) : (
+    console.log("this");
+    clickUpdate === true ? (
+      setClickUpdate(false)
+    ) : (
       setClickUpdate(true)
-      )
+    )
   }
   return (
-    <Container fixed>
-      {!clickUpdate
-        ?
-        <Grid>
-          <MemberInfoForm updateProfile={updateProfile} />
-          <CurrentRecord />
-        </Grid>
-      :
-      <UpdateMemInfo />
+    <>
+      {
+        !clickUpdate
+          ?
+          <div className={styled.imgMypage}>
+            <Container fixed>
+              <Grid sx={{ pb: 1 }}>
+                <MemberInfoForm updateProfile={updateProfile} />
+
+                <CurrentRecord />
+              </Grid>
+            </Container>
+          </div>
+          :
+          <div className={styled.imgModi}>
+            <Container fixed>
+              <UpdateMemInfo />
+            </Container>
+          </div>
       }
-    </Container>
+    </>
   );
 }

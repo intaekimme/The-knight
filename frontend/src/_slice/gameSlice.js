@@ -1,6 +1,9 @@
 import React from "react";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+// LOADING, PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
+const phaseInit = "LOADING";
+
 const meInit = {
   memberId: 1,
   nickname: "John",
@@ -20,8 +23,9 @@ const playersInit = {
     {
       memberId: 1,
       nickname: "John",
-      leftCount: 0,
-      rightCount: 0,
+      leftCount: 1,
+      rightCount: 3,
+      isDead: false,
       team: "A",
       order: 0,
       weapons: [null, null],
@@ -31,6 +35,7 @@ const playersInit = {
       nickname: "Smith",
       leftCount: 0,
       rightCount: 0,
+      isDead: true,
       team: "A",
       order: 0,
       weapons: [null, null],
@@ -40,6 +45,7 @@ const playersInit = {
       nickname: "Sara",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "A",
       order: 0,
       weapons: [null, null],
@@ -67,6 +73,7 @@ const playersInit = {
       nickname: "Ria",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "B",
       order: 0,
       weapons: [null, null],
@@ -76,6 +83,7 @@ const playersInit = {
       nickname: "FTX",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "B",
       order: 0,
       weapons: [null, null],
@@ -85,6 +93,7 @@ const playersInit = {
       nickname: "Sam",
       leftCount: 0,
       rightCount: 0,
+      isDead: false,
       team: "B",
       order: 0,
       weapons: [null, null],
@@ -114,7 +123,7 @@ const leaderInit = 0;
 
 const attackFirstInit = "";
 
-const orderInit = [null, null, null, null, null];
+const orderInit = [null];
 
 const countWeaponInit = {
   sword: 0,
@@ -125,12 +134,8 @@ const countWeaponInit = {
 
 const isSelectCompleteInit = false;
 
-// PREPARE, PREDECESSOR, ATTACK, ATTACK_DOUBT, DEFENSE, DEFENSE_DOUBT, DOUBT_RESULT, EXECUTE(공&방 결과), END
-const phaseInit = "PREPARE";
-const previousPhaseInit = null;
 
 const subscribeObjectInit = {
-  common: [],
   prepare: [],
   predecessor: [],
   attack: [],
@@ -142,7 +147,6 @@ const subscribeObjectInit = {
   end: [],
 }
 
-const isLoadingInit = true;
 
 const currentAttackerInit = {
   memberId: 6,
@@ -199,12 +203,12 @@ const doubtInfoInit =   {
       hand: "",
     },
     doubtTeam: "",  // 의심을 건 사람의 팀
-    doubtResult: false,  // 의심 성공 여부
+    doubtSuccess: false,  // 의심 성공 여부
   },
   doubtStatus : "",
 }
 
-const doubtPassListInit = []
+const doubtPassListInit = [1]
 
 const executeInfoInit = {
   attackTeam: "",
@@ -214,10 +218,10 @@ const executeInfoInit = {
     hand: "",
   },
   defender : {
-    memberId: 0,
+    memberId: 3,
     hand: "",
     isDead: false,
-    restCount: 0,
+    hitCount: 0,
     passedDefense: false,
   }
 }
@@ -239,32 +243,39 @@ const endInfoInit = {
   ],
 };
 
+const playersDOMInit = {}
+
+const BGMinit = {}
+
+const initialState = {
+  me: meInit,
+  timer: timerInit,
+  players: playersInit,
+  leader: leaderInit,
+  attakFirst: attackFirstInit,
+  order: orderInit,
+  countWeapon: countWeaponInit,
+  isSelectComplete: isSelectCompleteInit,
+  phase: phaseInit,
+  subscribeObject: subscribeObjectInit,
+  currentAttacker: currentAttackerInit,
+  currentDefender: currentDefenderInit,
+  selectAttack: selectAttackInit,
+  attackInfo: attackInfoInit,
+  defenseInfo: defenseInfoInit,
+  doubtInfo: doubtInfoInit,
+  doubtPassList: doubtPassListInit,
+  executeInfo: executeInfoInit,
+  endInfo: endInfoInit,
+  playersDOM: playersDOMInit,
+  BGM: BGMinit,
+}
+
 export const gameSlice = createSlice({
   name: "gameSlice",
-  initialState: {
-    me: meInit,
-    timer: timerInit,
-    players: playersInit,
-    leader: leaderInit,
-    attakFirst: attackFirstInit,
-    order: orderInit,
-    countWeapon: countWeaponInit,
-    isSelectComplete: isSelectCompleteInit,
-    phase: phaseInit,
-    previousPhase: previousPhaseInit,
-    subscribeObject: subscribeObjectInit,
-    isLoading: isLoadingInit,
-    currentAttacker: currentAttackerInit,
-    currentDefender: currentDefenderInit,
-    selectAttack: selectAttackInit,
-    attackInfo: attackInfoInit,
-    defenseInfo: defenseInfoInit,
-    doubtInfo: doubtInfoInit,
-    doubtPassList: doubtPassListInit,
-    executeInfo: executeInfoInit,
-    endInfo: endInfoInit,
-  },
+  initialState: initialState,
   reducers: {
+    resetGameSlice: () => initialState,
     setMe: (state) => {
       const memberId = parseInt(window.localStorage.getItem("memberId"));
       const player = state.players.players.find((player) => player.memberId === memberId);
@@ -278,11 +289,17 @@ export const gameSlice = createSlice({
       };
     },
     setTimer: (state, action) => {
+      if (state.timer.intervalObject) {
+        clearInterval(state.timer.intervalObject);
+      }
       state.timer.timer = action.payload;
     },
     countTimer: (state, action) => {
-      state.timer.timer = state.timer.timer - 1;
-      state.timer.intervalObject = action.payload;
+      const later = state.timer.timer - 1;
+      state.timer = {
+        timer: later,
+        intervalObject: action.payload,
+      }
     },
     stopCountTimer: (state) => {
       if (state.timer.timer <= 0) {
@@ -297,11 +314,7 @@ export const gameSlice = createSlice({
       state.order = action.payload;
     },
     fetchPhase: (state, action) => {
-      state.previousPhase = state.phase;
       state.phase = action.payload;
-    },
-    switchIsLoading: (state) => {
-      state.isLoading = !state.isLoading;
     },
     initializePass: (state) => {
       state.doubtPassList = [];
@@ -339,12 +352,20 @@ export const gameSlice = createSlice({
     fetchExecuteInfo: (state, action) => {
       state.executeInfo = action.payload;
     },
-    addDoubtPass: (state) => {
-      state.doubtPassList.push(state.me.memberId);
+    addDoubtPass: (state, action) => {
+      state.doubtPassList.push(action.payload);
     },
     selectWeaponForAttack: (state, action) => { 
-      state.selectAttack.weapon = action.payload.weapon;
-      state.selectAttack.hand = action.payload.hand;
+      state.selectAttack = {
+        weapon: action.payload.weapon,
+        hand: action.payload.hand,
+      };
+    },
+    resetWeaponForAttack: (state) => {
+      state.selectAttack = {
+        weapon: null,
+        hand: null,
+      }
     },
     addSubscribeObject: (state, action) => { 
       if (action.payload.phase === "PREPARE") {
@@ -363,8 +384,6 @@ export const gameSlice = createSlice({
         state.subscribeObject.doubtResult.push(action.payload.subscribeObject)
       } else if (action.payload.phase === "END") {
         state.subscribeObject.end.push(action.payload.subscribeObject)
-      } else if (action.payload.phase === "COMMON") {
-        state.subscribeObject.common.push(action.payload.subscribeObject)
       }
     },
     cancelSubscribe: (state, action) => {
@@ -392,14 +411,18 @@ export const gameSlice = createSlice({
       } else if (action.payload === "END") {
         state.subscribeObject.end.forEach(subscribeObject => subscribeObject.unsubscribe())
         state.subscribeObject.end = []
-      } else if (action.payload === "COMMON") {
-        state.subscribeObject.common.forEach(subscribeObject => subscribeObject.unsubscribe())
-        state.subscribeObject.common = []
       }
-    }
+    },
+    setDOM: (state, action) => {
+      state.playersDOM[action.payload.memberIdString] = action.payload.dom
+    },
+    setBGM: (state, action) => {
+      state.BGM = action.payload
+    },
   },
 });
 export const {
+  resetGameSlice,
   setMe,
   setTimer,
   countTimer,
@@ -407,7 +430,6 @@ export const {
   fetchPlayers,
   fetchOrder,
   fetchPhase,
-  switchIsLoading,
   initializePass,
   setEndInfo,
   setLeader,
@@ -422,7 +444,10 @@ export const {
   fetchExecuteInfo,
   addDoubtPass,
   selectWeaponForAttack,
+  resetWeaponForAttack,
   addSubscribeObject,
   cancelSubscribe,
+  setDOM,
+  setBGM,
 } = gameSlice.actions;
 export default gameSlice.reducer;

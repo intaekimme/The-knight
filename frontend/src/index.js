@@ -20,8 +20,6 @@ import EnterRoom from './components/lobby/EnterRoom';
 import Room from "./pages/Room";
 import GoogleLogin from './commons/login/GoogleLogin';
 import LoginToken from './commons/login/LoginToken';
-import Chat from './commons/chatting/Chat';
-import Chatting from './commons/chatting/Chatting';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 const theme = createTheme({
@@ -57,8 +55,6 @@ root.render(
               <Route path="connect-websocket/:gameId" element={<ConnectWebsocket/>}/>
               <Route path="/entryRoom/:gameId" element={<EnterRoom />} />
               <Route path="/room/:gameId" element={<Room />} />
-              <Route path="chat" element={<Chat />} />
-              <Route path="chatting" element={<Chatting />} />
             </Route>
           </Routes>
         </ThemeProvider>

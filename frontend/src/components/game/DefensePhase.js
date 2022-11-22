@@ -1,17 +1,26 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import api from "../../api/api"
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import {Box, Button, Paper} from "@mui/material";
+import shieldIconImg from "../../_assets/game/image/shield-icon.png";
+import clickSound from "../../_assets/game/sound/sound-click.mp3"
+import ticktockSound from "../../_assets/game/sound/sound-ticktock.mp3";
 
 export default function DefensePhase() {
   const me = useSelector((state) => state.game.me);
   const timer = useSelector((state) => state.game.timer).timer;
   const attackInfo = useSelector((state) => state.game.attackInfo);
   const currentDefender = useSelector((state) => state.game.currentDefender);
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.game.me).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
+
+  const clickAudio = new Audio(clickSound);
+  const ticktockAudio = new Audio(ticktockSound);
+
   const weaponsKr = {
     SWORD: "검",
     TWIN: "쌍검",
@@ -30,28 +39,34 @@ export default function DefensePhase() {
     const data = {
       hand: payload
     }
-    // stompClient.send(api.pubDefense(gameId), {}, JSON.stringify(data));
-    console.log(data)
+    stompClient.send(api.pubDefense(gameId), {}, JSON.stringify(data));
   }
 
   const onPubDefensePass = () => {
-    // stompClient.send(api.pubDefensePass(gameId), {}, {});
-    console.log("패스!")
+    stompClient.send(api.pubDefensePass(gameId), {}, {});
   }
 
   function selectShield(hand) {
+    clickAudio.play();
     onPubDefense(hand)
   }
 
   function selectPass() {
+    clickAudio.play();
     onPubDefensePass()
   }
+
+  useEffect(() => {
+    if (timer <= 5) {
+      ticktockAudio.play();
+    }
+  }, [timer]);
 
   function BoxRender() {
     // 내가 수비자일 때
     if (me.memberId === currentDefender.memberId) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -85,60 +100,91 @@ export default function DefensePhase() {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  borderRadius: "1.3vmin",
+                  backgroundColor: "#424242",
                 }}
               >
-                <Box sx={{ fontSize: "2.7vmin" }}>L</Box>
                 <Box
-                  onClick={() => selectShield("LEFT")}
                   sx={{
-                    width: "10vmin",
-                    height: "10vmin",
-                    backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    fontSize: "2vmin",
+                    color: "#f0f0f0",
+                    height: "3vmin",
+                    lineHeight: "3vmin",
                   }}
                 >
-                  shield
+                  L
                 </Box>
+                <Button
+                  onClick={() => selectShield("LEFT")}
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
+                    backgroundColor: "#f0f0f0",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <img src={shieldIconImg} alt="SHIELD" style={{ width: "8vmin", height: "8vmin" }} />
+                </Button>
               </Box>
               <Box
                 sx={{
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  borderRadius: "1.3vmin",
+                  backgroundColor: "#424242",
                 }}
               >
-                <Box sx={{ fontSize: "2.7vmin" }}>R</Box>
                 <Box
-                  onClick={() => selectShield("RIGHT")}
                   sx={{
-                    width: "10vmin",
-                    height: "10vmin",
-                    backgroundColor: "#f0f0f0",
-                    border: "7px solid #4d4d4d",
-                    borderRadius: "10px",
+                    fontSize: "2vmin",
+                    color: "#f0f0f0",
+                    height: "3vmin",
+                    lineHeight: "3vmin",
                   }}
                 >
-                  shield
+                  R
                 </Box>
+                <Button
+                  onClick={() => selectShield("RIGHT")}
+                  color="dark"
+                  style={{
+                    width: "11.3vmin",
+                    height: "11.3vmin",
+                    backgroundColor: "#f0f0f0",
+                    border: ".65vmin solid #424242",
+                    borderRadius: "1.3vmin",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <img src={shieldIconImg} alt="SHIELD" style={{ width: "8vmin", height: "8vmin" }} />
+                </Button>
               </Box>
             </Box>
-            <Box
+            <Button
               onClick={() => selectPass()}
-              sx={{
-                width: "10vmin",
-                height: "10vmin",
+              color="dark"
+              style={{
+                width: "11.3vmin",
+                height: "11.3vmin",
                 backgroundColor: "#f0f0f0",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                border: "7px solid #4d4d4d",
-                borderRadius: "10px",
+                border: ".65vmin solid #424242",
+                borderRadius: "1.3vmin",
                 fontSize: "3vmin",
               }}
             >
               Pass
-            </Box>
+            </Button>
           </Box>
           <Box
             sx={{
@@ -152,12 +198,12 @@ export default function DefensePhase() {
           >
             제한시간: {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 우리 팀이 공격자일 때
     } else if (me.team === currentDefender.team) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -181,12 +227,12 @@ export default function DefensePhase() {
           >
             제한시간: {timer}
           </Box>
-        </Box>
+        </Paper>
       );
       // 적팀이 공격자일 때
     } else {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -210,7 +256,7 @@ export default function DefensePhase() {
           >
             제한시간: {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     }
   }
@@ -220,9 +266,9 @@ export default function DefensePhase() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
-        height: "88vh",
+        height: "100vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>

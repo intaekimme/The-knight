@@ -27,6 +27,7 @@ const MEMBERS = '/members';
 const TEAM = '/team';
 const READY = '/ready';
 const EXIT = '/exit';
+const DELETE = '/delete';
 
 // 인게임
 const PLAYERS_INFO = '/players';
@@ -79,6 +80,7 @@ const api = {
   subSelectTeam: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + TEAM,
   subReady: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + READY,
   subExit: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + EXIT,
+  subDelete: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DELETE,
   subError: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + ERROR,
 
   // 발행
@@ -118,7 +120,7 @@ const api = {
   subEnd: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + END,
   subConvertComplete: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + CONVERT_COMPLETE,
   subDoubtPass: (gameId) => WEBSOCKET_SUBSCRIBE + GAME + `/${gameId}` + DOUBT_PASS,
-  
+
   pubConvertComplete: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + CONVERT_COMPLETE,
   pubScreenData: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SCREEN_DATA,
   pubSelectWeapon: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + SELECT_WEAPON,
@@ -131,6 +133,7 @@ const api = {
   pubDoubt: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DOUBT,
   pubOrder: (gameId, team) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + `/${team}`.toLowerCase() + ORDER,
   pubDoubtPass: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + DOUBT_PASS,
+  pubEnd: (gameId) => WEBSOCKET_PUBLISH + GAME + `/${gameId}` + END,
 
   //rank 관련
   getRankList: () => BASE_URL + API + '/ranking',

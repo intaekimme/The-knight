@@ -1,51 +1,10 @@
 import * as React from 'react';
 import { useSelector, useDispatch } from "react-redux";
 
-// import { DataGrid } from '@mui/x-data-grid';
-// import InputBase from '@mui/material/InputBase';
-// import IconButton from '@mui/material/IconButton';
-// import SearchIcon from '@mui/icons-material/Search';
 import { Avatar, ListItem, ListItemAvatar, ListItemText, Pagination, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TablePagination, TableRow } from "@mui/material";
 import { fetchRankAll } from "../../_slice/rankSlice";
+import { headerT, dataStyle, dataNameStyle } from "../../_css/RankCSSProperties";
 
-// const columns = [
-//   { field: 'id', headerName: '랭킹', width: 300, headerAlign: 'center', align:'center' },
-//   { field: 'name', headerName: '닉네임', width: 500, headerAlign: 'center', align:'center' },
-//   { field: 'score', headerName: '점수', width: 300, headerAlign: 'center', align:'center' },
-// ];
-
-// const sample = [
-//   ['Frozen yoghurt', 159],
-//   ['Ice cream sandwich', 237],
-//   ['Eclair', 262],
-//   ['Cupcake', 305],
-//   ['Gingerbread', 356],
-// ];
-
-// function createData(id, name, score) {
-//   id = id + 1;
-//   return { id, name, score };
-// }
-
-// const rows = [];
-// for (let i = 0; i < 200; i += 1) {
-//   const randomSelection = sample[Math.floor(Math.random() * sample.length)];
-//   rows.push(createData(i, ...randomSelection));
-// }
-// const originalRows = [
-//   // { rank: 1, name: "Pizza", score: 200}, { rank: 2, name: "Pizza", score: 200},
-//   // { rank: 3, name: "Pizza", score: 200}, { rank: 4, name: "Pizza", score: 200},
-//   // { rank: 5, name: "Pizza", score: 200}, { rank: 6, name: "Pizza", score: 200},
-//   // { rank: 7, name: "Pizza", score: 200}, { rank: 8, name: "Pizza", score: 200},
-//   // { rank: 9, name: "chicken", score: 200}, { rank: 10, name: "Pizza", score: 200},
-//   // { rank: 11, name: "Pizza", score: 200}, { rank: 12, name: "Pizza", score: 200},
-//   // { rank: 13, name: "Pizza", score: 200}, { rank: 14, name: "Pizza", score: 200},
-//   // { rank: 15, name: "Pizza", score: 200}, { rank: 16, name: "Pizza", score: 200},
-//   // { rank: 17, name: "Pizza", score: 200}, { rank: 18, name: "Pizza", score: 200},
-//   // { rank: 19, name: "Pizza", score: 200}, { rank: 20, name: "Pizza", score: 200},
-//   // { rank: 21, name: "Pizza", score: 200}, { rank: 22, name: "Pizza", score: 200},
-//   // { rank: 23, name: "Pizza", score: 200}, { rank: 24, name: "Pizza", score: 200},
-// ];
 
 export default function RankTable() {
   const dispatch = useDispatch();
@@ -53,55 +12,14 @@ export default function RankTable() {
     dispatch(fetchRankAll());
   }, [])
   const rankRows = useSelector(state => state.rank.rankList)
-  // for (let index = 0; index < originalRows.length; index++) {
-  //   originalRows.pop();
-  // }
-  // for (let index = 0; index < rankRows.length; index++) {
-  //   const row = rankRows[index];
-  //   originalRows.push(row);
-  // }
-  // console.log("zlzl",rankRows);
-
-  // const [rows, setRows] = React.useState(rankRows);
-  // // const [searched, setSearched] = React.useState("");
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(20)
-
-  // // const handleChange = (event) => {
-  // //   setSearched(event.target.value);
-  // // };
-
-  // // const requestSearch = (searchedVal) => {
-  // //   console.log(searchedVal);
-  // //   const filteredRows = originalRows.filter((row) => {
-  // //     return row.name.toLowerCase().includes(searchedVal.toString().toLowerCase());
-  // //   });
-  // //   setRows(filteredRows);
-  // // };
 
   const handleChangePage = (event, newPage) => {
     console.log(newPage);
     setPage(newPage)
   }
 
-  // const [keyword, setKeyword] = React.useState();
-  // const onChangeValue = (e) => {
-  //   setKeyword(e.target.value);
-  // }
-  // const searchRankMem = (e) => {
-  //   // e.preventDefault();
-  //   console.log(keyword);
-  //   dispatch(searchRank(keyword));
-  //   // if (rankRows.length !== 0) {
-  //   //   for (let index = 0; index < originalRows.length; index++) {
-  //   //     originalRows.pop();
-  //   //   }
-  //   //   setRows(rankRows);
-  //   // } else {
-  //   //   return
-  //   // }
-
-  // }
 
   return (
     <>
@@ -129,13 +47,13 @@ export default function RankTable() {
           autoHeight={true}
           />
       </Paper> */}
-      <TableContainer>
+      <TableContainer sx={{ mt: 2, borderRadius: 1, boxShadow: '1px 1px 10px 5px #424242' }}>
         <Table aria-label="simple table">
           <TableHead>
-            <TableRow>
-              <TableCell align="left" sx={{ pl: 3.5 }} style={{ width: 200 }}>랭킹</TableCell>
-              <TableCell align="left" sx={{ pl: 30 }}>닉네임</TableCell>
-              <TableCell align="center" style={{ width: 160 }}>점수</TableCell>
+            <TableRow sx={{ bgcolor: '#fff', opacity: 0.6 }}>
+              <TableCell align="left" sx={{ ...headerT, pl: 3.5 }} style={{ width: 210 }}>랭킹</TableCell>
+              <TableCell align="left" sx={{ ...headerT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>닉네임</TableCell>
+              <TableCell align="center" style={{ ...headerT, width: 210 }}>점수</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -143,10 +61,10 @@ export default function RankTable() {
               ? rankRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               : rankRows
             ).map((row, i) => (
-              <TableRow key={i} >
-                <TableCell align="left" sx={{ pl: 5 }}>{row.ranking}</TableCell>
-                <TableCell align="center" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <ListItem sx={{ pl: 22 }}>
+              <TableRow key={i} sx={{ bgcolor: '#424242', opacity: 0.7 }}>
+                <TableCell align="left" sx={{ ...dataStyle, pl: 5 }}>{row.ranking}</TableCell>
+                <TableCell align="center" sx={{ ...dataNameStyle, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ListItem sx={{ pl: 30 }}>
                     <ListItemAvatar>
                       <Avatar src={row.image} sx={{ width: 40, height: 40 }} />
                     </ListItemAvatar>
@@ -155,12 +73,12 @@ export default function RankTable() {
                     </ListItemText>
                   </ListItem>
                 </TableCell>
-                <TableCell align="center">{row.score}</TableCell>
+                <TableCell sx={dataStyle} align="center">{row.score}</TableCell>
               </TableRow>
             ))}
           </TableBody>
           <TableFooter>
-            <TableRow>
+            <TableRow sx={{ bgcolor: '#fff', opacity: 0.6 }}>
               <TablePagination
                 count={rankRows.length}
                 page={page}

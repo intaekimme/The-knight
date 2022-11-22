@@ -1,0 +1,10 @@
+.imgLobby{
+    background-image: url("../_assets/lobby/lobby.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    /* width: 100vw; */
+    /* height: 765px; */
+    height: 1200px;
+}

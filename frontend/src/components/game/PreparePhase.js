@@ -1,63 +1,86 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import OrderPicker from "./OrderPicker";
 import WeaponPicker from "./WeaponPicker";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
+import ticktockSound from "../../_assets/game/sound/sound-ticktock.mp3";
+import prepareBGM from "../../_assets/game/sound/bgm-game-prepare.mp3";
 
 export default function PreparePhase() {
   const timer = useSelector((state) => state.game.timer.timer);
   const leader = useSelector((state) => state.game.leader);
   const me = useSelector((state) => state.game.me);
+  const players = useSelector((state) => state.game.players);
+  const order = useSelector((state) => state.game.order);
+  const isSelectComplete = useSelector((state) => state.game.isSelectComplete);
   const isLeader = me.memberId === leader;
+
+  const ticktockAudio = new Audio(ticktockSound);
+  const prepareBGMAudio = new Audio(prepareBGM);
 
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const memberId = parseInt(window.localStorage.getItem("memberId"));
-  const myTeam = useSelector((state) => state.room.usersInfo).find(
-    (user) => user.id === memberId
-  ).team;
+  const myTeam = useSelector((state) => state.game.me).team;
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubSelectComplete = () => {
-    console.log("선택 완료 onPub 함수");
     stompClient.send(api.pubSelectComplete(gameId), {}, {});
   };
 
   function onClick() {
-    console.log("선택 완료 onClick 함수");
     onPubSelectComplete();
   }
+
+  useEffect(() => {
+    if (timer <= 5) {
+      ticktockAudio.volume = 0.1;
+      ticktockAudio.play();
+    }
+  }, [timer]);
+
+  useEffect(() => {
+    prepareBGMAudio.loop = true;
+    prepareBGMAudio.volume = 0.15;
+    prepareBGMAudio.play();
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      prepareBGMAudio.pause();
+    }
+  }, []);
 
   return (
     <Box
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
-        height: "88vh",
+        height: "100vh",
       }}
     >
       <Box
         sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
       >
-        <Box sx={{ fontSize: "5vmin", marginBottom: ".5rem" }}>
+        <Box sx={{ fontSize: "4vmin", color: "white" }}>
           진행 순서와 무기를 선택하세요
         </Box>
-        <Box
-          sx={{ fontSize: "3vmin", marginTop: ".5rem", marginBottom: ".5rem" }}
-        >
+        <Box sx={{ fontSize: "2.5vmin", paddingTop: "1vmin", color: "white" }}>
           {timer}
         </Box>
         <div
           style={{
             width: "100vmin",
-            height: "7vmin",
+            height: "5vmin",
             backgroundColor: "#d9d9d9",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            fontSize: "2.5vmin",
+            fontSize: "2vmin",
+            marginTop: "3vmin",
           }}
         >
           {isLeader
@@ -68,19 +91,43 @@ export default function PreparePhase() {
       <OrderPicker />
       <WeaponPicker></WeaponPicker>
       {isLeader && (
-        <div
+        <Button
+          variant="contained"
+          color="dark"
           style={{
-            width: "30vw",
-            height: "7vh",
-            backgroundColor: "#d9d9d9",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            width: "18vmin",
+            height: "5vmin",
+            ...(!isSelectComplete &&
+            players.players
+              .filter((player) => player.team === me.team)
+              .every((player) => player.weapons[0] && player.weapons[1]) &&
+            order.every((element) => element)
+              ? {
+                  backgroundColor: "#1c222e",
+                  color: "#dbeaef",
+                  border: ".3vmin solid #44888f",
+                }
+              : {
+                  backgroundColor: "#1e2327",
+                  color: "#666769",
+                  border: ".3vmin solid #424242",
+                }),
+            fontSize: "1.5vmin",
           }}
           onClick={() => onClick()}
+          // 순서와 무기가 모두 선택되었을 때, 선택완료 활성화
+          disabled={
+            !(
+              !isSelectComplete &&
+              players.players
+                .filter((player) => player.team === me.team)
+                .every((player) => player.weapons[0] && player.weapons[1]) &&
+              order.every((element) => element)
+            )
+          }
         >
           선택완료
-        </div>
+        </Button>
       )}
       <PlayerWithWeaponList></PlayerWithWeaponList>
     </Box>

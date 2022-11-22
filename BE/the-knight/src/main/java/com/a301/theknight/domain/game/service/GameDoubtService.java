@@ -7,29 +7,36 @@ import com.a301.theknight.domain.game.entity.redis.DoubtStatus;
 import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
+import com.a301.theknight.domain.game.util.GameConvertUtil;
+import com.a301.theknight.domain.game.util.GameLockUtil;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
 import static com.a301.theknight.domain.game.entity.GameStatus.*;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class GameDoubtService {
     private final GameRedisRepository gameRedisRepository;
-    private final RedissonClient redissonClient;
+    private final GameLockUtil gameLockUtil;
 
-    @Transactional
+//    @Transactional
     public void doubt(long gameId, long suspectId, long suspectedId, GameStatus doubtStatus) {
         InGame inGame = getInGame(gameId);
         InGamePlayer suspect = getInGamePlayer(gameId, suspectId);
@@ -39,15 +46,11 @@ public class GameDoubtService {
 
         boolean isLying = inGame.getLyingData();
         InGamePlayer deadPlayer = killByDoubt(suspect, suspected, isLying);
-        gameRedisRepository.saveInGamePlayer(gameId, deadPlayer.getMemberId(), deadPlayer);
 
-        inGame.setDoubtData(DoubtData.builder()
-                        .suspectId(suspectId)
-                        .suspectedId(suspectedId)
-                        .doubtResult(deadPlayer.equals(suspected))
-                        .doubtStatus(ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DoubtStatus.ATTACK : DoubtStatus.DEFENSE)
-                        .deadLeader(deadPlayer.isLeader()).build());
-        inGame.changeStatus(DOUBT_RESULT);
+        saveDoubtData(suspectId, suspectedId, inGame, suspected, deadPlayer);
+        inGame.addTurn();
+
+        gameRedisRepository.saveInGamePlayer(gameId, deadPlayer.getMemberId(), deadPlayer);
         gameRedisRepository.saveInGame(gameId, inGame);
     }
 
@@ -58,53 +61,49 @@ public class GameDoubtService {
 
         DoubtResponse doubtResponse = makeDoubtResponse(gameId, doubtData);
 
-        GameStatus nextStatus = getNextGameStatus(doubtData);
-        inGame.changeStatus(nextStatus);
         inGame.clearDoubtData();
         gameRedisRepository.saveInGame(gameId, inGame);
 
         return new DoubtResponseDto(doubtResponse, inGame.getGameStatus());
     }
 
-    @Transactional
-    public DoubtPassResponse doubtPass(long gameId, long suspectId){
-        RLock lock = redissonClient.getLock(lockKeyGen(gameId));
-        try {
-            boolean available = lock.tryLock(5, 2, TimeUnit.SECONDS);
-            if (!available) {
-                throw new CustomRestException(DomainErrorCode.FAIL_TO_ACQUIRE_REDISSON_LOCK);
-            }
+//    @Transactional
+    public DoubtPassDto doubtPass(long gameId, long suspectId){
+        gameLockUtil.doubtPassLock(gameId,7, 2);
 
-            InGame inGame = getInGame(gameId);
-            GameStatus gameStatus = inGame.getGameStatus();
-            InGamePlayer suspect = getInGamePlayer(gameId, suspectId);
-            if (suspect.isDead() || notDoubtStatus(gameStatus)) {
-                return null;
-            }
-
-            Team suspectTeam = suspect.getTeam();
-            int alivePlayerCount = Team.A.equals(suspectTeam) ?
-                    getAlivePlayerCount(gameRedisRepository.getTeamPlayerList(gameId, Team.A)) :
-                    getAlivePlayerCount(gameRedisRepository.getTeamPlayerList(gameId, Team.B));
-
-            inGame.addDoubtPassCount();
-            if(inGame.getDoubtPassCount() >= alivePlayerCount){
-                GameStatus nextStatus = ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DEFENSE : EXECUTE;
-                inGame.changeStatus(nextStatus);
-
-                inGame.initDoubtPassCount();
-            }
-            gameRedisRepository.saveInGame(gameId, inGame);
-
-            return DoubtPassResponse.builder()
-                    .memberId(suspect.getMemberId())
-                    .nickname(suspect.getNickname())
-                    .build();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
+        InGame inGame = getInGame(gameId);
+        GameStatus gameStatus = inGame.getGameStatus();
+        InGamePlayer suspect = getInGamePlayer(gameId, suspectId);
+        if (suspect.isDead() || notDoubtStatus(gameStatus)) {
+            throw new CustomWebSocketException(UNABLE_TO_PASS_DOUBT);
         }
+
+        inGame.addDoubtPassCount();
+        gameRedisRepository.saveInGame(gameId, inGame);
+
+        Team suspectTeam = suspect.getTeam();
+        int alivePlayerCount = getAlivePlayerCount(gameId, suspectTeam);
+
+        gameLockUtil.doubtPassUnLock(gameId);
+        return DoubtPassDto.builder()
+                .fullCount(inGame.getDoubtPassCount() >= alivePlayerCount)
+                .doubtPassResponse(DoubtPassResponse.builder()
+                        .memberId(suspect.getMemberId())
+                        .nickname(suspect.getNickname()).build())
+                .build();
+    }
+
+    private void saveDoubtData(long suspectId, long suspectedId, InGame inGame, InGamePlayer suspected, InGamePlayer deadPlayer) {
+        DoubtData doubtData = inGame.getTurnData().getDoubtData();
+
+        doubtData.setSuspectId(suspectId);
+        doubtData.setSuspectedId(suspectedId);
+        doubtData.setDoubtSuccess(deadPlayer.getMemberId().equals(suspected.getMemberId()));
+        doubtData.setDoubtHand(ATTACK_DOUBT.equals(inGame.getGameStatus()) ?
+                inGame.getTurnData().getAttackData().getAttackHand() :
+                inGame.getTurnData().getDefenseData().getDefendHand());
+        doubtData.setDoubtStatus(ATTACK_DOUBT.equals(inGame.getGameStatus()) ? DoubtStatus.ATTACK : DoubtStatus.DEFENSE);
+        doubtData.setDeadLeader(deadPlayer.isLeader());
     }
 
     // TODO
@@ -112,16 +111,6 @@ public class GameDoubtService {
         return !(ATTACK_DOUBT.equals(gameStatus) || DEFENSE_DOUBT.equals(gameStatus));
     }
 
-    // TODO
-    public GameStatus getNextGameStatus(DoubtData doubtData) {
-        if (doubtData.isDeadLeader()) {
-            return END;
-        }
-        if (doubtData.isDoubtResult()) {
-            return ATTACK;
-        }
-        return DoubtStatus.ATTACK.equals(doubtData.getDoubtStatus()) ? DEFENSE : EXECUTE;
-    }
 
     // TODO
     public DoubtResponse makeDoubtResponse(long gameId, DoubtData doubtData) {
@@ -132,7 +121,7 @@ public class GameDoubtService {
                 .suspect(DoubtPlayerDto.toDto(suspect))
                 .suspected(SuspectedPlayerDto.toDto(suspected, doubtData.getDoubtHand()))
                 .doubtTeam(suspect.getTeam().name())
-                .doubtResult(doubtData.isDoubtResult()).build();
+                .doubtSuccess(doubtData.isDoubtSuccess()).build();
     }
 
     // TODO
@@ -141,6 +130,14 @@ public class GameDoubtService {
         deadPlayer.death();
 
         return deadPlayer;
+    }
+
+    private int getAlivePlayerCount(long gameId, Team suspectTeam) {
+        List<InGamePlayer> teamPlayerList = gameRedisRepository.getTeamPlayerList(gameId, suspectTeam);
+
+        return (int) teamPlayerList.stream()
+                .filter(inGamePlayer -> !inGamePlayer.isDead())
+                .count();
     }
 
     // TODO
@@ -152,9 +149,10 @@ public class GameDoubtService {
 
     // TODO
     public void checkDoubtStatus(InGame inGame, GameStatus doubtStatus) {
-        if (!doubtStatus.equals(inGame.getGameStatus())) {
-            throw new CustomWebSocketException(DO_NOT_FIT_REQUEST_BY_GAME_STATUS);
-        }
+//        if (!doubtStatus.equals(inGame.getGameStatus())) {
+//            log.info("Not Equal Status : Reuqest = {}, inGame = {}", doubtStatus.name(), inGame.getGameStatus().name());
+//            throw new CustomWebSocketException(DO_NOT_FIT_REQUEST_BY_GAME_STATUS);
+//        }
     }
 
     // TODO
@@ -181,12 +179,5 @@ public class GameDoubtService {
     }
 
     // TODO
-    public String lockKeyGen(long gameId) {
-        return "game:" + gameId + "_convert_lock";
-    }
 
-    // TODO
-    public int getAlivePlayerCount(List<InGamePlayer> inGamePlayers){
-        return (int)(inGamePlayers.stream().filter(inGamePlayer -> !inGamePlayer.isDead()).count());
-    }
 }

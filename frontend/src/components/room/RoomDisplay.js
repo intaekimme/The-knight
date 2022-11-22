@@ -5,8 +5,13 @@ import { Grid, Box } from "@mui/material";
 import RoomUser from "./RoomUser";
 import RoomHeader from "./RoomHeader";
 
-export default function RoomDisplay() {
-	const size = 35;
+export default function RoomDisplay(props) {
+	const [size, setSize] = React.useState(props.size);
+	React.useEffect(()=>{
+		if(props.size){
+			setSize(props.size);
+		}
+	}, [props.size]);
 
 	// 방 정보
 	const roomData = useSelector((state) => state.room.roomInfo);
@@ -18,7 +23,10 @@ export default function RoomDisplay() {
   return (
 		<Box sx={{display: "flex", flexDirection: "column", alignItems: "center", minWidth:size*35, height: size*23}}>
 			<RoomHeader stompClient={stompClient} memberDatas={memberDatas} roomData={roomData} size={size}/>
-			<RoomUser stompClient={stompClient} memberDatas={memberDatas} roomData={roomData} size={size}/>
+			<Grid container>
+				<Grid item xs={11}><RoomUser stompClient={stompClient} memberDatas={memberDatas} roomData={roomData} size={size}/></Grid>
+				<Grid item xs={1}></Grid>
+			</Grid>
 		</Box>
   );
 }

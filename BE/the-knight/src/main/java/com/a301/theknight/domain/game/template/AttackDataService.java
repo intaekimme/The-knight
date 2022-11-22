@@ -7,10 +7,11 @@ import com.a301.theknight.domain.game.entity.redis.InGame;
 import com.a301.theknight.domain.game.entity.redis.InGamePlayer;
 import com.a301.theknight.domain.game.entity.redis.TeamInfoData;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
+import com.a301.theknight.domain.game.util.GameLockUtil;
 import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
-import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 
@@ -19,40 +20,38 @@ public class AttackDataService extends GameDataService {
 
     private final GameRedisRepository redisRepository;
 
-    public AttackDataService(RedissonClient redissonClient, GameRedisRepository redisRepository) {
-        super(redissonClient);
+    public AttackDataService(GameLockUtil gameLockUtil, GameRedisRepository redisRepository) {
+        super(gameLockUtil, redisRepository);
         this.redisRepository = redisRepository;
     }
 
     @Override
+    @Transactional
     public void makeAndSendData(long gameId, SendMessageService messageService) {
         InGame inGame = getInGame(gameId);
-        inGame.updateCurrentAttackTeam();
-        TeamInfoData teamInfoData = getTeamInfoData(inGame);
+        inGame.clearTurnData();
+        Team attackTeam = inGame.updateCurrentAttackTeam();
+
         int maxMembers = inGame.getMaxMemberNum() / 2;
+        TeamInfoData teamInfoData = inGame.getTeamInfoData(attackTeam);
 
         int nextAttackerIndex = findNextAttacker(gameId, maxMembers, teamInfoData);
         teamInfoData.updateCurrentAttackIndex(nextAttackerIndex);
         redisRepository.saveInGame(gameId, inGame);
 
-        long nextAttackerId = teamInfoData.getOrderList()[nextAttackerIndex].getMemberId();
+        GameOrderDto nextAttackerData = teamInfoData.getOrderList()[nextAttackerIndex];
         MemberTeamResponse response = MemberTeamResponse.builder()
-                .memberId(nextAttackerId)
+                .memberId(nextAttackerData.getMemberId())
+                .nickname(nextAttackerData.getNickname())
                 .team(inGame.getCurrentAttackTeam().name()).build();
-
         messageService.sendData(gameId, "/attacker", response);
-    }
-
-    private TeamInfoData getTeamInfoData(InGame inGame) {
-        return Team.A.equals(inGame.getCurrentAttackTeam()) ?
-                inGame.getTeamAInfo() : inGame.getTeamBInfo();
     }
 
     private int findNextAttacker(long gameId, int maxMembers, TeamInfoData teamInfoData) {
         GameOrderDto[] orderList = teamInfoData.getOrderList();
         int curIndex = (teamInfoData.getCurrentAttackIndex() + 1) % maxMembers;
 
-        for (int i = 0; i < maxMembers; i++) {
+        for (int i = 0; i <= maxMembers; i++) {
             GameOrderDto gameOrderDto = orderList[curIndex];
             InGamePlayer inGamePlayer = getInGamePlayer(gameId, gameOrderDto.getMemberId());
             if (!inGamePlayer.isDead()) {

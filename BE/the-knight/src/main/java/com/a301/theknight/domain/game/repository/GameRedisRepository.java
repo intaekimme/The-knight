@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -107,6 +108,10 @@ public class GameRedisRepository {
         redisTemplate.delete(generateWeaponKey(gameId, team));
     }
 
+    public void deleteInGame(long gameId) {
+        redisTemplate.delete(generateGameKey(gameId));
+    }
+
     private <T> Optional<T> getData(String key, Class<T> classType) {
         String jsonData = (String) redisTemplate.opsForValue().get(key);
 
@@ -147,15 +152,18 @@ public class GameRedisRepository {
 
     private void saveData(String key, String jsonData) {
         redisTemplate.opsForValue().set(key, jsonData);
+        redisTemplate.expire(key, Duration.ofMinutes(20L));
     }
 
     private void saveHashData(String key, String hashKey, String jsonData) {
         redisTemplate.opsForHash().delete(key, hashKey);
         redisTemplate.opsForHash().put(key, hashKey, jsonData);
+        redisTemplate.expire(key, Duration.ofMinutes(20L));
     }
 
     private <T> void saveAllHashData(String key, Map<String, String> dataMap) {
         redisTemplate.opsForHash().putAll(key, dataMap);
+        redisTemplate.expire(key, Duration.ofMinutes(20L));
     }
 
     private String generatePlayerKey(long memberId) {
@@ -173,5 +181,4 @@ public class GameRedisRepository {
     private String generateWeaponKey(long gameId, Team team) {
         return "weapon" + team.name() + ":" + gameId;
     }
-
 }

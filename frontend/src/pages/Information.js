@@ -1,7 +1,12 @@
+import React from "react";
+import Info from '../components/info/Info'
+
+import styled from '../_css/Info.module.css'
+
 export default function Information() {
   return (
-    <div>
-      소개
+    <div className={styled.imgInfo}>
+      <Info />
     </div>
   );
 }

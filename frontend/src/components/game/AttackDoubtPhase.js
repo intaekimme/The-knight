@@ -3,14 +3,21 @@ import { useSelector, useDispatch } from "react-redux";
 import { addDoubtPass, initializePass } from "../../_slice/gameSlice";
 import api from "../../api/api";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
-import Box from "@mui/material/Box";
+import { Box, Button, Paper } from "@mui/material";
+import clickSound from "../../_assets/game/sound/sound-click.mp3"
+import ticktockSound from "../../_assets/game/sound/sound-ticktock.mp3";
 
 export default function AttackDoubtPhase() {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.game.me);
   const timer = useSelector((state) => state.game.timer).timer;
+  const players = useSelector((state) => state.game.players);
   const attackInfo = useSelector((state) => state.game.attackInfo);
   const currentAttacker = useSelector((state) => state.game.currentAttacker);
+  const isDead = players.players.find(
+    (player) => player.memberId === me.memberId
+  ).isDead;
+
   const weaponsKr = {
     SWORD: "검",
     TWIN: "쌍검",
@@ -21,11 +28,14 @@ export default function AttackDoubtPhase() {
     LEFT: "왼쪽",
     RIGHT: "오른쪽",
   };
+  
+  const clickAudio = new Audio(clickSound)
+  const ticktockAudio = new Audio(ticktockSound);
 
-  // const stompClient = useSelector((state) => state.websocket.stompClient);
-  // const memberId = parseInt(window.localStorage.getItem("memberId"));
-  // const myTeam = useSelector((state) => state.room.usersInfo).find(user => user.id === memberId).team;
-  // const gameId = useSelector((state) => state.room.roomInfo).gameId;
+  const stompClient = useSelector((state) => state.websocket.stompClient);
+  const memberId = parseInt(window.localStorage.getItem("memberId"));
+  const myTeam = useSelector((state) => state.game.me).team;
+  const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
   const onPubDoubt = () => {
     // {
@@ -41,33 +51,38 @@ export default function AttackDoubtPhase() {
       },
       doubtStatus: "ATTACK_DOUBT",
     };
-    // stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
-    console.log(data);
+    stompClient.send(api.pubDoubt(gameId), {}, JSON.stringify(data));
   };
 
   const onPubDoubtPass = () => {
-    // stompClient.send(api.pubDoubtPass(gameId), {}, {});
-    console.log("패스");
+    stompClient.send(api.pubDoubtPass(gameId), {}, {});
   };
 
   function clickDoubt() {
+    clickAudio.play();
     onPubDoubt();
   }
 
   function clickPass() {
+    clickAudio.play();
     onPubDoubtPass();
-    dispatch(addDoubtPass());
   }
 
   useEffect(() => {
     dispatch(initializePass());
   }, []);
 
+  useEffect(() => {
+    if (timer <= 5) {
+      ticktockAudio.play();
+    }
+  }, [timer]);
+
   function BoxRender() {
-    // 공격자가 우리 팀일 때
+    // 상대의 의심을 기다릴 때
     if (me.team === currentAttacker.team) {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -78,16 +93,43 @@ export default function AttackDoubtPhase() {
             position: "relative",
           }}
         >
-          <Box sx={{ fontSize: "2.5vmin" }}>적팀이 의심여부를 선택 중입니다</Box>
-          <Box sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}>
+          <Box sx={{ fontSize: "2.5vmin" }}>
+            적팀이 의심여부를 선택 중입니다
+          </Box>
+          <Box
+            sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}
+          >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
-      // 공격자가 적팀일 때
+      // 우리 팀의 의심이지만, 나는 죽었을 때
+    } else if (isDead) {
+      return (
+        <Paper
+          sx={{
+            width: "70vmin",
+            height: "40vmin",
+            backgroundColor: "#d9d9d9",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "relative",
+          }}
+        >
+          <Box sx={{ fontSize: "2.5vmin" }}>
+            아군이 의심여부를 선택 중입니다
+          </Box>
+          <Box
+            sx={{ position: "absolute", bottom: "2vmin", fontSize: "2vmin" }}
+          >
+            제한시간 : {timer}
+          </Box>
+        </Paper>
+      );
     } else {
       return (
-        <Box
+        <Paper
           sx={{
             width: "70vmin",
             height: "40vmin",
@@ -100,7 +142,8 @@ export default function AttackDoubtPhase() {
         >
           <Box sx={{ textAlign: "center", fontSize: "2.7vmin" }}>
             {attackInfo.attacker.nickname}이(가) {attackInfo.defender.nickname}
-            을(를) {side[attackInfo.hand]} {weaponsKr[attackInfo.weapon]}(으)로 공격했습니다
+            을(를) {side[attackInfo.hand]} {weaponsKr[attackInfo.weapon]}(으)로
+            공격했습니다
           </Box>
           <Box
             sx={{
@@ -109,38 +152,40 @@ export default function AttackDoubtPhase() {
               justifyContent: "space-evenly",
             }}
           >
-            <Box
-              onClick={() => clickDoubt}
+            <Button
+              onClick={() => clickDoubt()}
+              color="dark"
               sx={{
-                width: "10vmin",
-                height: "10vmin",
+                width: "11.3vmin",
+                height: "11.3vmin",
                 backgroundColor: "#f0f0f0",
-                border: "7px solid #4d4d4d",
-                borderRadius: "10px",
-                fontSize: "3.5vmin",
+                border: ".65vmin solid #424242",
+                borderRadius: "1.3vmin",
+                fontSize: "3vmin",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
               }}
             >
               의심
-            </Box>
-            <Box
-              onClick={() => clickPass}
+            </Button>
+            <Button
+              onClick={() => clickPass()}
+              color="dark"
               sx={{
-                width: "10vmin",
-                height: "10vmin",
+                width: "11.3vmin",
+                height: "11.3vmin",
                 backgroundColor: "#f0f0f0",
-                border: "7px solid #4d4d4d",
-                borderRadius: "10px",
-                fontSize: "3.5vmin",
+                border: ".65vmin solid #424242",
+                borderRadius: "1.3vmin",
+                fontSize: "3vmin",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
               }}
             >
               Pass
-            </Box>
+            </Button>
           </Box>
           <Box
             sx={{
@@ -153,7 +198,7 @@ export default function AttackDoubtPhase() {
           >
             제한시간 : {timer}
           </Box>
-        </Box>
+        </Paper>
       );
     }
   }
@@ -163,9 +208,9 @@ export default function AttackDoubtPhase() {
       sx={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
         alignItems: "center",
-        height: "88vh",
+        height: "100vh",
       }}
     >
       <PlayerWithWeaponList isOpp={true}></PlayerWithWeaponList>

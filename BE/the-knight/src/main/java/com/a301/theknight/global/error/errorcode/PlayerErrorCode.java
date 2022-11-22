@@ -8,8 +8,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum PlayerErrorCode implements ErrorCode {
 
-    PLAYER_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Player is not exist."),
-    OWNER_IS_NOT_EXIST(HttpStatus.CONFLICT, "Game room owner is not exist.")
+    PLAYER_IS_NOT_EXIST(HttpStatus.NOT_FOUND, "Player is not exist.")
 
     ;
     private final HttpStatus httpStatus;

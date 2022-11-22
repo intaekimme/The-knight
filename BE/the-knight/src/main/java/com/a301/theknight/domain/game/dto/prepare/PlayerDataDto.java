@@ -22,6 +22,7 @@ public class PlayerDataDto {
     private int leftCount;
     private int rightCount;
     private int order;
+    private Boolean isDead;
     private List<Weapon> weapons;
 
     public static PlayerDataDto toDto(InGamePlayer inGamePlayer) {
@@ -32,6 +33,7 @@ public class PlayerDataDto {
                 .leftCount(inGamePlayer.getLeftCount())
                 .rightCount(inGamePlayer.getRightCount())
                 .order(inGamePlayer.getOrder())
+                .isDead(inGamePlayer.isDead())
                 .weapons(new ArrayList<>(asList(inGamePlayer.getLeftWeapon(), inGamePlayer.getRightWeapon())))
                 .build();
     }
@@ -48,6 +50,7 @@ public class PlayerDataDto {
                 .leftCount(inGamePlayer.getLeftCount())
                 .rightCount(inGamePlayer.getRightCount())
                 .order(inGamePlayer.getOrder())
+                .isDead(inGamePlayer.isDead())
                 .weapons(weapons)
                 .build();
     }

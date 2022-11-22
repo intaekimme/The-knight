@@ -4,6 +4,7 @@ import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.repository.GameRepository;
+import com.a301.theknight.domain.game.util.GameConvertUtil;
 import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.domain.player.dto.ReadyDto;
@@ -39,6 +40,9 @@ public class PlayerServiceTest {
 
     @Mock
     GameRedisRepository redisRepository;
+
+    @Mock
+    GameConvertUtil gameConvertUtil;
 
     PlayerService playerService;
 
@@ -82,7 +86,7 @@ public class PlayerServiceTest {
     }
 
     @BeforeEach
-    void setup() { playerService = new PlayerService(memberRepository, gameRepository, playerRepository, redisRepository); }
+    void setup() { playerService = new PlayerService(memberRepository, gameRepository, playerRepository, redisRepository, gameConvertUtil); }
 
     @Test
     @Disabled

@@ -4,49 +4,77 @@ import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.entity.Weapon;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Data
 public class TurnData {
+    private int turn;
     private long attackerId;
     private long defenderId;
     private AttackData attackData;
-    private DefendData defendData;
+    private DefendData defenseData;
     private boolean lyingAttack;
-    private boolean lyingDefend;
+    private boolean lyingDefense;
     private DoubtData doubtData;
 
-    public void recordAttackTurn(InGamePlayer attacker, InGamePlayer defender, GameAttackRequest gameAttackRequest){
-        this.attackerId = attacker.getMemberId();
-        this.attackData = AttackData.builder()
-                .weapon(gameAttackRequest.getWeapon())
-                .hand(gameAttackRequest.getHand())
-                .build();
-        this.defenderId = defender.getMemberId();
+    public void recordAttackData(InGamePlayer attacker, InGamePlayer defender, GameAttackRequest gameAttackRequest){
+        attackerId = attacker.getMemberId();
+        attackData.setWeapon(gameAttackRequest.getWeapon());
+        attackData.setAttackHand(gameAttackRequest.getHand());
+        defenderId = defender.getMemberId();
     }
 
-    public void recordDefenseTurn(InGamePlayer defender, GameDefenseRequest gameDefenseRequest){
-        this.defenderId = defender.getMemberId();
-        this.defendData = DefendData.builder()
-                .hand(gameDefenseRequest.getHand())
-                .shieldCount(
-                        gameDefenseRequest.getHand().name().equals("LEFT") ?
-                                defender.getLeftCount() :
-                                defender.getRightCount()
-                )
-                .build();
+    public void recordDefenseData(InGamePlayer defender, GameDefenseRequest gameDefenseRequest){
+        defenderId = defender.getMemberId();
+        defenseData.setDefendHand(gameDefenseRequest.getHand());
+        defenseData.setShieldCount(Hand.LEFT.equals(gameDefenseRequest.getHand()) ?
+                defender.getLeftCount() : defender.getRightCount());
     }
 
-    public void checkLyingAttack(InGamePlayer attacker){
-         this.lyingAttack = (this.attackData.getAttackHand().name().equals("LEFT") && (!this.attackData.getWeapon().name().equals(attacker.getLeftWeapon().name()))) ||
-                 (this.attackData.getAttackHand().name().equals("RIGHT") && (!this.attackData.getWeapon().name().equals(attacker.getRightWeapon().name())));
+    public void addDoubtPassCount() {
+        doubtData.addPassCount();
     }
 
-    public void checkLyingDefense(InGamePlayer defender){
-        this.lyingDefend = (this.defendData.getDefendHand().name().equals("LEFT") && (!defender.getLeftWeapon().equals(Weapon.SHIELD))) ||
-                (this.defendData.getDefendHand().name().equals("RIGHT") && (!defender.getRightWeapon().equals(Weapon.SHIELD)));
+    public void clearAttackData() {
+        attackerId = 0L;
+        attackData.setWeapon(null);
+        attackData.setAttackHand(null);
+        lyingAttack = false;
+    }
+
+    public void clearDefenseData() {
+        defenderId = 0L;
+        defenseData.setDefendHand(null);
+        defenseData.setShieldCount(0);
+        lyingDefense = false;
+    }
+
+    public void recordAttackLying(InGamePlayer attacker){
+        Weapon attackerWeapon = Hand.LEFT.equals(attackData.getAttackHand()) ? attacker.getLeftWeapon() : attacker.getRightWeapon();
+        lyingAttack = !attackerWeapon.equals(attackData.getWeapon());
+    }
+
+    public void recordDefenseLying(InGamePlayer defender){
+        Weapon defenderWeapon = Hand.LEFT.equals(defenseData.getDefendHand()) ? defender.getLeftWeapon() : defender.getRightWeapon();
+        lyingDefense = !Weapon.SHIELD.equals(defenderWeapon);
     }
 
     public void setDoubtData(DoubtData doubtData) {
         this.doubtData = doubtData;
+    }
+
+    public void addTurn() {
+        turn++;
+    }
+
+    public void clearDoubtData() {
+        doubtData.setSuspectId(0L);
+        doubtData.setSuspectedId(0L);
+        doubtData.setDoubtStatus(null);
+        doubtData.setDoubtHand(null);
+        doubtData.setDoubtSuccess(false);
+        doubtData.setDeadLeader(false);
+        doubtData.setDoubtPassCount(0);
     }
 }

@@ -3,6 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { over, Client } from "stompjs";
 import SockJS from "sockjs-client";
 import api from '../api/api';
+import GoogleLogin from '../commons/login/GoogleLogin';
 
 const connectWebsocket = createAsyncThunk('websocket/connectWebsocket', async (props, { rejectWithValue }) => {
   try {
@@ -37,10 +38,10 @@ const enterRoomSubscribe = createAsyncThunk('websocket/enterRoomSubscribe', asyn
   }
 });
 
-const exitRoomUnsubscribe = createAsyncThunk('websocket/exitRoomUnsubscribe', async (props, { rejectWithValue }) => {
+const exitRoom = createAsyncThunk('websocket/exitRoom', async (props, { rejectWithValue }) => {
   try {
-    props.stompClient.unsubscribe();
-    alert("room unsubscribe 성공");
+    // props.stompClient.unsubscribe();
+    // alert("room unsubscribe 성공");
     props.stompClient.disconnect();
     return true;
   } catch (err) {
@@ -75,6 +76,6 @@ export const websocketSlice = createSlice({
   },
 });
 
-export { connectWebsocket, enterRoomSubscribe, exitRoomUnsubscribe };
+export { connectWebsocket, enterRoomSubscribe, exitRoom };
 export const { setStompClient } = websocketSlice.actions;
 export default websocketSlice.reducer;
