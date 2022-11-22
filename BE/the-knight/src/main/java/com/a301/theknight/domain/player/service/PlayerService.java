@@ -125,7 +125,7 @@ public class PlayerService {
             }
             findGame.changeStatus(GameStatus.PLAYING);
             //TODO: 방장 레디 -> 게임 시작 부분도 Screen-Data 시퀀스로 맞춰서 의존성 분리시키기
-            gameConvertUtil.initRequestQueue(gameId, findGame.getCapacity());
+            gameConvertUtil.initRequestData(gameId, findGame.getCapacity());
             redisRepository.saveInGame(findGame.getId(), makeInGame(findGame));
         }
 

@@ -33,6 +33,15 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String password;
 
+    @Value("${redisson.host}")
+    private String redissonHost;
+
+    @Value("${redisson.port}")
+    private int redissonPort;
+
+    @Value("${redisson.password}")
+    private String redissonPassword;
+
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
@@ -61,14 +70,14 @@ public class RedisConfig {
         return new JpaTransactionManager(entityManagerFactory);
     }
 
-//    @Bean
-//    public RedissonClient redissonClient() {
-//        Config config = new Config();
-//        config.useSingleServer()
-//                .setAddress("redis://" + host + ":" + port)
-//                .setPassword(password);
-//        RedissonClient client = Redisson.create(config);
-//
-//        return client;
-//    }
+    @Bean
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress("redis://" + redissonHost + ":" + redissonPort)
+                .setPassword(redissonPassword);
+        RedissonClient client = Redisson.create(config);
+
+        return client;
+    }
 }

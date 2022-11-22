@@ -39,9 +39,12 @@ public class GameConvertUtil {
         return new ConvertResponse(curStatus, nextStatus);
     }
 
-    @Transactional
     public boolean requestCounting(long gameId) {
-        int maxCount = peopleMap.get(gameId) * 3 - 1;
+        int maxMember = peopleMap.computeIfAbsent(gameId, key -> {
+            InGame inGame = getInGame(gameId);
+            return inGame.getMaxMemberNum();
+        });
+        int maxCount = maxMember * 3 - 2;
         ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
         queue.add("count");
         queue.add("count");
@@ -52,13 +55,13 @@ public class GameConvertUtil {
         return false;
     }
 
-    public void initRequestQueue(long gameId, int maxMember) {
+    public void initRequestData(long gameId, int maxMember) {
         peopleMap.put(gameId, maxMember);
         ConcurrentLinkedQueue<String> queue = countMap.computeIfAbsent(gameId, key -> new ConcurrentLinkedQueue<>());
         queue.clear();
     }
 
-    public void initRequestQueue(long gameId) {
+    public void initRequestData(long gameId) {
         ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
         queue.clear();
 
@@ -141,10 +144,6 @@ public class GameConvertUtil {
     private InGame getInGame(long gameId) {
         return gameRedisRepository.getInGame(gameId)
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
-    }
-
-    private String generateCountLockKey(long gameId) {
-        return "game_count_lock:" + gameId;
     }
 
 }
