@@ -45,7 +45,7 @@ public class GameConvertUtil {
             InGame inGame = getInGame(gameId);
             return inGame.getMaxMemberNum();
         });
-        int maxCount = maxMember * 3 - 1;
+        int maxCount = maxMember * 3 - 2;
         ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
         queue.add("count");
         queue.add("count");
