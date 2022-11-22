@@ -1,15 +1,14 @@
 package com.a301.theknight.domain.auth.filter;
 
 import com.a301.theknight.domain.auth.model.MemberPrincipal;
-import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.CustomUserDetailsService;
 import com.a301.theknight.domain.auth.service.TokenService;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -51,6 +50,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
+            log.info("[Cast Exception] = {} {}", e.getLocalizedMessage(), e.getCause());
             throw new AuthenticationException(e.getMessage());
         }
 
