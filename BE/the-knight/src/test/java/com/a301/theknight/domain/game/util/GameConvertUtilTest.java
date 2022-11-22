@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
@@ -43,7 +42,7 @@ class GameConvertUtilTest {
     @BeforeEach
     void setup() {
         gameRedisRepository.deleteInGame(gameId);
-        gameConvertUtil.initRequestQueue(gameId, peopleNum);
+        gameConvertUtil.initRequestData(gameId, peopleNum);
     }
 
     @Test
@@ -53,7 +52,7 @@ class GameConvertUtilTest {
         //given
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         CountDownLatch countDownLatch = new CountDownLatch(peopleNum - 1);
-        gameConvertUtil.initRequestQueue(gameId);
+        gameConvertUtil.initRequestData(gameId);
         //when
         long start = System.currentTimeMillis();
         for (int i = 0; i < peopleNum - 1; i++) {
