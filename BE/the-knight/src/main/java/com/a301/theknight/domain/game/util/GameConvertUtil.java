@@ -39,7 +39,6 @@ public class GameConvertUtil {
         return new ConvertResponse(curStatus, nextStatus);
     }
 
-    @Transactional
     public boolean requestCounting(long gameId) {
         int maxMember = peopleMap.computeIfAbsent(gameId, key -> {
             InGame inGame = getInGame(gameId);
@@ -145,10 +144,6 @@ public class GameConvertUtil {
     private InGame getInGame(long gameId) {
         return gameRedisRepository.getInGame(gameId)
                 .orElseThrow(() -> new CustomWebSocketException(INGAME_IS_NOT_EXIST));
-    }
-
-    private String generateCountLockKey(long gameId) {
-        return "game_count_lock:" + gameId;
     }
 
 }
