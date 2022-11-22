@@ -39,16 +39,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
         log.info("=====>> [Request] {} {}", request.getMethod(), request.getRequestURI());
 
-
         String accessToken = getAccessTokenInRequestHeader(request);
         log.info("  Request Access-Token = {}", accessToken);
         try {
             if (StringUtils.hasText(accessToken) && tokenService.validateToken(accessToken, tokenProperties.getAccess().getName())) {
                 Long id = tokenService.getId(accessToken);
-                UserDetails userDetails = customUserDetailsService.loadMemberById(id);
-                MemberPrincipal memberPrincipal = (MemberPrincipal) userDetails;
+                MemberPrincipal memberPrincipal = customUserDetailsService.loadMemberById(id);
                 log.info("  Request Member Id = {}, Email = {}", memberPrincipal.getMemberId(), memberPrincipal.getUsername());
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberPrincipal, null, memberPrincipal.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
