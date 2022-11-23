@@ -57,14 +57,14 @@ export default function UpdateMemInfo() {
     setNewNickname(e.target.value);
   }
   const updateProfile = () => {
-    if (newUrl === "") {
-      dispatch(patchMemberInfo({ newNickname, image }))
-    } else if (newNickname === "") {
-      dispatch(patchMemberInfo({ nickname, newUrl }))
-    } else if (newUrl === "" && newNickname === "") {
-      alert("변경사항이 없어용~");
-    } else {
+    if (newNickname && newUrl) {
       dispatch(patchMemberInfo({ newNickname, newUrl }))
+    } else if (newNickname) {
+      dispatch(patchMemberInfo({ newNickname, image}))
+    } else if (newUrl) {
+      dispatch(patchMemberInfo({ nickname, newUrl}))
+    } else {
+      dispatch(patchMemberInfo({ nickname, image }))
     }
     navigate("/");
   }
