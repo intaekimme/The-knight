@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
 
 import LoginCheck from "../commons/login/LoginCheck";
 
@@ -12,6 +13,7 @@ import "../_css/Mypage.module.css"
 import { Container } from "@mui/system";
 import { Grid } from "@mui/material";
 import styled from "../_css/Mypage.module.css";
+import { onPubExit } from "../websocket/RoomPublishes";
 
 export default function MemberPage() {
 
@@ -22,6 +24,15 @@ export default function MemberPage() {
       navigate('/login');
     }
   }, []);
+
+  const stompClient = useSelector(state=>state.websocket.stompClient);
+  const gameId = useSelector(state=>state.room.roomInfo.gameId);
+  console.log(stompClient);
+  if(stompClient){
+    onPubExit({stompClient:stompClient, gameId:gameId});
+    console.log("disconnect");
+    stompClient.disconnect();
+  }
 
   const [clickUpdate, setClickUpdate] = useState(false);
   const updateProfile = () => {

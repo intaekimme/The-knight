@@ -3,6 +3,8 @@ package com.a301.theknight.domain.game.entity;
 import com.a301.theknight.domain.common.entity.BaseTimeEntity;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.entity.Team;
+import com.a301.theknight.global.error.errorcode.GameWaitingErrorCode;
+import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.a301.theknight.global.error.errorcode.GameWaitingErrorCode.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -93,6 +97,7 @@ public class Game extends BaseTimeEntity {
     public Player getOwner() {
         return players.stream()
                 .filter(Player::isOwner)
-                .findFirst().get();
+                .findFirst()
+                .orElseThrow(() -> new CustomWebSocketException(CAN_NOT_FIND_OWNER));
     }
 }

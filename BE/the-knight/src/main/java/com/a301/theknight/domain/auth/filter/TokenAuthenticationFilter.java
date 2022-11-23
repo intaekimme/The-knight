@@ -1,15 +1,14 @@
 package com.a301.theknight.domain.auth.filter;
 
 import com.a301.theknight.domain.auth.model.MemberPrincipal;
-import com.a301.theknight.domain.auth.util.TokenProperties;
 import com.a301.theknight.domain.auth.service.CustomUserDetailsService;
 import com.a301.theknight.domain.auth.service.TokenService;
+import com.a301.theknight.domain.auth.util.TokenProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -39,20 +38,19 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
         log.info("=====>> [Request] {} {}", request.getMethod(), request.getRequestURI());
 
-
         String accessToken = getAccessTokenInRequestHeader(request);
         log.info("  Request Access-Token = {}", accessToken);
         try {
             if (StringUtils.hasText(accessToken) && tokenService.validateToken(accessToken, tokenProperties.getAccess().getName())) {
                 Long id = tokenService.getId(accessToken);
-                UserDetails userDetails = customUserDetailsService.loadMemberById(id);
-                MemberPrincipal memberPrincipal = (MemberPrincipal) userDetails;
+                MemberPrincipal memberPrincipal = customUserDetailsService.loadMemberById(id);
                 log.info("  Request Member Id = {}, Email = {}", memberPrincipal.getMemberId(), memberPrincipal.getUsername());
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberPrincipal, null, memberPrincipal.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
+            log.info("[Cast Exception] = {} {}", e.getLocalizedMessage(), e.getCause());
             throw new AuthenticationException(e.getMessage());
         }
 

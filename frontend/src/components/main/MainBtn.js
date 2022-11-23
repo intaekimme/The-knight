@@ -1,5 +1,4 @@
-import { Avatar, Card, CardActions, Container, Grid, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { Avatar, Card, CardActions, Container, Grid, Typography, Box, Paper } from "@mui/material";
 import React from "react";
 
 import styled from 'styled-components';
@@ -7,6 +6,7 @@ import fullLogo from '../../_assets/fullLogo.png'
 import { btnMain } from '../../_css/MainCSSProperties'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
 import { useNavigate } from "react-router-dom";
+import { shadowWhite } from '../../_css/ReactCSSProperties';
 
 
 const MainButton = styled.div`
@@ -40,7 +40,7 @@ export default function MainBtn() {
                 //   opacity: [0.9, 0.8, 0.7],
                 // },
             }}>
-                <Box sx={{ bgcolor: '#fff', opacity: 0.7, height: 647, display: 'flex', justifyContent: 'center', boxShadow: '2px 2px 2px 10px #fff' }}>
+                <Paper sx={{ bgcolor: shadowWhite, height: 647, display: 'flex', justifyContent: 'center', boxShadow: `0 0 5px 5px ${shadowWhite}` }}>
                     <Grid>
                         <Avatar src={fullLogo} sx={{ pb: 3, height: 400, width: 'auto' }}></Avatar>
                         <MainButton>
@@ -67,7 +67,7 @@ export default function MainBtn() {
                             </Card>
                         </MainButton>
                     </Grid>
-                </Box>
+                </Paper>
             </Box>
         </Container>
     );
