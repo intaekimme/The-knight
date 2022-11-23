@@ -12,7 +12,6 @@ import Information from "./pages/Information";
 import Lobby from "./pages/Lobby";
 import Rank from "./pages/Rank";
 import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 import MemberPage from "./pages/MemberPage";
 import Game from './pages/Game';
 import ConnectWebsocket from './components/lobby/ConnectWebsocket';
@@ -50,7 +49,6 @@ root.render(
               <Route path="game" element={<Game />} />
               <Route path="login" element={<Login />} />
               <Route path="islogin" element={<LoginToken />} />
-              <Route path="signup" element={<Signup />} />
               <Route path="memberpage" element={<MemberPage />} />
               <Route path="connect-websocket/:gameId" element={<ConnectWebsocket/>}/>
               <Route path="/entryRoom/:gameId" element={<EnterRoom />} />
