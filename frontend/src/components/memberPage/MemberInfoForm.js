@@ -16,7 +16,7 @@ export default function MemberInfoForm({ updateProfile }) {
     //   }
   }, []);
   const memberInfo = useSelector(state => state.memberInfo.memberInfo);
-  console.log("memberInfo", memberInfo);
+
   return (
     <Grid container sx={{ pt: 5 }} rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center" alignItems="center">
       <Grid item xs={3} >
