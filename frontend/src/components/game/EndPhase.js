@@ -22,6 +22,16 @@ export default function EndPhase() {
   const stompClient = useSelector((state) => state.websocket.stompClient);
   const gameId = useSelector((state) => state.room.roomInfo).gameId;
 
+  const changeScore = (type, scoreBefore) => {
+    if (type === "up") {
+      return scoreBefore += 10
+    } else if (scoreBefore < 5) {
+      return 0
+    } else {
+      return scoreBefore - 5
+    }
+  }
+
   const onClick = () => {
     stompClient.send(api.pubEnd(gameId), {}, {})
     stompClient.disconnect();
@@ -65,16 +75,14 @@ export default function EndPhase() {
           {me.team === endInfo.winningTeam ? (
             <Score
               from={score}
-              to={score + 10}
-              color="#4FB5C2"
-              fontSize="4vmin"
+              to={changeScore("up", score)}
+              style={{ color: "#4fb5c2", fontSize: "4vmin"}}
             ></Score>
           ) : (
             <Score
               from={score}
-              to={score - 5}
-              color="#bf1d35"
-              fontSize="4vmin"
+              to={changeScore("down", score)}
+              style={{ color: "#bf1d35", fontSize: "4vmin"}}
             ></Score>
           )}
         </Box>
