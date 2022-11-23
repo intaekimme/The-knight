@@ -1,6 +1,6 @@
 import { useSpring, animated } from "react-spring";
 
-export default function Number ({from, to, color, fontSize}) {
+export default function Number ({from, to, style}) {
   const { number } = useSpring({
     from: { number: from},
     number: to,
@@ -12,7 +12,7 @@ export default function Number ({from, to, color, fontSize}) {
 
   return (
     <div>
-      <animated.div style={{color: color, fontSize: fontSize}}>
+      <animated.div style={style}>
         {number.to(n => n.toFixed(0))}
       </animated.div>
     </div>
