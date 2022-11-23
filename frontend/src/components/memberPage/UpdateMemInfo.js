@@ -57,7 +57,6 @@ export default function UpdateMemInfo() {
     setNewNickname(e.target.value);
   }
   const updateProfile = () => {
-    console.log(newUrl, newNickname);
     if (newUrl === "") {
       dispatch(patchMemberInfo({ newNickname, image }))
     } else if (newNickname === "") {
@@ -96,11 +95,11 @@ export default function UpdateMemInfo() {
           <Avatar alt="profile image" src={image} sx={{ width: 250, height: 250, bgcolor: '#000', border: "1px solid #DCD7C9", boxShadow: '2px 2px 30px #000' }} />
         </Grid>
         <Grid container item xs={9} spacing={1} >
-          {arr.map((a, key) => {
+          {arr.map((url, key) => {
             return (
               <Grid item xs={2} key={key}>
                 <ImgStyle>
-                  <Avatar alt="profile image" src={a} sx={{ width: 110, height: 110, boxShadow: '2px 2px 10px #424242' }} onClick={(e) => { changeImg(a, e) }}></Avatar>
+                  <Avatar alt="profile image" src={url} sx={{ width: 110, height: 110, boxShadow: '2px 2px 10px #424242' }} onClick={(e) => { changeImg(url, e) }}></Avatar>
                 </ImgStyle>
               </Grid>
             )
