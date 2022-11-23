@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { resetGameSlice } from "../_slice/gameSlice";
+import { fetchMemberInfo } from "../_slice/memberInfoSlice";
 
 import styled from "../_css/Game.module.css";
 import LoginCheck from "../commons/login/LoginCheck";
@@ -29,20 +30,23 @@ export default function Game() {
   const theme = createTheme({
     palette: {
       dark: {
-        main: '#00000',
+        main: '#000000',
         // contrastText: '#fff',
       },
     },
   });
 
-  // 비 로그인 시 로그인 화면으로
   const isLogin = LoginCheck();
   const navigate = useNavigate();
   React.useEffect(() => {
+    // 비 로그인 시 로그인 화면으로
     if (!isLogin) {
       navigate("/login");
     }
+    // 게임데이터 초기화
     dispatch(resetGameSlice())
+    // 유저 정보 갱신 (score 사용)
+    dispatch(fetchMemberInfo());
   }, []);
 
   const phase = useSelector(state => state.game.phase)
