@@ -20,6 +20,7 @@ function OrderPicker() {
   const fontColor = "black";
   const meFontColor = "#448b69";
   const nicknameLengthMax = 8;
+  const koreanNicknameLengthMax = 4;
 
   const onPubOrder = (payload) => {
     // {
@@ -85,6 +86,7 @@ function OrderPicker() {
                 fontColor={fontColor}
                 meFontColor={meFontColor}
                 nicknameLengthMax={nicknameLengthMax}
+                koreanNicknameLengthMax={koreanNicknameLengthMax}
               ></Player>
             ) : null}
           </Button>
