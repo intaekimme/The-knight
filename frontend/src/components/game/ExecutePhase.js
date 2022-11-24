@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import PlayerWithWeaponList from "./PlayerWithWeaponList";
 import { Box, Paper } from "@mui/material";
@@ -11,6 +11,7 @@ export default function ExecutePhase() {
   const executeInfo = useSelector((state) => state.game.executeInfo);
   const isTwin = executeInfo.attacker.weapon === "TWIN";
   const isDefensePass = executeInfo.defender.passedDefense;
+  const [isStart, setIsStart] = useState(false);
 
   function BoxRender() {
     return (
@@ -20,25 +21,27 @@ export default function ExecutePhase() {
     );
   }
 
+  useEffect(() => {
+    setIsStart(true);
+  })
+
   return (
     <div sx={{ position: "relative" }}>
-      {playersDOM[executeInfo.attacker.memberId.toString()] && (
-        <Sword
-          from={executeInfo.attacker.memberId}
-          to={executeInfo.defender.memberId}
-        ></Sword>
-      )}
-      {playersDOM[executeInfo.attacker.memberId.toString()] && isTwin && (
-        <SecondSword
-          from={executeInfo.attacker.memberId}
-          to={executeInfo.defender.memberId}
-        ></SecondSword>
-      )}
-      {playersDOM[executeInfo.attacker.memberId.toString()] && !isDefensePass && (
-        <Shield
-          defender={executeInfo.defender.memberId}
-          isTwin={isTwin}
-        ></Shield>
+      {isStart && playersDOM[executeInfo.attacker.memberId.toString()] && (
+        <div>
+          <Sword
+            from={executeInfo.attacker.memberId}
+            to={executeInfo.defender.memberId}
+          ></Sword>
+          <SecondSword
+            from={executeInfo.attacker.memberId}
+            to={executeInfo.defender.memberId}
+          ></SecondSword>
+          <Shield
+            defender={executeInfo.defender.memberId}
+            isTwin={isTwin}
+          ></Shield>
+        </div>
       )}
       <Box
         sx={{
