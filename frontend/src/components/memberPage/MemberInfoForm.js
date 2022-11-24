@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { btnModify, cardMem, formMem, memberImg } from "../../_css/MypageCSSProperties"
 import { Avatar, Button, Card, Grid, Paper, Typography } from "@mui/material";
-import { fetchMemberInfo } from "../../_slice/memberInfoSlice";
+import { fetchMemberInfo, switchIsUpdating } from "../../_slice/memberInfoSlice";
 
 export default function MemberInfoForm({ updateProfile }) {
   // const [isSetting, setIsSetting] = React.useState(false);
@@ -16,6 +16,10 @@ export default function MemberInfoForm({ updateProfile }) {
     //   }
   }, []);
   const memberInfo = useSelector(state => state.memberInfo.memberInfo);
+
+  const goUpdate = () => {
+    dispatch(switchIsUpdating())
+  }
 
   return (
     <Grid container sx={{ pt: 5 }} rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} justifyContent="center" alignItems="center">
@@ -45,7 +49,7 @@ export default function MemberInfoForm({ updateProfile }) {
             </Grid>
           </Grid>
           <Grid sx={{ pr: 5, mt: '-25px', display: 'flex', justifyContent: 'end' }}>
-            <Button sx={btnModify} onClick={updateProfile}>프로필 편집</Button>
+            <Button sx={btnModify} onClick={goUpdate}>프로필 편집</Button>
           </Grid>
         </Card >
       </Grid>

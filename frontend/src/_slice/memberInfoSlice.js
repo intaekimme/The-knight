@@ -36,6 +36,8 @@ const memberHistoryInit = [
   }
 ]
 
+const isUpdatingInit = false
+
 const fetchMemberInfo = createAsyncThunk('fetchMemberInfo', async () => {
   try {
     const res = await axios.get(api.getMemberInfo(), {
@@ -101,10 +103,18 @@ const deleteMemberInfo = createAsyncThunk('deleteMemberInfo', async () => {
 
 export const memberInfoSlice = createSlice({
   name: "memberInfoSlice",
-  initialState: { memberInfo: memberInfoInit, memberHistory: memberHistoryInit },
+  initialState: {
+    memberInfo: memberInfoInit,
+    memberHistory: memberHistoryInit,
+    isUpdating: isUpdatingInit,
+  },
   reducers: {
     changeImage: (state, action) => {
       state.memberInfo.image = action.payload
+    },
+    switchIsUpdating: (state) => {
+      const beforeIsUpdating = state.isUpdating
+      state.isUpdating = !beforeIsUpdating
     },
   },
   extraReducers: {
@@ -136,5 +146,5 @@ export const memberInfoSlice = createSlice({
 });
 
 export { fetchMemberInfo, fetchMemberHistory, patchMemberInfo, deleteMemberInfo };
-export const { changeImage } = memberInfoSlice.actions;
+export const { changeImage, switchIsUpdating } = memberInfoSlice.actions;
 export default memberInfoSlice.reducer;
