@@ -16,7 +16,8 @@ function Player({
   size,
   fontColor,
   meFontColor,
-  nicknameLength,
+  nicknameLengthMax,
+  koreanNicknameLengthMax,
 }) {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.game.me);
@@ -63,6 +64,21 @@ function Player({
     4: "12vmin",
     5: "11vmin",
   };
+
+  function isKorean(nickname) {
+    const korean = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+    return korean.test(nickname);
+  }
+
+  function shortenNickname(nickname, nicknameLengthMax, koreanNicknameLengthMax) {
+    if (koreanNicknameLengthMax && isKorean(nickname) && koreanNicknameLengthMax < nickname.length) {
+      return nickname.slice(0, koreanNicknameLengthMax - 1) + "...";
+    } else if (nicknameLengthMax && !isKorean(nickname) && nicknameLengthMax < nickname.length) {
+      return nickname.slice(0, nicknameLengthMax - 1) + "...";
+    } else {
+      return nickname;
+    }
+  }
 
   const onPubAttack = () => {
     const data = {
@@ -178,9 +194,7 @@ function Player({
           fontSize: "2vmin",
         }}
       >
-        {nicknameLength && (0 < nicknameLength && nicknameLength < player.nickname.length)
-          ? player.nickname.slice(0, nicknameLength - 1) + "..."
-          : player.nickname}
+        {shortenNickname(player.nickname, nicknameLengthMax, koreanNicknameLengthMax)}
       </Box>
       {(isAttackDoubtPhase || isDefenseDoubtPhase) && isPass && (
         <Box
