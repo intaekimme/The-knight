@@ -109,9 +109,6 @@ export const memberInfoSlice = createSlice({
     isUpdating: isUpdatingInit,
   },
   reducers: {
-    changeImage: (state, action) => {
-      state.memberInfo.image = action.payload
-    },
     switchIsUpdating: (state) => {
       const beforeIsUpdating = state.isUpdating
       state.isUpdating = !beforeIsUpdating
@@ -146,5 +143,5 @@ export const memberInfoSlice = createSlice({
 });
 
 export { fetchMemberInfo, fetchMemberHistory, patchMemberInfo, deleteMemberInfo };
-export const { changeImage, switchIsUpdating } = memberInfoSlice.actions;
+export const { switchIsUpdating } = memberInfoSlice.actions;
 export default memberInfoSlice.reducer;

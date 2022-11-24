@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { changeImage, deleteMemberInfo, fetchMemberInfo, patchMemberInfo, switchIsUpdating } from '../../_slice/memberInfoSlice'
+import { deleteMemberInfo, fetchMemberInfo, patchMemberInfo, switchIsUpdating } from '../../_slice/memberInfoSlice'
 
 import { btnLeft, btnRight, memberImg } from '../../_css/MypageCSSProperties'
 import styled from 'styled-components';
@@ -40,32 +40,23 @@ const ImgStyle = styled.div`
 export default function UpdateMemInfo() {
   const memberInfo = useSelector(state => state.memberInfo.memberInfo);
   const nickname = memberInfo.nickname;
-  let image = memberInfo.image;
+  const image = memberInfo.image;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [newUrl, setNewUrl] = React.useState("");
-  const [newNickname, setNewNickname] = React.useState("");
+  const [newUrl, setNewUrl] = React.useState(image);
+  const [newNickname, setNewNickname] = React.useState(nickname);
   const changeImg = (url, e) => {
     e.preventDefault();
     //프로필 이미지 변경
     setNewUrl(url);
-    dispatch(changeImage(url));
   }
   const onChangeNickname = (e) => {
     setNewNickname(e.target.value);
   }
   const updateProfile = () => {
-    if (newNickname && newUrl) {
-      dispatch(patchMemberInfo({ newNickname, newUrl }))
-    } else if (newNickname) {
-      dispatch(patchMemberInfo({ newNickname, image}))
-    } else if (newUrl) {
-      dispatch(patchMemberInfo({ nickname, newUrl}))
-    } else {
-      dispatch(patchMemberInfo({ nickname, image }))
-    }
+    dispatch(patchMemberInfo({ newNickname, newUrl }))
     dispatch(switchIsUpdating())
   }
 
@@ -73,7 +64,7 @@ export default function UpdateMemInfo() {
     dispatch(deleteMemberInfo());
     navigate("/");
   }
-
+  
   const arr = [
     p1,
     p2,
@@ -92,7 +83,7 @@ export default function UpdateMemInfo() {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container sx={{ pt: 12 }} spacing={3}>
         <Grid item xs={3} >
-          <Avatar alt="profile image" src={image} sx={{ width: 250, height: 250, bgcolor: '#000', border: "1px solid #DCD7C9", boxShadow: '2px 2px 30px #000' }} />
+          <Avatar alt="profile image" src={newUrl ? newUrl : image} sx={{ width: 250, height: 250, bgcolor: '#000', border: "1px solid #DCD7C9", boxShadow: '2px 2px 30px #000' }} />
         </Grid>
         <Grid container item xs={9} spacing={1} >
           {arr.map((url, key) => {
