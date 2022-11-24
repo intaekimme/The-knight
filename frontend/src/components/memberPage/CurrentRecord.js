@@ -29,7 +29,6 @@ export default function CurrentRecord() {
           capac = '2:2';
         }
         return (
-          <>
             <Grid item sx={{ pt: 6 }} key={key} capac={capac}>
               {
                 recordInfoDesc.result === 'WIN' ?
@@ -82,7 +81,6 @@ export default function CurrentRecord() {
                   </Card>
               }
             </Grid>
-          </>
         )
       })}
     </Grid>
