@@ -56,8 +56,7 @@ export default function UpdateMemInfo() {
   const onChangeNickname = (e) => {
     setNewNickname(e.target.value);
   }
-  const updateProfile = (e) => {
-    e.preventDefault();
+  const updateProfile = () => {
     if (newNickname && newUrl) {
       dispatch(patchMemberInfo({ newNickname, newUrl }))
     } else if (newNickname) {
@@ -67,11 +66,10 @@ export default function UpdateMemInfo() {
     } else {
       dispatch(patchMemberInfo({ nickname, image }))
     }
-    navigate("/");
+    navigate("/memberpage");
   }
 
-  const deleteProfile = (e) => {
-    e.preventDefault();
+  const deleteProfile = () => {
     dispatch(deleteMemberInfo());
     navigate("/");
   }
