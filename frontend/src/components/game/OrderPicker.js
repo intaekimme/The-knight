@@ -19,7 +19,7 @@ function OrderPicker() {
   const playerSize = "8vmin";
   const fontColor = "black";
   const meFontColor = "#448b69";
-  const nicknameLength = 8;
+  const nicknameLengthMax = 8;
 
   const onPubOrder = (payload) => {
     // {
@@ -84,7 +84,7 @@ function OrderPicker() {
                 size={playerSize}
                 fontColor={fontColor}
                 meFontColor={meFontColor}
-                nicknameLength={nicknameLength}
+                nicknameLengthMax={nicknameLengthMax}
               ></Player>
             ) : null}
           </Button>

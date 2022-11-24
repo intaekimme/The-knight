@@ -16,7 +16,7 @@ function Player({
   size,
   fontColor,
   meFontColor,
-  nicknameLength,
+  nicknameLengthMax,
 }) {
   const dispatch = useDispatch();
   const me = useSelector((state) => state.game.me);
@@ -178,8 +178,8 @@ function Player({
           fontSize: "2vmin",
         }}
       >
-        {nicknameLength && (0 < nicknameLength && nicknameLength < player.nickname.length)
-          ? player.nickname.slice(0, nicknameLength - 1) + "..."
+        {nicknameLengthMax && (0 < nicknameLengthMax && nicknameLengthMax < player.nickname.length)
+          ? player.nickname.slice(0, nicknameLengthMax - 1) + "..."
           : player.nickname}
       </Box>
       {(isAttackDoubtPhase || isDefenseDoubtPhase) && isPass && (
