@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux'
 import { useDispatch } from 'react-redux'
-import { changeImage, deleteMemberInfo, fetchMemberInfo, patchMemberInfo } from '../../_slice/memberInfoSlice'
+import { changeImage, deleteMemberInfo, fetchMemberInfo, patchMemberInfo, switchIsUpdating } from '../../_slice/memberInfoSlice'
 
 import { btnLeft, btnRight, memberImg } from '../../_css/MypageCSSProperties'
 import styled from 'styled-components';
@@ -66,7 +66,7 @@ export default function UpdateMemInfo() {
     } else {
       dispatch(patchMemberInfo({ nickname, image }))
     }
-    navigate("/memberpage");
+    dispatch(switchIsUpdating())
   }
 
   const deleteProfile = () => {
