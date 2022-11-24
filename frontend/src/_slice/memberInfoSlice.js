@@ -5,232 +5,36 @@ import api from "../api/api";
 import { create } from "@mui/material/styles/createTransitions";
 import GoogleLogin from '../commons/login/GoogleLogin';
 
-const memberInfoSliceInit = {
-  confirmPassword: false,
-  // MemberInfo: {
-  //   id: 1,
-  //   nickname: '더나이트최강자',
-  //   image: 'https://picsum.photos/id/237/200/300',
-  //   ranking: 1,
-  //   score: 323,
-  //   win: 7,
-  //   lose: 3,
-  //   currentReco: [
-  //     {
-  //       gameId: 1,
-  //       result: '승',
-  //       capacity: 10,
-  //       sword: 2,
-  //       twin: 2,
-  //       shield: 2,
-  //       hand: 2,
-  //       alliance: [
-  //         {
-  //           image: '',
-  //           nickname: '우리팀임여1',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '우리팀임여2',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '우리팀임여3',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '우리팀임여4',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '더나이트최강자',
-  //         },
-  //       ],
-  //       opposite: [
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여1',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여2',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여3',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여4',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여5',
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       gameId: 2,
-  //       result: '패',
-  //       capacity: 8,
-  //       sword: 3,
-  //       twin: 1,
-  //       shield: 3,
-  //       hand: 1,
-  //       alliance: [
-  //         {
-  //           image: '',
-  //           nickname: 'ㅋ우리팀임여1',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: 'ㅋ우리팀임여2',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: 'ㅋ우리팀임여3',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: 'ㅋ우리팀임여4',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '더나이트최강자',
-  //         },
-  //       ],
-  //       opposite: [
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여1',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여2',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여3',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여4',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여5',
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       gameId: 1,
-  //       result: '승',
-  //       capacity: 10,
-  //       sword: 2,
-  //       twin: 2,
-  //       shield: 2,
-  //       hand: 2,
-  //       alliance: [
-  //         {
-  //           image: '',
-  //           nickname: '우리팀임여1',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '우리팀임여2',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '우리팀임여3',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '우리팀임여4',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '더나이트최강자',
-  //         },
-  //       ],
-  //       opposite: [
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여1',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여2',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여3',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여4',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여5',
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       gameId: 2,
-  //       result: '패',
-  //       capacity: 6,
-  //       sword: 3,
-  //       twin: 1,
-  //       shield: 3,
-  //       hand: 1,
-  //       alliance: [
-  //         {
-  //           image: '',
-  //           nickname: 'ㅋ우리팀임여1',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: 'ㅋ우리팀임여2',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: 'ㅋ우리팀임여3',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: 'ㅋ우리팀임여4',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '더나이트최강자',
-  //         },
-  //       ],
-  //       opposite: [
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여1',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여2',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여3',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여4',
-  //         },
-  //         {
-  //           image: '',
-  //           nickname: '적팀임여5',
-  //         },
-  //       ],
-  //     },
-  //   ]
-  // },
+const memberInfoInit = {
+  nickname: '',
+  image: '',
+  ranking: -1,
+  score: -1,
+  win: -1,
+  lose: -1,
 }
+
+const memberHistoryInit = [
+  {
+    gameId: -1,
+    result: "",
+    capacity: -1,
+    sword: -1,
+    twin: -1,
+    shield: -1,
+    hand: -1,
+    alliance: [{
+      image: "",
+      nickname: ""
+    },
+    ],
+    opposite: [{
+      image: "",
+      nickname: ""
+    }
+    ],
+  }
+]
 
 const fetchMemberInfo = createAsyncThunk('fetchMemberInfo', async () => {
   try {
@@ -294,40 +98,10 @@ const deleteMemberInfo = createAsyncThunk('deleteMemberInfo', async () => {
   }
 })
 
-const memberInfoInit = {
-  nickname: '',
-  image: '',
-  ranking: -1,
-  score: -1,
-  win: -1,
-  lose: -1,
-}
-
-const memberHistoryInit = [
-  {
-    gameId: -1,
-    result: "",
-    capacity: -1,
-    sword: -1,
-    twin: -1,
-    shield: -1,
-    hand: -1,
-    alliance: [{
-      image: "",
-      nickname: ""
-    },
-    ],
-    opposite: [{
-      image: "",
-      nickname: ""
-    }
-    ],
-  }
-]
 
 export const memberInfoSlice = createSlice({
   name: "memberInfoSlice",
-  initialState: { value: memberInfoSliceInit, memberInfo: memberInfoInit, memberHistory: memberHistoryInit },
+  initialState: { memberInfo: memberInfoInit, memberHistory: memberHistoryInit },
   reducers: {
     changeImage: (state, action) => {
       state.memberInfo.image = action.payload
@@ -346,8 +120,8 @@ export const memberInfoSlice = createSlice({
     [fetchMemberHistory.rejected]: state => {
       state.memberHistory = memberHistoryInit;
     },
-    [patchMemberInfo.fulfilled]: (state, action) => {
-      state.memberInfo = action.payload;
+    [patchMemberInfo.fulfilled]: () => {
+      fetchMemberInfo();
     },
     [patchMemberInfo.rejected]: state => {
       state.memberInfo = memberInfoInit;
