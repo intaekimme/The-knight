@@ -16,7 +16,7 @@ import styled from "../_css/Mypage.module.css";
 import { onPubExit } from "../websocket/RoomPublishes";
 
 export default function MemberPage() {
-
+  const isUpdating = useSelector(state => state.memberInfo.isUpdating)
   const isLogin = LoginCheck();
   const navigate = useNavigate();
   React.useEffect(()=>{
@@ -34,24 +34,15 @@ export default function MemberPage() {
     stompClient.disconnect();
   }
 
-  const [clickUpdate, setClickUpdate] = useState(false);
-  const updateProfile = () => {
-    console.log("this");
-    clickUpdate === true ? (
-      setClickUpdate(false)
-    ) : (
-      setClickUpdate(true)
-    )
-  }
   return (
     <>
       {
-        !clickUpdate
+        !isUpdating
           ?
           <div className={styled.imgMypage}>
             <Container fixed>
               <Grid sx={{ pb: 1 }}>
-                <MemberInfoForm updateProfile={updateProfile} />
+                <MemberInfoForm />
                 <CurrentRecord />
               </Grid>
             </Container>
