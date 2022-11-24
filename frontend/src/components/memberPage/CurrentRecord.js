@@ -13,7 +13,8 @@ export default function CurrentRecord() {
     dispatch(fetchMemberHistory());
   }, []);
   const recordInfo = useSelector(state => state.memberInfo.memberHistory)
-  console.log("memberReco", recordInfo.games);
+  const nicknameLengthMax = 10;
+  const koreanNicknameLengthMax = 6;
 
   return (
     <Grid container direction="column" sx={{ mb: 10 }}>
@@ -43,7 +44,7 @@ export default function CurrentRecord() {
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <AllianceMem alliMems={recordInfoDesc.alliance} />
+                        <AllianceMem alliMems={recordInfoDesc.alliance} nicknameLengthMax={nicknameLengthMax} koreanNicknameLengthMax={koreanNicknameLengthMax}/>
                       </Grid>
                       <Grid item sx={{ pl: 2, pr: 2 }}>
                         <Typography sx={textMaxMem}>
@@ -51,7 +52,7 @@ export default function CurrentRecord() {
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <OppositeMem oppoMems={recordInfoDesc.opposite} />
+                        <OppositeMem oppoMems={recordInfoDesc.opposite} nicknameLengthMax={nicknameLengthMax} koreanNicknameLengthMax={koreanNicknameLengthMax}/>
                       </Grid>
                     </Grid>
                   </Card>
@@ -67,7 +68,7 @@ export default function CurrentRecord() {
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <AllianceMem alliMems={recordInfoDesc.alliance} />
+                        <AllianceMem alliMems={recordInfoDesc.alliance} nicknameLengthMax={nicknameLengthMax} koreanNicknameLengthMax={koreanNicknameLengthMax}/>
                       </Grid>
                       <Grid item sx={{ pl: 2, pr: 2 }}>
                         <Typography sx={textMaxMem}>
@@ -75,7 +76,7 @@ export default function CurrentRecord() {
                         </Typography>
                       </Grid>
                       <Grid item>
-                        <OppositeMem oppoMems={recordInfoDesc.opposite} />
+                        <OppositeMem oppoMems={recordInfoDesc.opposite} nicknameLengthMax={nicknameLengthMax} koreanNicknameLengthMax={koreanNicknameLengthMax}/>
                       </Grid>
                     </Grid>
                   </Card>
