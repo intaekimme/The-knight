@@ -52,7 +52,6 @@ export default function MemberPage() {
             <Container fixed>
               <Grid sx={{ pb: 1 }}>
                 <MemberInfoForm updateProfile={updateProfile} />
-
                 <CurrentRecord />
               </Grid>
             </Container>
