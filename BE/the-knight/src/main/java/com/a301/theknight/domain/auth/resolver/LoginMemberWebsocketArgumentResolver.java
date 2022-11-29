@@ -1,7 +1,6 @@
 package com.a301.theknight.domain.auth.resolver;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.auth.model.MemberPrincipal;
 import com.a301.theknight.global.error.errorcode.DomainErrorCode;
 import com.a301.theknight.global.error.exception.CustomRestException;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +9,6 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.invocation.HandlerMethodArgumentResolver;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.security.Principal;
@@ -28,7 +26,7 @@ public class LoginMemberWebsocketArgumentResolver implements HandlerMethodArgume
     }
 
     @Override
-    public Object resolveArgument(MethodParameter parameter, Message<?> message) throws Exception {
+    public Object resolveArgument(MethodParameter parameter, Message<?> message) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
         Principal principal = accessor.getUser();
 

@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.game.api;
 
 import com.a301.theknight.domain.auth.annotation.LoginMemberId;
-import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
+import com.a301.theknight.domain.game.dto.waiting.request.GameRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameCreationResponse;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.response.GameListResponse;
@@ -26,16 +26,15 @@ public class GameApi {
 
     @GetMapping
     public ResponseEntity<?> getGameList(@Size(max = 100) @RequestParam(required = false) String keyword,
-                                         @PageableDefault(size = 6, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
-                                         @LoginMemberId long memberId) {
-        GameListResponse gameListResponse = gameService.getGameList(keyword, memberId, pageable);
+                                         @PageableDefault(size = 6, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        GameListResponse gameListResponse = gameService.getGameList(keyword, pageable);
         return ResponseEntity.ok(gameListResponse);
     }
 
     @PostMapping
-    public ResponseEntity<?> createGame(@Valid @RequestBody GameCreateRequest gameCreateRequest,
+    public ResponseEntity<?> createGame(@Valid @RequestBody GameRequest gameRequest,
                                         @LoginMemberId long memberId) {
-        GameCreationResponse newGameId = gameService.createGame(gameCreateRequest, memberId);
+        GameCreationResponse newGameId = gameService.createGame(gameRequest, memberId);
         return ResponseEntity.ok(newGameId);
     }
 

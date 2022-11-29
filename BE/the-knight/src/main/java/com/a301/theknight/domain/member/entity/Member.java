@@ -41,16 +41,6 @@ public class Member extends BaseTimeEntity {
         this.role = role;
     }
 
-    //TODO  test 용도 추후 삭제
-    public Member(long id, String email, String password, String nickname, String image, String role) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.image = image;
-        this.role = role;
-    }
-
     public void saveRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }

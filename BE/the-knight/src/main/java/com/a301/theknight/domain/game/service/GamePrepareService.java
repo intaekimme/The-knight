@@ -77,13 +77,10 @@ public class GamePrepareService {
     @Transactional
     public GameOrderResponse saveOrder(long gameId, long memberId, Team team, GameOrderRequest orderRequest) {
         InGame inGame = getInGame(gameId);
-        if (!orderRequest.validate(inGame.getMaxMemberNum() / 2)) {
-            throw new CustomWebSocketException(ORDER_NUMBER_IS_INVALID);
-        }
         InGamePlayer inGamePlayer = getInGamePlayer(gameId, memberId);
-        if (!team.equals(inGamePlayer.getTeam())) {
-            throw new CustomWebSocketException(NOT_MATCH_REQUEST_TEAM);
-        }
+
+        checkRequestOrderNumber(orderRequest, inGame);
+        checkRequestTeam(team, inGamePlayer);
 
         GameOrderDto[] orderList = getOrderList(inGame, team);
         int playerOrder = inGamePlayer.getOrder();
@@ -179,6 +176,18 @@ public class GamePrepareService {
         });
         if (checkWeaponData.notAllSelected()) {
             throw new CustomWebSocketException(CAN_NOT_COMPLETE_WEAPON_SELECT);
+        }
+    }
+
+    private void checkRequestTeam(Team team, InGamePlayer inGamePlayer) {
+        if (!team.equals(inGamePlayer.getTeam())) {
+            throw new CustomWebSocketException(NOT_MATCH_REQUEST_TEAM);
+        }
+    }
+
+    private void checkRequestOrderNumber(GameOrderRequest orderRequest, InGame inGame) {
+        if (!orderRequest.validate(inGame.getMaxMemberNum() / 2)) {
+            throw new CustomWebSocketException(ORDER_NUMBER_IS_INVALID);
         }
     }
 

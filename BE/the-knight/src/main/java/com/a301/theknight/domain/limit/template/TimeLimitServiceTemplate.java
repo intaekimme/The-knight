@@ -27,10 +27,8 @@ public abstract class TimeLimitServiceTemplate {
         int preTurn = preInGame.getTurnNumber();
 
         try {
-            int time = (int)preStatus.getLimitMilliSeconds() / 200;
-            for (int i = 0; i < time; i++) {
-                Thread.sleep(190);
-            }
+            waitForTimeLimit(preStatus);
+
             InGame curInGame = getInGame(gameId);
             if (curInGame.getTurnNumber() != preTurn || !preStatus.equals(curInGame.getGameStatus())) {
                 log.info(" [Not Start TimeOut] {}, nextStatus = {}", preStatus, curInGame.getGameStatus());
@@ -39,6 +37,7 @@ public abstract class TimeLimitServiceTemplate {
 
             try {
                 gameLockUtil.dataLock(gameId, 1, 5);
+
                 log.info(" [Start Time Out] : status = {}", curInGame.getGameStatus().name());
                 sendMessageService.convertCall(gameId);
                 runLimitLogic(gameId);
@@ -47,6 +46,13 @@ public abstract class TimeLimitServiceTemplate {
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void waitForTimeLimit(GameStatus preStatus) throws InterruptedException {
+        int time = (int) preStatus.getLimitMilliSeconds() / 200;
+        for (int i = 0; i < time; i++) {
+            Thread.sleep(190);
         }
     }
 

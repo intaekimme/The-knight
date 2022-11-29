@@ -40,15 +40,6 @@ public class SendMessageService {
         }
     }
 
-    public void convertCall(long gameId, long delayMillis) {
-        try {
-            Thread.sleep(delayMillis);
-            convertCall(gameId);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void proceedCall(long gameId, long delayMillis) {
         try {
             Thread.sleep(delayMillis);

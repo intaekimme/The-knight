@@ -7,15 +7,17 @@ import com.a301.theknight.domain.member.entity.Member;
 import com.a301.theknight.domain.member.repository.MemberRepository;
 import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
-import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class GameServiceTest {
 
@@ -37,16 +39,24 @@ class GameServiceTest {
         testMembers = new Member[4];
 
         for(int i=0; i<4; i++){
-            testMembers[i] = new Member((long)(i),
-                    "testPlayer" + i + "@email.com",
-                    "testPlayer" + i,
-                    "testPlayer" + i,
-                    "testImage" + i,
-                    "ROLE_USER");
+            testMembers[i] = Member.builder()
+                    .nickname("testPlayer" + i)
+                    .password("testPlayer" + i)
+                    .image("testPlayer" + i)
+                    .role("ROLE_USER").build();
         }
 
-        testGame = new Game(1L, "testGame", 4,3,2,1,10 );
-        Player owner = new Player(1L, testMembers[0], testGame);
+        testGame = Game.builder()
+                .title("testGame")
+                .sword(4)
+                .twin(3)
+                .shield(2)
+                .hand(1)
+                .capacity(10).build();
+//        Player owner = new Player(1L, testMembers[0], testGame);
+        Player owner = Player.builder()
+                .member(testMembers[0])
+                .game(testGame).build();
         owner.setOwner();
 
         gameService = new GameService(gameRepository,memberRepository,playerRepository);

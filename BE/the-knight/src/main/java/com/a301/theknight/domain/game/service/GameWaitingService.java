@@ -1,6 +1,6 @@
 package com.a301.theknight.domain.game.service;
 
-import com.a301.theknight.domain.game.dto.waiting.request.GameModifyRequest;
+import com.a301.theknight.domain.game.dto.waiting.request.GameRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameExitResponse;
 import com.a301.theknight.domain.game.dto.waiting.response.GameMembersInfoDto;
 import com.a301.theknight.domain.game.dto.waiting.response.GameModifyResponse;
@@ -12,7 +12,6 @@ import com.a301.theknight.domain.player.entity.Player;
 import com.a301.theknight.domain.player.repository.PlayerRepository;
 import com.a301.theknight.global.error.errorcode.GameErrorCode;
 import com.a301.theknight.global.error.errorcode.GameWaitingErrorCode;
-import com.a301.theknight.global.error.errorcode.PlayerErrorCode;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,25 +48,24 @@ public class GameWaitingService {
     }
 
     @Transactional
-    public GameModifyResponse modify(long gameId, long memberId, GameModifyRequest gameModifyRequest){
+    public GameModifyResponse modify(long gameId, long memberId, GameRequest gameRequest){
         Game findGame = getGame(gameId);
 
-        if(findGame.getStatus() == GameStatus.WAITING){
-            if(isOwner(findGame, memberId)){
-                findGame.ModifyGame(
-                        gameModifyRequest.getTitle(),
-                        gameModifyRequest.getMaxMember(),
-                        gameModifyRequest.getSword(),
-                        gameModifyRequest.getTwin(),
-                        gameModifyRequest.getShield(),
-                        gameModifyRequest.getHand()
-                );
-            }else{
-                throw new CustomWebSocketException(GameWaitingErrorCode.NO_PERMISSION_TO_MODIFY_GAME_ROOM);
-            }
-        }else{
+        if (findGame.getStatus() != GameStatus.WAITING) {
             throw new CustomWebSocketException(GameWaitingErrorCode.GAME_IS_NOT_READY_STATUS);
         }
+        if (!isOwner(findGame, memberId)) {
+            throw new CustomWebSocketException(GameWaitingErrorCode.NO_PERMISSION_TO_MODIFY_GAME_ROOM);
+        }
+
+        findGame.ModifyGame(
+                gameRequest.getTitle(),
+                gameRequest.getMaxMember(),
+                gameRequest.getSword(),
+                gameRequest.getTwin(),
+                gameRequest.getShield(),
+                gameRequest.getHand());
+
         return GameModifyResponse.builder()
                 .title(findGame.getTitle())
                 .maxMember(findGame.getCapacity())
@@ -82,10 +80,8 @@ public class GameWaitingService {
     public GameExitResponse delete(long gameId, long memberId){
         Game findGame = getGame(gameId);
 
-        if(isOwnerPresent(findGame)){
-            if (!isOwner(findGame, memberId)) {
-                throw new CustomWebSocketException(GameWaitingErrorCode.NO_PERMISSION_TO_DELETE_GAME_ROOM);
-            }
+        if(isOwnerPresent(findGame) && !isOwner(findGame, memberId)) {
+            throw new CustomWebSocketException(GameWaitingErrorCode.NO_PERMISSION_TO_DELETE_GAME_ROOM);
         }
 
         playerRepository.deleteAll(findGame.getPlayers());

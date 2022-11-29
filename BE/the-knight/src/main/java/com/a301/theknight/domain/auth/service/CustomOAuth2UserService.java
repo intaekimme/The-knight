@@ -34,7 +34,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String image = (String) attributes.get("picture");
         log.info("  Login Google : name = {}, email = {}", nickname, email);
 
-        Member findMember = memberRepository.findByEmail(email)
+        memberRepository.findByEmail(email)
                 .orElseGet(() -> {
                     log.info("  Execute join new member");
                     Member member = memberRepository.save(Member.builder()

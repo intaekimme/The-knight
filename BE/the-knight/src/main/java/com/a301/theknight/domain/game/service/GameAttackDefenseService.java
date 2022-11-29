@@ -26,7 +26,6 @@ public class GameAttackDefenseService {
 
     private final GameRedisRepository gameRedisRepository;
 
-    //  Attacker
     @Transactional
     public MemberTeamResponse getAttacker(long gameId) {
 
@@ -54,7 +53,6 @@ public class GameAttackDefenseService {
         return memberTeamResponse;
     }
 
-    //  Attack
     @Transactional
     public GamePreAttackResponse getPreAttack(long gameId) {
         InGame inGame = getInGame(gameId);
@@ -64,7 +62,6 @@ public class GameAttackDefenseService {
 
         return new GamePreAttackResponse(preAttackTeam);
     }
-
 
     @Transactional
     public void attack(long gameId, long memberId, GameAttackRequest gameAttackRequest) {
@@ -115,8 +112,7 @@ public class GameAttackDefenseService {
         throw new CustomWebSocketException(UNABLE_TO_PASS_ATTACK);
     }
 
-    //  Defense
-//    @Transactional
+    @Transactional
     public void defense(long gameId, long memberId, GameDefenseRequest gameDefenseRequest) {
         InGame findInGame = getInGame(gameId);
         TurnData turn = getTurnData(findInGame);
@@ -148,7 +144,6 @@ public class GameAttackDefenseService {
     @Transactional
     public void isDefensePass(long gameId, long memberId) {
         InGame findInGame = getInGame(gameId);
-//        getInGamePlayer(gameId, memberId);
         if (!DEFENSE.equals(findInGame.getGameStatus())) {
             throw new CustomWebSocketException(UNABLE_TO_PASS_DEFENSE);
         }
