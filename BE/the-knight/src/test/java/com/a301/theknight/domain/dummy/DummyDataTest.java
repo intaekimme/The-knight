@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.dummy;
 
 
-import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
+import com.a301.theknight.domain.game.dto.waiting.request.GameRequest;
 import com.a301.theknight.domain.game.entity.Game;
 import com.a301.theknight.domain.game.repository.GameRepository;
 import com.a301.theknight.domain.game.service.GameService;
@@ -63,11 +63,11 @@ public class DummyDataTest {
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void 멤버_생성(){
         for(int i=1; i<=94; i++){
-            Member member = new Member(i,
-                    "player" + i + "@gmail.com", "player" + i,
-                    "player" + i,
-                    "player" + i,
-                    "ROLE_USER");
+            Member member = Member.builder()
+                    .nickname("player" + i)
+                    .password("player" + i)
+                    .image("player" + i)
+                    .role("ROLE_USER").build();
             memberRepository.save(member);
         }
     }
@@ -83,9 +83,9 @@ public class DummyDataTest {
         for(int i=1; i<=14; i++){
             int ownerNum = getRandomMember(random, 95);
 
-            GameCreateRequest gameCreateRequest = createRequest(i);
+            GameRequest gameRequest = createRequest(i);
 
-            gameService.createGame(gameCreateRequest , allMembers.get(ownerNum - 1).getId());
+            gameService.createGame(gameRequest, allMembers.get(ownerNum - 1).getId());
             visitedMember[ownerNum] = true;
         }
     }
@@ -215,10 +215,10 @@ public class DummyDataTest {
         return false;
     }
 
-    private GameCreateRequest createRequest(int i){
+    private GameRequest createRequest(int i){
         int[] setItemNum = setItem(maxMembers[i % 4]);
 
-        return GameCreateRequest.builder()
+        return GameRequest.builder()
                 .title("game" + i)
                 .maxMember(maxMembers[i % 4])
                 .sword(setItemNum[0])

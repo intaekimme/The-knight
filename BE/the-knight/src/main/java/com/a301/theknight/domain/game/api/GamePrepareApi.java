@@ -26,7 +26,6 @@ import javax.validation.constraints.Min;
 public class GamePrepareApi {
 
     private final GamePrepareService gamePrepareService;
-
     private final SendMessageService messageService;
 
     @MessageMapping(value = "/games/{gameId}/players")

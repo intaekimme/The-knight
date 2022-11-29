@@ -34,8 +34,8 @@ public class AttackDataService extends GameDataService {
 
         int maxMembers = inGame.getMaxMemberNum() / 2;
         TeamInfoData teamInfoData = inGame.getTeamInfoData(attackTeam);
-
         int nextAttackerIndex = findNextAttacker(gameId, maxMembers, teamInfoData);
+
         teamInfoData.updateCurrentAttackIndex(nextAttackerIndex);
         redisRepository.saveInGame(gameId, inGame);
 

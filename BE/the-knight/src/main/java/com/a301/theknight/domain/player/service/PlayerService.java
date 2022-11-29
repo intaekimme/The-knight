@@ -44,13 +44,8 @@ public class PlayerService {
     @Transactional
     public PlayerEntryResponse entry(long gameId, long memberId){
         Game entryGame = getGameFetchJoin(gameId);
-        if(!isWaiting(entryGame)){
-            throw new CustomWebSocketException(GAME_IS_NOT_READY_STATUS);
-        }
-        if(!isEnterPossible(entryGame)){
-            throw new CustomWebSocketException(CAN_NOT_ACCOMMODATE);
-        }
-        checkAlreadyEntry(memberId, entryGame);
+
+        enterValidCheck(memberId, entryGame);
 
         Member entryMember = getMember(memberId);
         Member owner = entryGame.getOwner().getMember();
@@ -67,21 +62,11 @@ public class PlayerService {
                 .image(entryMember.getImage()).build();
     }
 
-    private void checkAlreadyEntry(long memberId, Game entryGame) {
-        entryGame.getPlayers().forEach(player -> {
-            if (!player.isOwner() && player.getMember().getId().equals(memberId)) {
-                throw new CustomWebSocketException(PLAYER_IS_ALREADY_ENTRY);
-            }
-        });
-    }
-
     @Transactional
     public PlayerExitDto exit(long gameId, long memberId){
         Game findGame = getGame(gameId);
+        checkReadyStatus(findGame);
 
-        if(!isWaiting(findGame)){
-            throw new CustomWebSocketException(GAME_IS_NOT_READY_STATUS);
-        }
         Member findMember = getMember(memberId);
         Player exitPlayer = getPlayer(findGame, findMember);
         exitPlayer.exitGame();
@@ -124,7 +109,6 @@ public class PlayerService {
                 throw new CustomWebSocketException(NOT_All_USERS_ARE_READY);
             }
             findGame.changeStatus(GameStatus.PLAYING);
-            //TODO: 방장 레디 -> 게임 시작 부분도 Screen-Data 시퀀스로 맞춰서 의존성 분리시키기
             gameConvertUtil.initRequestData(gameId, findGame.getCapacity());
             redisRepository.saveInGame(findGame.getId(), makeInGame(findGame));
         }
@@ -134,6 +118,32 @@ public class PlayerService {
                 .readyStatus(readyPlayer.isReady())
                 .canStart(findGame.isCanStart())
                 .build();
+    }
+
+    private void enterValidCheck(long memberId, Game entryGame) {
+        checkReadyStatus(entryGame);
+        checkEnterPossible(entryGame);
+        checkAlreadyEntry(memberId, entryGame);
+    }
+
+    private void checkEnterPossible(Game entryGame) {
+        if(!isEnterPossible(entryGame)){
+            throw new CustomWebSocketException(CAN_NOT_ACCOMMODATE);
+        }
+    }
+
+    private void checkReadyStatus(Game entryGame) {
+        if(!isWaiting(entryGame)){
+            throw new CustomWebSocketException(GAME_IS_NOT_READY_STATUS);
+        }
+    }
+
+    private void checkAlreadyEntry(long memberId, Game entryGame) {
+        entryGame.getPlayers().forEach(player -> {
+            if (!player.isOwner() && player.getMember().getId().equals(memberId)) {
+                throw new CustomWebSocketException(PLAYER_IS_ALREADY_ENTRY);
+            }
+        });
     }
 
     private Member getMember(long memberId) {
@@ -159,6 +169,7 @@ public class PlayerService {
     private boolean isWaiting(Game game){
         return game.getStatus() == GameStatus.WAITING;
     }
+
     private boolean isEnterPossible(Game game){
         return game.getCapacity() > game.getPlayers().size();
     }

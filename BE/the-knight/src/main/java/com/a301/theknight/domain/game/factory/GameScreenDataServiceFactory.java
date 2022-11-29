@@ -3,21 +3,19 @@ package com.a301.theknight.domain.game.factory;
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.game.repository.GameRedisRepository;
 import com.a301.theknight.domain.game.template.*;
-import com.a301.theknight.global.error.errorcode.GamePlayingErrorCode;
 import com.a301.theknight.global.error.exception.CustomWebSocketException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.*;
 import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.INGAME_IS_NOT_EXIST;
+import static com.a301.theknight.global.error.errorcode.GamePlayingErrorCode.WRONG_GAME_STATUS;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class GameScreenDataServiceFactory {
     private final GameRedisRepository gameRedisRepository;
-
     private final PrepareDataService prepareDataService;
     private final PredecessorDataService predecessorDataService;
     private final AttackDataService attackDataService;

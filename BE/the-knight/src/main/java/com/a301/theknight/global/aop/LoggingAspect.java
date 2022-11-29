@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -62,7 +61,7 @@ public class LoggingAspect {
     public Object loggingWebsocketApi(ProceedingJoinPoint joinPoint) throws Throwable {
         String params = getParams(joinPoint);
         log.info("  [WebSocket API START] {}, {}", joinPoint.getSignature().getName(), params);
-        Object result = null;
+        Object result;
         try {
             result = joinPoint.proceed();
             return result;
@@ -106,14 +105,6 @@ public class LoggingAspect {
             log.info("  [Data Service END] {}, {}ms", joinPoint.getSignature().getName(), end - start);
         }
     }
-
-//    @Around("onMessageService()")
-//    public Object loggingMessageService(ProceedingJoinPoint joinPoint) throws Throwable {
-//        Signature signature = joinPoint.getSignature();
-//        String params = getParams(joinPoint);
-//
-//        return joinPoint.proceed();
-//    }
 
     private String changePasswordLog(String params) {
         int startIndex = params.indexOf("password") + 9;

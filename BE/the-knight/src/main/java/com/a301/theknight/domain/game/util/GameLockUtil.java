@@ -56,11 +56,6 @@ public class GameLockUtil {
         return tryLock(lockKey, 1, 5);
     }
 
-//    public void clickUnLock(long gameId, long memberId) {
-//        String lockKey = generateClickLock(gameId, memberId, MethodName);
-//        unLock(lockKey);
-//    }
-
     private boolean tryLock(String key, long waitTime, long leaseTime) {
         RLock lock = redissonClient.getLock(key);
         try {

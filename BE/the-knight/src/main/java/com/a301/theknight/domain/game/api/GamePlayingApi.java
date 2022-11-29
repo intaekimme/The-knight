@@ -6,12 +6,8 @@ import com.a301.theknight.domain.game.dto.attack.request.GameAttackRequest;
 import com.a301.theknight.domain.game.dto.defense.request.GameDefenseRequest;
 import com.a301.theknight.domain.game.dto.doubt.request.GameDoubtRequest;
 import com.a301.theknight.domain.game.dto.doubt.response.DoubtPassDto;
-import com.a301.theknight.domain.game.dto.prepare.response.SelectCompleteDto;
-import com.a301.theknight.domain.game.dto.prepare.response.SelectResponse;
 import com.a301.theknight.domain.game.service.GameAttackDefenseService;
 import com.a301.theknight.domain.game.service.GameDoubtService;
-import com.a301.theknight.domain.game.service.GamePrepareService;
-import com.a301.theknight.domain.player.entity.Team;
 import com.a301.theknight.global.aop.annotation.PreventClick;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -30,7 +26,6 @@ public class GamePlayingApi {
     private final SendMessageService messageService;
 
 
-    // AttackApi 3개
     @PreventClick
     @MessageMapping(value = "/games/{gameId}/attack")
     public void attack(@Min(1) @DestinationVariable long gameId, @Valid GameAttackRequest gameAttackRequest, @LoginMemberId long memberId) {
@@ -47,7 +42,6 @@ public class GamePlayingApi {
         messageService.convertCall(gameId);
     }
 
-    // DefenseApi 3개
     @PreventClick
     @MessageMapping(value = "/games/{gameId}/defense")
     public void defense(@Min(1) @DestinationVariable long gameId, @Valid GameDefenseRequest gameDefenseRequest, @LoginMemberId long memberId) {
@@ -64,7 +58,6 @@ public class GamePlayingApi {
         messageService.convertCall(gameId);
     }
 
-    // DoubtApi 3개
     @PreventClick
     @MessageMapping(value = "/games/{gameId}/doubt")
     public void doubt(@Min(1) @DestinationVariable long gameId, @Valid GameDoubtRequest doubtRequest, @LoginMemberId long memberId) {

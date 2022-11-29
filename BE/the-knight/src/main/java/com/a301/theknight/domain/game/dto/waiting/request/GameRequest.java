@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GameCreateRequest {
+public class GameRequest {
     @NotBlank(message = "The game title must have a value.")
     @Size(min=1, max=100, message = "Title(${validatedValue}) can only be between {min} and {max}.")
     private String title;
@@ -50,7 +50,7 @@ public class GameCreateRequest {
     }
 
     @Builder
-    public GameCreateRequest(String title, int maxMember, int sword, int twin, int shield, int hand){
+    public GameRequest(String title, int maxMember, int sword, int twin, int shield, int hand){
         this.title = title;
         this.maxMember = maxMember;
         this.sword = sword;
