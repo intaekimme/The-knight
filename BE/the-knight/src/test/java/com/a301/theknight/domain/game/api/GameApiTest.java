@@ -39,10 +39,10 @@ class GameApiTest {
 
     @DisplayName("[API] [GET] 게임 리스트 조회")
     @Test
-    void getGameList() throws Exception{
+    void getGameList() {
         //given
         Pageable pageable = PageRequest.of(0,1);
-        given(gameService.getGameList(keyword, memberId, pageable))
+        given(gameService.getGameList(keyword, pageable))
                 .willReturn(new GameListResponse(1, Arrays.asList(GameListDto.builder()
                         .gameId(1L)
                         .title("game1")

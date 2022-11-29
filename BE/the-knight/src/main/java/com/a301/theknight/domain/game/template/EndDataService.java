@@ -77,18 +77,22 @@ public class EndDataService extends GameDataService {
             Ranking ranking = rankingRepository.findByMemberId(memberId)
                     .orElseThrow(() -> new CustomWebSocketException(RANKING_IS_NOT_EXIST));
 
-            if (player.getTeam().name().equals(winningTeam)) {
-                player.winGame();
-                ranking.saveWinScore();
-            } else {
-                player.loseGame();
-                ranking.saveLoseScore();
-            }
+            recordGameResult(winningTeam, player, ranking);
         }
 
         return playerList.stream()
                 .map(PlayerDataDto::toDto)
                 .collect(Collectors.toList());
+    }
+
+    private void recordGameResult(String winningTeam, Player player, Ranking ranking) {
+        if (player.getTeam().name().equals(winningTeam)) {
+            player.winGame();
+            ranking.saveWinScore();
+        } else {
+            player.loseGame();
+            ranking.saveLoseScore();
+        }
     }
 
 

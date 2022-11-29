@@ -59,18 +59,21 @@ public class PlayerServiceTest {
         testMembers = new Member[11];
 
         for(int i=1; i<=10; i++){
-            testMembers[i] = new Member(i,
-                    "testPlayer" + i + "@email.com", "testPlayer" + i,
-                    "testPlayer" + i,
-                    "testPlayer" + i,
-                    "testImage" + i);
+//            testMembers[i] = new Member(i,
+//                    "testPlayer" + i + "@email.com", "testPlayer" + i,
+//                    "testPlayer" + i,
+//                    "testPlayer" + i,
+//                    "testImage" + i);
+            testMembers[i] = Member.builder().build();
         }
 
-        testGame = new Game(1L, "testGame", 4,3,2,1,10 );
+//        testGame = new Game(1L, "testGame", 4,3,2,1,10 );
+        testGame = Game.builder().build();
 
         testPlayers = new Player[11];
         for(int i = 1; i < testMembers.length-1; i++){
-            testPlayers[i] = new Player(i, testMembers[i], testGame);
+//            testPlayers[i] = new Player(i, testMembers[i], testGame);
+            testPlayers[i] = Player.builder().build();
             if(i % 2 == 0){
                 testPlayers[i].selectTeam(Team.B);
             }
@@ -141,7 +144,10 @@ public class PlayerServiceTest {
     @Test
     @DisplayName("Owner ready test")
     void ownerPlayerRequest() {
-        testPlayers[10] = new Player(10L, testMembers[10], testGame);
+//        testPlayers[10] = new Player(10L, testMembers[10], testGame);
+        testPlayers[10] = Player.builder()
+                .member(testMembers[10])
+                .game(testGame).build();
         testPlayers[10].selectTeam(Team.B);
         testPlayers[10].ready(true);
 

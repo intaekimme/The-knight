@@ -3,11 +3,11 @@ package com.a301.theknight.domain.ranking.service;
 import com.a301.theknight.domain.ranking.dto.RankingDto;
 import com.a301.theknight.domain.ranking.dto.RankingResponse;
 import com.a301.theknight.domain.ranking.repository.RankingRepository;
-import org.springframework.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 

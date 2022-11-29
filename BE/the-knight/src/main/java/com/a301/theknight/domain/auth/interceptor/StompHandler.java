@@ -44,7 +44,6 @@ public class StompHandler implements ChannelInterceptor {
                     MemberPrincipal memberPrincipal = (MemberPrincipal) userDetails;
                     log.info("  Request Member Id = {}, Email = {}", memberPrincipal.getMemberId(), memberPrincipal.getEmail());
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(memberPrincipal, null, memberPrincipal.getAuthorities());
-//                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     accessor.setUser(authentication);
                 }
             } catch (Exception e) {

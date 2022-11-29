@@ -2,7 +2,6 @@ package com.a301.theknight.domain.player.repository;
 
 import com.a301.theknight.domain.game.entity.GameStatus;
 import com.a301.theknight.domain.player.entity.Player;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 

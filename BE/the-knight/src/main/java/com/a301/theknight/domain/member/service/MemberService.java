@@ -69,16 +69,12 @@ public class MemberService {
 
             List<MemberInfoDto> alliance = game.getPlayers().stream()
                     .filter(p -> myTeam.equals(p.getTeam()))
-                    .map(p -> MemberInfoDto.builder()
-                            .nickname(p.getMember().getNickname())
-                            .image(p.getMember().getImage()).build())
+                    .map(MemberInfoDto::toDto)
                     .collect(Collectors.toList());
 
             List<MemberInfoDto> opposite = game.getPlayers().stream()
                     .filter(p -> !myTeam.equals(p.getTeam()))
-                    .map(p -> MemberInfoDto.builder()
-                            .nickname(p.getMember().getNickname())
-                            .image(p.getMember().getImage()).build())
+                    .map(MemberInfoDto::toDto)
                     .collect(Collectors.toList());
 
             historyDtoList.add(GameHistoryDto.builder()
@@ -89,7 +85,7 @@ public class MemberService {
                 .twin(game.getTwin())
                 .shield(game.getShield())
                 .hand(game.getHand())
-                .alliance(alliance)//game
+                .alliance(alliance)
                 .opposite(opposite).build());
         });
 

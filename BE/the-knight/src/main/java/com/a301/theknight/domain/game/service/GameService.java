@@ -1,7 +1,7 @@
 package com.a301.theknight.domain.game.service;
 
 import com.a301.theknight.domain.game.dto.waiting.GameListDto;
-import com.a301.theknight.domain.game.dto.waiting.request.GameCreateRequest;
+import com.a301.theknight.domain.game.dto.waiting.request.GameRequest;
 import com.a301.theknight.domain.game.dto.waiting.response.GameCreationResponse;
 import com.a301.theknight.domain.game.dto.waiting.response.GameInfoResponse;
 import com.a301.theknight.domain.game.dto.waiting.response.GameListResponse;
@@ -33,7 +33,7 @@ public class GameService {
 
 
     @Transactional(readOnly = true)
-    public GameListResponse getGameList(@Nullable String keyword, long memberId, Pageable pageable){
+    public GameListResponse getGameList(@Nullable String keyword, Pageable pageable){
         Page<Game> gamePage = gameRepository.findGameList(keyword, pageable);
 
         List<GameListDto> gameListDtos = gamePage.stream()
@@ -52,8 +52,8 @@ public class GameService {
     }
 
     @Transactional
-    public GameCreationResponse createGame(GameCreateRequest gameCreateRequest, long memberId){
-        Game newGame = gameCreateRequest.toEntity();
+    public GameCreationResponse createGame(GameRequest gameRequest, long memberId){
+        Game newGame = gameRequest.toEntity();
         newGame = gameRepository.save(newGame);
 
         Member owner = getMember(memberId);
@@ -71,17 +71,7 @@ public class GameService {
         getMember(memberId);
         Game findGame = getGame(gameId);
 
-        return GameInfoResponse.builder()
-                .gameId(gameId)
-                .title(findGame.getTitle())
-                .maxMember(findGame.getCapacity())
-                .currentMembers(findGame.getPlayers().size())
-                .sword(findGame.getSword())
-                .twin(findGame.getTwin())
-                .shield(findGame.getShield())
-                .hand(findGame.getHand())
-                .ownerId(findGame.getOwner().getMember().getId())
-                .build();
+        return GameInfoResponse.toDto(findGame);
     }
 
     private Member getMember(long memberId) {

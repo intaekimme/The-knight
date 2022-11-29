@@ -27,6 +27,8 @@ public class GameConvertUtil {
     private final Map<Long, Integer> peopleMap = new ConcurrentHashMap<>();
     private final Map<Long, ConcurrentLinkedQueue<String>> countMap = new HashMap<>();
 
+    private final int REPEAT = 3;
+
     @Transactional
     public ConvertResponse convertScreen(long gameId) {
         InGame inGame = getInGame(gameId);
@@ -44,11 +46,10 @@ public class GameConvertUtil {
             InGame inGame = getInGame(gameId);
             return inGame.getMaxMemberNum();
         });
-        int maxCount = maxMember * 3 - 2;
-        ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
-        queue.add("count");
-        queue.add("count");
-        queue.add("count");
+
+        int maxCount = maxMember * (REPEAT - 1) + 1;
+        ConcurrentLinkedQueue<String> queue = addQueue(gameId, maxMember);
+
         if (queue.size() >= maxCount) {
             return gameLockUtil.countLock(gameId, 1, 5);
         }
@@ -101,6 +102,14 @@ public class GameConvertUtil {
                 return null;
         }
         throw new CustomWebSocketException(WRONG_GAME_STATUS);
+    }
+
+    private ConcurrentLinkedQueue<String> addQueue(long gameId, int maxMember) {
+        ConcurrentLinkedQueue<String> queue = countMap.get(gameId);
+        for (int i = 0; i < REPEAT; i++) {
+            queue.add("count");
+        }
+        return queue;
     }
 
     private GameStatus getStatusAfterDefenseDoubt(DoubtData doubtData) {

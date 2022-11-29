@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum GameStatus {
-    //TODO 시연을 위해 강제로 제한시간 늘림.
     WAITING(5_000L),
     PLAYING(5_000L),
     END(5_000L),
